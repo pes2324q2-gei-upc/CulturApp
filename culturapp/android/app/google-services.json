@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "238144672947",
+    "project_id": "culturapp-82c6c",
+    "storage_bucket": "culturapp-82c6c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:238144672947:android:239e06970124dc24fe0cc6",
+        "android_client_info": {
+          "package_name": "com.example.culturapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "238144672947-lcfgms5p78ppmfd49cu8oc8t8t6ucqp3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3_DZfeW84mzjdZ2EifabSMgSZXDSnQYA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "238144672947-lcfgms5p78ppmfd49cu8oc8t8t6ucqp3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
