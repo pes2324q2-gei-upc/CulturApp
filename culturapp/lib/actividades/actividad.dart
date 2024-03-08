@@ -4,6 +4,9 @@ class Actividad {
   late String categoria;
   late double latitud;
   late double longitud;
+  late String imageUrl;
+  late String description;
+  late String dataInici;
 
   Actividad(this.name, this.code);
 
@@ -12,6 +15,7 @@ class Actividad {
     code = json['codi'];
     latitud = json['latitud'] != null ? double.parse(json['latitud']) : 1.0;
     longitud = json['longitud'] != null ? double.parse(json['longitud']) : 1.0;
+    description = json['descripcio'] ?? 'No hi ha cap descripció per aquesta activitat.';
     
     String tagsCategorias = json['tags_categor_es'] ?? '';
 
@@ -25,5 +29,27 @@ class Actividad {
     } else {
       categoria = ' ';
     }
+
+    String imagenes = json['imatges'] ?? '';
+    if (imagenes != '') {
+        int endIndex = imagenes.indexOf(',');
+        if (endIndex != -1) {
+            imageUrl = "https://agenda.cultura.gencat.cat" + imagenes.substring(0, endIndex);
+        } else {
+            imageUrl = "https://agenda.cultura.gencat.cat" + imagenes;
+        }
+    }
+
+    String data = json['imatges'] ?? '';
+    if (data != '') {
+        int endIndex = imagenes.indexOf('T');
+        if (endIndex != -1) {
+        dataInici = data.substring(0, endIndex);
+        }
+        else {
+            dataInici = '-';
+        }
+    }
+      
   }
 }

@@ -82,6 +82,76 @@ double calculateDistance(LatLng from, LatLng to) {
     getIcons();
     super.initState();
   }
+
+  void showActividadDetails(Actividad actividad) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SizedBox(
+          child: SingleChildScrollView( // Por si algun titulo es demasiado largo y hay que dejar espacio para que no haya pixel overflow
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: <Widget>[
+                  ClipRRect( //Para poder modificar la imagen
+                    borderRadius: BorderRadius.circular(20),
+                    child: SizedBox(
+                      height: 200.0, // Altura fija
+                      width: double.infinity, // Para que ocupe todo el ancho
+                      child: Image.network(
+                        actividad.imageUrl,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10.0),
+                  Text(
+                    actividad.name,
+                    style: const TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.orange,
+                    ),
+                    textAlign: TextAlign.justify,
+                  ),
+                  const Padding(padding: EdgeInsets.all(5.0)),
+                  Row(children: [
+                    const Text("Data: "),
+                    Text(
+                    actividad.dataInici,
+                  ),
+                  ],),
+                  const Padding(padding: EdgeInsets.all(5.0)),
+                  Text(
+                    actividad.description,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 3,
+                    style: const TextStyle(fontSize: 12.0),
+                    textAlign: TextAlign.justify,
+                  ),
+                  const Padding(padding: EdgeInsets.all(7.5)),
+                  SizedBox(
+                    width: 400.0,
+                    height: 35.0,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.orange),
+                      ),
+                      child: const Text(
+                        "Ver más información",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
   
   // Crea y ubica los marcadores
   Set<Marker> _createMarkers() {
@@ -91,6 +161,7 @@ double calculateDistance(LatLng from, LatLng to) {
         position: LatLng(actividad.latitud, actividad.longitud),
         infoWindow: InfoWindow(title: actividad.name),
         icon: _getMarkerIcon(actividad.categoria), // Llama a la función para obtener el icono
+        onTap: () => showActividadDetails(actividad),
       );
     }).toSet();
   }
