@@ -9,7 +9,7 @@ class Actividad {
   late String dataInici;
   late String dataFi;
   late String ubicacio;
-  late String urlEntrades;
+  late Uri urlEntrades;
   late String preu;
 
   Actividad(this.name, this.code);
@@ -20,7 +20,7 @@ class Actividad {
     latitud = json['latitud'] != null ? double.parse(json['latitud']) : 1.0;
     longitud = json['longitud'] != null ? double.parse(json['longitud']) : 1.0;
     description = json['descripcio'] ?? 'No hi ha cap descripció per aquesta activitat.';
-    ubicacio = json['adre_a'] ?? '-';
+    ubicacio = json['adre_a'] ?? 'No disponible';
     
     String tagsCategorias = json['tags_categor_es'] ?? '';
     if (tagsCategorias.contains('agenda:categories/')) {
@@ -52,6 +52,7 @@ class Actividad {
       dataInici = '-';
     }
     
+    if (dataInici == '9999-09-09') dataInici = 'Sense Data';
 
     data = json['data_fi'] ?? '';
     if (data != '') {
@@ -60,7 +61,18 @@ class Actividad {
     else {
       dataFi = '-';
     }
-    urlEntrades = json['enlla_os'] ?? '';
+
+    if (dataFi == '9999-09-09') dataFi = 'Sense Data';
+
+    String url = json['enlla_os'] ?? '';
+    if (url != '') {
+        int endIndex = url.indexOf(',');
+        if (endIndex != -1) {
+            urlEntrades = Uri.parse(url.substring(0, endIndex));
+        } else {
+            urlEntrades = Uri.parse(url);
+        }
+    }
 
     String entrades = json['entrades'] ?? 'Veure més informació';
     if (entrades != '') {
