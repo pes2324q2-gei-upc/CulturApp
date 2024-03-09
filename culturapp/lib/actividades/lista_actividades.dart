@@ -16,30 +16,38 @@ class ListaActividades extends StatefulWidget {
 class _ListaActividadesState extends State<ListaActividades> {
 
   List<Actividad> _actividades = [];
+  Future<void>? _fetchActivitiesFuture;
 
-  Future<List<Actividad>> fetchActivities() async {
+  Future<void> fetchActivities() async {
     var url = Uri.parse("https://analisi.transparenciacatalunya.cat/resource/rhpv-yr4f.json");
-    var response = await http.get(url);
-
     var actividades = <Actividad>[];
     
-    if (response.statusCode == 200) {
-      var actividadesJson = json.decode(response.body);
-      for (var actividadJson in actividadesJson) {
-        actividades.add(Actividad.fromJson(actividadJson));
+    try {
+      var response = await http.get(url);
+      if (response.statusCode == 200) {
+        var actividadesJson = json.decode(response.body);
+        for (var actividadJson in actividadesJson) {
+          actividades.add(Actividad.fromJson(actividadJson));
+        }
+        setState(() {
+          _actividades = actividades;
+        });
+      } 
+      else {
+      throw Exception('Failed to load activities');
       }
+    } 
+    catch (e) {
+      print(e.toString());
     }
-    return actividades;
   }
+
   @override
   void initState() {
     super.initState();
-    fetchActivities().then((value) {
-      setState(() {
-        _actividades.addAll(value);
-      });
-    });
+    _fetchActivitiesFuture = fetchActivities();
   }
+  
   void _onTabChange(int index) {
     // Aquí puedes realizar acciones específicas según el índice seleccionado
     // Por ejemplo, mostrar un mensaje diferente para cada tab
@@ -95,35 +103,46 @@ class _ListaActividadesState extends State<ListaActividades> {
         },
       ),
     ),
-      body: ListView.builder(
-        itemBuilder: (context, index) {
-            return Card(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 32.0, bottom: 32.0, right: 16.0, left: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                      Text(
-                      _actividades[index].name,
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.orange
-                      ),
-                      ),
-                    Text(
-                      _actividades[index].code,
-                      style: TextStyle(
-                        color: Colors.grey.shade600
-                      ),
+      body: FutureBuilder<void>(
+        future: _fetchActivitiesFuture,
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());  // Loading indicator
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            return ListView.builder(
+              itemBuilder: (context, index) {
+                  return Card(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 32.0, bottom: 32.0, right: 16.0, left: 16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                            Text(
+                            _actividades[index].name,
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange
+                            ),
+                            ),
+                          Text(
+                            _actividades[index].code,
+                            style: TextStyle(
+                              color: Colors.grey.shade600
+                            ),
 
+                            ),
+                        ],
                       ),
-                  ],
-                ),
-              ),
+                    ),
+                  );
+                },
+                itemCount: _actividades.length,
             );
-          },
-          itemCount: _actividades.length,
+          }
+        },
       ),
     );
   }
