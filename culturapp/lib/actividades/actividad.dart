@@ -7,6 +7,10 @@ class Actividad {
   late String imageUrl;
   late String description;
   late String dataInici;
+  late String dataFi;
+  late String ubicacio;
+  late String urlEntrades;
+  late String preu;
 
   Actividad(this.name, this.code);
 
@@ -16,9 +20,9 @@ class Actividad {
     latitud = json['latitud'] != null ? double.parse(json['latitud']) : 1.0;
     longitud = json['longitud'] != null ? double.parse(json['longitud']) : 1.0;
     description = json['descripcio'] ?? 'No hi ha cap descripció per aquesta activitat.';
+    ubicacio = json['adre_a'] ?? '-';
     
     String tagsCategorias = json['tags_categor_es'] ?? '';
-
     if (tagsCategorias.contains('agenda:categories/')) {
       //Obtener valor del punto en el que comienza la categoria
       int startIndex = tagsCategorias.indexOf('agenda:categories/') + 'agenda:categories/'.length;
@@ -40,16 +44,33 @@ class Actividad {
         }
     }
 
-    String data = json['imatges'] ?? '';
+    String data = json['data_inici'] ?? '';
     if (data != '') {
-        int endIndex = imagenes.indexOf('T');
+      dataInici = data.substring(0, 10);
+    }
+    else {
+      dataInici = '-';
+    }
+    
+
+    data = json['data_fi'] ?? '';
+    if (data != '') {
+        dataFi = data.substring(0, 10);
+    }
+    else {
+      dataFi = '-';
+    }
+    urlEntrades = json['enlla_os'] ?? '';
+
+    String entrades = json['entrades'] ?? 'Veure més informació';
+    if (entrades != '') {
+        int endIndex = imagenes.indexOf('€');
         if (endIndex != -1) {
-        dataInici = data.substring(0, endIndex);
-        }
-        else {
-            dataInici = '-';
+            preu = entrades.substring(0, endIndex);
+        } else {
+            preu = entrades;
         }
     }
-      
+
   }
 }
