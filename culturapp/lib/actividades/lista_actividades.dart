@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:culturapp/actividades/actividad.dart';
 import 'package:culturapp/routes/routes.dart';
+import 'package:culturapp/widgetsUtils/image_category.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:http/http.dart' as http;
@@ -14,6 +15,8 @@ class ListaActividades extends StatefulWidget {
 }
 
 class _ListaActividadesState extends State<ListaActividades> {
+
+
 
   List<Actividad> _actividades = [];
   Future<void>? _fetchActivitiesFuture;
@@ -113,30 +116,78 @@ class _ListaActividadesState extends State<ListaActividades> {
           } else {
             return ListView.builder(
               itemBuilder: (context, index) {
-                  return Card(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 32.0, bottom: 32.0, right: 16.0, left: 16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
+                  return Container(
+                    padding: EdgeInsets.all(8.0), // Adjust as needed
+                    child: Card(
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 32.0, bottom: 32.0, right: 16.0, left: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
                             Text(
                             _actividades[index].name,
                             style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.orange
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.orange
+                              ),
                             ),
+                            Row(
+                              children: [
+                                Card(
+                                  color: Colors.green.shade300, 
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        "  ${_actividades[index].comarca}  ",
+                                        style: const TextStyle(
+                                          color: Colors.white
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ),
+                                Container(
+                                  padding: EdgeInsets.only(left: 5),
+                                  height: 30,
+                                  child: ImageCategory(categoria: "${_actividades[index].categoria}"),
+                                ),
+                              ],
                             ),
-                          Text(
-                            _actividades[index].code,
-                            style: TextStyle(
-                              color: Colors.grey.shade600
-                            ),
-
-                            ),
-                        ],
+                            Container(
+                              padding: EdgeInsets.only(top: 5),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          // Add your left button logic here
+                                        },
+                                        child: Text("Add to my plan"),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          // Add your right button logic here
+                                        },
+                                        child: Text("More"),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
+                    )
                   );
                 },
                 itemCount: _actividades.length,
