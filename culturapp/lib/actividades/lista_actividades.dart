@@ -125,28 +125,17 @@ class _ListaActividadesState extends State<ListaActividades> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(
-                            _actividades[index].name,
-                            style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.orange
-                              ),
-                            ),
                             Row(
                               children: [
-                                Card(
-                                  color: Colors.green.shade300, 
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        "  ${_actividades[index].comarca}  ",
-                                        style: const TextStyle(
-                                          color: Colors.white
-                                        ),
-                                      ),
-                                    ],
-                                  )
+                                Expanded(
+                                  child: Text(
+                                    _actividades[index].name,
+                                    style: const TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.orange
+                                    ),
+                                  ),
                                 ),
                                 Container(
                                   padding: EdgeInsets.only(left: 5),
@@ -156,33 +145,34 @@ class _ListaActividadesState extends State<ListaActividades> {
                               ],
                             ),
                             Container(
-                              padding: EdgeInsets.only(top: 5),
+                              padding: EdgeInsets.symmetric(vertical: 5),
                               child: Row(
                                 children: [
-                                  Expanded(
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          // Add your left button logic here
-                                        },
-                                        child: Text("Add to my plan"),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          // Add your right button logic here
-                                        },
-                                        child: Text("More"),
-                                      ),
-                                    ),
+                                  Card(
+                                    color: Colors.green.shade300, 
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          "  ${_actividades[index].comarca}  ",
+                                          style: const TextStyle(
+                                            color: Colors.white
+                                          ),
+                                        ),
+                                      ],
+                                    )
                                   ),
                                 ],
                               ),
+                            ),
+                            
+                            Container(
+                              padding: EdgeInsets.only(top: 5),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  // Add your left button logic here
+                                },
+                                child: Text("More"),
+                              )
                             )
                           ],
                         ),
