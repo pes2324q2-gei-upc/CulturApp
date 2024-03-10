@@ -4,6 +4,8 @@ import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
 import "package:hive/hive.dart";
 import "package:sign_in_button/sign_in_button.dart";
+import 'package:culturapp/routes/routes.dart';
+
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -40,8 +42,7 @@ class _Login extends State<Login> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("Benvingut a CultureApp",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.orange),
+        Text("Benvingut a CulturApp",
         ),
         SizedBox(height: 70),
         Container(
@@ -106,6 +107,7 @@ class _Login extends State<Login> {
       bool userExists = await accountExists(userCredential.user);
       if (!userExists) {
         createUser(_user);
+        Navigator.pushNamed(context, Routes.signup);
       }
     }
     catch (error) {

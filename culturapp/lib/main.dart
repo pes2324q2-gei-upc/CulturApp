@@ -16,6 +16,7 @@ Future<void> main() async {
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
+  static const Color primarycolor = Color(0xFF7700);
 
   @override
   Widget build(BuildContext context) {
