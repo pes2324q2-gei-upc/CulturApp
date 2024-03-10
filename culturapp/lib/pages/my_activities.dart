@@ -10,6 +10,12 @@ class MyActivities extends StatefulWidget {
 class _MyActivities extends State<MyActivities> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('My Activities'),
+        ),
+        body: const Center(
+          child: Text('My Activities'),
+        ));
   }
 }
