@@ -12,10 +12,10 @@ class _MyActivities extends State<MyActivities> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('My Activities'),
+          title: const Text('MyActivities'),
         ),
         body: const Center(
-          child: Text('My Activities'),
+          child: Text('MyActivities'),
         ));
   }
 }

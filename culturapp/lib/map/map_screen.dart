@@ -300,9 +300,7 @@ class _MapPageState extends State<MapPage> {
               textStyle: TextStyle(fontSize: 12, color: Colors.orange),
               icon: Icons.event,
               onPressed: () {
-                MaterialPageRoute route =
-                    MaterialPageRoute(builder: (context) => MyActivities());
-                Navigator.push(context, route);
+                Navigator.pushNamed(context, '/myActivities');
               },
             ),
             GButton(
