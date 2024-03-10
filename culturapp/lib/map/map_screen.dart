@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:math' as math;
 
+import 'package:culturapp/actividad/vista_ver_actividad.dart';
 import 'package:culturapp/actividades/actividad.dart';
+import 'package:culturapp/controlador_presentacion.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -9,13 +11,22 @@ import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 class MapPage extends StatefulWidget {
-  const MapPage({Key? key});
+
+  final ControladorPresentacion controladorPresentacion;
+  
+  const MapPage({Key? key, required this.controladorPresentacion});
 
   @override
-  State<MapPage> createState() => _MapPageState();
+  State<MapPage> createState() => _MapPageState(controladorPresentacion);
 }
 
 class _MapPageState extends State<MapPage> {
+
+  late ControladorPresentacion _controladorPresentacion;  
+
+  _MapPageState(ControladorPresentacion controladorPresentacion){
+    _controladorPresentacion = controladorPresentacion;
+  }
 
   BitmapDescriptor iconoArte = BitmapDescriptor.defaultMarker;
   BitmapDescriptor iconoCarnaval = BitmapDescriptor.defaultMarker;
@@ -239,7 +250,18 @@ double calculateDistance(LatLng from, LatLng to) {
                         width: 400.0,
                         height: 35.0,
                         child: ElevatedButton(
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () {
+                            List<String> act = [actividad.name, 
+                                                actividad.code, 
+                                                actividad.categoria,
+                                                actividad.imageUrl, 
+                                                actividad.description, 
+                                                actividad.dataInici,
+                                                actividad.dataFi, 
+                                                actividad.ubicacio];
+
+                            _controladorPresentacion.mostrarVerActividad(context, act, actividad.urlEntrades);                    
+                          },
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all(Colors.orange),
                           ),

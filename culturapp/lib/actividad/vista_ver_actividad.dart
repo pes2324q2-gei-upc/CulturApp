@@ -6,19 +6,19 @@ import 'package:url_launcher/url_launcher.dart';
 // urlEntrades
 
 
-class VistaEntrarPagina extends StatefulWidget{
+class VistaVerActividad extends StatefulWidget{
 
   final List<String> info_actividad;
 
   final Uri uri_actividad;
 
-  const VistaEntrarPagina({super.key, required this.info_actividad, required this.uri_actividad});
+  const VistaVerActividad({super.key, required this.info_actividad, required this.uri_actividad});
 
   @override
-  State<VistaEntrarPagina> createState() => _VistaEntrarPaginaState(info_actividad, uri_actividad);
+  State<VistaVerActividad> createState() => _VistaVerActividadState(info_actividad, uri_actividad);
 }
 
-class _VistaEntrarPaginaState extends State<VistaEntrarPagina> {
+class _VistaVerActividadState extends State<VistaVerActividad> {
 
   late List<String> infoActividad;
   late Uri uriActividad;
@@ -26,7 +26,7 @@ class _VistaEntrarPaginaState extends State<VistaEntrarPagina> {
   bool estaApuntado = false;
   bool mostrarDescripcionCompleta = false;
   
-  _VistaEntrarPaginaState(List<String> info_actividad, Uri uri_actividad){
+  _VistaVerActividadState(List<String> info_actividad, Uri uri_actividad){
     infoActividad = info_actividad;
     uriActividad = uri_actividad;
   }
