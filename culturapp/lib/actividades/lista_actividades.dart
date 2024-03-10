@@ -145,7 +145,7 @@ class _ListaActividadesState extends State<ListaActividades> {
                               ],
                             ),
                             Container(
-                              padding: EdgeInsets.symmetric(vertical: 5),
+                              padding: EdgeInsets.symmetric(vertical: 10),
                               child: Row(
                                 children: [
                                   Card(
@@ -164,9 +164,10 @@ class _ListaActividadesState extends State<ListaActividades> {
                                 ],
                               ),
                             ),
-                            
+                            Image.network("${_actividades[index].imageUrl}"),
                             Container(
-                              padding: EdgeInsets.only(top: 5),
+                              alignment: Alignment.centerRight,
+                              padding: EdgeInsets.only(top: 10),
                               child: ElevatedButton(
                                 onPressed: () {
                                   // Add your left button logic here
