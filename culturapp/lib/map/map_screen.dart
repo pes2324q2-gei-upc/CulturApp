@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:culturapp/actividades/actividad.dart';
+import 'package:culturapp/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -229,7 +230,7 @@ double calculateDistance(LatLng from, LatLng to) {
 
 
   void _onTabChange(int index) {
-    /*switch (index) {
+    switch (index) {
       case 0:
         break;
       case 1:
@@ -238,11 +239,11 @@ double calculateDistance(LatLng from, LatLng to) {
         
         break;
       case 3:
-
+        Navigator.pushNamed(context, Routes.perfil);
         break;
       default:
         break;
-    }*/
+    }
   }
 
 
