@@ -117,7 +117,7 @@ class _ListaActividadesState extends State<ListaActividades> {
             return ListView.builder(
               itemBuilder: (context, index) {
                   return Container(
-                    padding: EdgeInsets.all(8.0), // Adjust as needed
+                    padding: const EdgeInsets.all(8.0), // Adjust as needed
                     child: Card(
                       color: Colors.white,
                       child: Padding(
@@ -138,14 +138,14 @@ class _ListaActividadesState extends State<ListaActividades> {
                                   ),
                                 ),
                                 Container(
-                                  padding: EdgeInsets.only(left: 5),
+                                  padding: const EdgeInsets.only(left: 5),
                                   height: 30,
                                   child: ImageCategory(categoria: "${_actividades[index].categoria}"),
                                 ),
                               ],
                             ),
                             Container(
-                              padding: EdgeInsets.symmetric(vertical: 10),
+                              padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Row(
                                 children: [
                                   Card(
@@ -167,12 +167,12 @@ class _ListaActividadesState extends State<ListaActividades> {
                             Image.network("${_actividades[index].imageUrl}"),
                             Container(
                               alignment: Alignment.centerRight,
-                              padding: EdgeInsets.only(top: 10),
+                              padding: const EdgeInsets.only(top: 10),
                               child: ElevatedButton(
                                 onPressed: () {
                                   // Add your left button logic here
                                 },
-                                child: Text("More"),
+                                child: const Text("More"),
                               )
                             )
                           ],
