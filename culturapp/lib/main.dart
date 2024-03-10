@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/routes/app_routes.dart';
 import 'package:culturapp/routes/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
