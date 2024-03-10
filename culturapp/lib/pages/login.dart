@@ -1,6 +1,8 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
+import "package:flutter/widgets.dart";
+import "package:hive/hive.dart";
 import "package:sign_in_button/sign_in_button.dart";
 
 class Login extends StatefulWidget {
@@ -30,10 +32,31 @@ class _Login extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-      title: Text("Login"),
-      ),
-      body: _user != null ? _userInfo() : _googleSignInButton(),
+      body: _user != null ? _userInfo() : _loginLayout(),
+    );
+  }
+
+  Widget _loginLayout() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text("Benvingut a CultureApp",
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.orange),
+        ),
+        SizedBox(height: 70),
+        Container(
+          width: double.infinity,
+          height: MediaQuery.of(context).size.height * 0.3,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/loginpicture.png'),
+              fit: BoxFit.cover,
+            )
+          ),
+        ),
+        SizedBox(height: 70),
+        _googleSignInButton(),
+      ],
     );
   }
 
@@ -45,7 +68,8 @@ class _Login extends State<Login> {
         onPressed: () {
           _handleGoogleSignIn();
         },
-        text: "Sign in with Google"
+        text: "Accedeix amb Google",
+        padding: EdgeInsets.all(10.0),
       )
     ));
   }
@@ -80,11 +104,7 @@ class _Login extends State<Login> {
       GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
       final UserCredential userCredential = await _auth.signInWithProvider(_googleAuthProvider);
       bool userExists = await accountExists(userCredential.user);
-      if (userExists) {
-        print("User exists");
-      }
-      else {
-        print("User doens't exist");
+      if (!userExists) {
         createUser(_user);
       }
     }
@@ -104,7 +124,6 @@ class _Login extends State<Login> {
       'email': _user?.email,
       'name': _user?.displayName,
     });
-    print("Account created");
   }
 }
 
