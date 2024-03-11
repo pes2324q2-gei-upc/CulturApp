@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:http/http.dart' as http;
+import 'package:culturapp/data/database_service.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({Key? key});
@@ -65,7 +66,6 @@ class _MapPageState extends State<MapPage> {
         "https://analisi.transparenciacatalunya.cat/resource/rhpv-yr4f.json");
     var response = await http.get(url);
     var actividades = <Actividad>[];
-
     if (response.statusCode == 200) {
       var actividadesJson = json.decode(response.body);
       for (var actividadJson in actividadesJson) {

@@ -1,3 +1,4 @@
+import 'package:culturapp/data/database_service.dart';
 import 'package:culturapp/routes/app_routes.dart';
 import 'package:culturapp/routes/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -9,6 +10,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
   options: DefaultFirebaseOptions.currentPlatform,
   );
+  getActivities();
   runApp(const MainApp());
 }
 
