@@ -33,7 +33,7 @@ class _MapPageState extends State<MapPage> {
   IconData iconoCategoria = Icons.category;
   LatLng myLatLng = const LatLng(41.389350, 2.113307);
   String address = 'FIB';
-
+  List<String> categoriasFavoritas = ['circ', 'festes', 'activitats-virtuals'];
   List<Actividad> _actividades = [];
   GoogleMapController? _mapController;
 
@@ -277,6 +277,11 @@ double calculateDistance(LatLng from, LatLng to) {
 
   // En funcion de la categoria atribuye un marcador
   BitmapDescriptor _getMarkerIcon(String categoria) {
+    
+    for (int i = 0; i < 3; ++i) {
+      if (categoria == categoriasFavoritas[i]) categoria = 'recom';
+    }
+
     switch (categoria) {
         case 'carnavals':
           return iconoCarnaval;

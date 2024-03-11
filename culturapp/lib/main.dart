@@ -21,7 +21,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: Routes.categorias, //Esta puesto el mapa como pagina principal por defecto, esto se puede cambiar
+      initialRoute: Routes.map, //Esta puesto el mapa como pagina principal por defecto, esto se puede cambiar
       routes: appRoutes,
     );
   }
