@@ -6,6 +6,8 @@ class Actividad {
   late double longitud;
   late DateTime data_inici;
   late DateTime data_fi;
+  late String horari;
+  late String descripcio;
 
   Actividad(this.name, this.code);
 
@@ -14,9 +16,11 @@ class Actividad {
     code = json['codi'];
     latitud = json['latitud'] != null ? double.parse(json['latitud']) : 1.0;
     longitud = json['longitud'] != null ? double.parse(json['longitud']) : 1.0;
-    //data_inici = json['data_inici'] != null ? double.parse(json['data_inici']) : 1.0;
-    //data_fi = json['data_fi'] != null ? double.parse(json['data_fi']) : 1.0;
-    
+    data_inici = json['data_inici'] != null ? DateTime.parse(json['data_inici']) : DateTime.now();
+    data_fi = json['data_fi'] != null ? DateTime.parse(json['data_fi']) : DateTime.now();
+    horari = json['horari'] != null ? json['horari'] : "horari_nul";
+    descripcio = json['descripcio'] != null ? json['descripcio'] : "descripcio_nul";
+
     String tagsCategorias = json['tags_categor_es'] ?? '';
 
     if (tagsCategorias.contains('agenda:categories/')) {

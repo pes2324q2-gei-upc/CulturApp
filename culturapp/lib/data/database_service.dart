@@ -16,11 +16,15 @@ Future<List> getUsuaris() async {
 }
 
 Future<void> getActivities() async {
+
+
+  var snapshot = await db.collection('activity').get();
+  var numElementos = snapshot.docs.length;
+  // Insertar datos solo si la colección 'activity' tiene más de dos elementos
+  if (numElementos < 2) {
     var url = Uri.parse(
         "https://analisi.transparenciacatalunya.cat/resource/rhpv-yr4f.json");
     var response = await http.get(url);
-    var actividades = <Actividad>[];
-    
     if (response.statusCode == 200) {
       var actividadesJson = json.decode(response.body);
       for (var actividadJson in actividadesJson) {
@@ -31,12 +35,16 @@ Future<void> getActivities() async {
           'categoria': actividad.categoria,
           'latitud': actividad.latitud,
           'longitud': actividad.longitud,
-          //'data': actividad.data,
+          'data_inici': actividad.data_inici,
+          'data_fi': actividad.data_fi,
+          'horari': actividad.horari,
+          'descripcio': actividad.descripcio
         };
         db.collection('activity').doc(actividad.code).set(act);
       }
     }
   }
+}
 /* 
 import 'package:culturapp/services/firebase_service.dart';
 
