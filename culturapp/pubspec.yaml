@@ -46,5 +46,6 @@ flutter:
   - assets/pinruta.png
   - assets/pinteatre.png
   - assets/pinvirtual.png
+  - assets/userImage.png
   
   uses-material-design: true
