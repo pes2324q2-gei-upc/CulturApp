@@ -1,3 +1,4 @@
+import "package:culturapp/actividades/actividad.dart";
 import "package:culturapp/models/cercador_my_activities.dart";
 import "package:flutter/material.dart";
 
@@ -9,6 +10,8 @@ class MyActivities extends StatefulWidget {
 }
 
 class _MyActivities extends State<MyActivities> {
+  //List<Actividad> activitats = null; quan tinguem de base de dades fer-ho bé
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,10 +24,7 @@ class _MyActivities extends State<MyActivities> {
           actions: [
             IconButton(
                 onPressed: () {
-                  showSearch(
-                    context: context,
-                    delegate: CercadorMyActivities(),
-                  );
+                  Navigator.pushNamed(context, '/myActivities/search');
                 },
                 icon: const Icon(Icons.search, color: Colors.white)),
           ]),
