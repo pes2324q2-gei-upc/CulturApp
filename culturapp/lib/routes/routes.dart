@@ -3,5 +3,6 @@ class Routes{
   
   static const String map = '/map';
   static const String actividades = '/actividades';
+  static const String categorias = '/categorias';
 
 }

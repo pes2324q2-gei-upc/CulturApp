@@ -60,7 +60,7 @@ double calculateDistance(LatLng from, LatLng to) {
   
   // Obtener actividades del JSON para mostrarlas por pantalla
   Future<List<Actividad>> fetchActivities(LatLng center, double zoom) async {
-    double radius = 1500 * (16 / zoom);
+    double radius = 1000 * (16 / zoom);
     var url = Uri.parse("https://analisi.transparenciacatalunya.cat/resource/rhpv-yr4f.json");
     var response = await http.get(url);
     var actividades = <Actividad>[];
@@ -454,10 +454,10 @@ double calculateDistance(LatLng from, LatLng to) {
       ),
     ),
     body: Stack(
-      fit: StackFit.expand, // Ajusta esta línea
+      fit: StackFit.expand,
       children: [
         GoogleMap(
-          initialCameraPosition: CameraPosition(target: myLatLng, zoom: 16),
+          initialCameraPosition: CameraPosition(target: myLatLng, zoom: 12),
           markers: _createMarkers(),
           onCameraMove: _onCameraMove,
           onMapCreated: _onMapCreated,

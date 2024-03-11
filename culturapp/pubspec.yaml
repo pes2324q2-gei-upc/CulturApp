@@ -60,4 +60,18 @@ flutter:
   - assets/categoriaruta.png
   - assets/categoriavirtual.png
   - assets/categoriateatre.png
+  - assets/background.png
+  - assets/festa.png
+  - assets/infantil.png
+  - assets/circ.png
+  - assets/commem.png
+  - assets/expo.png
+  - assets/art.png
+  - assets/carnav.png
+  - assets/concert.png
+  - assets/confe.png
+  - assets/ruta.png
+  - assets/virtual.png
+  - assets/teatr.png
+
   uses-material-design: true
