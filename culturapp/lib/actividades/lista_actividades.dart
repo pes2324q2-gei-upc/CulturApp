@@ -104,7 +104,7 @@ class _ListaActividadesState extends State<ListaActividades> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                       Text(
-                      _actividades[index].name,
+                      _actividades[index].name ?? '',
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -112,7 +112,7 @@ class _ListaActividadesState extends State<ListaActividades> {
                       ),
                       ),
                     Text(
-                      _actividades[index].code,
+                      _actividades[index].code ?? '',
                       style: TextStyle(
                         color: Colors.grey.shade600
                       ),

@@ -15,9 +15,7 @@ Future<List> getUsuaris() async {
   return usuaris;
 }
 
-Future<void> getActivities() async {
-
-
+Future<void> insertActivities() async {
   var snapshot = await db.collection('activity').get();
   var numElementos = snapshot.docs.length;
   // Insertar datos solo si la colección 'activity' tiene más de dos elementos
@@ -45,8 +43,35 @@ Future<void> getActivities() async {
     }
   }
 }
-/* 
-import 'package:culturapp/services/firebase_service.dart';
+
+Future<List<Actividad>> getActivities() async {
+  List<Actividad> activities = [];
+  CollectionReference crActivity = db.collection('activity');
+  QuerySnapshot querySnapshot = await crActivity.get();
+
+  for (var doc in querySnapshot.docs) {
+    Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+    String? name = data?['name'];
+    String? code = data?['code'];
+    String? categoria = data?['categoria'];
+    double? latitud = data?['latitud'];
+    double? longitud = data?['longitud'];
+    Timestamp? timestamp = data?['data_inici'];
+    DateTime? data_inici = timestamp != null ? timestamp.toDate() : null;
+    timestamp = data?['data_fi'];
+    DateTime? data_fi = timestamp != null ? timestamp.toDate() : null;
+    String? horari = data?['horari'];
+    String? descripcio = data?['descripcio'];
+    Actividad actividad = Actividad(name, code, categoria, latitud, longitud, data_inici, data_fi, horari, descripcio);
+    activities.add(actividad);
+  }
+  return activities;
+}
+
+
+//Ejemplos de codigos que llaman a alguna función de este tipo desde el builder
+ 
+/*import 'package:culturapp/services/firebase_service.dart';
 
 body:FutureBuilder( 
       future: getUsuaris(),

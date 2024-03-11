@@ -10,7 +10,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
   options: DefaultFirebaseOptions.currentPlatform,
   );
-  await getActivities();
+  //await insertActivities();
   runApp(const MainApp());
 }
 

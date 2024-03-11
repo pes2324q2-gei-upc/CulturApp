@@ -62,20 +62,14 @@ class _MapPageState extends State<MapPage> {
   // Obtener actividades del JSON para mostrarlas por pantalla
   Future<List<Actividad>> fetchActivities(LatLng center, double zoom) async {
     double radius = 500 * (16 / zoom);
-    var url = Uri.parse(
-        "https://analisi.transparenciacatalunya.cat/resource/rhpv-yr4f.json");
-    var response = await http.get(url);
-    var actividades = <Actividad>[];
-    if (response.statusCode == 200) {
-      var actividadesJson = json.decode(response.body);
-      for (var actividadJson in actividadesJson) {
-        var actividad = Actividad.fromJson(actividadJson);
-        // Comprobar si la actividad está dentro del radio
-        if (calculateDistance(
-                center, LatLng(actividad.latitud, actividad.longitud)) <=
-            radius) {
-          actividades.add(actividad);
-        }
+    var actividades = await getActivities();
+    var actividadesaux = <Actividad> [];
+    for (var actividad in actividades) {
+      // Comprobar si la actividad está dentro del radio
+      if (calculateDistance(
+              center, LatLng(actividad.latitud ?? 0.0, actividad.longitud ?? 0.0)) <=
+          radius) {
+        actividadesaux.add(actividad);
       }
     }
     return actividades;
@@ -91,11 +85,11 @@ class _MapPageState extends State<MapPage> {
   Set<Marker> _createMarkers() {
     return _actividades.map((actividad) {
       return Marker(
-        markerId: MarkerId(actividad.code),
-        position: LatLng(actividad.latitud, actividad.longitud),
+        markerId: MarkerId(actividad.code ?? ''),
+        position: LatLng(actividad.latitud ?? 0.0, actividad.longitud ?? 0.0),
         infoWindow: InfoWindow(title: actividad.name),
         icon: _getMarkerIcon(
-            actividad.categoria), // Llama a la función para obtener el icono
+            actividad.categoria ?? ''), // Llama a la función para obtener el icono
       );
     }).toSet();
   }

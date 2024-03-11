@@ -1,23 +1,25 @@
-class Actividad {
-  late String name;
-  late String code;
-  late String categoria;
-  late double latitud;
-  late double longitud;
-  late DateTime data_inici;
-  late DateTime data_fi;
-  late String horari;
-  late String descripcio;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-  Actividad(this.name, this.code);
+class Actividad {
+  late String? name;
+  late String? code;
+  late String? categoria;
+  late double? latitud;
+  late double? longitud;
+  late DateTime? data_inici;
+  late DateTime? data_fi;
+  late String? horari;
+  late String? descripcio;
+
+  Actividad(this.name, this.code, this.categoria, this.latitud, this.longitud, this.data_inici, this.data_fi, this.horari, this.descripcio);
 
   Actividad.fromJson(Map<String, dynamic> json) {
-    name = json['denominaci'];
-    code = json['codi'];
-    latitud = json['latitud'] != null ? double.parse(json['latitud']) : 1.0;
-    longitud = json['longitud'] != null ? double.parse(json['longitud']) : 1.0;
-    data_inici = json['data_inici'] != null ? DateTime.parse(json['data_inici']) : DateTime.now();
-    data_fi = json['data_fi'] != null ? DateTime.parse(json['data_fi']) : DateTime.now();
+    name = json['denominaci'] != null ? json['denominaci'] : "nom nul";
+    code = json['codi'] != null ? json['codi'] : "codi_nul";
+    latitud = json['latitud'] is double ? json['latitud'] : 1.0;
+    longitud = json['longitud'] is double ? json['longitud'] : 1.0;
+    data_inici = json['data_inici'] != null ? (json['data_inici'] as Timestamp).toDate(): DateTime.now();
+    data_fi = json['data_fi'] != null ? (json['data_fi'] as Timestamp).toDate(): DateTime.now();
     horari = json['horari'] != null ? json['horari'] : "horari_nul";
     descripcio = json['descripcio'] != null ? json['descripcio'] : "descripcio_nul";
 
