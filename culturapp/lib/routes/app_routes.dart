@@ -9,5 +9,4 @@ Map<String, Widget Function(BuildContext)> appRoutes = {
   Routes.map: (_) => const MapPage(),
   Routes.misActividades: (_) => const MyActivities(),
   Routes.login: (_) => const Login(),
-  Routes.signup: (_) => const Signup(),
 };

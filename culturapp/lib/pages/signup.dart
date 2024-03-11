@@ -4,12 +4,30 @@ import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
 import "package:hive/hive.dart";
 import "package:sign_in_button/sign_in_button.dart";
+import 'package:culturapp/pages/logout.dart';
 
 class Signup extends StatelessWidget {
-  const Signup({super.key});
+
+  User? _user;
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Signup(this._user);
+
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController atribut1Controller = TextEditingController();
+  final TextEditingController atribut2Controller = TextEditingController();
+  final TextEditingController atribut3Controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      body: _signupScreen(context)
+      );
+  }
+
+  @override
+  Widget _signupScreen(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -45,6 +63,7 @@ class Signup extends StatelessWidget {
                 Column(
                   children: <Widget>[
                     TextField(
+                      controller: usernameController,
                       decoration: InputDecoration(
                           hintText: "Username",
                           border: OutlineInputBorder(
@@ -58,6 +77,7 @@ class Signup extends StatelessWidget {
                     const SizedBox(height: 20),
 
                     TextField(
+                      controller: atribut1Controller,
                       decoration: InputDecoration(
                           hintText: "Atribut1",
                           border: OutlineInputBorder(
@@ -71,6 +91,7 @@ class Signup extends StatelessWidget {
                     const SizedBox(height: 20),
 
                     TextField(
+                      controller: atribut2Controller,
                       decoration: InputDecoration(
                         hintText: "Atribut2",
                         border: OutlineInputBorder(
@@ -86,6 +107,7 @@ class Signup extends StatelessWidget {
                     const SizedBox(height: 20),
 
                     TextField(
+                      controller: atribut3Controller,
                       decoration: InputDecoration(
                         hintText: "Atribut3",
                         border: OutlineInputBorder(
@@ -104,6 +126,15 @@ class Signup extends StatelessWidget {
 
                     child: ElevatedButton(
                       onPressed: () {
+                        String username = usernameController.text;
+                        String atribut1 = atribut1Controller.text;
+                        String atribut2 = atribut2Controller.text;
+                        String atribut3 = atribut3Controller.text;
+                        createUser(username, atribut1, atribut2, atribut3);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => Logout(_user))
+                          );
                       },
                       child: const Text(
                         "Crear compte",
@@ -123,4 +154,12 @@ class Signup extends StatelessWidget {
       ),
     );
   }
+
+  void createUser(String username, String atribut1, String atribut2, String atribut3) {
+  CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
+  usersCollection.doc(_user?.uid).set({
+    'email': _user?.email,
+    'username': username,
+  });
+}
 }

@@ -5,6 +5,8 @@ import "package:flutter/widgets.dart";
 import "package:hive/hive.dart";
 import "package:sign_in_button/sign_in_button.dart";
 import 'package:culturapp/routes/routes.dart';
+import 'package:culturapp/pages/logout.dart';
+import 'package:culturapp/pages/signup.dart';
 
 
 class Login extends StatefulWidget {
@@ -29,12 +31,15 @@ class _Login extends State<Login> {
         _user = event;
       });
     });
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _checkLoggedInUser();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _user != null ? _userInfo() : _loginLayout(),
+      body: _loginLayout(),
     );
   }
 
@@ -107,7 +112,16 @@ class _Login extends State<Login> {
       bool userExists = await accountExists(userCredential.user);
       if (!userExists) {
         createUser(_user);
-        Navigator.pushNamed(context, Routes.signup);
+       Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Signup(_user))
+      );
+      }
+      else {
+        Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Logout(_user))
+      );
       }
     }
     catch (error) {
@@ -126,6 +140,22 @@ class _Login extends State<Login> {
       'email': _user?.email,
       'name': _user?.displayName,
     });
+  }
+
+  void _checkLoggedInUser() async {
+    User? currentUser = _auth.currentUser; // Obtener el usuario actualmente autenticado
+    
+    if (currentUser != null) {
+      setState(() {
+        _user = currentUser; // Establece el usuario en el estado
+      });
+      
+      // Navegar a la página de Logout
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Logout(_user))
+      );
+    }
   }
 }
 
