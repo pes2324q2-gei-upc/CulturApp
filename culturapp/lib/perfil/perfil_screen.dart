@@ -54,7 +54,7 @@ class _PerfilPageState extends State<PerfilPage> {
       actions: [
         IconButton(
           onPressed: () {
-            //hacer que me lleve a una nueva pestaña con las opciones de configuración
+            //hacer que no se vea si estas viendo el perfil de otro user
             Navigator.pushNamed(context, Routes.settings);
           },
           icon: const Icon(Icons.settings, color: Colors.white),

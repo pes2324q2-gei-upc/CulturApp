@@ -8,21 +8,50 @@ class SettingsPerfil extends StatefulWidget {
 }
 
 class _SettingsPerfil extends State<SettingsPerfil> {
+  bool privat = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
         title: const Text(
-          'Seetings Perfil',
+          'Seetings',
           style: TextStyle(color: Colors.white),
         ),
       ),
-      body: const Stack(
+      body: 
+      //hacer widget con el listado de todo
+      //privacidad
+      SwitchListTile(
+        title: const Text("Privacidad"),
+        value: privat, 
+        onChanged: (bool value) {
+          setState(() {
+            privat = value;
+          });
+        },
+        secondary: const Icon(Icons.lock),
+      )
+      
+      /*Stack(
         children: [
           Text("Aqui anira totes les configuracions de la app")
+          
+          //lista de cuentas bloqueadas
+          //idioma
+          
+          const ListTile(
+            title: Text("Account"),
+          ),
+
+          //cambiar contraseña
+          //logout
+          //delete account
+          
+          //tema de notificaciones?
         ],
       ),
+      */
     );
   }
 }
