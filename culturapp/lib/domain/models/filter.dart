@@ -7,9 +7,7 @@ class Filter {
       return List.from(data);
     }
     return data.where((actividad) {
-      return actividad.categoria
-          .toLowerCase()
-          .contains(searchText.toLowerCase());
+      return actividad.categoria?.toLowerCase().contains(searchText.toLowerCase()) ?? false;
     }).toList();
   }
 }

@@ -8,8 +8,6 @@ class Routes {
   static const String actividades = '/actividades';
   static const String categorias = '/categorias';
 
-  static const String perfil = '/perfil';
-
   static const String misActividades = '/myActivities';
 
   static const String searchMisActividades = '/myActivities/search';
