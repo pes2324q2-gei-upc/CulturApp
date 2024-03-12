@@ -2,8 +2,11 @@ import 'package:culturapp/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 class UserInfoWidget extends StatefulWidget {
+  const UserInfoWidget({super.key});
+
   
   @override
+  // ignore: library_private_types_in_public_api
   _UserInfoWidgetState createState() => _UserInfoWidgetState();
 }
 

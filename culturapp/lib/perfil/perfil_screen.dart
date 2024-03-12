@@ -61,7 +61,7 @@ class _PerfilPageState extends State<PerfilPage> {
         ),
       ],
     ),
-    body: Stack(
+    body: const Stack(
         children: [
           UserInfoWidget(), // Calling the UserInfoWidget
         ],
