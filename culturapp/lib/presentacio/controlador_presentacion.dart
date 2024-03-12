@@ -1,4 +1,4 @@
-import 'package:culturapp/actividad/vista_ver_actividad.dart';
+import 'package:culturapp/presentacio/screens/vista_ver_actividad.dart';
 import 'package:flutter/material.dart';
 
 

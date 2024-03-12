@@ -1,4 +1,4 @@
-import "package:culturapp/actividades/actividad.dart";
+import "package:culturapp/domain/models/actividad.dart";
 import "package:flutter/material.dart";
 
 class Filter {

@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:culturapp/routes/app_routes.dart';
-import 'package:culturapp/routes/routes.dart';
+import 'package:culturapp/presentacio/routes/app_routes.dart';
+import 'package:culturapp/presentacio/routes/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:culturapp/data/database_service.dart';
 
-import 'firebase_options.dart';
+import '../data/firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

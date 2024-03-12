@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:culturapp/actividades/actividad.dart';
+import 'package:culturapp/domain/models/actividad.dart';
 import 'package:http/http.dart' as http;
 FirebaseFirestore db = FirebaseFirestore.instance;
 

@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:math' as math;
 
-import 'package:culturapp/actividad/vista_ver_actividad.dart';
-import 'package:culturapp/actividades/actividad.dart';
-import 'package:culturapp/controlador_presentacion.dart';
-import 'package:culturapp/routes/routes.dart';
-import 'package:culturapp/pages/my_activities.dart';
+import 'package:culturapp/presentacio/screens/vista_ver_actividad.dart';
+import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/presentacio/controlador_presentacion.dart';
+import 'package:culturapp/presentacio/routes/routes.dart';
+import 'package:culturapp/presentacio/screens/my_activities.dart';
 
-import 'package:culturapp/actividades/lista_actividades.dart';
+import 'package:culturapp/presentacio/screens/lista_actividades.dart';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
