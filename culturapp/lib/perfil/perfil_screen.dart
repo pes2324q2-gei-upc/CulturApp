@@ -1,3 +1,6 @@
+
+import 'package:culturapp/widgets/user_info.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:culturapp/routes/routes.dart';
@@ -11,9 +14,11 @@ class PerfilPage extends StatefulWidget {
 }
 
 class _PerfilPageState extends State<PerfilPage> {
+
+  //no se que es esta funcuion
   @override
   void initState() {
-
+   
     super.initState();
   }
   
@@ -23,23 +28,28 @@ class _PerfilPageState extends State<PerfilPage> {
        Navigator.pushNamed(context, Routes.map);
       break;
       case 1:
-        break;
+        //Navigator.pushNamed(context, Routes.actividades);
+      break;
       case 2:
-        
-        break;
+        //Navigator.pushNamed(context, Routes.chat);
+      break;
       case 3:
-
-        break;
+        Navigator.pushNamed(context, Routes.perfil);
+      break;
       default:
-        break;
+      break;
     }
   }
 
-
-  //Se crea la ''pantalla'' para el
   @override
   Widget build(BuildContext context) {
   return Scaffold(
+    body: Stack(
+        children: [
+          UserInfoWidget(), // Calling the UserInfoWidget
+        ],
+      ),
+    //container amb les diferents pantalles
     bottomNavigationBar: Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -66,3 +76,4 @@ class _PerfilPageState extends State<PerfilPage> {
     );
   }
 }
+

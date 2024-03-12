@@ -21,10 +21,12 @@ dependencies:
   syncfusion_flutter_datagrid: ^24.2.9
   http: ^0.13.6
   google_nav_bar: ^5.0.6
+  url_launcher: ^6.2.5
   flutter:
     sdk: flutter
   provider: ^6.1.2
   ui_auth: ^0.0.1
+  sign_in_button: ^3.2.0
 
 dev_dependencies:
   flutter_test:
@@ -46,5 +48,33 @@ flutter:
   - assets/pinruta.png
   - assets/pinteatre.png
   - assets/pinvirtual.png
+  - assets/categoriacirc.png
+  - assets/categoriaarte.png
+  - assets/categoriaconfe.png
+  - assets/categoriacarnaval.png
+  - assets/categoriacommemoracio.png
+  - assets/categoriaconcert.png
+  - assets/categoriaexpo.png
+  - assets/categoriafesta.png
+  - assets/categoriainfantil.png
+  - assets/categoriarecom.png
+  - assets/categoriaruta.png
+  - assets/categoriavirtual.png
+  - assets/categoriateatre.png
+  - assets/background.png
+  - assets/festa.png
+  - assets/infantil.png
+  - assets/circ.png
+  - assets/commem.png
+  - assets/expo.png
+  - assets/art.png
+  - assets/carnav.png
+  - assets/concert.png
+  - assets/confe.png
+  - assets/ruta.png
+  - assets/virtual.png
+  - assets/teatr.png
+  - assets/userImage.png
+  - assets/loginpicture.png
   
   uses-material-design: true

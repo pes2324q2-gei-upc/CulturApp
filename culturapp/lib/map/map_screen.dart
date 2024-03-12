@@ -1,23 +1,41 @@
 import 'dart:convert';
 import 'dart:math' as math;
 
+import 'package:culturapp/actividad/vista_ver_actividad.dart';
 import 'package:culturapp/actividades/actividad.dart';
+import 'package:culturapp/controlador_presentacion.dart';
+import 'package:culturapp/routes/routes.dart';
 import 'package:culturapp/pages/my_activities.dart';
+
 import 'package:culturapp/actividades/lista_actividades.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:http/http.dart' as http;
 import 'package:culturapp/data/database_service.dart';
 
+import 'package:url_launcher/url_launcher.dart';
+
+
 class MapPage extends StatefulWidget {
-  const MapPage({Key? key});
+
+  final ControladorPresentacion controladorPresentacion;
+  
+  const MapPage({Key? key, required this.controladorPresentacion});
 
   @override
-  State<MapPage> createState() => _MapPageState();
+  State<MapPage> createState() => _MapPageState(controladorPresentacion);
 }
 
 class _MapPageState extends State<MapPage> {
+
+  late ControladorPresentacion _controladorPresentacion;  
+
+  _MapPageState(ControladorPresentacion controladorPresentacion){
+    _controladorPresentacion = controladorPresentacion;
+  }
+
   BitmapDescriptor iconoArte = BitmapDescriptor.defaultMarker;
   BitmapDescriptor iconoCarnaval = BitmapDescriptor.defaultMarker;
   BitmapDescriptor iconoCirco = BitmapDescriptor.defaultMarker;
@@ -32,9 +50,11 @@ class _MapPageState extends State<MapPage> {
   BitmapDescriptor iconoTeatro = BitmapDescriptor.defaultMarker;
   BitmapDescriptor iconoVirtual = BitmapDescriptor.defaultMarker;
 
+  IconData iconoCategoria = Icons.category;
+
   LatLng myLatLng = const LatLng(41.389350, 2.113307);
   String address = 'FIB';
-
+  List<String> categoriasFavoritas = ['circ', 'festes', 'activitats-virtuals'];
   List<Actividad> _actividades = [];
   GoogleMapController? _mapController;
 
@@ -82,6 +102,11 @@ class _MapPageState extends State<MapPage> {
     super.initState();
   }
 
+
+  Image _retornaIcon (String categoria){
+      switch (categoria) {
+
+
   // Crea y ubica los marcadores
   Set<Marker> _createMarkers() {
     return _actividades.map((actividad) {
@@ -98,45 +123,255 @@ class _MapPageState extends State<MapPage> {
   // En funcion de la categoria atribuye un marcador
   BitmapDescriptor _getMarkerIcon(String categoria) {
     switch (categoria) {
+
       case 'carnavals':
-        return iconoCarnaval;
+        return Image.asset('assets/categoriacarnaval.png', width: 45.0,);
       case 'teatre':
-        return iconoTeatro;
+        return Image.asset('assets/categoriateatre.png', width: 45.0,);
       case 'concerts':
-        return iconoConcierto;
+        return Image.asset('assets/categoriaconcert.png', width: 45.0,);
       case 'circ':
-        return iconoCirco;
+        return Image.asset('assets/categoriacirc.png', width: 45.0,);
       case 'exposicions':
-        return iconoExpo;
+        return Image.asset('assets/categoriaarte.png', width: 45.0,);
       case 'conferencies':
-        return iconoConferencia;
+        return Image.asset('assets/categoriaconfe.png', width: 45.0,);
       case 'commemoracions':
-        return iconoCommemoracion;
+        return Image.asset('assets/categoriacommemoracio.png', width: 45.0,);
       case 'rutes-i-visites':
-        return iconoRuta;
+        return Image.asset('assets/categoriaruta.png', width: 45.0,);
       case 'cursos':
-        return iconoExpo;
+        return Image.asset('assets/categoriaexpo.png', width: 45.0,);
       case 'activitats-virtuals':
-        return iconoVirtual;
+        return Image.asset('assets/categoriavirtual.png', width: 45.0,);
       case 'infantil':
-        return iconoInfantil;
+        return Image.asset('assets/categoriainfantil.png', width: 45.0,);
       case 'festes':
-        return iconoFiesta;
+        return Image.asset('assets/categoriafesta.png', width: 45.0,);
       case 'festivals-i-mostres':
-        return iconoFiesta;
+        return Image.asset('assets/categoriafesta.png', width: 45.0,);
       case 'dansa':
-        return iconoFiesta;
+        return Image.asset('assets/categoriafesta.png', width: 45.0,);
       case 'cicles':
-        return iconoExpo;
+        return Image.asset('assets/categoriaexpo.png', width: 45.0,);
       case 'cultura-digital':
-        return iconoExpo;
+        return Image.asset('assets/categoriavirtual.png', width: 45.0,);
       case 'fires-i-mercats':
-        return iconoInfantil;
+        return Image.asset('assets/categoriainfantil.png', width: 45.0,);
       case 'gegants':
-        return iconoFiesta;
+        return Image.asset('assets/categoriafesta.png', width: 45.0,);
       default:
-        return iconoRecom;
+        return Image.asset('assets/categoriarecom.png', width: 45.0,);
     }
+  }
+
+
+  void showActividadDetails(Actividad actividad) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SizedBox(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              //Columna y dentro de ella filas, 1 para foto + atributos con mas filas dentro, y la descripcion y boton separados.
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      //Imagen
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: SizedBox( // se mete aqui la imagen para poder modificar su tamaño
+                          height: 150.0,
+                          width: 150.0,
+                          child: Image.network(
+                            actividad.imageUrl,
+                            fit: BoxFit.cover, // Para que ocupe lo mismo que nombre + atributos
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10.0),
+                      Flexible( // Para que los textos se ajusten bien
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start, // Que los textos empiezen en el ''inicio''
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    actividad.name,
+                                    style: const TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.orange,
+                                    ),
+                                  ),
+                                ),
+                                const Padding(padding: EdgeInsets.only(right: 5.0)),
+                                _retornaIcon(actividad.categoria), //Obtener el icono de la categoria
+                              ],
+                            ),
+                            const Padding(padding: EdgeInsets.only(top: 7.5)),
+                            Row(
+                              // Atributos - icono + info
+                              children: [
+                                const Icon(Icons.location_on),
+                                const Padding(padding: EdgeInsets.only(right: 7.5)),
+                                Expanded(
+                                  child: Text(
+                                    actividad.ubicacio,
+                                    overflow: TextOverflow.ellipsis, //Poner puntos suspensivos para evitar pixel overflow
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                const Icon(Icons.calendar_month),
+                                const Padding(padding: EdgeInsets.only(right: 7.5)),
+                                Text(actividad.dataInici),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                const Icon(Icons.calendar_month),
+                                const Padding(padding: EdgeInsets.only(right: 7.5)),
+                                Text(actividad.dataFi),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                const Icon(Icons.local_atm),
+                                const Padding(padding: EdgeInsets.only(right: 7.5)),
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      launchUrl(actividad.urlEntrades); // abrir la url de la actividad para ir a su pagina
+                                    },
+                                    child: const Text(
+                                      'Informació Entrades',
+                                      style: TextStyle(
+                                        decoration: TextDecoration.underline, // Subrayar para que se entienda que es un enlace
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 15.0),
+                  Column(
+                    children: <Widget>[
+                      Text(
+                        actividad.description,
+                        overflow: TextOverflow.ellipsis,  //Poner puntos suspensivos para evitar pixel overflow
+                        maxLines: 3,
+                        style: const TextStyle(fontSize: 12.0),
+                      ),
+                      const SizedBox(height: 15.0),
+                      SizedBox(
+                        width: 400.0,
+                        height: 35.0,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            List<String> act = [actividad.name, 
+                                                actividad.code, 
+                                                actividad.categoria,
+                                                actividad.imageUrl, 
+                                                actividad.description, 
+                                                actividad.dataInici,
+                                                actividad.dataFi, 
+                                                actividad.ubicacio];
+
+                            _controladorPresentacion.mostrarVerActividad(context, act, actividad.urlEntrades);                    
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(Colors.orange),
+                          ),
+                          child: const Text(
+                            "Ver más información",
+                            style: TextStyle(
+                              color: Colors.white
+                              ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Crea y ubica los marcadores
+  Set<Marker> _createMarkers() {
+    return _actividades.map((actividad) {
+      return Marker(
+        markerId: MarkerId(actividad.code),
+        position: LatLng(actividad.latitud, actividad.longitud),
+        infoWindow: InfoWindow(title: actividad.name),
+        icon: _getMarkerIcon(actividad.categoria), // Llama a la función para obtener el icono
+        onTap: () => showActividadDetails(actividad),
+      );
+    }).toSet();
+  }
+
+  // En funcion de la categoria atribuye un marcador
+  BitmapDescriptor _getMarkerIcon(String categoria) {
+    
+    for (int i = 0; i < 3; ++i) {
+      if (categoria == categoriasFavoritas[i]) categoria = 'recom';
+    }
+
+    switch (categoria) {
+        case 'carnavals':
+          return iconoCarnaval;
+        case 'teatre':
+          return iconoTeatro;
+        case 'concerts':
+          return iconoConcierto;
+        case 'circ':
+          return iconoCirco;
+        case 'exposicions':
+          return iconoArte;
+        case 'conferencies':
+          return iconoConferencia;
+        case 'commemoracions':
+          return iconoCommemoracion;
+        case 'rutes-i-visites':
+          return iconoRuta;
+        case 'cursos':
+          return iconoExpo;
+        case 'activitats-virtuals':
+          return iconoVirtual;
+        case 'infantil':
+          return iconoInfantil;
+        case 'festes':
+          return iconoFiesta;
+        case 'festivals-i-mostres':
+          return iconoFiesta;
+        case 'dansa':
+          return iconoFiesta;
+        case 'cicles':
+          return iconoExpo;
+        case 'cultura-digital':
+          return iconoExpo;
+        case 'fires-i-mercats':
+          return iconoInfantil;
+        case 'gegants':
+          return iconoFiesta;
+        default:
+          return iconoRecom;
+      }
   }
 
   //Carga los marcadores de los PNGs
@@ -250,7 +485,7 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _onTabChange(int index) {
-    /*switch (index) {
+    switch (index) {
       case 0:
         break;
       case 1:
@@ -259,11 +494,11 @@ class _MapPageState extends State<MapPage> {
         
         break;
       case 3:
-
+        Navigator.pushNamed(context, Routes.perfil);
         break;
       default:
         break;
-    }*/
+    }
   }
 
   //Se crea la ''pantalla'' para el mapa - falta añadir dock inferior y barra de busqueda
@@ -308,16 +543,37 @@ class _MapPageState extends State<MapPage> {
                 icon: Icons.person),
           ],
         ),
+
+
+ 
       ),
-      body: Stack(
-        fit: StackFit.expand, // Ajusta esta línea
-        children: [
-          GoogleMap(
-            initialCameraPosition: CameraPosition(target: myLatLng, zoom: 16),
-            markers: _createMarkers(),
-            onCameraMove: _onCameraMove,
-            onMapCreated: _onMapCreated,
-          ),
+      child: GNav(
+        backgroundColor: Colors.white,
+        color: Colors.orange,
+        activeColor: Colors.orange,
+        tabBackgroundColor: Colors.grey.shade100,
+        gap: 6,
+        onTabChange: (index) {
+          _onTabChange(index);
+        },
+        selectedIndex: 0,
+        tabs: const [
+          GButton(text: "Mapa", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.map),
+          GButton(text: "Mis Actividades", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.event),
+          GButton(text: "Chats", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.chat),
+          GButton(text: "Perfil", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.person),
+        ],
+      ),
+    ),
+    body: Stack(
+      fit: StackFit.expand,
+      children: [
+        GoogleMap(
+          initialCameraPosition: CameraPosition(target: myLatLng, zoom: 12),
+          markers: _createMarkers(),
+          onCameraMove: _onCameraMove,
+          onMapCreated: _onMapCreated,
+        ),
           Positioned(
             top: 50.0,
             left: 25.0,
@@ -329,7 +585,7 @@ class _MapPageState extends State<MapPage> {
                 borderRadius: BorderRadius.circular(25.0),
               ),
               child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 25.0),
+                padding:  EdgeInsets.symmetric(horizontal: 25.0),
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: 'Buscar...',
@@ -344,3 +600,4 @@ class _MapPageState extends State<MapPage> {
     );
   }
 }
+

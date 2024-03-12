@@ -1,3 +1,5 @@
+import "package:culturapp/actividades/actividad.dart";
+import "package:culturapp/pages/search_my_activities.dart";
 import "package:flutter/material.dart";
 
 class MyActivities extends StatefulWidget {
@@ -8,92 +10,27 @@ class MyActivities extends StatefulWidget {
 }
 
 class _MyActivities extends State<MyActivities> {
+  //List<Actividad> activitats = null; quan tinguem de base de dades fer-ho bé
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('MyActivities'), actions: [
-        IconButton(
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: CustomSearchDelegate(),
-              );
-            },
-            icon: const Icon(Icons.search)),
-      ]),
+      appBar: AppBar(
+          backgroundColor: Colors.orange,
+          title: const Text(
+            'Mis Actividades',
+            style: TextStyle(color: Colors.white),
+          ),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/myActivities/search');
+                },
+                icon: const Icon(Icons.search, color: Colors.white)),
+          ]),
       body: const Center(
-        child: Text('MyActivities_cos ig?'),
+        child: Text('content: ficar activitats aquí'),
       ),
-    );
-  }
-}
-
-class CustomSearchDelegate extends SearchDelegate {
-  List<String> searchTerms = [
-    'Concert Apple',
-    'Concert ABBA',
-    'Super3',
-  ];
-
-  @override
-  List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(
-          onPressed: () {
-            query = '';
-          },
-          icon: const Icon(Icons.clear)),
-    ];
-  }
-
-  @override
-  Widget buildLeading(BuildContext context) {
-    return IconButton(
-        onPressed: () {
-          close(context, null);
-        },
-        icon: const Icon(Icons.arrow_back));
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    List<String> matchQuery = [];
-
-    for (var event in searchTerms) {
-      if (event.toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(event);
-      }
-    }
-
-    return ListView.builder(
-      itemCount: matchQuery.length,
-      itemBuilder: (context, index) {
-        var result = matchQuery[index];
-        return ListTile(
-          title: Text(result),
-        );
-      },
-    );
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    List<String> matchQuery = [];
-
-    for (var event in searchTerms) {
-      if (event.toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(event);
-      }
-    }
-
-    return ListView.builder(
-      itemCount: matchQuery.length,
-      itemBuilder: (context, index) {
-        var result = matchQuery[index];
-        return ListTile(
-          title: Text(result),
-        );
-      },
     );
   }
 }
