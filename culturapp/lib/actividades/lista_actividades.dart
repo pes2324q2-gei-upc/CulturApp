@@ -1,11 +1,10 @@
 
-import 'dart:convert';
 import 'package:culturapp/actividades/actividad.dart';
+import 'package:culturapp/data/database_service.dart';
 import 'package:culturapp/routes/routes.dart';
 import 'package:culturapp/widgetsUtils/image_category.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:http/http.dart' as http;
 
 class ListaActividades extends StatefulWidget {
   const ListaActividades({super.key});
@@ -22,28 +21,11 @@ class _ListaActividadesState extends State<ListaActividades> {
   Future<void>? _fetchActivitiesFuture;
 
   Future<void> fetchActivities() async {
-    var url = Uri.parse("https://analisi.transparenciacatalunya.cat/resource/rhpv-yr4f.json");
-    var actividades = <Actividad>[];
-    
-    try {
-      var response = await http.get(url);
-      if (response.statusCode == 200) {
-        var actividadesJson = json.decode(response.body);
-        for (var actividadJson in actividadesJson) {
-          actividades.add(Actividad.fromJson(actividadJson));
-        }
-        setState(() {
-          _actividades = actividades;
-        });
-      } 
-      else {
-      throw Exception('Failed to load activities');
-      }
-    } 
-    catch (e) {
-      print(e.toString());
-    }
-  }
+    var actividades = await getActivities();
+    setState(() {
+      _actividades = actividades;
+    });
+  } 
 
   @override
   void initState() {
@@ -80,7 +62,7 @@ class _ListaActividadesState extends State<ListaActividades> {
 
     return  Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: Color.fromARGB(255, 255, 129, 94),
         title: const Text("Actividades Disponibles"),
       ),
       bottomNavigationBar: Container(
@@ -91,7 +73,7 @@ class _ListaActividadesState extends State<ListaActividades> {
       child: GNav(
         backgroundColor: Colors.white,
         color: Colors.orange,
-        activeColor: Colors.orange,
+        activeColor: Color.fromARGB(255, 255, 106, 0),
         tabBackgroundColor: Colors.grey.shade100,
         gap: 6,
         selectedIndex: 1,
@@ -129,7 +111,7 @@ class _ListaActividadesState extends State<ListaActividades> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    _actividades[index].name,
+                                    _actividades[index].name ?? "No name",
                                     style: const TextStyle(
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold,

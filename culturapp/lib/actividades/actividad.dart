@@ -10,13 +10,13 @@ class Actividad {
   late DateTime? data_fi;
   late String? horari;
   late String? descripcio;
-  late String imageUrl;
-  late String ubicacio;
-  late String urlEntrades;
-  late String preu;
-  late String comarca;
+  late String? imageUrl;
+  late String? ubicacio;
+  late String? urlEntrades;
+  late String? preu;
+  late String? comarca;
 
-  Actividad(this.name, this.code, this.categoria, this.latitud, this.longitud, this.data_inici, this.data_fi, this.horari, this.descripcio);
+  Actividad(this.name, this.code, this.categoria, this.latitud, this.longitud, this.data_inici, this.data_fi, this.horari, this.descripcio, this.comarca, this.imageUrl, this.preu, this.ubicacio, this.urlEntrades);
 
   Actividad.fromJson(Map<String, dynamic> json) {
     name = json['denominaci'] != null ? json['denominaci'] : "nom nul";
@@ -47,7 +47,7 @@ class Actividad {
       comarca = '';
     }
  
-    String tagsCategorias = json['tags_categor_es'] ?? '';
+  /* String tagsCategorias = json['tags_categor_es'] ?? '';
     if (tagsCategorias.contains('agenda:categories/')) {
       //Obtener valor del punto en el que comienza la categoria
       int startIndex = tagsCategorias.indexOf('agenda:categories/') + 'agenda:categories/'.length;
@@ -57,7 +57,7 @@ class Actividad {
       categoria = endIndex != -1 ? tagsCategorias.substring(startIndex, endIndex) : tagsCategorias.substring(startIndex);
     } else {
       categoria = ' ';
-    }
+    }*/
 
     String imagenes = json['imatges'] ?? '';
     if (imagenes != '') {
@@ -67,23 +67,6 @@ class Actividad {
         } else {
             imageUrl = "https://agenda.cultura.gencat.cat" + imagenes;
         }
-    }
-
-    String data = json['data_inici'] ?? '';
-    if (data != '') {
-      dataInici = data.substring(0, 10);
-    }
-    else {
-      dataInici = '-';
-    }
-    
-
-    data = json['data_fi'] ?? '';
-    if (data != '') {
-        dataFi = data.substring(0, 10);
-    }
-    else {
-      dataFi = '-';
     }
     urlEntrades = json['enlla_os'] ?? '';
 

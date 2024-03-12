@@ -47,7 +47,7 @@ Future<void> insertActivities() async {
 Future<List<Actividad>> getActivities() async {
   List<Actividad> activities = [];
   CollectionReference crActivity = db.collection('activity');
-  QuerySnapshot querySnapshot = await crActivity.get();
+  QuerySnapshot querySnapshot = await crActivity.limit(20).get();
 
   for (var doc in querySnapshot.docs) {
     Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
@@ -62,7 +62,73 @@ Future<List<Actividad>> getActivities() async {
     DateTime? data_fi = timestamp != null ? timestamp.toDate() : null;
     String? horari = data?['horari'];
     String? descripcio = data?['descripcio'];
-    Actividad actividad = Actividad(name, code, categoria, latitud, longitud, data_inici, data_fi, horari, descripcio);
+    String? comarca = data?['comarca'];
+    String? imageUrl = data?['imageUrl'];
+    String? preu = data?['preu'];
+    String? ubicacio = data?['ubicacio'];
+    String? urlEntrades = data?['urlEntrades'];
+    Actividad actividad = Actividad(name, code, categoria, latitud, longitud, data_inici, data_fi, horari, descripcio, comarca, imageUrl, preu, ubicacio, urlEntrades);
+    activities.add(actividad);
+  }
+  return activities;
+}
+
+
+Future<List<Actividad>> getActividadCategoria(String categoria) async {
+  List<Actividad> activities = [];
+  CollectionReference crActivity = db.collection('activity');            
+  QuerySnapshot querySnapshot = await crActivity
+                                  .where('categoria', isEqualTo: categoria)
+                                  .get();
+  for (var doc in querySnapshot.docs) {
+    Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+    String? name = data?['name'];
+    String? code = data?['code'];
+    String? categoria = data?['categoria'];
+    double? latitud = data?['latitud'];
+    double? longitud = data?['longitud'];
+    Timestamp? timestamp = data?['data_inici'];
+    DateTime? data_inici = timestamp != null ? timestamp.toDate() : null;
+    timestamp = data?['data_fi'];
+    DateTime? data_fi = timestamp != null ? timestamp.toDate() : null;
+    String? horari = data?['horari'];
+    String? descripcio = data?['descripcio'];
+    String? comarca = data?['comarca'];
+    String? imageUrl = data?['imageUrl'];
+    String? preu = data?['preu'];
+    String? ubicacio = data?['ubicacio'];
+    String? urlEntrades = data?['urlEntrades'];
+    Actividad actividad = Actividad(name, code, categoria, latitud, longitud, data_inici, data_fi, horari, descripcio, comarca, imageUrl, preu, ubicacio, urlEntrades);
+    activities.add(actividad);
+  }
+  return activities;
+}
+
+Future<List<Actividad>> getActividadData(DateTime date) async {
+  List<Actividad> activities = [];
+  CollectionReference crActivity = db.collection('activity');           
+  QuerySnapshot querySnapshot = await crActivity
+                                  .where('data', isEqualTo: date)
+                                  .get();
+  for (var doc in querySnapshot.docs) {
+    Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+    String? name = data?['name'];
+    String? code = data?['code'];
+    String? categoria = data?['categoria'];
+    double? latitud = data?['latitud'];
+    double? longitud = data?['longitud'];
+    Timestamp? timestamp = data?['data_inici'];
+    DateTime? data_inici = timestamp != null ? timestamp.toDate() : null;
+    timestamp = data?['data_fi'];
+    DateTime? data_fi = timestamp != null ? timestamp.toDate() : null;
+    String? horari = data?['horari'];
+    String? descripcio = data?['descripcio'];
+    String? comarca = data?['comarca'];
+    String? imageUrl = data?['imageUrl'];
+    String? preu = data?['preu'];
+    String? ubicacio = data?['ubicacio'];
+    String? urlEntrades = data?['urlEntrades'];
+    Actividad actividad = Actividad(name, code, categoria, latitud, longitud, data_inici, data_fi, horari, descripcio, comarca, imageUrl, preu, ubicacio, urlEntrades);
     activities.add(actividad);
   }
   return activities;

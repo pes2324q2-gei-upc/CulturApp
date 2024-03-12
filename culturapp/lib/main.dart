@@ -1,10 +1,8 @@
-import 'package:culturapp/data/database_service.dart';
 import 'package:culturapp/routes/app_routes.dart';
 import 'package:culturapp/routes/routes.dart';
-import 'package:culturapp/actividades/lista_actividades.dart';
-import 'package:culturapp/actividades/actividad.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:culturapp/data/database_service.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -12,7 +10,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
   options: DefaultFirebaseOptions.currentPlatform,
   );
-  //await insertActivities();
+  await insertActivities();
   runApp(const MainApp());
 }
 
@@ -23,11 +21,9 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      routes: {
-        '/listaActividades': (context) => ListaActividades(),
-        // Add other routes if necessary
-      },
-      initialRoute: '/listaActividades',
+      debugShowCheckedModeBanner: false,
+      initialRoute: Routes.map, //Esta puesto el mapa como pagina principal por defecto, esto se puede cambiar
+      routes: appRoutes,
     );
   }
 }

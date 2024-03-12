@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:culturapp/actividades/actividad.dart';
 import 'package:culturapp/pages/my_activities.dart';
+import 'package:culturapp/actividades/lista_actividades.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -294,7 +295,7 @@ class _MapPageState extends State<MapPage> {
               textStyle: TextStyle(fontSize: 12, color: Colors.orange),
               icon: Icons.event,
               onPressed: () {
-                Navigator.pushNamed(context, '/myActivities');
+                Navigator.pushNamed(context, '/listaActividades');
               },
             ),
             GButton(
