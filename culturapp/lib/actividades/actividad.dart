@@ -26,7 +26,6 @@ class Actividad {
     data_inici = json['data_inici'] != null && json['data_inici'] is String
     ? DateTime.parse(json['data_inici'])
     : DateTime.now();
-
     data_fi = json['data_fi'] != null && json['data_fi'] is String
     ? DateTime.parse(json['data_fi'])
     : DateTime.now();

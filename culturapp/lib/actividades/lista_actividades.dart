@@ -62,7 +62,7 @@ class _ListaActividadesState extends State<ListaActividades> {
 
     return  Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 255, 129, 94),
+        backgroundColor: Colors.orange,
         title: const Text("Actividades Disponibles"),
       ),
       bottomNavigationBar: Container(
@@ -73,7 +73,7 @@ class _ListaActividadesState extends State<ListaActividades> {
       child: GNav(
         backgroundColor: Colors.white,
         color: Colors.orange,
-        activeColor: Color.fromARGB(255, 255, 106, 0),
+        activeColor: Colors.orange,
         tabBackgroundColor: Colors.grey.shade100,
         gap: 6,
         selectedIndex: 1,
