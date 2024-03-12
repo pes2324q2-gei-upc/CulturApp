@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:culturapp/actividades/actividad.dart';
+import 'package:culturapp/routes/routes.dart';
 import 'package:culturapp/pages/my_activities.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -255,7 +256,7 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _onTabChange(int index) {
-    /*switch (index) {
+    switch (index) {
       case 0:
         break;
       case 1:
@@ -264,11 +265,11 @@ class _MapPageState extends State<MapPage> {
         
         break;
       case 3:
-
+        Navigator.pushNamed(context, Routes.perfil);
         break;
       default:
         break;
-    }*/
+    }
   }
 
   //Se crea la ''pantalla'' para el mapa - falta añadir dock inferior y barra de busqueda
