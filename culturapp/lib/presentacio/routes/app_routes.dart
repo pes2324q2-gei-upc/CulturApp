@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:culturapp/presentacio/screens/perfil_screen.dart';
 
 Map<String, Widget Function(BuildContext)> appRoutes = {
-
   //Routes.map: (_) => const MapPage(),
   Routes.listaActividades: (_) => const ListaActividades(),
   Routes.perfil: (_) => const PerfilPage(),
@@ -21,4 +20,3 @@ Map<String, Widget Function(BuildContext)> appRoutes = {
   Routes.searchMisActividades: (_) => const SearchMyActivities(),
   Routes.login: (_) => const Login(),
 };
-

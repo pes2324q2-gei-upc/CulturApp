@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:http/http.dart' as http;
+
 FirebaseFirestore db = FirebaseFirestore.instance;
 
 Future<List> getUsuaris() async {
@@ -33,8 +34,8 @@ Future<void> insertActivities() async {
           'categoria': actividad.categoria,
           'latitud': actividad.latitud,
           'longitud': actividad.longitud,
-          'data_inici': actividad.data_inici,
-          'data_fi': actividad.data_fi,
+          'data_inici': actividad.dataInici,
+          'data_fi': actividad.dataFi,
           'horari': actividad.horari,
           'descripcio': actividad.descripcio,
           'comarca': actividad.comarca,
@@ -48,7 +49,7 @@ Future<void> insertActivities() async {
     }
   }
 }
-
+/*
 Future<List<Actividad>> getActivities() async {
   List<Actividad> activities = [];
   CollectionReference crActivity = db.collection('activity');
@@ -72,19 +73,31 @@ Future<List<Actividad>> getActivities() async {
     String? preu = data?['preu'];
     String? ubicacio = data?['ubicacio'];
     String? urlEntrades = data?['urlEntrades'];
-    Actividad actividad = Actividad(name, code, categoria, latitud, longitud, data_inici, data_fi, horari, descripcio, comarca, imageUrl, preu, ubicacio, urlEntrades);
+    Actividad actividad = Actividad(
+        name,
+        code,
+        categoria,
+        latitud,
+        longitud,
+        data_inici,
+        data_fi,
+        horari,
+        descripcio,
+        comarca,
+        imageUrl,
+        preu,
+        ubicacio,
+        urlEntrades);
     activities.add(actividad);
   }
   return activities;
 }
 
-
 Future<List<Actividad>> getActividadCategoria(String categoria) async {
   List<Actividad> activities = [];
-  CollectionReference crActivity = db.collection('activity');            
-  QuerySnapshot querySnapshot = await crActivity
-                                  .where('categoria', isEqualTo: categoria)
-                                  .get();
+  CollectionReference crActivity = db.collection('activity');
+  QuerySnapshot querySnapshot =
+      await crActivity.where('categoria', isEqualTo: categoria).get();
   for (var doc in querySnapshot.docs) {
     Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
     String? name = data?['name'];
@@ -103,7 +116,21 @@ Future<List<Actividad>> getActividadCategoria(String categoria) async {
     String? preu = data?['preu'];
     String? ubicacio = data?['ubicacio'];
     String? urlEntrades = data?['urlEntrades'];
-    Actividad actividad = Actividad(name, code, categoria, latitud, longitud, data_inici, data_fi, horari, descripcio, comarca, imageUrl, preu, ubicacio, urlEntrades);
+    Actividad actividad = Actividad(
+        name,
+        code,
+        categoria,
+        latitud,
+        longitud,
+        data_inici,
+        data_fi,
+        horari,
+        descripcio,
+        comarca,
+        imageUrl,
+        preu,
+        ubicacio,
+        urlEntrades);
     activities.add(actividad);
   }
   return activities;
@@ -111,10 +138,9 @@ Future<List<Actividad>> getActividadCategoria(String categoria) async {
 
 Future<List<Actividad>> getActividadData(DateTime date) async {
   List<Actividad> activities = [];
-  CollectionReference crActivity = db.collection('activity');           
-  QuerySnapshot querySnapshot = await crActivity
-                                  .where('data', isEqualTo: date)
-                                  .get();
+  CollectionReference crActivity = db.collection('activity');
+  QuerySnapshot querySnapshot =
+      await crActivity.where('data', isEqualTo: date).get();
   for (var doc in querySnapshot.docs) {
     Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
     String? name = data?['name'];
@@ -133,11 +159,25 @@ Future<List<Actividad>> getActividadData(DateTime date) async {
     String? preu = data?['preu'];
     String? ubicacio = data?['ubicacio'];
     String? urlEntrades = data?['urlEntrades'];
-    Actividad actividad = Actividad(name, code, categoria, latitud, longitud, data_inici, data_fi, horari, descripcio, comarca, imageUrl, preu, ubicacio, urlEntrades);
+    Actividad actividad = Actividad(
+        name,
+        code,
+        categoria,
+        latitud,
+        longitud,
+        data_inici,
+        data_fi,
+        horari,
+        descripcio,
+        comarca,
+        imageUrl,
+        preu,
+        ubicacio,
+        urlEntrades);
     activities.add(actividad);
   }
   return activities;
-}
+}*/
 
 
 //Ejemplos de codigos que llaman a alguna función de este tipo desde el builder
@@ -162,4 +202,5 @@ body:FutureBuilder(
           );
         }
       }
-    ),*/
+    ),
+    */

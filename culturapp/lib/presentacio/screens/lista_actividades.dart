@@ -1,4 +1,3 @@
-
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/data/database_service.dart';
 import 'package:culturapp/presentacio/routes/routes.dart';
@@ -14,32 +13,29 @@ class ListaActividades extends StatefulWidget {
 }
 
 class _ListaActividadesState extends State<ListaActividades> {
-
-
-
   List<Actividad> _actividades = [];
   Future<void>? _fetchActivitiesFuture;
 
   Future<void> fetchActivities() async {
-    var actividades = await getActivities();
+    var actividades = null; //await getActivities();
     setState(() {
       _actividades = actividades;
     });
-  } 
+  }
 
   @override
   void initState() {
     super.initState();
     _fetchActivitiesFuture = fetchActivities();
   }
-  
+
   void _onTabChange(int index) {
     // Aquí puedes realizar acciones específicas según el índice seleccionado
     // Por ejemplo, mostrar un mensaje diferente para cada tab
     switch (index) {
       case 0:
-      Navigator.pop(context);
-      Navigator.pushNamed(context, Routes.map);
+        Navigator.pop(context);
+        Navigator.pushNamed(context, Routes.map);
         break;
       case 1:
         break;
@@ -59,51 +55,64 @@ class _ListaActividadesState extends State<ListaActividades> {
 
   @override
   Widget build(BuildContext context) {
-
-    return  Scaffold(
+    return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
         title: const Text("Actividades Disponibles"),
       ),
       bottomNavigationBar: Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(50.0)),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(50.0)),
+        ),
+        child: GNav(
+          backgroundColor: Colors.white,
+          color: Colors.orange,
+          activeColor: Colors.orange,
+          tabBackgroundColor: Colors.grey.shade100,
+          gap: 6,
+          selectedIndex: 1,
+          tabs: const [
+            GButton(
+                text: "Mapa",
+                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+                icon: Icons.map),
+            GButton(
+                text: "Mis Actividades",
+                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+                icon: Icons.event),
+            GButton(
+                text: "Chats",
+                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+                icon: Icons.chat),
+            GButton(
+                text: "Perfil",
+                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+                icon: Icons.person),
+          ],
+          onTabChange: (index) {
+            _onTabChange(index);
+          },
+        ),
       ),
-      child: GNav(
-        backgroundColor: Colors.white,
-        color: Colors.orange,
-        activeColor: Colors.orange,
-        tabBackgroundColor: Colors.grey.shade100,
-        gap: 6,
-        selectedIndex: 1,
-        tabs: const [
-          GButton(text: "Mapa", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.map),
-          GButton(text: "Mis Actividades", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.event),
-          GButton(text: "Chats", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.chat),
-          GButton(text: "Perfil", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.person),
-        ],
-        onTabChange: (index) {
-          _onTabChange(index);
-        },
-      ),
-    ),
       body: FutureBuilder<void>(
         future: _fetchActivitiesFuture,
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());  // Loading indicator
+            return const Center(
+                child: CircularProgressIndicator()); // Loading indicator
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
             return ListView.builder(
               itemBuilder: (context, index) {
-                  return Container(
+                return Container(
                     padding: const EdgeInsets.all(8.0), // Adjust as needed
                     child: Card(
                       color: Colors.white,
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 32.0, bottom: 32.0, right: 16.0, left: 16.0),
+                        padding: const EdgeInsets.only(
+                            top: 32.0, bottom: 32.0, right: 16.0, left: 16.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
@@ -113,16 +122,17 @@ class _ListaActividadesState extends State<ListaActividades> {
                                   child: Text(
                                     _actividades[index].name ?? "No name",
                                     style: const TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.orange
-                                    ),
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.orange),
                                   ),
                                 ),
                                 Container(
                                   padding: const EdgeInsets.only(left: 5),
                                   height: 30,
-                                  child: ImageCategory(categoria: "${_actividades[index].categoria}"),
+                                  child: ImageCategory(
+                                      categoria:
+                                          "${_actividades[index].categoria}"),
                                 ),
                               ],
                             ),
@@ -131,39 +141,35 @@ class _ListaActividadesState extends State<ListaActividades> {
                               child: Row(
                                 children: [
                                   Card(
-                                    color: Colors.green.shade300, 
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          "  ${_actividades[index].comarca}  ",
-                                          style: const TextStyle(
-                                            color: Colors.white
+                                      color: Colors.green.shade300,
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            "  ${_actividades[index].comarca}  ",
+                                            style: const TextStyle(
+                                                color: Colors.white),
                                           ),
-                                        ),
-                                      ],
-                                    )
-                                  ),
+                                        ],
+                                      )),
                                 ],
                               ),
                             ),
                             Image.network("${_actividades[index].imageUrl}"),
                             Container(
-                              alignment: Alignment.centerRight,
-                              padding: const EdgeInsets.only(top: 10),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  // Add your left button logic here
-                                },
-                                child: const Text("More"),
-                              )
-                            )
+                                alignment: Alignment.centerRight,
+                                padding: const EdgeInsets.only(top: 10),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    // Add your left button logic here
+                                  },
+                                  child: const Text("More"),
+                                ))
                           ],
                         ),
                       ),
-                    )
-                  );
-                },
-                itemCount: _actividades.length,
+                    ));
+              },
+              itemCount: _actividades.length,
             );
           }
         },
