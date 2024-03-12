@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:culturapp/actividades/actividad.dart';
 import 'package:culturapp/routes/routes.dart';
+import 'package:culturapp/widgetsUtils/image_category.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:http/http.dart' as http;
@@ -15,31 +16,41 @@ class ListaActividades extends StatefulWidget {
 
 class _ListaActividadesState extends State<ListaActividades> {
 
+
+
   List<Actividad> _actividades = [];
+  Future<void>? _fetchActivitiesFuture;
 
-  Future<List<Actividad>> fetchActivities() async {
+  Future<void> fetchActivities() async {
     var url = Uri.parse("https://analisi.transparenciacatalunya.cat/resource/rhpv-yr4f.json");
-    var response = await http.get(url);
-
     var actividades = <Actividad>[];
     
-    if (response.statusCode == 200) {
-      var actividadesJson = json.decode(response.body);
-      for (var actividadJson in actividadesJson) {
-        actividades.add(Actividad.fromJson(actividadJson));
+    try {
+      var response = await http.get(url);
+      if (response.statusCode == 200) {
+        var actividadesJson = json.decode(response.body);
+        for (var actividadJson in actividadesJson) {
+          actividades.add(Actividad.fromJson(actividadJson));
+        }
+        setState(() {
+          _actividades = actividades;
+        });
+      } 
+      else {
+      throw Exception('Failed to load activities');
       }
+    } 
+    catch (e) {
+      print(e.toString());
     }
-    return actividades;
   }
+
   @override
   void initState() {
     super.initState();
-    fetchActivities().then((value) {
-      setState(() {
-        _actividades.addAll(value);
-      });
-    });
+    _fetchActivitiesFuture = fetchActivities();
   }
+  
   void _onTabChange(int index) {
     // Aquí puedes realizar acciones específicas según el índice seleccionado
     // Por ejemplo, mostrar un mensaje diferente para cada tab
@@ -95,35 +106,85 @@ class _ListaActividadesState extends State<ListaActividades> {
         },
       ),
     ),
-      body: ListView.builder(
-        itemBuilder: (context, index) {
-            return Card(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 32.0, bottom: 32.0, right: 16.0, left: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                      Text(
-                      _actividades[index].name ?? '',
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.orange
+      body: FutureBuilder<void>(
+        future: _fetchActivitiesFuture,
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());  // Loading indicator
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            return ListView.builder(
+              itemBuilder: (context, index) {
+                  return Container(
+                    padding: const EdgeInsets.all(8.0), // Adjust as needed
+                    child: Card(
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 32.0, bottom: 32.0, right: 16.0, left: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    _actividades[index].name,
+                                    style: const TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.orange
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.only(left: 5),
+                                  height: 30,
+                                  child: ImageCategory(categoria: "${_actividades[index].categoria}"),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Row(
+                                children: [
+                                  Card(
+                                    color: Colors.green.shade300, 
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          "  ${_actividades[index].comarca}  ",
+                                          style: const TextStyle(
+                                            color: Colors.white
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Image.network("${_actividades[index].imageUrl}"),
+                            Container(
+                              alignment: Alignment.centerRight,
+                              padding: const EdgeInsets.only(top: 10),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  // Add your left button logic here
+                                },
+                                child: const Text("More"),
+                              )
+                            )
+                          ],
+                        ),
                       ),
-                      ),
-                    Text(
-                      _actividades[index].code ?? '',
-                      style: TextStyle(
-                        color: Colors.grey.shade600
-                      ),
-
-                      ),
-                  ],
-                ),
-              ),
+                    )
+                  );
+                },
+                itemCount: _actividades.length,
             );
-          },
-          itemCount: _actividades.length,
+          }
+        },
       ),
     );
   }

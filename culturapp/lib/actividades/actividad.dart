@@ -10,6 +10,11 @@ class Actividad {
   late DateTime? data_fi;
   late String? horari;
   late String? descripcio;
+  late String imageUrl;
+  late String ubicacio;
+  late String urlEntrades;
+  late String preu;
+  late String comarca;
 
   Actividad(this.name, this.code, this.categoria, this.latitud, this.longitud, this.data_inici, this.data_fi, this.horari, this.descripcio);
 
@@ -24,7 +29,25 @@ class Actividad {
     descripcio = json['descripcio'] != null ? json['descripcio'] : "descripcio_nul";
 
     String tagsCategorias = json['tags_categor_es'] ?? '';
-
+  
+    String comarcaAll = json['comarca'] ?? '-';
+    if(comarcaAll.contains('agenda:ubicacions/')) {
+      // Split the string on '/'
+      List<String> comarcaParts = comarcaAll.split('/');
+      
+      // Take the last part of the split
+      String comarcaLastPart = comarcaParts.last;
+      
+      // Replace all '-' with ' '
+      String comarcaReplaced = comarcaLastPart.replaceAll('-', ' ');
+      
+      // Capitalize the first letter and make the rest of the string lowercase
+      comarca = comarcaReplaced[0].toUpperCase() + comarcaReplaced.substring(1).toLowerCase();
+    } else {
+      comarca = '';
+    }
+ 
+    String tagsCategorias = json['tags_categor_es'] ?? '';
     if (tagsCategorias.contains('agenda:categories/')) {
       //Obtener valor del punto en el que comienza la categoria
       int startIndex = tagsCategorias.indexOf('agenda:categories/') + 'agenda:categories/'.length;
@@ -35,5 +58,44 @@ class Actividad {
     } else {
       categoria = ' ';
     }
+
+    String imagenes = json['imatges'] ?? '';
+    if (imagenes != '') {
+        int endIndex = imagenes.indexOf(',');
+        if (endIndex != -1) {
+            imageUrl = "https://agenda.cultura.gencat.cat" + imagenes.substring(0, endIndex);
+        } else {
+            imageUrl = "https://agenda.cultura.gencat.cat" + imagenes;
+        }
+    }
+
+    String data = json['data_inici'] ?? '';
+    if (data != '') {
+      dataInici = data.substring(0, 10);
+    }
+    else {
+      dataInici = '-';
+    }
+    
+
+    data = json['data_fi'] ?? '';
+    if (data != '') {
+        dataFi = data.substring(0, 10);
+    }
+    else {
+      dataFi = '-';
+    }
+    urlEntrades = json['enlla_os'] ?? '';
+
+    String entrades = json['entrades'] ?? 'Veure més informació';
+    if (entrades != '') {
+        int endIndex = imagenes.indexOf('€');
+        if (endIndex != -1) {
+            preu = entrades.substring(0, endIndex);
+        } else {
+            preu = entrades;
+        }
+    }
+
   }
 }
