@@ -25,6 +25,7 @@ dependencies:
     sdk: flutter
   provider: ^6.1.2
   ui_auth: ^0.0.1
+  sign_in_button: ^3.2.0
 
 dev_dependencies:
   flutter_test:
@@ -46,5 +47,6 @@ flutter:
   - assets/pinruta.png
   - assets/pinteatre.png
   - assets/pinvirtual.png
+  - assets/loginpicture.png
   
   uses-material-design: true
