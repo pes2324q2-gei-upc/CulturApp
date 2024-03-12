@@ -1,5 +1,5 @@
 import "package:culturapp/actividades/actividad.dart";
-import "package:culturapp/models/cercador_my_activities.dart";
+import "package:culturapp/pages/search_my_activities.dart";
 import "package:flutter/material.dart";
 
 class MyActivities extends StatefulWidget {

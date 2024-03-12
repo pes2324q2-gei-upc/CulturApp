@@ -8,6 +8,10 @@ class SearchMyActivities extends StatefulWidget {
 }
 
 class _SearchMyActivitiesState extends State<SearchMyActivities> {
+  void updateList(String value) {
+    //funcio on es filtrarà la nostra llista
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
