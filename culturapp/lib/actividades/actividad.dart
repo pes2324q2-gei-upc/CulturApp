@@ -23,8 +23,13 @@ class Actividad {
     code = json['codi'] != null ? json['codi'] : "codi_nul";
     latitud = json['latitud'] is double ? json['latitud'] : 1.0;
     longitud = json['longitud'] is double ? json['longitud'] : 1.0;
-    data_inici = json['data_inici'] != null ? (json['data_inici'] as Timestamp).toDate(): DateTime.now();
-    data_fi = json['data_fi'] != null ? (json['data_fi'] as Timestamp).toDate(): DateTime.now();
+    data_inici = json['data_inici'] != null && json['data_inici'] is String
+    ? DateTime.parse(json['data_inici'])
+    : DateTime.now();
+
+    data_fi = json['data_fi'] != null && json['data_fi'] is String
+    ? DateTime.parse(json['data_fi'])
+    : DateTime.now();
     horari = json['horari'] != null ? json['horari'] : "horari_nul";
     descripcio = json['descripcio'] != null ? json['descripcio'] : "descripcio_nul";
 
