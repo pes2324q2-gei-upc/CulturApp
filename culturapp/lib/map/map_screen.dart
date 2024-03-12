@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math' as math;
 
+import 'package:culturapp/actividad/vista_ver_actividad.dart';
 import 'package:culturapp/actividades/actividad.dart';
 import 'package:culturapp/controlador_presentacion.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 class MapPage extends StatefulWidget {
+
   final ControladorPresentacion controladorPresentacion;
   
   const MapPage({Key? key, required this.controladorPresentacion});
@@ -21,7 +23,7 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
 
   late ControladorPresentacion _controladorPresentacion;  
-  
+
   _MapPageState(ControladorPresentacion controladorPresentacion){
     _controladorPresentacion = controladorPresentacion;
   }
@@ -248,7 +250,7 @@ double calculateDistance(LatLng from, LatLng to) {
                         width: 400.0,
                         height: 35.0,
                         child: ElevatedButton(
-                           onPressed: () {
+                          onPressed: () {
                             List<String> act = [actividad.name, 
                                                 actividad.code, 
                                                 actividad.categoria,
