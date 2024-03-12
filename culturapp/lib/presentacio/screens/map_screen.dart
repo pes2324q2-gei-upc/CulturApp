@@ -1,22 +1,15 @@
 import 'dart:convert';
 import 'dart:math' as math;
-
-import 'package:culturapp/presentacio/screens/vista_ver_actividad.dart';
+import 'package:culturapp/actividades/actividad.dart';
+import 'package:culturapp/controlador_presentacion.dart';
+import 'package:culturapp/data/database_service.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacion.dart';
-import 'package:culturapp/presentacio/routes/routes.dart';
-import 'package:culturapp/presentacio/screens/my_activities.dart';
-
-import 'package:culturapp/presentacio/screens/lista_actividades.dart';
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:http/http.dart' as http;
-import 'package:culturapp/data/database_service.dart';
-
 import 'package:url_launcher/url_launcher.dart';
-
 
 class MapPage extends StatefulWidget {
 
@@ -49,21 +42,19 @@ class _MapPageState extends State<MapPage> {
   BitmapDescriptor iconoRuta = BitmapDescriptor.defaultMarker;
   BitmapDescriptor iconoTeatro = BitmapDescriptor.defaultMarker;
   BitmapDescriptor iconoVirtual = BitmapDescriptor.defaultMarker;
-
   IconData iconoCategoria = Icons.category;
-
   LatLng myLatLng = const LatLng(41.389350, 2.113307);
   String address = 'FIB';
-  List<String> categoriasFavoritas = ['circ', 'festes', 'activitats-virtuals'];
+
   List<Actividad> _actividades = [];
   GoogleMapController? _mapController;
+  List<String> categoriasFavoritas = ['circ', 'festes', 'activitats-virtuals'];
 
-  double radians(double degrees) {
-    return degrees * (math.pi / 180.0);
-  }
-
+double radians(double degrees) {
+  return degrees * (math.pi / 180.0);
+}
 // Formula de Haversine para calcular que actividades entran en el radio del zoom de la pantalla
-  double calculateDistance(LatLng from, LatLng to) {
+double calculateDistance(LatLng from, LatLng to) {
     const int earthRadius = 6371000;
     double lat1 = radians(from.latitude);
     double lon1 = radians(from.longitude);
@@ -79,7 +70,7 @@ class _MapPageState extends State<MapPage> {
 
     return earthRadius * c;
   }
-
+  
   // Obtener actividades del JSON para mostrarlas por pantalla
   Future<List<Actividad>> fetchActivities(LatLng center, double zoom) async {
     double radius = 500 * (16 / zoom);
@@ -102,28 +93,8 @@ class _MapPageState extends State<MapPage> {
     super.initState();
   }
 
-
   Image _retornaIcon (String categoria){
       switch (categoria) {
-
-
-  // Crea y ubica los marcadores
-  Set<Marker> _createMarkers() {
-    return _actividades.map((actividad) {
-      return Marker(
-        markerId: MarkerId(actividad.code ?? ''),
-        position: LatLng(actividad.latitud ?? 0.0, actividad.longitud ?? 0.0),
-        infoWindow: InfoWindow(title: actividad.name),
-        icon: _getMarkerIcon(
-            actividad.categoria ?? ''), // Llama a la función para obtener el icono
-      );
-    }).toSet();
-  }
-
-  // En funcion de la categoria atribuye un marcador
-  BitmapDescriptor _getMarkerIcon(String categoria) {
-    switch (categoria) {
-
       case 'carnavals':
         return Image.asset('assets/categoriacarnaval.png', width: 45.0,);
       case 'teatre':
@@ -164,7 +135,6 @@ class _MapPageState extends State<MapPage> {
         return Image.asset('assets/categoriarecom.png', width: 45.0,);
     }
   }
-
 
   void showActividadDetails(Actividad actividad) {
     showModalBottomSheet(
@@ -311,7 +281,6 @@ class _MapPageState extends State<MapPage> {
       },
     );
   }
-
   // Crea y ubica los marcadores
   Set<Marker> _createMarkers() {
     return _actividades.map((actividad) {
@@ -327,11 +296,9 @@ class _MapPageState extends State<MapPage> {
 
   // En funcion de la categoria atribuye un marcador
   BitmapDescriptor _getMarkerIcon(String categoria) {
-    
     for (int i = 0; i < 3; ++i) {
       if (categoria == categoriasFavoritas[i]) categoria = 'recom';
-    }
-
+    }    
     switch (categoria) {
         case 'carnavals':
           return iconoCarnaval;
@@ -373,94 +340,72 @@ class _MapPageState extends State<MapPage> {
           return iconoRecom;
       }
   }
-
   //Carga los marcadores de los PNGs
   getIcons() async {
-    var icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinarte.png');
+    var icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinarte.png');
     setState(() {
       iconoArte = icon;
     });
 
-    icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinfesta.png');
+    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinfesta.png');
     setState(() {
       iconoFiesta = icon;
     });
-
-    icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinrecom.png');
+    
+    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinrecom.png');
     setState(() {
       iconoRecom = icon;
     });
 
-    icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(devicePixelRatio: 2.5),
-        'assets/pinteatre.png');
+    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinteatre.png');
     setState(() {
       iconoTeatro = icon;
     });
 
-    icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinexpo.png');
+    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinexpo.png');
     setState(() {
       iconoExpo = icon;
     });
 
-    icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinconfe.png');
+    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinconfe.png');
     setState(() {
       iconoConferencia = icon;
     });
 
-    icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(devicePixelRatio: 2.5),
-        'assets/pincarnaval.png');
+    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pincarnaval.png');
     setState(() {
       iconoCarnaval = icon;
     });
 
-    icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pincirc.png');
+    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pincirc.png');
     setState(() {
       iconoCirco = icon;
     });
 
-    icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(devicePixelRatio: 2.5),
-        'assets/pincommemoracio.png');
+    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pincommemoracio.png');
     setState(() {
       iconoCommemoracion = icon;
     });
 
-    icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(devicePixelRatio: 2.5),
-        'assets/pinconcert.png');
+    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinconcert.png');
     setState(() {
       iconoConcierto = icon;
     });
-    icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinruta.png');
+    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinruta.png');
     setState(() {
       iconoRuta = icon;
     });
 
-    icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(devicePixelRatio: 2.5),
-        'assets/pinconcert.png');
+    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinconcert.png');
     setState(() {
       iconoConcierto = icon;
     });
 
-    icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(devicePixelRatio: 2.5),
-        'assets/pininfantil.png');
+  icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pininfantil.png');
     setState(() {
       iconoInfantil = icon;
     });
-    icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(devicePixelRatio: 2.5),
-        'assets/pinvirtual.png');
+  icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinvirtual.png');
     setState(() {
       iconoVirtual = icon;
     });
@@ -484,8 +429,9 @@ class _MapPageState extends State<MapPage> {
     _mapController = controller;
   }
 
+
   void _onTabChange(int index) {
-    switch (index) {
+    /*switch (index) {
       case 0:
         break;
       case 1:
@@ -494,58 +440,22 @@ class _MapPageState extends State<MapPage> {
         
         break;
       case 3:
-        Navigator.pushNamed(context, Routes.perfil);
+
         break;
       default:
         break;
-    }
+    }*/
   }
+
 
   //Se crea la ''pantalla'' para el mapa - falta añadir dock inferior y barra de busqueda
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(50.0)),
-        ),
-        child: GNav(
-          backgroundColor: Colors.white,
-          color: Colors.orange,
-          activeColor: Colors.orange,
-          tabBackgroundColor: Colors.grey.shade100,
-          gap: 6,
-          onTabChange: (index) {
-            _onTabChange(index);
-          },
-          selectedIndex: 0,
-          tabs: [
-            GButton(
-                text: "Mapa",
-                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
-                icon: Icons.map),
-            GButton(
-              text: "Mis Actividades",
-              textStyle: TextStyle(fontSize: 12, color: Colors.orange),
-              icon: Icons.event,
-              onPressed: () {
-                Navigator.pushNamed(context, '/listaActividades');
-              },
-            ),
-            GButton(
-                text: "Chats",
-                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
-                icon: Icons.chat),
-            GButton(
-                text: "Perfil",
-                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
-                icon: Icons.person),
-          ],
-        ),
-
-
- 
+  return Scaffold(
+    bottomNavigationBar: Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(50.0)),
       ),
       child: GNav(
         backgroundColor: Colors.white,
@@ -566,10 +476,10 @@ class _MapPageState extends State<MapPage> {
       ),
     ),
     body: Stack(
-      fit: StackFit.expand,
+      fit: StackFit.expand, // Ajusta esta línea
       children: [
         GoogleMap(
-          initialCameraPosition: CameraPosition(target: myLatLng, zoom: 12),
+          initialCameraPosition: CameraPosition(target: myLatLng, zoom: 16),
           markers: _createMarkers(),
           onCameraMove: _onCameraMove,
           onMapCreated: _onMapCreated,
@@ -600,4 +510,3 @@ class _MapPageState extends State<MapPage> {
     );
   }
 }
-
