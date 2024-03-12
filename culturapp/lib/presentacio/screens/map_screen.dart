@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'dart:math' as math;
-import 'package:culturapp/actividades/actividad.dart';
-import 'package:culturapp/controlador_presentacion.dart';
 import 'package:culturapp/data/database_service.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacion.dart';
@@ -23,7 +21,7 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
 
-  late ControladorPresentacion _controladorPresentacion;  
+  late ControladorPresentacion _controladorPresentacion;
 
   _MapPageState(ControladorPresentacion controladorPresentacion){
     _controladorPresentacion = controladorPresentacion;
@@ -238,7 +236,7 @@ double calculateDistance(LatLng from, LatLng to) {
                   Column(
                     children: <Widget>[
                       Text(
-                        actividad.description,
+                        actividad.descripcio,
                         overflow: TextOverflow.ellipsis,  //Poner puntos suspensivos para evitar pixel overflow
                         maxLines: 3,
                         style: const TextStyle(fontSize: 12.0),
@@ -249,16 +247,16 @@ double calculateDistance(LatLng from, LatLng to) {
                         height: 35.0,
                         child: ElevatedButton(
                           onPressed: () {
-                            List<String> act = [actividad.name, 
-                                                actividad.code, 
+                            List<String> act = [actividad.name,
+                                                actividad.code,
                                                 actividad.categoria,
-                                                actividad.imageUrl, 
-                                                actividad.description, 
+                                                actividad.imageUrl,
+                                                actividad.descripcio,
                                                 actividad.dataInici,
-                                                actividad.dataFi, 
+                                                actividad.dataFi,
                                                 actividad.ubicacio];
 
-                            _controladorPresentacion.mostrarVerActividad(context, act, actividad.urlEntrades);                    
+                            _controladorPresentacion.mostrarVerActividad(context, act, actividad.urlEntrades);
                           },
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all(Colors.orange),
