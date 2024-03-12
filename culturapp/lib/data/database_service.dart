@@ -36,7 +36,12 @@ Future<void> insertActivities() async {
           'data_inici': actividad.data_inici,
           'data_fi': actividad.data_fi,
           'horari': actividad.horari,
-          'descripcio': actividad.descripcio
+          'descripcio': actividad.descripcio,
+          'comarca': actividad.comarca,
+          'imageUrl': actividad.imageUrl,
+          'preu': actividad.preu,
+          'ubicacio': actividad.ubicacio,
+          'urlEntrades': actividad.urlEntrades
         };
         db.collection('activity').doc(actividad.code).set(act);
       }

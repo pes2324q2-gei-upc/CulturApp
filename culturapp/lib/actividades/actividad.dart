@@ -33,7 +33,7 @@ class Actividad {
     horari = json['horari'] != null ? json['horari'] : "horari_nul";
     descripcio = json['descripcio'] != null ? json['descripcio'] : "descripcio_nul";
 
-    String tagsCategorias = json['tags_categor_es'] ?? '';
+    categoria = json['tags_categor_es'] ?? '';
   
     String comarcaAll = json['comarca'] ?? '-';
     if(comarcaAll.contains('agenda:ubicacions/')) {
@@ -84,6 +84,8 @@ class Actividad {
             preu = entrades;
         }
     }
+    else preu = 'Gratuit';
+    ubicacio = json['adre_a'] ?? '';
 
   }
 }
