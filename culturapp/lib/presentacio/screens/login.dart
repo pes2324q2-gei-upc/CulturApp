@@ -7,6 +7,7 @@ import "package:sign_in_button/sign_in_button.dart";
 import 'package:culturapp/presentacio/routes/routes.dart';
 import 'package:culturapp/presentacio/screens/logout.dart';
 import 'package:culturapp/presentacio/screens/signup.dart';
+import 'package:culturapp/presentacio/routes/routes.dart';
 
 
 class Login extends StatefulWidget {
@@ -17,10 +18,13 @@ class Login extends StatefulWidget {
 }
 
 class _Login extends State<Login> {
+  //Instancia d'autentificacio de Firebase
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  //Usuari de Firebase
   User? _user;
 
+  //Instancia de base de dades de Firebase
   FirebaseFirestore db = FirebaseFirestore.instance;
 
   @override
@@ -32,10 +36,12 @@ class _Login extends State<Login> {
       });
     });
     WidgetsBinding.instance!.addPostFrameCallback((_) {
+      //Comprovar si ja hi ha una sessio iniciada
       _checkLoggedInUser();
     });
   }
 
+  //Construccio de la pantalla
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,12 +49,13 @@ class _Login extends State<Login> {
     );
   }
 
+  //Layout de login
   Widget _loginLayout() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text("Benvingut a CulturApp",
-        ),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
         SizedBox(height: 70),
         Container(
           width: double.infinity,
@@ -66,6 +73,7 @@ class _Login extends State<Login> {
     );
   }
 
+  //Botó de login
   Widget _googleSignInButton() {
     return Center(child: SizedBox(
       height: 50,
@@ -79,49 +87,25 @@ class _Login extends State<Login> {
       )
     ));
   }
-
-  Widget _userInfo() {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Container(
-            height: 100,
-            width: 100,
-            decoration: BoxDecoration(
-              image: DecorationImage(image: NetworkImage(_user!.photoURL!)))
-        ),
-        Text(_user!.email!),
-        Text(_user!.displayName ?? ""),
-        MaterialButton(
-          color: Colors.red,
-          child: const Text("Sign out"),
-          onPressed: _auth.signOut,)
-        ],
-      ),
-    );
-  }
-
+ 
+  //Inici de sessio
   Future<void> _handleGoogleSignIn() async {
     try {
+      //Iniciar la sessio amb el compte especificat per l'usuari
       GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
       final UserCredential userCredential = await _auth.signInWithProvider(_googleAuthProvider);
       bool userExists = await accountExists(userCredential.user);
+
+      //Si no hi ha un usuari associat al compte de google, redirigir a la pantalla de registre
       if (!userExists) {
-        createUser(_user);
        Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => Signup(_user))
-      );
+        );
       }
+      //Altrament redirigir a la pantalla principal de l'app
       else {
-        Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Logout(_user))
-      );
+        Navigator.pushNamed(context, Routes.perfil);
       }
     }
     catch (error) {
@@ -129,32 +113,23 @@ class _Login extends State<Login> {
     }
   }
   
+  //Comprovar si existeix un usuari per a cert compte de google
   Future<bool> accountExists(User? user) async {
     DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection("users").doc(_user!.uid).get();
     return userSnapshot.exists;
   }
-  
-  void createUser(User? user) {
-    CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
-    usersCollection.doc(_user?.uid).set({
-      'email': _user?.email,
-      'name': _user?.displayName,
-    });
-  }
 
+  //Comprovar si hi ha una sessio iniciada
   void _checkLoggedInUser() async {
-    User? currentUser = _auth.currentUser; // Obtener el usuario actualmente autenticado
+    //Obte l'usuari autentificat en el moment si existeix
+    User? currentUser = _auth.currentUser;
     
+    //Si existeix l'usuari, estableix l'usuari de l'estat i redirigeix a la pantalla principal
     if (currentUser != null) {
       setState(() {
-        _user = currentUser; // Establece el usuario en el estado
+        _user = currentUser;
       });
-      
-      // Navegar a la página de Logout
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Logout(_user))
-      );
+     Navigator.pushNamed(context, Routes.perfil);
     }
   }
 }

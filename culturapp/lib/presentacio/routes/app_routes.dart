@@ -13,7 +13,7 @@ import 'package:culturapp/presentacio/screens/perfil_screen.dart';
 
 Map<String, Widget Function(BuildContext)> appRoutes = {
 
-  Routes.map: (_) => const MapPage(),
+  //Routes.map: (_) => const MapPage(),
   Routes.listaActividades: (_) => const ListaActividades(),
   Routes.perfil: (_) => const PerfilPage(),
 

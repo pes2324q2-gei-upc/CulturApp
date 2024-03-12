@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:math' as math;
-import 'package:culturapp/actividades/actividad.dart';
-import 'package:culturapp/controlador_presentacion.dart';
+
 import 'package:culturapp/data/database_service.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacion.dart';
@@ -11,6 +10,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
+/*
 class MapPage extends StatefulWidget {
 
   final ControladorPresentacion controladorPresentacion;
@@ -510,3 +510,4 @@ double calculateDistance(LatLng from, LatLng to) {
     );
   }
 }
+*/

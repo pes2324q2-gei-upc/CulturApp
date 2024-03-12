@@ -4,6 +4,7 @@ import 'package:culturapp/presentacio/widgets/user_info.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:culturapp/presentacio/routes/routes.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 class PerfilPage extends StatefulWidget {
@@ -14,6 +15,8 @@ class PerfilPage extends StatefulWidget {
 }
 
 class _PerfilPageState extends State<PerfilPage> {
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   //no se que es esta funcuion
   @override
@@ -46,7 +49,11 @@ class _PerfilPageState extends State<PerfilPage> {
   return Scaffold(
     body: Stack(
         children: [
-          UserInfoWidget(), // Calling the UserInfoWidget
+          UserInfoWidget(), 
+          MaterialButton(
+          color: Colors.red,
+          child: const Text("Sign out"),
+          onPressed: () => signout(context))// Calling the UserInfoWidget
         ],
       ),
     //container amb les diferents pantalles
@@ -74,6 +81,11 @@ class _PerfilPageState extends State<PerfilPage> {
       ),
     ),
     );
+  }
+
+  void signout(context) {
+    _auth.signOut();
+    Navigator.pushNamed(context, Routes.login); // Cierra la llamada a MaterialPageRoute
   }
 }
 
