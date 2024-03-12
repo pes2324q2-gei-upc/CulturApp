@@ -7,11 +7,16 @@ import 'package:culturapp/controlador_presentacion.dart';
 import 'package:culturapp/routes/routes.dart';
 import 'package:culturapp/pages/my_activities.dart';
 
+import 'package:culturapp/actividades/lista_actividades.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:http/http.dart' as http;
+import 'package:culturapp/data/database_service.dart';
+
 import 'package:url_launcher/url_launcher.dart';
+
 
 class MapPage extends StatefulWidget {
 
@@ -77,23 +82,15 @@ class _MapPageState extends State<MapPage> {
 
   // Obtener actividades del JSON para mostrarlas por pantalla
   Future<List<Actividad>> fetchActivities(LatLng center, double zoom) async {
-
-    double radius = 1000 * (16 / zoom);
-    var url = Uri.parse("https://analisi.transparenciacatalunya.cat/resource/rhpv-yr4f.json");
-
-    var response = await http.get(url);
-    var actividades = <Actividad>[];
-
-    if (response.statusCode == 200) {
-      var actividadesJson = json.decode(response.body);
-      for (var actividadJson in actividadesJson) {
-        var actividad = Actividad.fromJson(actividadJson);
-        // Comprobar si la actividad está dentro del radio
-        if (calculateDistance(
-                center, LatLng(actividad.latitud, actividad.longitud)) <=
-            radius) {
-          actividades.add(actividad);
-        }
+    double radius = 500 * (16 / zoom);
+    var actividades = await getActivities();
+    var actividadesaux = <Actividad> [];
+    for (var actividad in actividades) {
+      // Comprobar si la actividad está dentro del radio
+      if (calculateDistance(
+              center, LatLng(actividad.latitud ?? 0.0, actividad.longitud ?? 0.0)) <=
+          radius) {
+        actividadesaux.add(actividad);
       }
     }
     return actividades;
@@ -114,11 +111,11 @@ class _MapPageState extends State<MapPage> {
   Set<Marker> _createMarkers() {
     return _actividades.map((actividad) {
       return Marker(
-        markerId: MarkerId(actividad.code),
-        position: LatLng(actividad.latitud, actividad.longitud),
+        markerId: MarkerId(actividad.code ?? ''),
+        position: LatLng(actividad.latitud ?? 0.0, actividad.longitud ?? 0.0),
         infoWindow: InfoWindow(title: actividad.name),
         icon: _getMarkerIcon(
-            actividad.categoria), // Llama a la función para obtener el icono
+            actividad.categoria ?? ''), // Llama a la función para obtener el icono
       );
     }).toSet();
   }
@@ -507,11 +504,48 @@ class _MapPageState extends State<MapPage> {
   //Se crea la ''pantalla'' para el mapa - falta añadir dock inferior y barra de busqueda
   @override
   Widget build(BuildContext context) {
-  return Scaffold(
-    bottomNavigationBar: Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(50.0)),
+    return Scaffold(
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(50.0)),
+        ),
+        child: GNav(
+          backgroundColor: Colors.white,
+          color: Colors.orange,
+          activeColor: Colors.orange,
+          tabBackgroundColor: Colors.grey.shade100,
+          gap: 6,
+          onTabChange: (index) {
+            _onTabChange(index);
+          },
+          selectedIndex: 0,
+          tabs: [
+            GButton(
+                text: "Mapa",
+                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+                icon: Icons.map),
+            GButton(
+              text: "Mis Actividades",
+              textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+              icon: Icons.event,
+              onPressed: () {
+                Navigator.pushNamed(context, '/listaActividades');
+              },
+            ),
+            GButton(
+                text: "Chats",
+                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+                icon: Icons.chat),
+            GButton(
+                text: "Perfil",
+                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+                icon: Icons.person),
+          ],
+        ),
+
+
+ 
       ),
       child: GNav(
         backgroundColor: Colors.white,

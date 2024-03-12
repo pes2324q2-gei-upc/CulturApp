@@ -1,7 +1,10 @@
+
 import 'package:culturapp/widgets/user_info.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:culturapp/routes/routes.dart';
+
 
 class PerfilPage extends StatefulWidget {
   const PerfilPage({Key? key});
@@ -15,7 +18,7 @@ class _PerfilPageState extends State<PerfilPage> {
   //no se que es esta funcuion
   @override
   void initState() {
-    
+   
     super.initState();
   }
   
@@ -73,3 +76,4 @@ class _PerfilPageState extends State<PerfilPage> {
     );
   }
 }
+
