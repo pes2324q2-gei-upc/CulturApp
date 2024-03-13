@@ -70,7 +70,7 @@ class _MapPageState extends State<MapPage> {
   // Obtener actividades del JSON para mostrarlas por pantalla
   Future<List<Actividad>> fetchActivities(LatLng center, double zoom) async {
     double radius = 1500 * (16 / zoom);
-    var actividades = await getActivities();
+    var actividades = await null; //getActivities();
     var actividadesaux = <Actividad>[];
     for (var actividad in actividades) {
       // Comprobar si la actividad está dentro del radio
