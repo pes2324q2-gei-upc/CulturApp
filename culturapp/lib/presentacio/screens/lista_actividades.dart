@@ -165,13 +165,27 @@ class _ListaActividadesState extends State<ListaActividades> {
                                         Row(
                                           children: [
                                             const Icon(Icons.calendar_month_sharp),
-                                            Text("  Inicio: ${DateFormat('yyyy-MM-dd').format(DateTime.parse(_actividades[index].dataInici))}")
+                                            Text("  Inicio: ${() {
+                                                try {
+                                                  return DateFormat('yyyy-MM-dd').format(DateTime.parse(_actividades[index].dataInici));
+                                                } catch (e) {
+                                                  return 'Unknown';
+                                                }
+                                              }()}"
+                                            )
                                           ],
                                         ),
                                         Row(
                                           children: [
                                             const Icon(Icons.calendar_month_sharp),
-                                            Text("  Fin: ${DateFormat('yyyy-MM-dd').format(DateTime.parse(_actividades[index].dataFi))}")
+                                            Text("  Fin: ${() {
+                                                try {
+                                                  return DateFormat('yyyy-MM-dd').format(DateTime.parse(_actividades[index].dataFi));
+                                                } catch (e) {
+                                                  return 'Unknown';
+                                                }
+                                              }()}"
+                                            )
                                           ],
                                         ),
                                         const Row(
