@@ -98,6 +98,7 @@ class _SearchMyActivitiesState extends State<SearchMyActivities> {
                   child: ListView.builder(
                       itemCount: display_list.length,
                       itemBuilder: (context, index) => ListTile(
+                            contentPadding: EdgeInsets.all(8.0),
                             title: Text(display_list[index].name,
                                 style: TextStyle(
                                   color: Colors.orange,
