@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:culturapp/data/database_service.dart';
 import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/presentacio/routes/routes.dart';
 import 'package:culturapp/presentacio/widgets/widgetsUtils/image_category.dart';
 import 'package:culturapp/presentacio/widgets/widgetsUtils/text_with_link.dart';
 import 'package:flutter/foundation.dart';
@@ -23,35 +25,40 @@ class _ListaActividadesState extends State<ListaActividades> {
   Future<void>? _fetchActivitiesFuture;
 
   Future<void> fetchActivities() async {
-    var url = Uri.parse("https://analisi.transparenciacatalunya.cat/resource/rhpv-yr4f.json");
-    var actividades = <Actividad>[];
-    
-    try {
-      var response = await http.get(url);
-      if (response.statusCode == 200) {
-        var actividadesJson = json.decode(response.body);
-        for (var actividadJson in actividadesJson) {
-          actividades.add(Actividad.fromJson(actividadJson));
-        }
-        setState(() {
-          _actividades = actividades;
-        });
-      } 
-      else {
-      throw Exception('Failed to load activities');
-      }
-    } 
-    catch (e) {
-      if (kDebugMode) {
-        print(e.toString());
-      }
-    }
-  }
+    var actividades = await getActivities();
+    setState(() {
+      _actividades = actividades;
+    });
+  } 
 
   @override
   void initState() {
     super.initState();
     _fetchActivitiesFuture = fetchActivities();
+  }
+  
+  void _onTabChange(int index) {
+    // Aquí puedes realizar acciones específicas según el índice seleccionado
+    // Por ejemplo, mostrar un mensaje diferente para cada tab
+    switch (index) {
+      case 0:
+      Navigator.pop(context);
+      Navigator.pushNamed(context, Routes.map);
+        break;
+      case 1:
+        break;
+      case 2:
+        Navigator.pop(context);
+
+        break;
+      case 3:
+        Navigator.pop(context);
+
+        break;
+
+      default:
+        break;
+    }
   }
 
   @override
@@ -80,6 +87,9 @@ class _ListaActividadesState extends State<ListaActividades> {
           GButton(text: "Chats", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.chat),
           GButton(text: "Perfil", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.person),
         ],
+        onTabChange: (index) {
+          _onTabChange(index);
+        },
       ),
     ),
       body: FutureBuilder<void>(
