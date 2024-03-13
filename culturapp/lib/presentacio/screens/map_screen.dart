@@ -1,12 +1,11 @@
-import 'dart:convert';
 import 'dart:math' as math;
+
 import 'package:culturapp/data/database_service.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacion.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 class MapPage extends StatefulWidget {
@@ -70,8 +69,8 @@ class _MapPageState extends State<MapPage> {
 
   // Obtener actividades del JSON para mostrarlas por pantalla
   Future<List<Actividad>> fetchActivities(LatLng center, double zoom) async {
-    double radius = 500 * (16 / zoom);
-    var actividades = null; //await getActivities();
+    double radius = 1500 * (16 / zoom);
+    var actividades = await getActivities();
     var actividadesaux = <Actividad>[];
     for (var actividad in actividades) {
       // Comprobar si la actividad está dentro del radio
@@ -368,9 +367,9 @@ class _MapPageState extends State<MapPage> {
 
   // En funcion de la categoria atribuye un marcador
   BitmapDescriptor _getMarkerIcon(String categoria) {
-    for (int i = 0; i < 3; ++i) {
+    /*for (int i = 0; i < 3; ++i) {
       if (categoria == categoriasFavoritas[i]) categoria = 'recom';
-    }
+    }*/
     switch (categoria) {
       case 'carnavals':
         return iconoCarnaval;
@@ -512,6 +511,8 @@ class _MapPageState extends State<MapPage> {
         fetchActivities(position.target, zoom).then((value) {
           setState(() {
             _actividades = value;
+
+            print(_actividades);
           });
         });
       });
