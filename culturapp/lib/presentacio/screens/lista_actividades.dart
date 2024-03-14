@@ -1,9 +1,14 @@
-import 'package:culturapp/domain/models/actividad.dart';
+import 'dart:convert';
 import 'package:culturapp/data/database_service.dart';
+import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/routes/routes.dart';
 import 'package:culturapp/presentacio/widgets/widgetsUtils/image_category.dart';
+import 'package:culturapp/presentacio/widgets/widgetsUtils/text_with_link.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class ListaActividades extends StatefulWidget {
   const ListaActividades({super.key});
@@ -107,67 +112,144 @@ class _ListaActividadesState extends State<ListaActividades> {
             return ListView.builder(
               itemBuilder: (context, index) {
                 return Container(
-                    padding: const EdgeInsets.all(8.0), // Adjust as needed
-                    child: Card(
-                      color: Colors.white,
-                      child: Padding(
+                  padding: const EdgeInsets.all(8.0), // Adjust as needed
+                  child: Card(
+                    color: Colors.white,
+                    child: Padding(
                         padding: const EdgeInsets.only(
-                            top: 32.0, bottom: 32.0, right: 16.0, left: 16.0),
+                            top: 16.0, bottom: 32.0, right: 16.0, left: 16.0),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              children: [
-                                Expanded(
+                          children: [
+                            Row(children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 20),
                                   child: Text(
-                                    _actividades[index].name ?? "No name",
+                                    _actividades[index].name,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
-                                        fontSize: 22,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.orange),
                                   ),
                                 ),
-                                Container(
-                                  padding: const EdgeInsets.only(left: 5),
-                                  height: 30,
-                                  child: ImageCategory(
-                                      categoria:
-                                          "${_actividades[index].categoria}"),
+                              )
+                            ]),
+                            Row(
+                              children: [
+                                //Padding(padding: EdgeInsets.only(top: 20)),
+                                //Image
+                                Expanded(
+                                  flex: 2,
+                                  child: Column(children: [
+                                    SizedBox(
+                                        //width: 100, // Take all available width
+                                        //height: double.infinity, // Take all available height
+                                        child: Image.network(
+                                      _actividades[index].imageUrl,
+                                      fit: BoxFit.cover,
+                                    ))
+                                  ]),
                                 ),
+                                //Title, category, location, dateIni and dateFi
+                                //Regal, link to buy
+                                Expanded(
+                                  flex: 3,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 8),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          crossAxisAlignment: CrossAxisAlignment
+                                              .start, // Add this line
+                                          children: [
+                                            const Icon(
+                                                Icons.share_location_rounded),
+                                            Expanded(
+                                              child: Text(
+                                                "  ${_actividades[index].ubicacio}",
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            const Icon(
+                                                Icons.calendar_month_sharp),
+                                            Text("  Inicio: ${() {
+                                              try {
+                                                return DateFormat('yyyy-MM-dd')
+                                                    .format(DateTime.parse(
+                                                        _actividades[index]
+                                                            .dataInici));
+                                              } catch (e) {
+                                                return 'Unknown';
+                                              }
+                                            }()}")
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            const Icon(
+                                                Icons.calendar_month_sharp),
+                                            Text("  Fin: ${() {
+                                              try {
+                                                return DateFormat('yyyy-MM-dd')
+                                                    .format(DateTime.parse(
+                                                        _actividades[index]
+                                                            .dataFi));
+                                              } catch (e) {
+                                                return 'Unknown';
+                                              }
+                                            }()}")
+                                          ],
+                                        ),
+                                        const Row(
+                                          children: [
+                                            Icon(Icons.card_giftcard),
+                                            Text('  -')
+                                            //Text(_actividades[index].regal ?? '-')
+                                          ],
+                                        ),
+                                        const Row(
+                                          children: [
+                                            Icon(Icons.attach_money_rounded),
+                                            //TextWithLink(text: "  Compra aqui", url: _actividades[index].urlEntrades),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                    flex: 1,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Container(
+                                          padding:
+                                              const EdgeInsets.only(left: 5),
+                                          width: 50,
+                                          child: ImageCategory(
+                                              categoria: _actividades[index]
+                                                  .categoria),
+                                        ),
+                                      ],
+                                    ))
                               ],
                             ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Row(
-                                children: [
-                                  Card(
-                                      color: Colors.green.shade300,
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            "  ${_actividades[index].comarca}  ",
-                                            style: const TextStyle(
-                                                color: Colors.white),
-                                          ),
-                                        ],
-                                      )),
-                                ],
-                              ),
-                            ),
-                            Image.network("${_actividades[index].imageUrl}"),
-                            Container(
-                                alignment: Alignment.centerRight,
-                                padding: const EdgeInsets.only(top: 10),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    // Add your left button logic here
-                                  },
-                                  child: const Text("More"),
-                                ))
                           ],
-                        ),
-                      ),
-                    ));
+                        )),
+                  ),
+                );
               },
               itemCount: _actividades.length,
             );
