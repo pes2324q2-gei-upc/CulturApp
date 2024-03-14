@@ -19,8 +19,19 @@ class ControladorDomini {
 
   }
 
+  Future<List<Actividad>> getUserActivities(String userID) async {
+    final respuesta = await http.get(
+      Uri.parse('http://10.0.2.2:8080/read/activities/user/$userID'),
+    );
+
+    if (respuesta.statusCode == 200) {
+      return _convert_json_to_list(respuesta);
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
+
   List<Actividad> _convert_json_to_list(response){
-    
     List<Actividad> actividades = <Actividad>[];
       var actividadesJson = json.decode(response.body);
       for (var actividadJson in actividadesJson) {

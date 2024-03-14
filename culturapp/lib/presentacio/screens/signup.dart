@@ -5,7 +5,6 @@ import "package:flutter/widgets.dart";
 import "package:hive/hive.dart";
 import "package:sign_in_button/sign_in_button.dart";
 import 'package:culturapp/presentacio/screens/logout.dart';
-import 'package:culturapp/presentacio/routes/routes.dart';
 
 class Signup extends StatelessWidget {
 

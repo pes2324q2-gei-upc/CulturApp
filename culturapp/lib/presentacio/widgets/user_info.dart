@@ -1,4 +1,3 @@
-import 'package:culturapp/presentacio/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 class UserInfoWidget extends StatefulWidget {
