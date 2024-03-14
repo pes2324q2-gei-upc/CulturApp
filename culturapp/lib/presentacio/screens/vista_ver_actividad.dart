@@ -1,3 +1,4 @@
+import 'package:culturapp/presentacio/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -242,21 +243,25 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     }
   }
 
+  //aqui deveria ir el foro
+
   void _onTabChange(int index) {
-    /*switch (index) {
+    switch (index) {
       case 0:
-        break;
+        Navigator.pushNamed(context, '/');
+      break;
       case 1:
-        break;
+        Navigator.pushNamed(context, Routes.misActividades);
+      break;
       case 2:
         
-        break;
+      break;
       case 3:
-
-        break;
+        Navigator.pushNamed(context, Routes.perfil);
+      break;
       default:
         break;
-    }*/
+    }
   }
   
   Widget _barraNavegacion() {

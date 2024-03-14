@@ -5,20 +5,26 @@ import "package:flutter/widgets.dart";
 import "package:hive/hive.dart";
 import "package:sign_in_button/sign_in_button.dart";
 import 'package:culturapp/presentacio/screens/logout.dart';
+import 'package:culturapp/presentacio/routes/routes.dart';
 
 class Signup extends StatelessWidget {
 
+  //Usuari de Firebase
   User? _user;
 
+  //Instancia de autentificacio de Firebase
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  //Constructora
   Signup(this._user);
 
+  //Camps del formulari
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController atribut1Controller = TextEditingController();
   final TextEditingController atribut2Controller = TextEditingController();
   final TextEditingController atribut3Controller = TextEditingController();
 
+  //Construir pantalla
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,6 +32,7 @@ class Signup extends StatelessWidget {
       );
   }
 
+  //Pantalla de signup
   @override
   Widget _signupScreen(BuildContext context) {
     return MaterialApp(
@@ -131,10 +138,7 @@ class Signup extends StatelessWidget {
                         String atribut2 = atribut2Controller.text;
                         String atribut3 = atribut3Controller.text;
                         createUser(username, atribut1, atribut2, atribut3);
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => Logout(_user))
-                          );
+                        Navigator.pushNamed(context, Routes.perfil);
                       },
                       child: const Text(
                         "Crear compte",
@@ -155,6 +159,7 @@ class Signup extends StatelessWidget {
     );
   }
 
+  //Crear usuari a partir de les dades introduides i el compte de google
   void createUser(String username, String atribut1, String atribut2, String atribut3) {
   CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
   usersCollection.doc(_user?.uid).set({

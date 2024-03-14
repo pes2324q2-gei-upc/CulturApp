@@ -1,8 +1,11 @@
+import 'package:culturapp/presentacio/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 class UserInfoWidget extends StatefulWidget {
-  
+  const UserInfoWidget({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _UserInfoWidgetState createState() => _UserInfoWidgetState();
 }
 
@@ -38,7 +41,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 16, top: 55, bottom:20),
+          padding: const EdgeInsets.only(left: 16, top: 10, bottom:20),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             //imagen
@@ -68,13 +71,19 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                   ],
                 ),
               ),
-              //boton de settings
-              const Spacer(), 
-              IconButton(
-                onPressed: () {
-                  //hacer que me lleve a una nueva pestaña con las opciones de configuración
-                },
-                icon: const Icon(Icons.settings),
+              //edit username
+              Transform.translate(
+                offset: const Offset(0, 5),
+                child: Transform.scale(
+                  scale: 0.9, 
+                  child: IconButton(
+                    onPressed: () {
+                      //hacer que no se vea si estas viendo el perfil de otro user
+                      Navigator.pushNamed(context, Routes.updatePerfil);
+                    },
+                    icon: const Icon(Icons.edit, color: Colors.orange),
+                  ),
+                ),
               ),
             ],
           ),
@@ -119,7 +128,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
         child: Row(
           children: [
             Icon(icon, color: isSelected ? Colors.orange : Colors.white),
-            const SizedBox(width: 8),
+            const SizedBox(width: 6),
             Text(
               label,
               style: TextStyle(
