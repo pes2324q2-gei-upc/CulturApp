@@ -13,6 +13,8 @@ class PerfilPage extends StatefulWidget {
 
 class _PerfilPageState extends State<PerfilPage> {
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   //no se que es esta funcuion
   @override
   void initState() {
@@ -92,4 +94,3 @@ class _PerfilPageState extends State<PerfilPage> {
     ),
     );
   }
-}

@@ -24,4 +24,3 @@ Map<String, Widget Function(BuildContext)> appRoutes = {
   Routes.searchMisActividades: (_) => const SearchMyActivities(),
   Routes.login: (_) => const Login(),
 };
-
