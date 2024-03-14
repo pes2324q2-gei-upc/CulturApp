@@ -1,31 +1,29 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:culturapp/presentacio/routes/app_routes.dart';
-import 'package:culturapp/presentacio/routes/routes.dart';
+import 'package:culturapp/data/firebase_options.dart';
+import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:culturapp/presentacio/screens/map_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:culturapp/data/database_service.dart';
 
-import 'data/firebase_options.dart';
-
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
   options: DefaultFirebaseOptions.currentPlatform,
   );
-  await insertActivities();
-  runApp(const MainApp());
+  runApp(MyApp());
 }
 
+class MyApp extends StatelessWidget {
+  final ControladorPresentacion controladorPresentacion = ControladorPresentacion();
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      initialRoute: Routes.map, //Esta puesto el mapa como pagina principal por defecto, esto se puede cambiar
-      routes: appRoutes,
+      theme: ThemeData(
+        primarySwatch: Colors.orange,
+      ),
+      home: MapPage(controladorPresentacion: controladorPresentacion),
     );
   }
 }

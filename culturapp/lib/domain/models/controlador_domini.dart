@@ -28,6 +28,7 @@ class ControladorDomini {
         actividades.add(actividad);
       }
     return actividades;
-    }
+    
+  }
 
 }
