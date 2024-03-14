@@ -18,6 +18,14 @@ class _ListaActividadesState extends State<ListaActividades> {
   void initState() {
     super.initState();
   }
+
+  String getCategoria(Actividad actividad) {
+  try {
+    return actividad.categoria.toString();
+  } catch (error) {
+    return "default";
+  }
+}
   
   void _onTabChange(int index) {
     // Aquí puedes realizar acciones específicas según el índice seleccionado
@@ -196,7 +204,7 @@ class _ListaActividadesState extends State<ListaActividades> {
                               Container(
                                 padding: const EdgeInsets.only(left: 5),
                                 width: 50,
-                                child: ImageCategory(categoria: widget.actividades[index].categoria),
+                                child: ImageCategory(categoria: getCategoria(widget.actividades[index]))
                               ),
                             ],
                           )

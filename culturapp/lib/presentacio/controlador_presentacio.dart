@@ -19,28 +19,28 @@ class ControladorPresentacion {
     );
   }
 
-  Future<void> mostrarMisActividades(BuildContext context, String userID) async {
-    List<Actividad> misActividades = await controladorPersistencia.getUserActivities(userID);
-    if (Navigator.canPop(context)) {
+  Future<void> mostrarMisActividades(BuildContext context, String userID) async { 
+    controladorDomini.getUserActivities(userID).then((actividades) => {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ListaActividades(actividades: misActividades,),
+          builder: (context) => ListaActividades(actividades: actividades,),
         ),
-      );
+      )
     }
+    );
   }
 
-  Future<void> mostrarActividades(BuildContext context, String userID) async {
-    List<Actividad> misActividades = await controladorPersistencia.getActivities();
-    if (Navigator.canPop(context)) {
+  Future<void> mostrarActividades(BuildContext context, String userID) async { 
+    controladorDomini.getActivities().then((actividades) => {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ListaActividades(actividades: misActividades,),
+          builder: (context) => ListaActividades(actividades: actividades,),
         ),
-      );
+      )
     }
+    );
   }
 
   Future <List<Actividad>> getActivities() async {
