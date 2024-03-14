@@ -41,6 +41,21 @@ class _SearchMyActivitiesState extends State<SearchMyActivities> {
         preu: "preu",
         comarca: "comarca",
         horari: "horari"),
+    Actividad(
+        name: "ConcertTaylor",
+        code: "AACC",
+        categoria: "concert",
+        latitud: 2.0,
+        longitud: 3.0,
+        imageUrl: "imatge url",
+        descripcio: "descripcio",
+        dataInici: "dataInici",
+        dataFi: "dataFi",
+        ubicacio: "ubicacio",
+        urlEntrades: Uri(),
+        preu: "preu",
+        comarca: "comarca",
+        horari: "horari"),
   ];
 
   //creant la llista que farem display i aplicarem els seus filtres:
@@ -48,46 +63,58 @@ class _SearchMyActivitiesState extends State<SearchMyActivities> {
 
   void updateList(String value) {
     //funcio on es filtrarà la nostra llista
+    setState(
+      () {
+        display_list = my_activities_list
+            .where((element) =>
+                element.name!.toLowerCase().contains(value.toLowerCase()))
+            .toList();
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          iconTheme: const IconThemeData(
+            color: Colors.white,
+          ),
           backgroundColor: Colors.orange,
         ),
         body: Padding(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Search for an event",
+                const Text("Search for an event",
                     style: TextStyle(
                       color: Colors.orange,
                       fontSize: 22.0,
                       fontWeight: FontWeight.bold,
                     )),
-                SizedBox(
+                const SizedBox(
                   height: 20.0,
                 ),
                 TextField(
+                  onChanged: (value) => updateList(value),
                   cursorColor: Colors.white,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                   ),
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Color.fromRGBO(240, 186, 132, 1),
+                    fillColor: const Color.fromRGBO(240, 186, 132, 1),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide.none,
                     ),
                     hintText: "Search...",
-                    hintStyle: TextStyle(
+                    hintStyle: const TextStyle(
                       color: Colors.white,
                     ),
-                    suffixIcon: Icon(Icons.search),
+                    suffixIcon: const Icon(Icons.search),
                     suffixIconColor: Colors.white,
                   ),
                 ),
@@ -98,14 +125,14 @@ class _SearchMyActivitiesState extends State<SearchMyActivities> {
                   child: ListView.builder(
                       itemCount: display_list.length,
                       itemBuilder: (context, index) => ListTile(
-                            contentPadding: EdgeInsets.all(8.0),
+                            contentPadding: const EdgeInsets.all(8.0),
                             title: Text(display_list[index].name,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.orange,
                                   fontWeight: FontWeight.bold,
                                 )),
                             subtitle: Text(display_list[index].descripcio,
-                                style: TextStyle(color: Colors.orange)),
+                                style: const TextStyle(color: Colors.orange)),
                           )),
                 )
               ]),
