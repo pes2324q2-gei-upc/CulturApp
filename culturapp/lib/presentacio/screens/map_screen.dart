@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 
-import 'package:culturapp/data/database_service.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:flutter/material.dart';
@@ -8,10 +7,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class MapPage extends StatefulWidget {
 
+class MapPage extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
-  
+
   const MapPage({Key? key, required this.controladorPresentacion});
 
   @override
@@ -19,13 +18,12 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-
   late ControladorPresentacion _controladorPresentacion;
 
   _MapPageState(ControladorPresentacion controladorPresentacion){
     _controladorPresentacion = controladorPresentacion;
   }
-
+  bool fetchComplete = false;
   BitmapDescriptor iconoArte = BitmapDescriptor.defaultMarker;
   BitmapDescriptor iconoCarnaval = BitmapDescriptor.defaultMarker;
   BitmapDescriptor iconoCirco = BitmapDescriptor.defaultMarker;
@@ -47,11 +45,17 @@ class _MapPageState extends State<MapPage> {
   GoogleMapController? _mapController;
   List<String> categoriasFavoritas = ['circ', 'festes', 'activitats-virtuals'];
 
-double radians(double degrees) {
-  return degrees * (math.pi / 180.0);
-}
-// Formula de Haversine para calcular que actividades entran en el radio del zoom de la pantalla
-double calculateDistance(LatLng from, LatLng to) {
+  double radians(double degrees) {
+    return degrees * (math.pi / 180.0);
+  }
+
+  @override
+  void initState() {
+    getIcons();
+    super.initState();
+  }
+
+  double calculateDistance(LatLng from, LatLng to) {
     const int earthRadius = 6371000;
     double lat1 = radians(from.latitude);
     double lon1 = radians(from.longitude);
@@ -67,30 +71,42 @@ double calculateDistance(LatLng from, LatLng to) {
 
     return earthRadius * c;
   }
-  
-  // Obtener actividades del JSON para mostrarlas por pantalla
-  Future<List<Actividad>> fetchActivities(LatLng center, double zoom) async {
-    double radius = 1500 * (16 / zoom);
-    var actividades = await getActivities();
-    var actividadesaux = <Actividad> [];
-    for (var actividad in actividades) {
-      // Comprobar si la actividad está dentro del radio
-      if (calculateDistance(
-              center, LatLng(actividad.latitud ?? 0.0, actividad.longitud ?? 0.0)) <=
-          radius) {
-        actividadesaux.add(actividad);
+
+  Future<void> fetchActivitiesIfNeeded(LatLng center, double zoom) async {
+    if (!fetchComplete) {
+      double radius = 1500 * (16 / zoom);
+      var actividades = await _controladorPresentacion.getActivities();
+      _actividades = actividades;
+      var actividadesaux = <Actividad>[];
+      for (var actividad in actividades) {
+        if (calculateDistance(
+                center,
+                LatLng(actividad.latitud ?? 0.0, actividad.longitud ?? 0.0)) <=
+            radius) {
+          actividadesaux.add(actividad);
+        }
+      }
+      setState(() {
+        fetchComplete = true;
+      });
+    }
+
+    else {
+      double radius = 1500 * (16 / zoom);
+      var actividades = _actividades;
+      var actividadesaux = <Actividad>[];
+      for (var actividad in actividades) {
+        if (calculateDistance(
+                center,
+                LatLng(actividad.latitud ?? 0.0, actividad.longitud ?? 0.0)) <=
+            radius) {
+          actividadesaux.add(actividad);
+        }
       }
     }
-    return actividades;
   }
 
-  @override
-  void initState() {
-    getIcons();
-    super.initState();
-  }
-
-  Image _retornaIcon (String categoria){
+  Image _retornaIcon(String categoria) {
       switch (categoria) {
       case 'carnavals':
         return Image.asset('assets/categoriacarnaval.png', width: 45.0,);
@@ -149,12 +165,22 @@ double calculateDistance(LatLng from, LatLng to) {
                       //Imagen
                       ClipRRect(
                         borderRadius: BorderRadius.circular(20),
-                        child: SizedBox( // se mete aqui la imagen para poder modificar su tamaño
+                        child: SizedBox(
                           height: 150.0,
                           width: 150.0,
                           child: Image.network(
                             actividad.imageUrl,
-                            fit: BoxFit.cover, // Para que ocupe lo mismo que nombre + atributos
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              // Widget de error que se mostrará si la imagen no se carga correctamente
+                              return const Center(
+                                child: Icon(
+                                  Icons.error_outline,
+                                  color: Colors.red,
+                                  size: 48,
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ),
@@ -176,7 +202,7 @@ double calculateDistance(LatLng from, LatLng to) {
                                   ),
                                 ),
                                 const Padding(padding: EdgeInsets.only(right: 5.0)),
-                                _retornaIcon(actividad.categoria), //Obtener el icono de la categoria
+                                _retornaIcon(actividad.categoria[0]), //Obtener el icono de la categoria
                               ],
                             ),
                             const Padding(padding: EdgeInsets.only(top: 7.5)),
@@ -248,7 +274,7 @@ double calculateDistance(LatLng from, LatLng to) {
                           onPressed: () {
                             List<String> act = [actividad.name,
                                                 actividad.code,
-                                                actividad.categoria,
+                                                actividad.categoria[0],
                                                 actividad.imageUrl,
                                                 actividad.descripcio,
                                                 actividad.dataInici,
@@ -278,20 +304,19 @@ double calculateDistance(LatLng from, LatLng to) {
       },
     );
   }
-  // Crea y ubica los marcadores
+
   Set<Marker> _createMarkers() {
     return _actividades.map((actividad) {
       return Marker(
         markerId: MarkerId(actividad.code),
         position: LatLng(actividad.latitud, actividad.longitud),
         infoWindow: InfoWindow(title: actividad.name),
-        icon: _getMarkerIcon(actividad.categoria), // Llama a la función para obtener el icono
+        icon: _getMarkerIcon(actividad.categoria[0]), // Llama a la función para obtener el icono
         onTap: () => showActividadDetails(actividad),
       );
     }).toSet();
   }
 
-  // En funcion de la categoria atribuye un marcador
   BitmapDescriptor _getMarkerIcon(String categoria) {
     /*for (int i = 0; i < 3; ++i) {
       if (categoria == categoriasFavoritas[i]) categoria = 'recom';
@@ -337,8 +362,8 @@ double calculateDistance(LatLng from, LatLng to) {
           return iconoRecom;
       }
   }
-  //Carga los marcadores de los PNGs
-  getIcons() async {
+
+  Future<void> getIcons() async {
     var icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinarte.png');
     setState(() {
       iconoArte = icon;
@@ -408,83 +433,90 @@ double calculateDistance(LatLng from, LatLng to) {
     });
   }
 
-  //Cuando la pantalla se mueve se recalcula la posicon y el zoom para volver a calcular las actividades que tocan
   void _onCameraMove(CameraPosition position) {
-    if (_mapController != null) {
+    if (_mapController != null && fetchComplete) {
       _mapController!.getZoomLevel().then((zoom) {
-        fetchActivities(position.target, zoom).then((value) {
-          setState(() {
-            _actividades = value;
-
-            print(_actividades);
-
-          });
+        setState(() {
+          _actividades = _actividades.where((actividad) {
+            double distance = calculateDistance(
+              position.target,
+              LatLng(actividad.latitud ?? 0.0, actividad.longitud ?? 0.0),
+            );
+            return distance <= 1500 * (16 / zoom);
+          }).toList();
         });
       });
     }
   }
 
-  //Se crea el mapa y atribuye a la variable mapa
   void _onMapCreated(GoogleMapController controller) {
     _mapController = controller;
   }
 
-
   void _onTabChange(int index) {
-    switch (index) {
+    /*switch (index) {
       case 0:
         break;
       case 1:
-        //Navigator.pushNamed(context, Routes.misActividades);
-      break;
+        break;
       case 2:
         
         break;
       case 3:
-        //Navigator.pushNamed(context, Routes.perfil);
-      break;
+
+        break;
       default:
         break;
-    }
+    }*/
   }
 
-
-  //Se crea la ''pantalla'' para el mapa - falta añadir dock inferior y barra de busqueda
   @override
   Widget build(BuildContext context) {
-  return Scaffold(
-    bottomNavigationBar: Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(50.0)),
-      ),
-      child: GNav(
-        backgroundColor: Colors.white,
-        color: Colors.orange,
-        activeColor: Colors.orange,
-        tabBackgroundColor: Colors.grey.shade100,
-        gap: 6,
-        onTabChange: (index) {
-          _onTabChange(index);
-        },
-        selectedIndex: 0,
-        tabs: const [
-          GButton(text: "Mapa", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.map),
-          GButton(text: "Mis Actividades", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.event),
-          GButton(text: "Chats", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.chat),
-          GButton(text: "Perfil", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.person),
-        ],
-      ),
-    ),
-    body: Stack(
-      fit: StackFit.expand, // Ajusta esta línea
-      children: [
-        GoogleMap(
-          initialCameraPosition: CameraPosition(target: myLatLng, zoom: 16),
-          markers: _createMarkers(),
-          onCameraMove: _onCameraMove,
-          onMapCreated: _onMapCreated,
+    return Scaffold(
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(50.0)),
         ),
+        child: GNav(
+          backgroundColor: Colors.white,
+          color: Colors.orange,
+          activeColor: Colors.orange,
+          tabBackgroundColor: Colors.grey.shade100,
+          gap: 6,
+          onTabChange: (index) {
+            _onTabChange(index);
+          },
+          selectedIndex: 0,
+          tabs: const [
+            GButton(
+                text: "Mapa",
+                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+                icon: Icons.map),
+            GButton(
+                text: "Mis Actividades",
+                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+                icon: Icons.event),
+            GButton(
+                text: "Chats",
+                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+                icon: Icons.chat),
+            GButton(
+                text: "Perfil",
+                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+                icon: Icons.person),
+          ],
+        ),
+      ),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          GoogleMap(
+            initialCameraPosition: CameraPosition(target: myLatLng, zoom: 16),
+            markers: _createMarkers(),
+            onCameraMove: _onCameraMove,
+            onMapCreated: _onMapCreated,
+          ),
           Positioned(
             top: 50.0,
             left: 25.0,
@@ -496,7 +528,7 @@ double calculateDistance(LatLng from, LatLng to) {
                 borderRadius: BorderRadius.circular(25.0),
               ),
               child: const Padding(
-                padding:  EdgeInsets.symmetric(horizontal: 25.0),
+                padding: EdgeInsets.symmetric(horizontal: 25.0),
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: 'Buscar...',

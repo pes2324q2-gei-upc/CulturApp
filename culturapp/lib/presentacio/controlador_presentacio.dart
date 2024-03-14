@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 class ControladorPresentacion {
 
-  final controladorPersistencia = ControladorDomini();
+  final controladorDomini = ControladorDomini();
 
   void mostrarVerActividad(BuildContext context, List<String> info_act, Uri uri_act) {
     Navigator.push(
@@ -45,7 +45,7 @@ class ControladorPresentacion {
 
   Future <List<Actividad>> getActivities() async {
 
-    return await controladorPersistencia.getActivities();
+    return await controladorDomini.getActivities();
 
   }
 }
