@@ -9,6 +9,8 @@ class ControladorPresentacion {
 
   final controladorDomini = ControladorDomini();
 
+  late final List<Actividad> activitats;
+
   void mostrarVerActividad(BuildContext context, List<String> info_act, Uri uri_act) {
     Navigator.push(
       context,
@@ -18,9 +20,7 @@ class ControladorPresentacion {
     );
   }
 
-  Future <List<Actividad>> getActivities() async {
+  List<Actividad> getActivitats() {return activitats;}
 
-    return await controladorDomini.getActivities();
-
-  }
+  Future <void> initialice() async { activitats = await controladorDomini.getActivitiesAgenda(); }
 }

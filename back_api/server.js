@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const axios = require('axios');
 
 const admin = require("firebase-admin");
 const credentials = require("./key.json");
@@ -54,6 +55,27 @@ app.get('/read/:id', async (req, res) => {
         res.send(response.data());
     } catch (error){
         res.send(error);
+    }
+});
+
+app.get('/activitats/agenda/json', async (req, res) => {
+    try {
+        // Realizar la solicitud GET a la API utilizando axios
+        const response = await axios.get('https://analisi.transparenciacatalunya.cat/resource/rhpv-yr4f.json');
+
+        // Verificar si la respuesta fue exitosa (código de respuesta 200)
+        if (response.status === 200) {
+            // Obtener los datos JSON de la respuesta/read/all
+            res.send(response.data);
+        } else {
+            // Si la solicitud no fue exitosa, mostrar mensaje de error
+            console.error(`Error al obtener datos desde la API. Código de respuesta: ${response.status}`);
+            return null;
+        }
+    } catch (error) {
+        // Manejar cualquier error que ocurra durante la solicitud
+        console.error('Error al obtener datos desde la API:', error.message);
+        return null;
     }
 });
 

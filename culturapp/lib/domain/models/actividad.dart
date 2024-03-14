@@ -1,7 +1,7 @@
 class Actividad {
   late String name;
   late String code;
-  late List<dynamic> categoria;
+  late List<dynamic> categoria = [];
   late double latitud;
   late double longitud;
   late String imageUrl;
@@ -23,6 +23,19 @@ class Actividad {
     longitud = json['longitud'] != null ? double.parse(json['longitud']) : 1.0;
     descripcio = json['descripcio'] ?? 'No hi ha cap descripció per aquesta activitat.';
     ubicacio = json['adre_a'] ?? 'No disponible';
+    String tagsCategorias = json['tags_categor_es'] ?? '';
+
+    if (tagsCategorias.contains('agenda:categories/')) {
+      List<String> categoriaJSON = tagsCategorias.split(',');
+
+      for (var cat in categoriaJSON){
+        int startIndex = cat.indexOf('agenda:categories/') + 'agenda:categories/'.length;        
+        categoria.add(cat.substring(startIndex));
+      }   
+
+    } else {
+      categoria = [''];
+    }
     
 
     String imagenes = json['imatges'] ?? '';
