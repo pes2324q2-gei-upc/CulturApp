@@ -560,15 +560,19 @@ class _MapPageState extends State<MapPage> {
             _onTabChange(index);
           },
           selectedIndex: 0,
-          tabs: const [
+          tabs: [
             GButton(
                 text: "Mapa",
                 textStyle: TextStyle(fontSize: 12, color: Colors.orange),
                 icon: Icons.map),
             GButton(
-                text: "Mis Actividades",
-                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
-                icon: Icons.event),
+              text: "Mis Actividades",
+              textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+              icon: Icons.event,
+              onPressed: () {
+                Navigator.pushNamed(context, '/myActivities');
+              },
+            ),
             GButton(
                 text: "Chats",
                 textStyle: TextStyle(fontSize: 12, color: Colors.orange),
