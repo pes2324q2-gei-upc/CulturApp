@@ -47,16 +47,6 @@ class _PerfilPageState extends State<PerfilPage> {
   @override
   Widget build(BuildContext context) {
   return Scaffold(
-    body: Stack(
-        children: [
-          UserInfoWidget(), 
-          MaterialButton(
-          color: Colors.red,
-          child: const Text("Sign out"),
-          onPressed: () => signout(context))// Calling the UserInfoWidget
-        ],
-      ),
-    //container amb les diferents pantalles
     bottomNavigationBar: Container(
       decoration: const BoxDecoration(
         color: Colors.white,

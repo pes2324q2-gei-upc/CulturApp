@@ -10,15 +10,17 @@ import 'package:culturapp/presentacio/routes/routes.dart';
 import 'package:culturapp/presentacio/screens/lista_actividades.dart';
 import 'package:flutter/material.dart';
 import 'package:culturapp/presentacio/screens/perfil_screen.dart';
+import 'package:culturapp/presentacio/screens/settings_perfil.dart';
+import 'package:culturapp/presentacio/screens/update_perfil.dart';
 
 Map<String, Widget Function(BuildContext)> appRoutes = {
 
   //Routes.map: (_) => const MapPage(),
   Routes.listaActividades: (_) => const ListaActividades(),
   Routes.perfil: (_) => const PerfilPage(),
-
+  Routes.updatePerfil: (_) => const UpdatePerfil(),
+  Routes.settings: (_) => const SettingsPerfil(),
   Routes.misActividades: (_) => const MyActivities(),
   Routes.searchMisActividades: (_) => const SearchMyActivities(),
   Routes.login: (_) => const Login(),
 };
-
