@@ -45,6 +45,36 @@ app.get('/read/all', async (req, res) => {
 });
 
 
+app.get('/read/all', async (req, res) => {
+    try {
+        const activityRef = db.collection("actividades").limit(20);
+        const response = await activityRef.get();
+        let responseArr = [];
+        response.forEach(doc => {
+            responseArr.push(doc.data());
+        });
+        res.status(200).send(responseArr);
+    } catch (error){
+        res.send(error);
+    }
+});
+
+
+app.get('/read/activities/user/:id', async (req, res) => {
+    try {
+        const activityRef = db.collection("actividades").limit(20);
+        const response = await activityRef.get();
+        let responseArr = [];
+        response.forEach(doc => {
+            responseArr.push(doc.data());
+        });
+        res.status(200).send(responseArr);
+    } catch (error){
+        res.send(error);
+    }
+});
+
+
 
 //Obtener 1 documento
 app.get('/read/:id', async (req, res) => {
