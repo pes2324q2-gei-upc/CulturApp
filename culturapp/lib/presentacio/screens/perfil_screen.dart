@@ -23,7 +23,7 @@ class _PerfilPageState extends State<PerfilPage> {
   void _onTabChange(int index) {
     switch (index) {
       case 0:
-       Navigator.pushNamed(context, Routes.map);
+       Navigator.pushNamed(context, '/');
       break;
       case 1:
         Navigator.pushNamed(context, Routes.misActividades);
