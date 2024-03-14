@@ -1,4 +1,5 @@
 import "package:culturapp/domain/models/actividad.dart";
+import "package:culturapp/domain/models/filter.dart";
 import "package:flutter/material.dart";
 
 class SearchMyActivities extends StatefulWidget {
@@ -124,6 +125,10 @@ class _SearchMyActivitiesState extends State<SearchMyActivities> {
                 SizedBox(
                   height: 20.0,
                 ),
+                Filter(),
+                SizedBox(
+                  height: 20.0,
+                ),
                 Expanded(
                   child: ListView.builder(
                       itemCount: display_list.length,
@@ -141,7 +146,7 @@ class _SearchMyActivitiesState extends State<SearchMyActivities> {
                             leading:
                                 Image.network(display_list[index].imageUrl!),
                           )),
-                )
+                ),
               ]),
         ));
   }
