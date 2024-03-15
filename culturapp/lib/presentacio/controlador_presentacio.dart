@@ -5,16 +5,13 @@ import 'package:culturapp/presentacio/screens/vista_ver_actividad.dart';
 import 'package:flutter/material.dart';
 
 
-
 class ControladorPresentacion {
 
   final controladorDomini = ControladorDomini();
 
   late final List<Actividad> activitats;
 
-  List<Actividad> getActivitats() {return activitats;}
-
-  Future <void> initialice() async { activitats = await controladorDomini.getActivitiesAgenda(); }
+  Future <void> initialice() async => activitats = await controladorDomini.getActivitiesAgenda(); 
 
   void mostrarVerActividad(BuildContext context, List<String> info_act, Uri uri_act) {
     Navigator.push(
@@ -26,7 +23,7 @@ class ControladorPresentacion {
   }
 
   Future<void> mostrarMisActividades(BuildContext context, String userID) async { 
-      controladorDomini.getUserActivities(userID).then((actividades) => {
+      getUserActivities(userID).then((actividades) => {
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -46,7 +43,7 @@ class ControladorPresentacion {
       );
   }
 
-  
+  List<Actividad> getActivitats() => activitats;
 
-
+  Future<List<Actividad>> getUserActivities(String userID) => controladorDomini.getUserActivities(userID);
 }

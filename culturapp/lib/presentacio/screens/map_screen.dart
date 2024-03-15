@@ -8,9 +8,8 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MapPage extends StatefulWidget {
-
   final ControladorPresentacion controladorPresentacion;
-  
+
   const MapPage({Key? key, required this.controladorPresentacion});
 
   @override
@@ -18,7 +17,6 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-
   late ControladorPresentacion _controladorPresentacion;
 
   late List<Actividad> activitats;
@@ -49,11 +47,12 @@ class _MapPageState extends State<MapPage> {
   GoogleMapController? _mapController;
   List<String> categoriasFavoritas = ['circ', 'festes', 'activitats-virtuals'];
 
-double radians(double degrees) {
-  return degrees * (math.pi / 180.0);
-}
+  double radians(double degrees) {
+    return degrees * (math.pi / 180.0);
+  }
+
 // Formula de Haversine para calcular que actividades entran en el radio del zoom de la pantalla
-double calculateDistance(LatLng from, LatLng to) {
+  double calculateDistance(LatLng from, LatLng to) {
     const int earthRadius = 6371000;
     double lat1 = radians(from.latitude);
     double lon1 = radians(from.longitude);
@@ -69,15 +68,15 @@ double calculateDistance(LatLng from, LatLng to) {
 
     return earthRadius * c;
   }
-  
+
   // Obtener actividades del JSON para mostrarlas por pantalla
   Future<List<Actividad>> fetchActivities(LatLng center, double zoom) async {
     double radius = 1500 * (16 / zoom);
     var actividadesaux = <Actividad> [];
     for (var actividad in activitats) {
       // Comprobar si la actividad está dentro del radio
-      if (calculateDistance(
-              center, LatLng(actividad.latitud ?? 0.0, actividad.longitud ?? 0.0)) <=
+      if (calculateDistance(center,
+              LatLng(actividad.latitud ?? 0.0, actividad.longitud ?? 0.0)) <=
           radius) {
         actividadesaux.add(actividad);
       }
@@ -91,46 +90,103 @@ double calculateDistance(LatLng from, LatLng to) {
     super.initState();
   }
 
-  Image _retornaIcon (String categoria){
-      switch (categoria) {
+  Image _retornaIcon(String categoria) {
+    switch (categoria) {
       case 'carnavals':
-        return Image.asset('assets/categoriacarnaval.png', width: 45.0,);
+        return Image.asset(
+          'assets/categoriacarnaval.png',
+          width: 45.0,
+        );
       case 'teatre':
-        return Image.asset('assets/categoriateatre.png', width: 45.0,);
+        return Image.asset(
+          'assets/categoriateatre.png',
+          width: 45.0,
+        );
       case 'concerts':
-        return Image.asset('assets/categoriaconcert.png', width: 45.0,);
+        return Image.asset(
+          'assets/categoriaconcert.png',
+          width: 45.0,
+        );
       case 'circ':
-        return Image.asset('assets/categoriacirc.png', width: 45.0,);
+        return Image.asset(
+          'assets/categoriacirc.png',
+          width: 45.0,
+        );
       case 'exposicions':
-        return Image.asset('assets/categoriaarte.png', width: 45.0,);
+        return Image.asset(
+          'assets/categoriaarte.png',
+          width: 45.0,
+        );
       case 'conferencies':
-        return Image.asset('assets/categoriaconfe.png', width: 45.0,);
+        return Image.asset(
+          'assets/categoriaconfe.png',
+          width: 45.0,
+        );
       case 'commemoracions':
-        return Image.asset('assets/categoriacommemoracio.png', width: 45.0,);
+        return Image.asset(
+          'assets/categoriacommemoracio.png',
+          width: 45.0,
+        );
       case 'rutes-i-visites':
-        return Image.asset('assets/categoriaruta.png', width: 45.0,);
+        return Image.asset(
+          'assets/categoriaruta.png',
+          width: 45.0,
+        );
       case 'cursos':
-        return Image.asset('assets/categoriaexpo.png', width: 45.0,);
+        return Image.asset(
+          'assets/categoriaexpo.png',
+          width: 45.0,
+        );
       case 'activitats-virtuals':
-        return Image.asset('assets/categoriavirtual.png', width: 45.0,);
+        return Image.asset(
+          'assets/categoriavirtual.png',
+          width: 45.0,
+        );
       case 'infantil':
-        return Image.asset('assets/categoriainfantil.png', width: 45.0,);
+        return Image.asset(
+          'assets/categoriainfantil.png',
+          width: 45.0,
+        );
       case 'festes':
-        return Image.asset('assets/categoriafesta.png', width: 45.0,);
+        return Image.asset(
+          'assets/categoriafesta.png',
+          width: 45.0,
+        );
       case 'festivals-i-mostres':
-        return Image.asset('assets/categoriafesta.png', width: 45.0,);
+        return Image.asset(
+          'assets/categoriafesta.png',
+          width: 45.0,
+        );
       case 'dansa':
-        return Image.asset('assets/categoriafesta.png', width: 45.0,);
+        return Image.asset(
+          'assets/categoriafesta.png',
+          width: 45.0,
+        );
       case 'cicles':
-        return Image.asset('assets/categoriaexpo.png', width: 45.0,);
+        return Image.asset(
+          'assets/categoriaexpo.png',
+          width: 45.0,
+        );
       case 'cultura-digital':
-        return Image.asset('assets/categoriavirtual.png', width: 45.0,);
+        return Image.asset(
+          'assets/categoriavirtual.png',
+          width: 45.0,
+        );
       case 'fires-i-mercats':
-        return Image.asset('assets/categoriainfantil.png', width: 45.0,);
+        return Image.asset(
+          'assets/categoriainfantil.png',
+          width: 45.0,
+        );
       case 'gegants':
-        return Image.asset('assets/categoriafesta.png', width: 45.0,);
+        return Image.asset(
+          'assets/categoriafesta.png',
+          width: 45.0,
+        );
       default:
-        return Image.asset('assets/categoriarecom.png', width: 45.0,);
+        return Image.asset(
+          'assets/categoriarecom.png',
+          width: 45.0,
+        );
     }
   }
 
@@ -170,11 +226,13 @@ double calculateDistance(LatLng from, LatLng to) {
                         ),
                       ),
                       const SizedBox(width: 10.0),
-                      Flexible( // Para que los textos se ajusten bien
+                      Flexible(
+                        // Para que los textos se ajusten bien
                         child: Column(
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.start, // Que los textos empiezen en el ''inicio''
+                              mainAxisAlignment: MainAxisAlignment
+                                  .start, // Que los textos empiezen en el ''inicio''
                               children: [
                                 Flexible(
                                   child: Text(
@@ -195,11 +253,13 @@ double calculateDistance(LatLng from, LatLng to) {
                               // Atributos - icono + info
                               children: [
                                 const Icon(Icons.location_on),
-                                const Padding(padding: EdgeInsets.only(right: 7.5)),
+                                const Padding(
+                                    padding: EdgeInsets.only(right: 7.5)),
                                 Expanded(
                                   child: Text(
                                     actividad.ubicacio,
-                                    overflow: TextOverflow.ellipsis, //Poner puntos suspensivos para evitar pixel overflow
+                                    overflow: TextOverflow
+                                        .ellipsis, //Poner puntos suspensivos para evitar pixel overflow
                                   ),
                                 ),
                               ],
@@ -207,30 +267,35 @@ double calculateDistance(LatLng from, LatLng to) {
                             Row(
                               children: [
                                 const Icon(Icons.calendar_month),
-                                const Padding(padding: EdgeInsets.only(right: 7.5)),
+                                const Padding(
+                                    padding: EdgeInsets.only(right: 7.5)),
                                 Text(actividad.dataInici),
                               ],
                             ),
                             Row(
                               children: [
                                 const Icon(Icons.calendar_month),
-                                const Padding(padding: EdgeInsets.only(right: 7.5)),
+                                const Padding(
+                                    padding: EdgeInsets.only(right: 7.5)),
                                 Text(actividad.dataFi),
                               ],
                             ),
                             Row(
                               children: [
                                 const Icon(Icons.local_atm),
-                                const Padding(padding: EdgeInsets.only(right: 7.5)),
+                                const Padding(
+                                    padding: EdgeInsets.only(right: 7.5)),
                                 Expanded(
                                   child: GestureDetector(
                                     onTap: () {
-                                      launchUrl(actividad.urlEntrades); // abrir la url de la actividad para ir a su pagina
+                                      launchUrl(actividad
+                                          .urlEntrades); // abrir la url de la actividad para ir a su pagina
                                     },
                                     child: const Text(
                                       'Informació Entrades',
                                       style: TextStyle(
-                                        decoration: TextDecoration.underline, // Subrayar para que se entienda que es un enlace
+                                        decoration: TextDecoration
+                                            .underline, // Subrayar para que se entienda que es un enlace
                                       ),
                                     ),
                                   ),
@@ -247,7 +312,8 @@ double calculateDistance(LatLng from, LatLng to) {
                     children: <Widget>[
                       Text(
                         actividad.descripcio,
-                        overflow: TextOverflow.ellipsis,  //Poner puntos suspensivos para evitar pixel overflow
+                        overflow: TextOverflow
+                            .ellipsis, //Poner puntos suspensivos para evitar pixel overflow
                         maxLines: 3,
                         style: const TextStyle(fontSize: 12.0),
                       ),
@@ -266,16 +332,16 @@ double calculateDistance(LatLng from, LatLng to) {
                                                 actividad.dataFi,
                                                 actividad.ubicacio];
 
-                            _controladorPresentacion.mostrarVerActividad(context, act, actividad.urlEntrades);
+                            _controladorPresentacion.mostrarVerActividad(
+                                context, act, actividad.urlEntrades);
                           },
                           style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(Colors.orange),
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.orange),
                           ),
                           child: const Text(
                             "Ver más información",
-                            style: TextStyle(
-                              color: Colors.white
-                              ),
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
                       ),
@@ -289,6 +355,7 @@ double calculateDistance(LatLng from, LatLng to) {
       },
     );
   }
+
   // Crea y ubica los marcadores
   Set<Marker> _createMarkers() {
     return _actividades.map((actividad) {
@@ -308,112 +375,134 @@ double calculateDistance(LatLng from, LatLng to) {
       if (categoria == categoriasFavoritas[i]) categoria = 'recom';
     }*/
     switch (categoria) {
-        case 'carnavals':
-          return iconoCarnaval;
-        case 'teatre':
-          return iconoTeatro;
-        case 'concerts':
-          return iconoConcierto;
-        case 'circ':
-          return iconoCirco;
-        case 'exposicions':
-          return iconoArte;
-        case 'conferencies':
-          return iconoConferencia;
-        case 'commemoracions':
-          return iconoCommemoracion;
-        case 'rutes-i-visites':
-          return iconoRuta;
-        case 'cursos':
-          return iconoExpo;
-        case 'activitats-virtuals':
-          return iconoVirtual;
-        case 'infantil':
-          return iconoInfantil;
-        case 'festes':
-          return iconoFiesta;
-        case 'festivals-i-mostres':
-          return iconoFiesta;
-        case 'dansa':
-          return iconoFiesta;
-        case 'cicles':
-          return iconoExpo;
-        case 'cultura-digital':
-          return iconoExpo;
-        case 'fires-i-mercats':
-          return iconoInfantil;
-        case 'gegants':
-          return iconoFiesta;
-        default:
-          return iconoRecom;
-      }
+      case 'carnavals':
+        return iconoCarnaval;
+      case 'teatre':
+        return iconoTeatro;
+      case 'concerts':
+        return iconoConcierto;
+      case 'circ':
+        return iconoCirco;
+      case 'exposicions':
+        return iconoArte;
+      case 'conferencies':
+        return iconoConferencia;
+      case 'commemoracions':
+        return iconoCommemoracion;
+      case 'rutes-i-visites':
+        return iconoRuta;
+      case 'cursos':
+        return iconoExpo;
+      case 'activitats-virtuals':
+        return iconoVirtual;
+      case 'infantil':
+        return iconoInfantil;
+      case 'festes':
+        return iconoFiesta;
+      case 'festivals-i-mostres':
+        return iconoFiesta;
+      case 'dansa':
+        return iconoFiesta;
+      case 'cicles':
+        return iconoExpo;
+      case 'cultura-digital':
+        return iconoExpo;
+      case 'fires-i-mercats':
+        return iconoInfantil;
+      case 'gegants':
+        return iconoFiesta;
+      default:
+        return iconoRecom;
+    }
   }
+
   //Carga los marcadores de los PNGs
   getIcons() async {
-    var icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinarte.png');
+    var icon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinarte.png');
     setState(() {
       iconoArte = icon;
     });
 
-    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinfesta.png');
+    icon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinfesta.png');
     setState(() {
       iconoFiesta = icon;
     });
-    
-    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinrecom.png');
+
+    icon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinrecom.png');
     setState(() {
       iconoRecom = icon;
     });
 
-    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinteatre.png');
+    icon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(devicePixelRatio: 2.5),
+        'assets/pinteatre.png');
     setState(() {
       iconoTeatro = icon;
     });
 
-    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinexpo.png');
+    icon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinexpo.png');
     setState(() {
       iconoExpo = icon;
     });
 
-    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinconfe.png');
+    icon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinconfe.png');
     setState(() {
       iconoConferencia = icon;
     });
 
-    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pincarnaval.png');
+    icon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(devicePixelRatio: 2.5),
+        'assets/pincarnaval.png');
     setState(() {
       iconoCarnaval = icon;
     });
 
-    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pincirc.png');
+    icon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pincirc.png');
     setState(() {
       iconoCirco = icon;
     });
 
-    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pincommemoracio.png');
+    icon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(devicePixelRatio: 2.5),
+        'assets/pincommemoracio.png');
     setState(() {
       iconoCommemoracion = icon;
     });
 
-    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinconcert.png');
+    icon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(devicePixelRatio: 2.5),
+        'assets/pinconcert.png');
     setState(() {
       iconoConcierto = icon;
     });
-    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinruta.png');
+    icon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinruta.png');
     setState(() {
       iconoRuta = icon;
     });
 
-    icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinconcert.png');
+    icon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(devicePixelRatio: 2.5),
+        'assets/pinconcert.png');
     setState(() {
       iconoConcierto = icon;
     });
 
-  icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pininfantil.png');
+    icon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(devicePixelRatio: 2.5),
+        'assets/pininfantil.png');
     setState(() {
       iconoInfantil = icon;
     });
-  icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinvirtual.png');
+    icon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(devicePixelRatio: 2.5),
+        'assets/pinvirtual.png');
     setState(() {
       iconoVirtual = icon;
     });
@@ -438,7 +527,6 @@ double calculateDistance(LatLng from, LatLng to) {
     _mapController = controller;
   }
 
-
   void _onTabChange(int index) {
     /*switch (index) {
       case 0:
@@ -456,43 +544,58 @@ double calculateDistance(LatLng from, LatLng to) {
     }*/
   }
 
-
   //Se crea la ''pantalla'' para el mapa - falta añadir dock inferior y barra de busqueda
   @override
   Widget build(BuildContext context) {
-  return Scaffold(
-    bottomNavigationBar: Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(50.0)),
-      ),
-      child: GNav(
-        backgroundColor: Colors.white,
-        color: Colors.orange,
-        activeColor: Colors.orange,
-        tabBackgroundColor: Colors.grey.shade100,
-        gap: 6,
-        onTabChange: (index) {
-          _onTabChange(index);
-        },
-        selectedIndex: 0,
-        tabs: const [
-          GButton(text: "Mapa", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.map),
-          GButton(text: "Mis Actividades", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.event),
-          GButton(text: "Chats", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.chat),
-          GButton(text: "Perfil", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.person),
-        ],
-      ),
-    ),
-    body: Stack(
-      fit: StackFit.expand, // Ajusta esta línea
-      children: [
-        GoogleMap(
-          initialCameraPosition: CameraPosition(target: myLatLng, zoom: 16),
-          markers: _createMarkers(),
-          onCameraMove: _onCameraMove,
-          onMapCreated: _onMapCreated,
+    return Scaffold(
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(50.0)),
         ),
+        child: GNav(
+          backgroundColor: Colors.white,
+          color: Colors.orange,
+          activeColor: Colors.orange,
+          tabBackgroundColor: Colors.grey.shade100,
+          gap: 6,
+          onTabChange: (index) {
+            _onTabChange(index);
+          },
+          selectedIndex: 0,
+          tabs: [
+            GButton(
+                text: "Mapa",
+                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+                icon: Icons.map),
+            GButton(
+              text: "Mis Actividades",
+              textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+              icon: Icons.event,
+              onPressed: () {
+                Navigator.pushNamed(context, '/myActivities');
+              },
+            ),
+            GButton(
+                text: "Chats",
+                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+                icon: Icons.chat),
+            GButton(
+                text: "Perfil",
+                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+                icon: Icons.person),
+          ],
+        ),
+      ),
+      body: Stack(
+        fit: StackFit.expand, // Ajusta esta línea
+        children: [
+          GoogleMap(
+            initialCameraPosition: CameraPosition(target: myLatLng, zoom: 16),
+            markers: _createMarkers(),
+            onCameraMove: _onCameraMove,
+            onMapCreated: _onMapCreated,
+          ),
           Positioned(
             top: 50.0,
             left: 25.0,
@@ -504,7 +607,7 @@ double calculateDistance(LatLng from, LatLng to) {
                 borderRadius: BorderRadius.circular(25.0),
               ),
               child: const Padding(
-                padding:  EdgeInsets.symmetric(horizontal: 25.0),
+                padding: EdgeInsets.symmetric(horizontal: 25.0),
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: 'Buscar...',

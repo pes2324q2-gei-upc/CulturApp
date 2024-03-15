@@ -52,8 +52,7 @@ class _ListaActividadesState extends State<ListaActividades> {
 
   @override
   Widget build(BuildContext context) {
-
-    return  Scaffold(
+    return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
         title: const Text("Actividades Disponibles"),
