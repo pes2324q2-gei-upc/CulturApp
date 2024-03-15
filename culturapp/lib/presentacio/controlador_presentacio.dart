@@ -12,6 +12,10 @@ class ControladorPresentacion {
 
   late final List<Actividad> activitats;
 
+  List<Actividad> getActivitats() {return activitats;}
+
+  Future <void> initialice() async { activitats = await controladorDomini.getActivitiesAgenda(); }
+
   void mostrarVerActividad(BuildContext context, List<String> info_act, Uri uri_act) {
     Navigator.push(
       context,
@@ -21,40 +25,28 @@ class ControladorPresentacion {
     );
   }
 
-<<<<<<< HEAD
-  List<Actividad> getActivitats() {return activitats;}
-
-  Future <void> initialice() async { activitats = await controladorDomini.getActivitiesAgenda(); }
-}
-=======
   Future<void> mostrarMisActividades(BuildContext context, String userID) async { 
-    controladorDomini.getUserActivities(userID).then((actividades) => {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ListaActividades(actividades: actividades,),
-        ),
-      )
-    }
+      controladorDomini.getUserActivities(userID).then((actividades) => {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ListaActividades(actividades: actividades,),
+          ),
+        )
+      }
     );
   }
 
-  Future<void> mostrarActividades(BuildContext context, String userID) async { 
-    controladorDomini.getActivities().then((actividades) => {
+  void mostrarActividades(BuildContext context, String userID) async { 
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ListaActividades(actividades: actividades,),
+          builder: (context) => ListaActividades(actividades: activitats,),
         ),
-      )
-    }
-    );
+      );
   }
 
-  Future <List<Actividad>> getActivities() async {
+  
 
-    return await controladorDomini.getActivities();
 
-  }
 }
->>>>>>> dev.v2

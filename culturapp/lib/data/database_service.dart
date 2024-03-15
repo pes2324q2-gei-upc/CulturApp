@@ -135,9 +135,9 @@ Future<List<Actividad>> getActivities(String userID) async {
         }
     }
 
-    Actividad actividad = Actividad(dataFi: dataFi ,dataInici: dataInici ,  horari: horari, latitud: latitud, longitud: longitud, descripcio: descripcio, name: name, code: code, categoria: categoria, comarca: comarca, imageUrl: imageUrl, preu: preu, urlEntrades: urlEntrades, ubicacio: ubicacio);
+    //Actividad actividad = Actividad(dataFi: dataFi ,dataInici: dataInici ,  horari: horari, latitud: latitud, longitud: longitud, descripcio: descripcio, name: name, code: code, categoria: categoria, comarca: comarca, imageUrl: imageUrl, preu: preu, urlEntrades: urlEntrades, ubicacio: ubicacio);
     
-    activities.add(actividad);
+    //activities.add(actividad);
   }
   return activities;
 }

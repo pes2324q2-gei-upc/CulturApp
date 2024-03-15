@@ -137,7 +137,7 @@ class Signup extends StatelessWidget {
                         String atribut2 = atribut2Controller.text;
                         String atribut3 = atribut3Controller.text;
                         createUser(username, atribut1, atribut2, atribut3);
-                        Navigator.pushNamed(context, Routes.perfil);
+                        //Navigator.pushNamed(context, Routes.perfil);
                       },
                       child: const Text(
                         "Crear compte",
