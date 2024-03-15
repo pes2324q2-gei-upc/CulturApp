@@ -5,17 +5,25 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
+  // Asegura que Flutter esté inicializado
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-  options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(MyApp());
+  
+  // Inicializa Firebase
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Crea la instancia del controlador después de la inicialización de Firebase
+  final controladorPresentacion = ControladorPresentacion();
+
+  await controladorPresentacion.initialice();
+
+  // Inicia la aplicación
+  runApp(MyApp(controladorPresentacion: controladorPresentacion));
 }
 
 class MyApp extends StatelessWidget {
-  final ControladorPresentacion controladorPresentacion = ControladorPresentacion();
+  final ControladorPresentacion controladorPresentacion;
 
-  MyApp({super.key});
+  MyApp({Key? key, required this.controladorPresentacion}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

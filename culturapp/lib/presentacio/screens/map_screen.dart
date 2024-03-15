@@ -7,10 +7,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-
 class MapPage extends StatefulWidget {
-  final ControladorPresentacion controladorPresentacion;
 
+  final ControladorPresentacion controladorPresentacion;
+  
   const MapPage({Key? key, required this.controladorPresentacion});
 
   @override
@@ -18,12 +18,16 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+
   late ControladorPresentacion _controladorPresentacion;
+
+  late List<Actividad> activitats;
 
   _MapPageState(ControladorPresentacion controladorPresentacion){
     _controladorPresentacion = controladorPresentacion;
+    activitats = _controladorPresentacion.getActivitats();
   }
-  bool fetchComplete = false;
+
   BitmapDescriptor iconoArte = BitmapDescriptor.defaultMarker;
   BitmapDescriptor iconoCarnaval = BitmapDescriptor.defaultMarker;
   BitmapDescriptor iconoCirco = BitmapDescriptor.defaultMarker;
@@ -45,17 +49,11 @@ class _MapPageState extends State<MapPage> {
   GoogleMapController? _mapController;
   List<String> categoriasFavoritas = ['circ', 'festes', 'activitats-virtuals'];
 
-  double radians(double degrees) {
-    return degrees * (math.pi / 180.0);
-  }
-
-  @override
-  void initState() {
-    getIcons();
-    super.initState();
-  }
-
-  double calculateDistance(LatLng from, LatLng to) {
+double radians(double degrees) {
+  return degrees * (math.pi / 180.0);
+}
+// Formula de Haversine para calcular que actividades entran en el radio del zoom de la pantalla
+double calculateDistance(LatLng from, LatLng to) {
     const int earthRadius = 6371000;
     double lat1 = radians(from.latitude);
     double lon1 = radians(from.longitude);
@@ -71,42 +69,29 @@ class _MapPageState extends State<MapPage> {
 
     return earthRadius * c;
   }
-
-  Future<void> fetchActivitiesIfNeeded(LatLng center, double zoom) async {
-    if (!fetchComplete) {
-      double radius = 1500 * (16 / zoom);
-      var actividades = await _controladorPresentacion.getActivities();
-      _actividades = actividades;
-      var actividadesaux = <Actividad>[];
-      for (var actividad in actividades) {
-        if (calculateDistance(
-                center,
-                LatLng(actividad.latitud ?? 0.0, actividad.longitud ?? 0.0)) <=
-            radius) {
-          actividadesaux.add(actividad);
-        }
-      }
-      setState(() {
-        fetchComplete = true;
-      });
-    }
-
-    else {
-      double radius = 1500 * (16 / zoom);
-      var actividades = _actividades;
-      var actividadesaux = <Actividad>[];
-      for (var actividad in actividades) {
-        if (calculateDistance(
-                center,
-                LatLng(actividad.latitud ?? 0.0, actividad.longitud ?? 0.0)) <=
-            radius) {
-          actividadesaux.add(actividad);
-        }
+  
+  // Obtener actividades del JSON para mostrarlas por pantalla
+  Future<List<Actividad>> fetchActivities(LatLng center, double zoom) async {
+    double radius = 1500 * (16 / zoom);
+    var actividadesaux = <Actividad> [];
+    for (var actividad in activitats) {
+      // Comprobar si la actividad está dentro del radio
+      if (calculateDistance(
+              center, LatLng(actividad.latitud ?? 0.0, actividad.longitud ?? 0.0)) <=
+          radius) {
+        actividadesaux.add(actividad);
       }
     }
+    return actividadesaux;
   }
 
-  Image _retornaIcon(String categoria) {
+  @override
+  void initState() {
+    getIcons();
+    super.initState();
+  }
+
+  Image _retornaIcon (String categoria){
       switch (categoria) {
       case 'carnavals':
         return Image.asset('assets/categoriacarnaval.png', width: 45.0,);
@@ -304,7 +289,7 @@ class _MapPageState extends State<MapPage> {
       },
     );
   }
-
+  // Crea y ubica los marcadores
   Set<Marker> _createMarkers() {
     return _actividades.map((actividad) {
       return Marker(
@@ -317,6 +302,7 @@ class _MapPageState extends State<MapPage> {
     }).toSet();
   }
 
+  // En funcion de la categoria atribuye un marcador
   BitmapDescriptor _getMarkerIcon(String categoria) {
     /*for (int i = 0; i < 3; ++i) {
       if (categoria == categoriasFavoritas[i]) categoria = 'recom';
@@ -362,8 +348,8 @@ class _MapPageState extends State<MapPage> {
           return iconoRecom;
       }
   }
-
-  Future<void> getIcons() async {
+  //Carga los marcadores de los PNGs
+  getIcons() async {
     var icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinarte.png');
     setState(() {
       iconoArte = icon;
@@ -433,25 +419,25 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
+  //Cuando la pantalla se mueve se recalcula la posicon y el zoom para volver a calcular las actividades que tocan
   void _onCameraMove(CameraPosition position) {
-    if (_mapController != null && fetchComplete) {
+    if (_mapController != null) {
       _mapController!.getZoomLevel().then((zoom) {
-        setState(() {
-          _actividades = _actividades.where((actividad) {
-            double distance = calculateDistance(
-              position.target,
-              LatLng(actividad.latitud ?? 0.0, actividad.longitud ?? 0.0),
-            );
-            return distance <= 1500 * (16 / zoom);
-          }).toList();
+        fetchActivities(position.target, zoom).then((value) {
+          setState(() {
+            _actividades = value;
+
+          });
         });
       });
     }
   }
 
+  //Se crea el mapa y atribuye a la variable mapa
   void _onMapCreated(GoogleMapController controller) {
     _mapController = controller;
   }
+
 
   void _onTabChange(int index) {
     /*switch (index) {
@@ -470,53 +456,43 @@ class _MapPageState extends State<MapPage> {
     }*/
   }
 
+
+  //Se crea la ''pantalla'' para el mapa - falta añadir dock inferior y barra de busqueda
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(50.0)),
-        ),
-        child: GNav(
-          backgroundColor: Colors.white,
-          color: Colors.orange,
-          activeColor: Colors.orange,
-          tabBackgroundColor: Colors.grey.shade100,
-          gap: 6,
-          onTabChange: (index) {
-            _onTabChange(index);
-          },
-          selectedIndex: 0,
-          tabs: const [
-            GButton(
-                text: "Mapa",
-                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
-                icon: Icons.map),
-            GButton(
-                text: "Mis Actividades",
-                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
-                icon: Icons.event),
-            GButton(
-                text: "Chats",
-                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
-                icon: Icons.chat),
-            GButton(
-                text: "Perfil",
-                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
-                icon: Icons.person),
-          ],
-        ),
+  return Scaffold(
+    bottomNavigationBar: Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(50.0)),
       ),
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          GoogleMap(
-            initialCameraPosition: CameraPosition(target: myLatLng, zoom: 16),
-            markers: _createMarkers(),
-            onCameraMove: _onCameraMove,
-            onMapCreated: _onMapCreated,
-          ),
+      child: GNav(
+        backgroundColor: Colors.white,
+        color: Colors.orange,
+        activeColor: Colors.orange,
+        tabBackgroundColor: Colors.grey.shade100,
+        gap: 6,
+        onTabChange: (index) {
+          _onTabChange(index);
+        },
+        selectedIndex: 0,
+        tabs: const [
+          GButton(text: "Mapa", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.map),
+          GButton(text: "Mis Actividades", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.event),
+          GButton(text: "Chats", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.chat),
+          GButton(text: "Perfil", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.person),
+        ],
+      ),
+    ),
+    body: Stack(
+      fit: StackFit.expand, // Ajusta esta línea
+      children: [
+        GoogleMap(
+          initialCameraPosition: CameraPosition(target: myLatLng, zoom: 16),
+          markers: _createMarkers(),
+          onCameraMove: _onCameraMove,
+          onMapCreated: _onMapCreated,
+        ),
           Positioned(
             top: 50.0,
             left: 25.0,
@@ -528,7 +504,7 @@ class _MapPageState extends State<MapPage> {
                 borderRadius: BorderRadius.circular(25.0),
               ),
               child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 25.0),
+                padding:  EdgeInsets.symmetric(horizontal: 25.0),
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: 'Buscar...',
