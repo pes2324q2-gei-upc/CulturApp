@@ -49,7 +49,7 @@ Future<void> insertActivities() async {
   }
 }
 
-Future<List<Actividad>> getActivities() async {
+Future<List<Actividad>> getActivities(String userID) async {
   List<Actividad> activities = [];
   CollectionReference crActivity = db.collection('actividades');
   QuerySnapshot querySnapshot = await crActivity.get();

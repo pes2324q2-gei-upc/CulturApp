@@ -19,8 +19,26 @@ class ControladorDomini {
 
   }
 
+<<<<<<< HEAD
   List<Actividad> _convert_database_to_list(response) {
     
+=======
+  Future<List<Actividad>> getUserActivities(String userID) async {
+    final respuesta = await http.get(
+      Uri.parse('http://10.0.2.2:8080/read/activities/user/$userID'),
+    );
+
+    if (respuesta.statusCode == 200) {
+      return _convert_json_to_list(respuesta);
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
+
+
+
+  List<Actividad> _convert_json_to_list(response) {
+>>>>>>> dev.v2
     List<Actividad> actividades = <Actividad>[];
     var actividadesJson = json.decode(response.body);
     
@@ -71,6 +89,7 @@ class ControladorDomini {
     
     return actividades;
   }
+<<<<<<< HEAD
 
   List<Actividad> _convert_json_to_list(response) {
 
@@ -87,4 +106,6 @@ class ControladorDomini {
     return actividades;
   }
 
+=======
+>>>>>>> dev.v2
 }
