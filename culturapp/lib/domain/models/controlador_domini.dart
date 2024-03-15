@@ -8,7 +8,7 @@ class ControladorDomini {
   
   Future <List<Actividad>> getActivitiesAgenda() async {
 
-    final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/activitats/agenda/json'));
+    final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/activitats/cache'));
     
     if (respuesta.statusCode == 200) {
       return _convert_json_to_list(respuesta);
