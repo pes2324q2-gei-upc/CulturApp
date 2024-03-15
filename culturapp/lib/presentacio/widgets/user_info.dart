@@ -1,4 +1,3 @@
-import 'package:culturapp/presentacio/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 class UserInfoWidget extends StatefulWidget {
@@ -79,7 +78,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                   child: IconButton(
                     onPressed: () {
                       //hacer que no se vea si estas viendo el perfil de otro user
-                      Navigator.pushNamed(context, Routes.updatePerfil);
+                      //Navigator.pushNamed(context, Routes.updatePerfil);
                     },
                     icon: const Icon(Icons.edit, color: Colors.orange),
                   ),

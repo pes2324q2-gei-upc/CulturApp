@@ -5,7 +5,6 @@ import "package:flutter/widgets.dart";
 import "package:hive/hive.dart";
 import "package:sign_in_button/sign_in_button.dart";
 import 'package:culturapp/presentacio/screens/logout.dart';
-import 'package:culturapp/presentacio/routes/routes.dart';
 
 class Signup extends StatelessWidget {
 
@@ -138,7 +137,7 @@ class Signup extends StatelessWidget {
                         String atribut2 = atribut2Controller.text;
                         String atribut3 = atribut3Controller.text;
                         createUser(username, atribut1, atribut2, atribut3);
-                        Navigator.pushNamed(context, Routes.perfil);
+                        //Navigator.pushNamed(context, Routes.perfil);
                       },
                       child: const Text(
                         "Crear compte",
