@@ -1,5 +1,6 @@
 import 'package:culturapp/data/firebase_options.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ void main() async {
   // Crea la instancia del controlador después de la inicialización de Firebase
   final controladorPresentacion = ControladorPresentacion();
 
-  await controladorPresentacion.initialice();
+  //await controladorPresentacion.initialice();
 
   // Inicia la aplicación
   runApp(MyApp(controladorPresentacion: controladorPresentacion));
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home: MapPage(controladorPresentacion: controladorPresentacion),
+      home: Login(controladorPresentacion: controladorPresentacion),
     );
   }
 }

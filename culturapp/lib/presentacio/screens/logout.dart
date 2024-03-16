@@ -1,4 +1,4 @@
-import 'package:culturapp/presentacio/controlador_presentacion.dart';
+import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 //import 'package:culturapp/presentacio/routes/routes.dart';
