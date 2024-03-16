@@ -11,6 +11,13 @@ class Xats extends StatefulWidget {
 
 class _Xats extends State<Xats> {
   //List<Actividad> activitats = null; quan tinguem de base de dades fer-ho bé
+  String containerContent = 'Content 1';
+
+  void changeContent(String newContent) {
+    setState(() {
+      containerContent = newContent;
+    });
+  }
 
   void _onTabChange(int index) {
     switch (index) {
@@ -60,7 +67,7 @@ class _Xats extends State<Xats> {
                           foregroundColor:
                               MaterialStateProperty.all<Color>(Colors.white),
                         ),
-                        onPressed: () {},
+                        onPressed: () => changeContent('Content 1'),
                         child: Text('Amics'),
                       )),
                   SizedBox(
@@ -73,7 +80,7 @@ class _Xats extends State<Xats> {
                           foregroundColor:
                               MaterialStateProperty.all<Color>(Colors.white),
                         ),
-                        onPressed: () {},
+                        onPressed: () => changeContent('Content 2'),
                         child: Text('Grups'),
                       )),
                   SizedBox(
@@ -86,10 +93,18 @@ class _Xats extends State<Xats> {
                           foregroundColor:
                               MaterialStateProperty.all<Color>(Colors.white),
                         ),
-                        onPressed: () {},
+                        onPressed: () => changeContent('Content 3'),
                         child: Text('Afegir Amics'),
                       )),
                 ],
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              Container(
+                padding: EdgeInsets.all(20),
+                color: Colors.grey[200],
+                child: Text(containerContent),
               ),
             ]),
       ),
