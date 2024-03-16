@@ -617,6 +617,51 @@ class _MapPageState extends State<MapPage> {
               ),
             ),
           ),
+          Positioned.fill(
+            child: DraggableScrollableSheet(
+              initialChildSize: 0.2, // Ajusta este valor a la altura inicial deseada
+              minChildSize: 0.1, // Ajusta este valor al mínimo que desees
+              maxChildSize: 0.85, // Ajusta este valor al máximo que desees
+              builder: (BuildContext context, ScrollController scrollController) {
+                return Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.orange, // Color de fondo del panel
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(24),
+                      topRight: Radius.circular(24),
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min, // Asegura que el Column solo ocupa el espacio necesario.
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Container(
+                          width: 40, // Ancho de la barra
+                          height: 5, // Altura de la barra
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300], // Color de la barra
+                            borderRadius: BorderRadius.circular(10), // Bordes redondeados para la barra
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView(
+                          controller: scrollController,
+                          children: const [
+                            SizedBox(
+                              height: 500, // Altura fija para ListaActividades
+                              //child: ListaActividades(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );
