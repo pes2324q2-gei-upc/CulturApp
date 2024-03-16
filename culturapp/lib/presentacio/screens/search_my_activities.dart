@@ -1,3 +1,4 @@
+import "package:culturapp/domain/filtre_data.dart";
 import "package:culturapp/domain/models/actividad.dart";
 import "package:culturapp/domain/models/filtre_categoria.dart";
 import "package:flutter/material.dart";
@@ -129,15 +130,26 @@ class _SearchMyActivitiesState extends State<SearchMyActivities> {
                 const SizedBox(
                   height: 10.0,
                 ),
-                SizedBox(
-                  height: 20.0,
-                  child: FiltreCategoria(canviCategoria: (newFilter) {
-                    setState(() {
-                      selectedCategory = newFilter;
-                    });
-                    updateList(value, selectedCategory);
-                  }),
-                ),
+                Row(children: [
+                  SizedBox(
+                    height: 20.0,
+                    width: 90.0,
+                    child: FiltreCategoria(canviCategoria: (newFilter) {
+                      setState(() {
+                        selectedCategory = newFilter;
+                      });
+                      updateList(value, selectedCategory);
+                    }),
+                  ),
+                  const SizedBox(
+                    width: 10.0,
+                  ),
+                  SizedBox(
+                    height: 30.0,
+                    width: 150.0,
+                    child: FiltreData(),
+                  )
+                ]),
                 const SizedBox(
                   height: 20.0,
                 ),

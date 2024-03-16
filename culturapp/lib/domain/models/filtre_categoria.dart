@@ -37,7 +37,7 @@ class _FiltreState extends State<FiltreCategoria> {
           decoration: BoxDecoration(
               border: Border.all(color: Colors.orange, width: 2.0),
               color: Colors.white,
-              borderRadius: BorderRadius.circular(10)),
+              borderRadius: BorderRadius.circular(8)),
           child: Center(
             child: DropdownButton<String>(
               value: _selectedCategory,
