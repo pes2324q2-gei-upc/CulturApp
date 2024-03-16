@@ -1,7 +1,7 @@
 import 'package:culturapp/presentacio/controlador_presentacion.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:culturapp/presentacio/routes/routes.dart';
+//import 'package:culturapp/presentacio/routes/routes.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 
 class Logout extends StatelessWidget {
