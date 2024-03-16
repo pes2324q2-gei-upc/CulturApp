@@ -12,56 +12,21 @@ class SearchMyActivities extends StatefulWidget {
 
 class _SearchMyActivitiesState extends State<SearchMyActivities> {
   //dummy activitats fins que tinguem les de l'api
-  static List<Actividad> my_activities_list = [
-    Actividad(
-        name: "Super3",
-        code: "AABB",
-        categoria: "infantil",
-        latitud: 2.0,
-        longitud: 3.0,
-        imageUrl:
-            "https://i.pinimg.com/originals/10/ef/0c/10ef0c804190d04cace0f0096ccb8912.jpg",
-        descripcio: "descripcio",
-        dataInici: "10-07-2024",
-        dataFi: "23-07-2024",
-        ubicacio: "ubicacio",
-        urlEntrades: Uri(),
-        preu: "preu",
-        comarca: "comarca",
-        horari: "horari"),
-    Actividad(
-        name: "Super31",
-        code: "AACC",
-        categoria: "teatre",
-        latitud: 2.0,
-        longitud: 3.0,
-        imageUrl:
-            "https://i.pinimg.com/originals/10/ef/0c/10ef0c804190d04cace0f0096ccb8912.jpg",
-        descripcio: "descripcio",
-        dataInici: "10-08-2024",
-        dataFi: "23-08-2024",
-        ubicacio: "ubicacio",
-        urlEntrades: Uri(),
-        preu: "preu",
-        comarca: "comarca",
-        horari: "horari"),
-    Actividad(
-        name: "ConcertTaylor",
-        code: "AACC",
-        categoria: "concert",
-        latitud: 2.0,
-        longitud: 3.0,
-        imageUrl:
-            "https://i.pinimg.com/originals/10/ef/0c/10ef0c804190d04cace0f0096ccb8912.jpg",
-        descripcio: "descripcio",
-        dataInici: "30-11-2024",
-        dataFi: "23-12-2024",
-        ubicacio: "ubicacio",
-        urlEntrades: Uri(),
-        preu: "preu",
-        comarca: "comarca",
-        horari: "horari"),
-  ];
+  static List<Actividad> my_activities_list = [];
+  Future<void>? _fetchMyActivitiesFuture;
+
+  Future<void> fetchMyActivities() async {
+    var activities = await getActivities();
+    setState(() {
+      my_activities_list = activities;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMyActivitiesFuture = fetchMyActivities();
+  }
 
   //creant la llista que farem display i aplicarem els seus filtres:
   List<Actividad> display_list = List.from(my_activities_list);
