@@ -65,13 +65,17 @@ class _SearchMyActivitiesState extends State<SearchMyActivities> {
   //creant la llista que farem display i aplicarem els seus filtres:
   List<Actividad> display_list = List.from(my_activities_list);
 
-  void updateList(String value) {
+  String selectedCategory = '';
+  String value = '';
+
+  void updateList(String value, String category) {
     //funcio on es filtrarà la nostra llista
     setState(
       () {
         display_list = my_activities_list
             .where((element) =>
-                element.name!.toLowerCase().contains(value.toLowerCase()))
+                element.name.toLowerCase().contains(value.toLowerCase()) &&
+                (category == '' || element.categoria == category))
             .toList();
       },
     );
@@ -102,7 +106,7 @@ class _SearchMyActivitiesState extends State<SearchMyActivities> {
                   height: 20.0,
                 ),
                 TextField(
-                  onChanged: (value) => updateList(value),
+                  onChanged: (value) => updateList(value, selectedCategory),
                   cursorColor: Colors.white,
                   style: const TextStyle(
                     color: Colors.white,
@@ -122,11 +126,19 @@ class _SearchMyActivitiesState extends State<SearchMyActivities> {
                     suffixIconColor: Colors.white,
                   ),
                 ),
+                const SizedBox(
+                  height: 10.0,
+                ),
                 SizedBox(
                   height: 20.0,
+                  child: Filter(canviCategoria: (newFilter) {
+                    setState(() {
+                      selectedCategory = newFilter;
+                    });
+                    updateList(value, selectedCategory);
+                  }),
                 ),
-                Filter(),
-                SizedBox(
+                const SizedBox(
                   height: 20.0,
                 ),
                 Expanded(

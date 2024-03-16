@@ -2,44 +2,59 @@ import "package:culturapp/domain/models/actividad.dart";
 import "package:flutter/material.dart";
 
 class Filter extends StatefulWidget {
+  const Filter(
+      {super.key, required Null Function(dynamic newFilter) canviCategoria});
+
   @override
   _FilterState createState() => _FilterState();
 }
 
 class _FilterState extends State<Filter> {
-  String _dropdownValue = 'concert';
+  static const List<String> llistaCategories = <String>[
+    'concert',
+    'infantil',
+    'teatre'
+  ];
+  late String _selectedCategory = llistaCategories.first;
+  //categoria seleccionada
 
-  var _categories = ['concert', 'teatre', 'infantil'];
+  void dropdownCallback(String? selectedValue) {
+    if (selectedValue is String) {
+      setState(() {
+        _selectedCategory = selectedValue;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
+        body: Align(
+      alignment: Alignment.centerLeft,
       child: Container(
-          width: 150,
-          height: 80,
+          width: 90,
+          height: 60,
           decoration: BoxDecoration(
-              color: Colors.blue, borderRadius: BorderRadius.circular(10)),
+              border: Border.all(color: Colors.orange, width: 2.0),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10)),
           child: Center(
-            child: DropdownButton(
-              items: _categories.map((String item) {
+            child: DropdownButton<String>(
+              value: _selectedCategory,
+              items: llistaCategories.map((String item) {
                 return DropdownMenuItem(value: item, child: Text(item));
               }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _dropdownValue = newValue!;
-                });
-              },
-              value: _dropdownValue,
+              onChanged: dropdownCallback,
               borderRadius: BorderRadius.circular(10),
               icon: const Icon(Icons.keyboard_arrow_down),
-              iconSize: 50,
-              style: const TextStyle(fontSize: 30, color: Colors.black),
+              iconSize: 20,
+              style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black),
               underline: Container(),
             ),
           )),
     ));
   }
 }
-//i have to limit the layout beacause : RenderPhysicalModel object was given an infinite size during layout.
-//o el de search, sino no sortirà
