@@ -1,5 +1,5 @@
 import "package:culturapp/domain/models/actividad.dart";
-import "package:culturapp/domain/models/filter.dart";
+import "package:culturapp/domain/models/filtre_categoria.dart";
 import "package:flutter/material.dart";
 
 class SearchMyActivities extends StatefulWidget {
@@ -131,7 +131,7 @@ class _SearchMyActivitiesState extends State<SearchMyActivities> {
                 ),
                 SizedBox(
                   height: 20.0,
-                  child: Filter(canviCategoria: (newFilter) {
+                  child: FiltreCategoria(canviCategoria: (newFilter) {
                     setState(() {
                       selectedCategory = newFilter;
                     });

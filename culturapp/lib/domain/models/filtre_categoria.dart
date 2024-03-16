@@ -1,15 +1,15 @@
 import "package:culturapp/domain/models/actividad.dart";
 import "package:flutter/material.dart";
 
-class Filter extends StatefulWidget {
-  const Filter(
+class FiltreCategoria extends StatefulWidget {
+  const FiltreCategoria(
       {super.key, required Null Function(dynamic newFilter) canviCategoria});
 
   @override
-  _FilterState createState() => _FilterState();
+  _FiltreState createState() => _FiltreState();
 }
 
-class _FilterState extends State<Filter> {
+class _FiltreState extends State<FiltreCategoria> {
   static const List<String> llistaCategories = <String>[
     'concert',
     'infantil',
