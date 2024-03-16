@@ -531,13 +531,12 @@ class _MapPageState extends State<MapPage> {
         break;
       case 1:
         Navigator.pushNamed(context, Routes.misActividades);
-      break;
+        break;
       case 2:
-        
         break;
       case 3:
         Navigator.pushNamed(context, Routes.perfil);
-      break;
+        break;
       default:
         break;
     }
@@ -576,9 +575,13 @@ class _MapPageState extends State<MapPage> {
               },
             ),
             GButton(
-                text: "Chats",
-                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
-                icon: Icons.chat),
+              text: "Chats",
+              textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+              icon: Icons.chat,
+              onPressed: () {
+                Navigator.pushNamed(context, '/xats');
+              },
+            ),
             GButton(
                 text: "Perfil",
                 textStyle: TextStyle(fontSize: 12, color: Colors.orange),

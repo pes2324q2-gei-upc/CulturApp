@@ -8,6 +8,7 @@ import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/signup.dart';
 import 'package:culturapp/presentacio/routes/routes.dart';
 import 'package:culturapp/presentacio/screens/lista_actividades.dart';
+import 'package:culturapp/presentacio/screens/xats.dart';
 import 'package:flutter/material.dart';
 import 'package:culturapp/presentacio/screens/perfil_screen.dart';
 import 'package:culturapp/presentacio/screens/settings_perfil.dart';
@@ -22,4 +23,5 @@ Map<String, Widget Function(BuildContext)> appRoutes = {
   Routes.misActividades: (_) => const MyActivities(),
   Routes.searchMisActividades: (_) => const SearchMyActivities(),
   Routes.login: (_) => const Login(),
+  Routes.xats: (_) => const Xats(),
 };
