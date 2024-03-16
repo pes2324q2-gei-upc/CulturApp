@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:culturapp/presentacio/screens/lista_actividades.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -625,7 +626,7 @@ class _MapPageState extends State<MapPage> {
               builder: (BuildContext context, ScrollController scrollController) {
                 return Container(
                   decoration: const BoxDecoration(
-                    color: Colors.orange, // Color de fondo del panel
+                    color: Colors.white, // Color de fondo del panel
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(24),
                       topRight: Radius.circular(24),
@@ -648,10 +649,10 @@ class _MapPageState extends State<MapPage> {
                       Expanded(
                         child: ListView(
                           controller: scrollController,
-                          children: const [
+                          children: [
                             SizedBox(
                               height: 500, // Altura fija para ListaActividades
-                              //child: ListaActividades(),
+                              child: ListaActividades(actividades: _actividades,),
                             ),
                           ],
                         ),
