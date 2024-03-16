@@ -132,8 +132,8 @@ class _SearchMyActivitiesState extends State<SearchMyActivities> {
                 ),
                 Row(children: [
                   SizedBox(
-                    height: 20.0,
-                    width: 90.0,
+                    height: 30.0,
+                    width: 100.0,
                     child: FiltreCategoria(canviCategoria: (newFilter) {
                       setState(() {
                         selectedCategory = newFilter;

@@ -32,11 +32,10 @@ class _FiltreState extends State<FiltreCategoria> {
         body: Align(
       alignment: Alignment.centerLeft,
       child: Container(
-          width: 90,
+          width: 100,
           height: 60,
           decoration: BoxDecoration(
-              border: Border.all(color: Colors.orange, width: 2.0),
-              color: Colors.white,
+              color: Color.fromRGBO(255, 170, 102, 0.5),
               borderRadius: BorderRadius.circular(8)),
           child: Center(
             child: DropdownButton<String>(
@@ -46,12 +45,13 @@ class _FiltreState extends State<FiltreCategoria> {
               }).toList(),
               onChanged: dropdownCallback,
               borderRadius: BorderRadius.circular(10),
-              icon: const Icon(Icons.keyboard_arrow_down),
+              dropdownColor: Color.fromRGBO(255, 170, 102, 0.5),
+              icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
               iconSize: 20,
               style: const TextStyle(
-                  fontSize: 14,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black),
+                  color: Colors.white),
               underline: Container(),
             ),
           )),
