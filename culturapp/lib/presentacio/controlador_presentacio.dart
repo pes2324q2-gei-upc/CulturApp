@@ -34,7 +34,7 @@ class ControladorPresentacion {
     );
   }
 
-  void mostrarActividades(BuildContext context, String userID) async { 
+  void mostrarActividades(BuildContext context) async { 
       Navigator.push(
         context,
         MaterialPageRoute(
