@@ -2,6 +2,7 @@ import 'package:culturapp/data/firebase_options.dart';
 import 'package:culturapp/presentacio/controlador_presentacion.dart';
 import 'package:culturapp/presentacio/routes/app_routes.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
+import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home: MapPage(controladorPresentacion: controladorPresentacion),
+      home: Login(controladorPresentacion: controladorPresentacion),
       routes: appRoutes,
     );
   }

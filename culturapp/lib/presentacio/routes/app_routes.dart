@@ -22,5 +22,5 @@ Map<String, Widget Function(BuildContext)> appRoutes = {
   Routes.settings: (_) => const SettingsPerfil(),
   Routes.misActividades: (_) => const MyActivities(),
   Routes.searchMisActividades: (_) => const SearchMyActivities(),
-  Routes.login: (_) => const Login(),
+  Routes.signup: (context) => Signup(user: null),
 };

@@ -52,7 +52,7 @@ Future<void> insertActivities() async {
 Future<List<Actividad>> getActivities() async {
   List<Actividad> activities = [];
   CollectionReference crActivity = db.collection('actividades');
-  QuerySnapshot querySnapshot = await crActivity.get();
+  QuerySnapshot querySnapshot = await crActivity.limit(1).get();
 
   for (var doc in querySnapshot.docs) {
     Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;

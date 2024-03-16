@@ -1,4 +1,4 @@
-import 'package:culturapp/presentacio/screens/login.dart';
+import 'package:culturapp/presentacio/screens/signup.dart';
 import 'package:culturapp/presentacio/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:culturapp/presentacio/routes/routes.dart';
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      initialRoute: Routes.login,
+      initialRoute: Routes.signup,
       routes: appRoutes,
     );
   }

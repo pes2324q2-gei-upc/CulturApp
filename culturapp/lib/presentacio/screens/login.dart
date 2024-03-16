@@ -1,4 +1,5 @@
 import "package:cloud_firestore/cloud_firestore.dart";
+import "package:culturapp/presentacio/controlador_presentacion.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
@@ -6,12 +7,15 @@ import "package:hive/hive.dart";
 import "package:sign_in_button/sign_in_button.dart";
 import 'package:culturapp/presentacio/routes/routes.dart';
 import 'package:culturapp/presentacio/screens/logout.dart';
+import 'package:culturapp/presentacio/screens/map_screen.dart';
 import 'package:culturapp/presentacio/screens/signup.dart';
 import 'package:culturapp/presentacio/routes/routes.dart';
 
 
 class Login extends StatefulWidget {
-  const Login({super.key});
+  final ControladorPresentacion controladorPresentacion;
+
+  const Login({Key? key, required this.controladorPresentacion});
 
   @override
   State<Login> createState() => _Login();
@@ -34,6 +38,7 @@ class _Login extends State<Login> {
       setState(() {
         _user = event;
       });
+      _checkLoggedInUser();
     });
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       //Comprovar si ja hi ha una sessio iniciada
@@ -98,14 +103,21 @@ class _Login extends State<Login> {
 
       //Si no hi ha un usuari associat al compte de google, redirigir a la pantalla de registre
       if (!userExists) {
-       Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Signup(_user))
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Signup(user: _user),
+          ),
         );
       }
       //Altrament redirigir a la pantalla principal de l'app
       else {
-        Navigator.pushNamed(context, Routes.perfil);
+        Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MapPage(controladorPresentacion: widget.controladorPresentacion),
+          ),
+        );
       }
     }
     catch (error) {
@@ -129,7 +141,12 @@ class _Login extends State<Login> {
       setState(() {
         _user = currentUser;
       });
-     Navigator.pushNamed(context, Routes.perfil);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MapPage(controladorPresentacion: widget.controladorPresentacion),
+        ),
+      );
     }
   }
 }
