@@ -620,30 +620,37 @@ class _MapPageState extends State<MapPage> {
           ),
           Positioned.fill(
             child: DraggableScrollableSheet(
-              initialChildSize: 0.2, // Ajusta este valor a la altura inicial deseada
-              minChildSize: 0.1, // Ajusta este valor al mínimo que desees
-              maxChildSize: 0.85, // Ajusta este valor al máximo que desees
+              initialChildSize: 0.2,
+              minChildSize: 0.1,
+              maxChildSize: 0.85,
               builder: (BuildContext context, ScrollController scrollController) {
                 return Container(
                   decoration: const BoxDecoration(
-                    color: Colors.white, // Color de fondo del panel
+                    color: Colors.white,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(24),
                       topRight: Radius.circular(24),
                     ),
                   ),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min, // Asegura que el Column solo ocupa el espacio necesario.
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Padding(
+                      //Barra gris del botón
+                      Padding( 
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: Container(
-                          width: 40, // Ancho de la barra
-                          height: 5, // Altura de la barra
+                          width: 40, 
+                          height: 5,
                           decoration: BoxDecoration(
-                            color: Colors.grey[300], // Color de la barra
-                            borderRadius: BorderRadius.circular(10), // Bordes redondeados para la barra
+                            color: Colors.grey[300], 
+                            borderRadius: BorderRadius.circular(10),
                           ),
+                        ),
+                      ),
+                      Text(
+                        "${_actividades.length} Actividades disponibles",
+                        style: TextStyle (
+                          color: Colors.orange,
                         ),
                       ),
                       Expanded(
@@ -651,7 +658,7 @@ class _MapPageState extends State<MapPage> {
                           controller: scrollController,
                           children: [
                             SizedBox(
-                              height: 500, // Altura fija para ListaActividades
+                              height: 500,
                               child: ListaActividades(actividades: _actividades,),
                             ),
                           ],
