@@ -74,71 +74,73 @@ class _Xats extends State<Xats> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  SizedBox(
-                      height: 50.0,
-                      width: 110.0,
-                      child: TextButton(
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(_buttonAmics),
-                          foregroundColor:
-                              MaterialStateProperty.all<Color>(Colors.white),
-                        ),
-                        onPressed: () {
-                          _changeButtonColor(1);
-                          changeContent(Amics());
-                        },
-                        child: Text('Amics'),
-                      )),
-                  SizedBox(
-                      height: 50.0,
-                      width: 110.0,
-                      child: TextButton(
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(_buttonGrups),
-                          foregroundColor:
-                              MaterialStateProperty.all<Color>(Colors.white),
-                        ),
-                        onPressed: () {
-                          _changeButtonColor(2);
-                          changeContent(Grups());
-                        },
-                        child: Text('Grups'),
-                      )),
-                  SizedBox(
-                      height: 50.0,
-                      width: 110.0,
-                      child: TextButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              _buttonAfegirAmics),
-                          foregroundColor:
-                              MaterialStateProperty.all<Color>(Colors.white),
-                        ),
-                        onPressed: () {
-                          _changeButtonColor(3);
-                          changeContent(AfegirAmics());
-                        },
-                        child: Text('Afegir Amics'),
-                      )),
-                ],
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              Container(
-                padding: EdgeInsets.all(20),
-                color: Colors.grey[200],
-                child: currentContent,
-              ),
-            ]),
+        child: SingleChildScrollView(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    SizedBox(
+                        height: 50.0,
+                        width: 120.0,
+                        child: TextButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all<Color>(_buttonAmics),
+                            foregroundColor:
+                                MaterialStateProperty.all<Color>(Colors.white),
+                          ),
+                          onPressed: () {
+                            _changeButtonColor(1);
+                            changeContent(Amics());
+                          },
+                          child: Text('Amics'),
+                        )),
+                    SizedBox(
+                        height: 50.0,
+                        width: 120.0,
+                        child: TextButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all<Color>(_buttonGrups),
+                            foregroundColor:
+                                MaterialStateProperty.all<Color>(Colors.white),
+                          ),
+                          onPressed: () {
+                            _changeButtonColor(2);
+                            changeContent(Grups());
+                          },
+                          child: Text('Grups'),
+                        )),
+                    SizedBox(
+                        height: 50.0,
+                        width: 120.0,
+                        child: TextButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                _buttonAfegirAmics),
+                            foregroundColor:
+                                MaterialStateProperty.all<Color>(Colors.white),
+                          ),
+                          onPressed: () {
+                            _changeButtonColor(3);
+                            changeContent(AfegirAmics());
+                          },
+                          child: Text('Afegir Amics'),
+                        )),
+                  ],
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                Container(
+                  padding: EdgeInsets.all(20),
+                  color: Colors.grey[200],
+                  child: currentContent,
+                ),
+              ]),
+        ),
       ),
       //container amb les diferents pantalles
       bottomNavigationBar: Container(
