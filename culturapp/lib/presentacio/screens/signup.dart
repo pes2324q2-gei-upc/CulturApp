@@ -11,12 +11,13 @@ import 'package:flutter/material.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class Signup extends StatefulWidget {
-  final User? user;
 
-  const Signup({Key? key, this.user}) : super(key: key);
+  final ControladorPresentacion controladorPresentacion;
+
+  const Signup({Key? key, required this.controladorPresentacion}) : super(key: key);
 
   @override
-  _SignupState createState() => _SignupState();
+  _SignupState createState() => _SignupState(controladorPresentacion);
 }
 
 class _SignupState extends State<Signup> {
@@ -42,6 +43,15 @@ class _SignupState extends State<Signup> {
     'fires-i-mercats',
     'gegants',
   ];
+  
+  late ControladorPresentacion _controladorPresentacion;
+
+  late User? user;
+
+  _SignupState(ControladorPresentacion controladorPresentacion) {
+    _controladorPresentacion = controladorPresentacion;
+    user = controladorPresentacion.getUser();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,16 +145,7 @@ class _SignupState extends State<Signup> {
                   padding: const EdgeInsets.only(top: 3, left: 3),
                   child: ElevatedButton(
                     onPressed: () {
-                      String username = usernameController.text;
-                      createUser(username);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Login(
-                            controladorPresentacion: ControladorPresentacion(),
-                          ),
-                        ),
-                      );
+                      createUser();
                     },
                     child: const Text(
                       "Crear compte",
@@ -163,37 +164,8 @@ class _SignupState extends State<Signup> {
     );
   }
 
-  void createUser(String username) {
-    CollectionReference usersCollection =
-        FirebaseFirestore.instance.collection('users');
-    usersCollection.doc(widget.user?.uid).set({
-      'email': widget.user?.email,
-      'username': username,
-      'favcategories': selectedCategories,
-    });
-  }
-
-  void _showCategorySelector() {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          height: MediaQuery.of(context).size.height * 0.75,
-          child: MultiSelectDialogField(
-            items: _categories
-                .map((animal) => MultiSelectItem<String>(animal, animal))
-                .toList(),
-            listType: MultiSelectListType.CHIP,
-            onConfirm: (values) {
-              setState(() {
-                selectedCategories = values;
-              });
-              Navigator.pop(context);
-            },
-          ),
-        );
-      },
-    );
+  void createUser() {
+    _controladorPresentacion.createUser(usernameController.text, selectedCategories, context);
   }
 
   void _showMultiSelect() async {

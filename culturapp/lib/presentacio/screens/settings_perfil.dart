@@ -5,10 +5,13 @@ import "package:firebase_auth/firebase_auth.dart";
 import 'package:culturapp/presentacio/screens/login.dart';
 
 class SettingsPerfil extends StatefulWidget {
-  const SettingsPerfil({super.key});
+
+  final ControladorPresentacion controladorPresentacion;
+
+  const SettingsPerfil({Key? key, required this.controladorPresentacion}) : super(key: key);
 
   @override
-  State<SettingsPerfil> createState() => _SettingsPerfil();
+  State<SettingsPerfil> createState() => _SettingsPerfil(this.controladorPresentacion);
 }
 
 class _SettingsPerfil extends State<SettingsPerfil> {
@@ -18,8 +21,14 @@ class _SettingsPerfil extends State<SettingsPerfil> {
   //Instancia de autentificacio de Firebase
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  late ControladorPresentacion _controladorPresentacion;
 
   bool privat = false;
+  
+  _SettingsPerfil(ControladorPresentacion controladorPresentacion) {
+    _controladorPresentacion = controladorPresentacion;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,12 +104,6 @@ class _SettingsPerfil extends State<SettingsPerfil> {
   }
 
   void signout(context) {
-    _auth.signOut();
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Login(controladorPresentacion: ControladorPresentacion()),
-        ),
-      ); // Cierra la llamada a MaterialPageRoute
+    _controladorPresentacion.logout(context);
   }
 }

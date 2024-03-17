@@ -15,7 +15,7 @@ void main() async {
   // Crea la instancia del controlador después de la inicialización de Firebase
   final controladorPresentacion = ControladorPresentacion();
 
-  //await controladorPresentacion.initialice();
+  await controladorPresentacion.initialice();
 
   // Inicia la aplicación
   runApp(MyApp(controladorPresentacion: controladorPresentacion));

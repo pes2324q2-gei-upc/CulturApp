@@ -528,7 +528,7 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _onTabChange(int index) {
-    /*switch (index) {
+    switch (index) {
       case 0:
         break;
       case 1:
@@ -537,11 +537,11 @@ class _MapPageState extends State<MapPage> {
         
         break;
       case 3:
-
+        _controladorPresentacion.mostrarPerfil(context);
         break;
       default:
         break;
-    }*/
+    }
   }
 
   //Se crea la ''pantalla'' para el mapa - falta añadir dock inferior y barra de busqueda
