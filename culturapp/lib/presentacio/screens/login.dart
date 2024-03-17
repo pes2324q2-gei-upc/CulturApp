@@ -1,4 +1,5 @@
 import "package:cloud_firestore/cloud_firestore.dart";
+import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
@@ -6,38 +7,43 @@ import "package:hive/hive.dart";
 import "package:sign_in_button/sign_in_button.dart";
 //import 'package:culturapp/presentacio/routes/routes.dart';
 import 'package:culturapp/presentacio/screens/logout.dart';
+import 'package:culturapp/presentacio/screens/map_screen.dart';
 import 'package:culturapp/presentacio/screens/signup.dart';
 //import 'package:culturapp/presentacio/routes/routes.dart';
 
 
 class Login extends StatefulWidget {
-  const Login({super.key});
+  final ControladorPresentacion controladorPresentacion;
+
+  const Login({Key? key, required this.controladorPresentacion});
 
   @override
-  State<Login> createState() => _Login();
+  State<Login> createState() => _Login(controladorPresentacion);
 }
 
 class _Login extends State<Login> {
-  //Instancia d'autentificacio de Firebase
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  
+  late ControladorPresentacion _controladorPresentacion;
 
-  //Usuari de Firebase
-  User? _user;
+  late FirebaseAuth _auth = FirebaseAuth.instance;
 
-  //Instancia de base de dades de Firebase
-  FirebaseFirestore db = FirebaseFirestore.instance;
+  _Login(ControladorPresentacion controladorPresentacion) {
+    _controladorPresentacion = controladorPresentacion;
+  }
 
   @override
   void initState() {
     super.initState();
+    /*
     _auth.authStateChanges().listen((event) {
       setState(() {
-        _user = event;
+        _controladorPresentacion.setUser(event);
       });
-    });
+      _controladorPresentacion.checkLoggetInUser(context);
+    });*/
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       //Comprovar si ja hi ha una sessio iniciada
-      _checkLoggedInUser();
+      _controladorPresentacion.checkLoggetInUser(context);
     });
   }
 
@@ -90,47 +96,7 @@ class _Login extends State<Login> {
  
   //Inici de sessio
   Future<void> _handleGoogleSignIn() async {
-    try {
-      //Iniciar la sessio amb el compte especificat per l'usuari
-      GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
-      final UserCredential userCredential = await _auth.signInWithProvider(_googleAuthProvider);
-      bool userExists = await accountExists(userCredential.user);
-
-      //Si no hi ha un usuari associat al compte de google, redirigir a la pantalla de registre
-      if (!userExists) {
-       Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Signup(_user))
-        );
-      }
-      //Altrament redirigir a la pantalla principal de l'app
-      else {
-        //Navigator.pushNamed(context, Routes.perfil);
-      }
-    }
-    catch (error) {
-      print(error);
-    }
-  }
-  
-  //Comprovar si existeix un usuari per a cert compte de google
-  Future<bool> accountExists(User? user) async {
-    DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection("users").doc(_user!.uid).get();
-    return userSnapshot.exists;
-  }
-
-  //Comprovar si hi ha una sessio iniciada
-  void _checkLoggedInUser() async {
-    //Obte l'usuari autentificat en el moment si existeix
-    User? currentUser = _auth.currentUser;
-    
-    //Si existeix l'usuari, estableix l'usuari de l'estat i redirigeix a la pantalla principal
-    if (currentUser != null) {
-      setState(() {
-        _user = currentUser;
-      });
-     //Navigator.pushNamed(context, Routes.perfil);
-    }
+    await _controladorPresentacion.handleGoogleSignIn(context);
   }
 }
 

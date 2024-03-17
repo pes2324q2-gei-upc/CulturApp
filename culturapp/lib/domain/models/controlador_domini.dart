@@ -1,13 +1,14 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
 
 class ControladorDomini {
   
   Future <List<Actividad>> getActivitiesAgenda() async {
-
     final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/activitats/cache'));
     
     if (respuesta.statusCode == 200) {
@@ -97,6 +98,43 @@ class ControladorDomini {
       }
     
     return actividades;
+  }
+
+  Future<bool> accountExists(User? user) async {
+    final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/user/exists?uid=${user?.uid}'));
+    
+    if (respuesta.statusCode == 200) {
+      print(respuesta);
+      return (respuesta.body == "exists");
+    }
+    else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
+
+   void createUser(User? _user, String username, List<String> selectedCategories) async {
+    try {
+      final Map<String, dynamic> userdata = {
+        'uid': _user?.uid,
+        'username': username,
+        'email': _user?.email,
+        'favcategories': jsonEncode(selectedCategories),
+      };
+
+      final respuesta = await http.post(
+        Uri.parse('http://10.0.2.2:8080/users/create'),
+        body: jsonEncode(userdata),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (respuesta.statusCode == 200) {
+        print('Datos enviados exitosamente');
+      } else {
+        print('Error al enviar los datos: ${respuesta.statusCode}');
+      }
+    } catch (error) {
+      print('Error de red: $error');
+    }
   }
 
 }
