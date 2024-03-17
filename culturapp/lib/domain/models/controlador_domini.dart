@@ -8,10 +8,10 @@ class ControladorDomini {
   
   Future <List<Actividad>> getActivitiesAgenda() async {
 
-    final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/activitats/cache'));
+    final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/read/all'));
     
     if (respuesta.statusCode == 200) {
-      return _convert_json_to_list(respuesta);
+      return _convert_database_to_list(respuesta);
     }
     else {
       throw Exception('Fallo la obtención de datos');
@@ -45,7 +45,7 @@ class ControladorDomini {
       actividad.longitud = actividadJson['longitud'].toDouble();
       actividad.descripcio = actividadJson['descripcio'] ?? 'No hi ha cap descripció per aquesta activitat.';
       actividad.ubicacio = actividadJson['adre_a'] ?? 'No disponible';
-      
+      actividad.visualitzacions = actividadJson['visualitzacions'] ?? 0;
       actividad.categoria = actividadJson['tags_categor_es'] ?? '';
       
       String imagenes = actividadJson['imatges'] ?? '';
@@ -93,6 +93,7 @@ class ControladorDomini {
       for (var actividadJson in actividadesJson) {
         var actividad = Actividad.fromJson(actividadJson);
           actividades.add(actividad);
+          print(actividad.visualitzacions);
         }
       }
     

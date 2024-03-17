@@ -1,6 +1,7 @@
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/presentacio/screens/lista_actividades.dart';
+import 'package:culturapp/presentacio/screens/recomendador_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_ver_actividad.dart';
 import 'package:flutter/material.dart';
 
@@ -10,8 +11,13 @@ class ControladorPresentacion {
   final controladorDomini = ControladorDomini();
 
   late final List<Actividad> activitats;
+  late final List<String> recomms;
+  final List<String> categsFav = ['carnavals', 'concerts', 'conferencies'];
 
-  Future <void> initialice() async => activitats = await controladorDomini.getActivitiesAgenda(); 
+  Future <void> initialice() async{ 
+    activitats = await controladorDomini.getActivitiesAgenda(); 
+  }
+
 
   void mostrarVerActividad(BuildContext context, List<String> info_act, Uri uri_act) {
     Navigator.push(
@@ -44,6 +50,10 @@ class ControladorPresentacion {
   }
 
   List<Actividad> getActivitats() => activitats;
-
+  List<String> getActivitatsRecomm() {
+    recomms =  calcularActividadesRecomendadas(categsFav, activitats);
+    return recomms;
+    }
+  
   Future<List<Actividad>> getUserActivities(String userID) => controladorDomini.getUserActivities(userID);
 }

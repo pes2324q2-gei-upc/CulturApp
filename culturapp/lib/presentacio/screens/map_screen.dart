@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +8,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 class MapPage extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
+  
+  final List<String>? recomenacions;
 
-  const MapPage({Key? key, required this.controladorPresentacion});
+  const MapPage({Key? key, required this.controladorPresentacion, this.recomenacions});
 
   @override
   State<MapPage> createState() => _MapPageState(controladorPresentacion);
@@ -20,10 +21,12 @@ class _MapPageState extends State<MapPage> {
   late ControladorPresentacion _controladorPresentacion;
 
   late List<Actividad> activitats;
+  late List<String> recomms;
 
   _MapPageState(ControladorPresentacion controladorPresentacion){
     _controladorPresentacion = controladorPresentacion;
     activitats = _controladorPresentacion.getActivitats();
+    recomms = _controladorPresentacion.getActivitatsRecomm();
   }
 
   BitmapDescriptor iconoArte = BitmapDescriptor.defaultMarker;
@@ -363,17 +366,18 @@ class _MapPageState extends State<MapPage> {
         markerId: MarkerId(actividad.code),
         position: LatLng(actividad.latitud, actividad.longitud),
         infoWindow: InfoWindow(title: actividad.name),
-        icon: _getMarkerIcon(actividad.categoria[0]), // Llama a la función para obtener el icono
+        icon: _getMarkerIcon(actividad.categoria[0], actividad.code), // Llama a la función para obtener el icono
         onTap: () => showActividadDetails(actividad),
       );
     }).toSet();
   }
 
   // En funcion de la categoria atribuye un marcador
-  BitmapDescriptor _getMarkerIcon(String categoria) {
-    /*for (int i = 0; i < 3; ++i) {
-      if (categoria == categoriasFavoritas[i]) categoria = 'recom';
-    }*/
+  BitmapDescriptor _getMarkerIcon(String categoria, String code) {
+    for(int i = 0; i < recomms.length; ++i){
+      if (recomms[i] == code) categoria = 'recom';
+    }
+    
     switch (categoria) {
       case 'carnavals':
         return iconoCarnaval;
@@ -410,6 +414,8 @@ class _MapPageState extends State<MapPage> {
       case 'fires-i-mercats':
         return iconoInfantil;
       case 'gegants':
+        return iconoFiesta;
+      case 'sardahes':
         return iconoFiesta;
       default:
         return iconoRecom;
@@ -564,7 +570,7 @@ class _MapPageState extends State<MapPage> {
           },
           selectedIndex: 0,
           tabs: [
-            GButton(
+            const GButton(
                 text: "Mapa",
                 textStyle: TextStyle(fontSize: 12, color: Colors.orange),
                 icon: Icons.map),
