@@ -1,4 +1,5 @@
 import "package:culturapp/presentacio/routes/routes.dart";
+import "package:culturapp/presentacio/screens/amics.dart";
 import "package:flutter/material.dart";
 import "package:google_nav_bar/google_nav_bar.dart";
 
@@ -11,11 +12,11 @@ class Xats extends StatefulWidget {
 
 class _Xats extends State<Xats> {
   //List<Actividad> activitats = null; quan tinguem de base de dades fer-ho bé
-  String containerContent = 'Content 1';
+  Widget currentContent = Amics();
 
-  void changeContent(String newContent) {
+  void changeContent(Widget newContent) {
     setState(() {
-      containerContent = newContent;
+      currentContent = newContent;
     });
   }
 
@@ -36,6 +37,28 @@ class _Xats extends State<Xats> {
       default:
         break;
     }
+  }
+
+  Color _buttonAmics = Colors.grey;
+  Color _buttonGrups = Colors.orange;
+  Color _buttonAfegirAmics = Colors.orange;
+
+  void _changeButtonColor(int buttonNumber) {
+    setState(() {
+      if (buttonNumber == 1) {
+        _buttonAmics = Colors.grey;
+        _buttonGrups = Colors.orange;
+        _buttonAfegirAmics = Colors.orange;
+      } else if (buttonNumber == 2) {
+        _buttonAmics = Colors.orange;
+        _buttonGrups = Colors.grey;
+        _buttonAfegirAmics = Colors.orange;
+      } else if (buttonNumber == 3) {
+        _buttonAmics = Colors.orange;
+        _buttonGrups = Colors.orange;
+        _buttonAfegirAmics = Colors.grey;
+      }
+    });
   }
 
   @override
@@ -59,41 +82,50 @@ class _Xats extends State<Xats> {
                 children: [
                   SizedBox(
                       height: 50.0,
-                      width: 120.0,
+                      width: 110.0,
                       child: TextButton(
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all<Color>(Colors.orange),
+                              MaterialStateProperty.all<Color>(_buttonAmics),
                           foregroundColor:
                               MaterialStateProperty.all<Color>(Colors.white),
                         ),
-                        onPressed: () => changeContent('Content 1'),
+                        onPressed: () {
+                          _changeButtonColor(1);
+                          changeContent(Amics());
+                        },
                         child: Text('Amics'),
                       )),
                   SizedBox(
                       height: 50.0,
-                      width: 120.0,
+                      width: 110.0,
                       child: TextButton(
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all<Color>(Colors.orange),
+                              MaterialStateProperty.all<Color>(_buttonGrups),
                           foregroundColor:
                               MaterialStateProperty.all<Color>(Colors.white),
                         ),
-                        onPressed: () => changeContent('Content 2'),
+                        onPressed: () {
+                          _changeButtonColor(2);
+                          changeContent(Grups());
+                        },
                         child: Text('Grups'),
                       )),
                   SizedBox(
                       height: 50.0,
-                      width: 120.0,
+                      width: 110.0,
                       child: TextButton(
                         style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(Colors.orange),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              _buttonAfegirAmics),
                           foregroundColor:
                               MaterialStateProperty.all<Color>(Colors.white),
                         ),
-                        onPressed: () => changeContent('Content 3'),
+                        onPressed: () {
+                          _changeButtonColor(3);
+                          changeContent(AfegirAmics());
+                        },
                         child: Text('Afegir Amics'),
                       )),
                 ],
@@ -104,7 +136,7 @@ class _Xats extends State<Xats> {
               Container(
                 padding: EdgeInsets.all(20),
                 color: Colors.grey[200],
-                child: Text(containerContent),
+                child: currentContent,
               ),
             ]),
       ),
@@ -145,5 +177,19 @@ class _Xats extends State<Xats> {
         ),
       ),
     );
+  }
+}
+
+class Grups extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Text('This is Grups');
+  }
+}
+
+class AfegirAmics extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Text('This is AfegirAmics');
   }
 }
