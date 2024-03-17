@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 class ControladorDomini {
   
   Future <List<Actividad>> getActivitiesAgenda() async {
-    final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080:8080/activitats/cache'));
+    final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/activitats/cache'));
     
     if (respuesta.statusCode == 200) {
       return _convert_json_to_list(respuesta);
@@ -101,7 +101,7 @@ class ControladorDomini {
   }
 
   Future<bool> accountExists(User? user) async {
-    final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080:8080/user/exists?uid=${user?.uid}'));
+    final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/user/exists?uid=${user?.uid}'));
     
     if (respuesta.statusCode == 200) {
       print(respuesta);
@@ -122,7 +122,7 @@ class ControladorDomini {
       };
 
       final respuesta = await http.post(
-        Uri.parse('http://10.0.2.2:8080:8080/users/create'),
+        Uri.parse('http://10.0.2.2:8080/users/create'),
         body: jsonEncode(userdata),
         headers: {'Content-Type': 'application/json'},
       );
