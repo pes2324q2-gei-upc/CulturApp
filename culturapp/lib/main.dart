@@ -15,7 +15,6 @@ void main() async {
   final controladorPresentacion = ControladorPresentacion();
 
   await controladorPresentacion.initialice();
- 
   // Inicia la aplicación
   runApp(MyApp(controladorPresentacion: controladorPresentacion));
 }

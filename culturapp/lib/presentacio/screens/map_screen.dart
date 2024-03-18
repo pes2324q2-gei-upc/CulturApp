@@ -49,6 +49,21 @@ class _MapPageState extends State<MapPage> {
   LatLng myLatLng = const LatLng(41.389350, 2.113307);
   String address = 'FIB';
 
+  final List<String> catsAMB = ["Residus",
+  "territori.espai_public_platges",
+  "Sostenibilitat",
+  "Aigua",
+  "territori.espai_public_parcs",
+  "Espai públic - Rius",
+  "Espai públic - Parcs",
+  "Portal de transparència",
+  "Mobilitat sostenible",
+  "Internacional",
+  "Activitat econòmica",
+  "Polítiques socials",
+  "territori.espai_public_rius",
+  "Espai públic - Platges"];
+
   List<Actividad> _actividades = [];
   GoogleMapController? _mapController;
   List<String> categoriasFavoritas = ['circ', 'festes', 'activitats-virtuals'];

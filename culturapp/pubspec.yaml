@@ -39,6 +39,7 @@ flutter:
   - assets/pinarte.png
   - assets/pinconfe.png
   - assets/pincarnaval.png
+  - assets/pinreciclar.png
   - assets/pincirc.png
   - assets/pincommemoracio.png
   - assets/pinconcert.png
@@ -51,6 +52,7 @@ flutter:
   - assets/pinvirtual.png
   - assets/categoriacirc.png
   - assets/categoriaarte.png
+  - assets/categoriareciclar.png
   - assets/categoriaconfe.png
   - assets/categoriacarnaval.png
   - assets/categoriacommemoracio.png
@@ -73,6 +75,7 @@ flutter:
   - assets/concert.png
   - assets/confe.png
   - assets/ruta.png
+  - assets/reciclar.png
   - assets/virtual.png
   - assets/teatr.png
   - assets/userImage.png
