@@ -48,15 +48,7 @@ class ControladorDomini {
       actividad.visualitzacions = actividadJson['visualitzacions'] ?? 0;
       actividad.categoria = actividadJson['tags_categor_es'] ?? '';
       
-      String imagenes = actividadJson['imatges'] ?? '';
-      if (imagenes != '') {
-        int endIndex = imagenes.indexOf(',');
-        if (endIndex != -1) {
-            actividad.imageUrl = "https://agenda.cultura.gencat.cat" + imagenes.substring(0, endIndex);
-        } else {
-          actividad.imageUrl = "https://agenda.cultura.gencat.cat" + imagenes;
-        }
-    }
+      actividad.imageUrl = actividadJson['imatges'] ?? '';
       
       String data = actividadJson['data_inici'] ?? '';
       actividad.dataInici = data.isNotEmpty ? data.substring(0, 10) : '-';

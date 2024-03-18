@@ -45,6 +45,7 @@ class _MapPageState extends State<MapPage> {
   BitmapDescriptor iconoRuta = BitmapDescriptor.defaultMarker;
   BitmapDescriptor iconoTeatro = BitmapDescriptor.defaultMarker;
   BitmapDescriptor iconoVirtual = BitmapDescriptor.defaultMarker;
+  BitmapDescriptor iconoAMB = BitmapDescriptor.defaultMarker;
   IconData iconoCategoria = Icons.category;
   LatLng myLatLng = const LatLng(41.389350, 2.113307);
   String address = 'FIB';
@@ -112,102 +113,110 @@ class _MapPageState extends State<MapPage> {
   }
 
   Image _retornaIcon(String categoria) {
-    switch (categoria) {
-      case 'carnavals':
-        return Image.asset(
-          'assets/categoriacarnaval.png',
-          width: 45.0,
-        );
-      case 'teatre':
-        return Image.asset(
-          'assets/categoriateatre.png',
-          width: 45.0,
-        );
-      case 'concerts':
-        return Image.asset(
-          'assets/categoriaconcert.png',
-          width: 45.0,
-        );
-      case 'circ':
-        return Image.asset(
-          'assets/categoriacirc.png',
-          width: 45.0,
-        );
-      case 'exposicions':
-        return Image.asset(
-          'assets/categoriaarte.png',
-          width: 45.0,
-        );
-      case 'conferencies':
-        return Image.asset(
-          'assets/categoriaconfe.png',
-          width: 45.0,
-        );
-      case 'commemoracions':
-        return Image.asset(
-          'assets/categoriacommemoracio.png',
-          width: 45.0,
-        );
-      case 'rutes-i-visites':
-        return Image.asset(
-          'assets/categoriaruta.png',
-          width: 45.0,
-        );
-      case 'cursos':
-        return Image.asset(
-          'assets/categoriaexpo.png',
-          width: 45.0,
-        );
-      case 'activitats-virtuals':
-        return Image.asset(
-          'assets/categoriavirtual.png',
-          width: 45.0,
-        );
-      case 'infantil':
-        return Image.asset(
-          'assets/categoriainfantil.png',
-          width: 45.0,
-        );
-      case 'festes':
-        return Image.asset(
-          'assets/categoriafesta.png',
-          width: 45.0,
-        );
-      case 'festivals-i-mostres':
-        return Image.asset(
-          'assets/categoriafesta.png',
-          width: 45.0,
-        );
-      case 'dansa':
-        return Image.asset(
-          'assets/categoriafesta.png',
-          width: 45.0,
-        );
-      case 'cicles':
-        return Image.asset(
-          'assets/categoriaexpo.png',
-          width: 45.0,
-        );
-      case 'cultura-digital':
-        return Image.asset(
-          'assets/categoriavirtual.png',
-          width: 45.0,
-        );
-      case 'fires-i-mercats':
-        return Image.asset(
-          'assets/categoriainfantil.png',
-          width: 45.0,
-        );
-      case 'gegants':
-        return Image.asset(
-          'assets/categoriafesta.png',
-          width: 45.0,
-        );
-      default:
-        return Image.asset(
-          'assets/categoriarecom.png',
-          width: 45.0,
-        );
+    if (catsAMB.contains(categoria)){
+      return Image.asset(
+            'assets/categoriareciclar.png',
+            width: 45.0,
+          );
+    }
+    else {
+      switch (categoria) {
+        case 'carnavals':
+          return Image.asset(
+            'assets/categoriacarnaval.png',
+            width: 45.0,
+          );
+        case 'teatre':
+          return Image.asset(
+            'assets/categoriateatre.png',
+            width: 45.0,
+          );
+        case 'concerts':
+          return Image.asset(
+            'assets/categoriaconcert.png',
+            width: 45.0,
+          );
+        case 'circ':
+          return Image.asset(
+            'assets/categoriacirc.png',
+            width: 45.0,
+          );
+        case 'exposicions':
+          return Image.asset(
+            'assets/categoriaarte.png',
+            width: 45.0,
+          );
+        case 'conferencies':
+          return Image.asset(
+            'assets/categoriaconfe.png',
+            width: 45.0,
+          );
+        case 'commemoracions':
+          return Image.asset(
+            'assets/categoriacommemoracio.png',
+            width: 45.0,
+          );
+        case 'rutes-i-visites':
+          return Image.asset(
+            'assets/categoriaruta.png',
+            width: 45.0,
+          );
+        case 'cursos':
+          return Image.asset(
+            'assets/categoriaexpo.png',
+            width: 45.0,
+          );
+        case 'activitats-virtuals':
+          return Image.asset(
+            'assets/categoriavirtual.png',
+            width: 45.0,
+          );
+        case 'infantil':
+          return Image.asset(
+            'assets/categoriainfantil.png',
+            width: 45.0,
+          );
+        case 'festes':
+          return Image.asset(
+            'assets/categoriafesta.png',
+            width: 45.0,
+          );
+        case 'festivals-i-mostres':
+          return Image.asset(
+            'assets/categoriafesta.png',
+            width: 45.0,
+          );
+        case 'dansa':
+          return Image.asset(
+            'assets/categoriafesta.png',
+            width: 45.0,
+          );
+        case 'cicles':
+          return Image.asset(
+            'assets/categoriaexpo.png',
+            width: 45.0,
+          );
+        case 'cultura-digital':
+          return Image.asset(
+            'assets/categoriavirtual.png',
+            width: 45.0,
+          );
+        case 'fires-i-mercats':
+          return Image.asset(
+            'assets/categoriainfantil.png',
+            width: 45.0,
+          );
+        case 'gegants':
+          return Image.asset(
+            'assets/categoriafesta.png',
+            width: 45.0,
+          );
+        default:
+          return Image.asset(
+            'assets/categoriarecom.png',
+            width: 45.0,
+          );
+      }
     }
   }
 
@@ -360,13 +369,9 @@ class _MapPageState extends State<MapPage> {
                               DocumentSnapshot snapshot = await transaction.get(docRef);
                               int currentValue = 0;
                               if (snapshot.data() is Map<String, dynamic>) {
-                                print('aqui estouy');
                                 currentValue = (snapshot.data() as Map<String, dynamic>)['visualitzacions'] ?? 5;
-                                print('aqui estouy');
-                                print(currentValue);
                               } 
                               int newValue = currentValue + 1;
-                              print(newValue);
                               transaction.update(docRef, {'visualitzacions': newValue});
                             });
                           },
@@ -409,48 +414,52 @@ class _MapPageState extends State<MapPage> {
     for(int i = 0; i < recomms.length; ++i){
       if (recomms[i] == code) categoria = 'recom';
     }
-    
-    switch (categoria) {
-      case 'carnavals':
-        return iconoCarnaval;
-      case 'teatre':
-        return iconoTeatro;
-      case 'concerts':
-        return iconoConcierto;
-      case 'circ':
-        return iconoCirco;
-      case 'exposicions':
-        return iconoArte;
-      case 'conferencies':
-        return iconoConferencia;
-      case 'commemoracions':
-        return iconoCommemoracion;
-      case 'rutes-i-visites':
-        return iconoRuta;
-      case 'cursos':
-        return iconoExpo;
-      case 'activitats-virtuals':
-        return iconoVirtual;
-      case 'infantil':
-        return iconoInfantil;
-      case 'festes':
-        return iconoFiesta;
-      case 'festivals-i-mostres':
-        return iconoFiesta;
-      case 'dansa':
-        return iconoFiesta;
-      case 'cicles':
-        return iconoExpo;
-      case 'cultura-digital':
-        return iconoExpo;
-      case 'fires-i-mercats':
-        return iconoInfantil;
-      case 'gegants':
-        return iconoFiesta;
-      case 'sardahes':
-        return iconoFiesta;
-      default:
-        return iconoRecom;
+    if (catsAMB.contains(categoria)){
+      return iconoAMB;
+    }
+    else {
+      switch (categoria) {
+        case 'carnavals':
+          return iconoCarnaval;
+        case 'teatre':
+          return iconoTeatro;
+        case 'concerts':
+          return iconoConcierto;
+        case 'circ':
+          return iconoCirco;
+        case 'exposicions':
+          return iconoArte;
+        case 'conferencies':
+          return iconoConferencia;
+        case 'commemoracions':
+          return iconoCommemoracion;
+        case 'rutes-i-visites':
+          return iconoRuta;
+        case 'cursos':
+          return iconoExpo;
+        case 'activitats-virtuals':
+          return iconoVirtual;
+        case 'infantil':
+          return iconoInfantil;
+        case 'festes':
+          return iconoFiesta;
+        case 'festivals-i-mostres':
+          return iconoFiesta;
+        case 'dansa':
+          return iconoFiesta;
+        case 'cicles':
+          return iconoExpo;
+        case 'cultura-digital':
+          return iconoExpo;
+        case 'fires-i-mercats':
+          return iconoInfantil;
+        case 'gegants':
+          return iconoFiesta;
+        case 'sardahes':
+          return iconoFiesta;
+        default:
+          return iconoRecom;
+      }
     }
   }
 
@@ -466,6 +475,12 @@ class _MapPageState extends State<MapPage> {
         const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinfesta.png');
     setState(() {
       iconoFiesta = icon;
+    });
+
+    icon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinreciclar.png');
+    setState(() {
+      iconoAMB = icon;
     });
 
     icon = await BitmapDescriptor.fromAssetImage(
