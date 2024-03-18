@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:culturapp/data/database_service.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
 class MapPage extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
@@ -542,6 +544,25 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
+  var querySearch = '';
+  Actividad activitat;
+
+  Future<void> busquedaActivitat(String querySearch) async {
+    //de moment res pq això es per backend
+    String url = '/activitats/search?q=$querySearch';
+    var response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      dynamic data = jsonDecode(response.body);
+
+      setState(() {
+        activitat = Actividad.fromJson(data);
+      });
+    } else {
+      throw Exception('Failed to load actividades');
+    }
+  }
+
   //Se crea la ''pantalla'' para el mapa - falta añadir dock inferior y barra de busqueda
   @override
   Widget build(BuildContext context) {
@@ -608,13 +629,18 @@ class _MapPageState extends State<MapPage> {
                 border: Border.all(color: Colors.black, width: 1.5),
                 borderRadius: BorderRadius.circular(25.0),
               ),
-              child: const Padding(
+              child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 25.0),
                 child: TextField(
+                  //en aquest cas, només "onPressed pq només pot haver-hi una"
                   decoration: InputDecoration(
-                    hintText: 'Buscar...',
-                    border: InputBorder.none,
-                  ),
+                      hintText: 'Buscar...',
+                      border: InputBorder.none,
+                      suffixIcon: IconButton(
+                          onPressed: () {
+                            busquedaActivitat(querySearch);
+                          },
+                          icon: Icon(Icons.search))),
                 ),
               ),
             ),
