@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 
 class ControladorDomini {
 
-  final String ip = "192.168.1.38";
+  final String ip = "10.0.2.2";
   
   Future <List<Actividad>> getActivitiesAgenda() async {
     final respuesta = await http.get(Uri.parse('http://${ip}:8080/activitats/cache'));
