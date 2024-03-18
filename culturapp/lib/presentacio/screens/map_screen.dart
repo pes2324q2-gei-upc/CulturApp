@@ -1,4 +1,6 @@
 import 'dart:math' as math;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:culturapp/data/firebase_service.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +24,7 @@ class _MapPageState extends State<MapPage> {
 
   late List<Actividad> activitats;
   late List<String> recomms;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   _MapPageState(ControladorPresentacion controladorPresentacion){
     _controladorPresentacion = controladorPresentacion;
@@ -325,7 +328,7 @@ class _MapPageState extends State<MapPage> {
                         width: 400.0,
                         height: 35.0,
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             List<String> act = [actividad.name,
                                                 actividad.code,
                                                 actividad.categoria[0],
@@ -334,9 +337,23 @@ class _MapPageState extends State<MapPage> {
                                                 actividad.dataInici,
                                                 actividad.dataFi,
                                                 actividad.ubicacio];
-
                             _controladorPresentacion.mostrarVerActividad(
                                 context, act, actividad.urlEntrades);
+                            //Actualizar BD +1 Visualitzacio
+                            DocumentReference docRef = _firestore.collection('actividades').doc(actividad.code);
+                            await _firestore.runTransaction((transaction) async {
+                              DocumentSnapshot snapshot = await transaction.get(docRef);
+                              int currentValue = 0;
+                              if (snapshot.data() is Map<String, dynamic>) {
+                                print('aqui estouy');
+                                currentValue = (snapshot.data() as Map<String, dynamic>)['visualitzacions'] ?? 5;
+                                print('aqui estouy');
+                                print(currentValue);
+                              } 
+                              int newValue = currentValue + 1;
+                              print(newValue);
+                              transaction.update(docRef, {'visualitzacions': newValue});
+                            });
                           },
                           style: ButtonStyle(
                             backgroundColor:
@@ -576,17 +593,17 @@ class _MapPageState extends State<MapPage> {
                 icon: Icons.map),
             GButton(
               text: "Mis Actividades",
-              textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+              textStyle: const TextStyle(fontSize: 12, color: Colors.orange),
               icon: Icons.event,
               onPressed: () {
                 Navigator.pushNamed(context, '/myActivities');
               },
             ),
-            GButton(
+            const GButton(
                 text: "Chats",
                 textStyle: TextStyle(fontSize: 12, color: Colors.orange),
                 icon: Icons.chat),
-            GButton(
+            const GButton(
                 text: "Perfil",
                 textStyle: TextStyle(fontSize: 12, color: Colors.orange),
                 icon: Icons.person),
