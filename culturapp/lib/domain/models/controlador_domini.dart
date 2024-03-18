@@ -7,9 +7,11 @@ import 'package:http/http.dart' as http;
 
 
 class ControladorDomini {
+
+  final String ip = "10.0.2.2";
   
   Future <List<Actividad>> getActivitiesAgenda() async {
-    final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/activitats/cache'));
+    final respuesta = await http.get(Uri.parse('http://${ip}:8080/activitats/cache'));
     
     if (respuesta.statusCode == 200) {
       return _convert_json_to_list(respuesta);
@@ -22,7 +24,7 @@ class ControladorDomini {
 
   Future<List<Actividad>> getUserActivities(String userID) async {
     final respuesta = await http.get(
-      Uri.parse('http://10.0.2.2:8080/activitats/user/$userID'),
+      Uri.parse('http://${ip}:8080/activitats/user/$userID'),
     );
 
     if (respuesta.statusCode == 200) {
@@ -101,7 +103,7 @@ class ControladorDomini {
   }
 
   Future<bool> accountExists(User? user) async {
-    final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/user/exists?uid=${user?.uid}'));
+    final respuesta = await http.get(Uri.parse('http://${ip}:8080/user/exists?uid=${user?.uid}'));
     
     if (respuesta.statusCode == 200) {
       print(respuesta);
@@ -122,8 +124,65 @@ class ControladorDomini {
       };
 
       final respuesta = await http.post(
-        Uri.parse('http://10.0.2.2:8080/users/create'),
+        Uri.parse('http://${ip}:8080/users/create'),
         body: jsonEncode(userdata),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (respuesta.statusCode == 200) {
+        print('Datos enviados exitosamente');
+      } else {
+        print('Error al enviar los datos: ${respuesta.statusCode}');
+      }
+    } catch (error) {
+      print('Error de red: $error');
+    }
+  }
+
+  void signoutFromActivity(String? uid, String code) async {
+    try {
+      final Map<String, dynamic> requestData = {
+        'uid': uid,
+        'activityId': code,
+      };
+
+      final respuesta = await http.post(
+        Uri.parse('http://${ip}:8080/activitats/signout'),
+        body: jsonEncode(requestData),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (respuesta.statusCode == 200) {
+        print('Datos enviados exitosamente');
+      } else {
+        print('Error al enviar los datos: ${respuesta.statusCode}');
+      }
+    } catch (error) {
+      print('Error de red: $error');
+    }
+  }
+
+  Future<bool> isUserInActivity(String? uid, String code) async {
+    final respuesta = await http.get(Uri.parse('http://${ip}:8080/activitats/isuserin?uid=${uid}&activityId=${code}'));
+    
+    if (respuesta.statusCode == 200) {
+      return (respuesta.body == "yes");
+    }
+    else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
+
+  void signupInActivity(String? uid, String code) async {
+    try {
+      final Map<String, dynamic> requestData = {
+        'uid': uid,
+        'activityId': code,
+      };
+
+      final respuesta = await http.post(
+        Uri.parse('http://${ip}:8080/activitats/signup'),
+        body: jsonEncode(requestData),
         headers: {'Content-Type': 'application/json'},
       );
 
