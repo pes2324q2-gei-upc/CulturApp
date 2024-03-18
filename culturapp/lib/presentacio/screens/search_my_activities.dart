@@ -1,4 +1,6 @@
-import "package:culturapp/domain/filtre_data.dart";
+import "dart:convert";
+import 'package:http/http.dart' as http;
+import "package:culturapp/domain/models/filtre_data.dart";
 import "package:culturapp/domain/models/actividad.dart";
 import "package:culturapp/domain/models/filtre_categoria.dart";
 import "package:flutter/material.dart";
@@ -12,89 +14,91 @@ class SearchMyActivities extends StatefulWidget {
 
 class _SearchMyActivitiesState extends State<SearchMyActivities> {
   //dummy activitats fins que tinguem les de l'api
-  static List<Actividad> my_activities_list = [];
-  Future<void>? _fetchMyActivitiesFuture;
+  //fins que backend no funcioni
 
-  Future<void> fetchMyActivities() async {
-    //var activities = await getActivities();
-    var activities = [
-      Actividad(
-          name: "Super3",
-          code: "AABB",
-          categoria: "infantil",
-          latitud: 2.0,
-          longitud: 3.0,
-          imageUrl:
-              "https://i.pinimg.com/originals/10/ef/0c/10ef0c804190d04cace0f0096ccb8912.jpg",
-          descripcio: "descripcio",
-          dataInici: "10-07-2024",
-          dataFi: "23-07-2024",
-          ubicacio: "ubicacio",
-          urlEntrades: Uri(),
-          preu: "preu",
-          comarca: "comarca",
-          horari: "horari"),
-      Actividad(
-          name: "Super31",
-          code: "AACC",
-          categoria: "teatre",
-          latitud: 2.0,
-          longitud: 3.0,
-          imageUrl:
-              "https://i.pinimg.com/originals/10/ef/0c/10ef0c804190d04cace0f0096ccb8912.jpg",
-          descripcio: "descripcio",
-          dataInici: "10-08-2024",
-          dataFi: "23-08-2024",
-          ubicacio: "ubicacio",
-          urlEntrades: Uri(),
-          preu: "preu",
-          comarca: "comarca",
-          horari: "horari"),
-      Actividad(
-          name: "ConcertTaylor",
-          code: "AACC",
-          categoria: "concert",
-          latitud: 2.0,
-          longitud: 3.0,
-          imageUrl:
-              "https://i.pinimg.com/originals/10/ef/0c/10ef0c804190d04cace0f0096ccb8912.jpg",
-          descripcio: "descripcio",
-          dataInici: "30-11-2024",
-          dataFi: "23-12-2024",
-          ubicacio: "ubicacio",
-          urlEntrades: Uri(),
-          preu: "preu",
-          comarca: "comarca",
-          horari: "horari"),
-    ];
+  TextEditingController searchController = TextEditingController();
+  String selectedCategoria = '';
+  String selectedData = '';
+
+  /*Future<void> fetchMyActivities(
+      String searchQuery, String categoria, String data) async {
+    String url =
+        '/activitats/user/:id/search?q=$searchQuery&filterCategoria=$categoria&filterData=$data';
+    var response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = jsonDecode(response.body);
+      setState(() {
+        my_activities_list =
+            data.map((json) => Actividad.fromJson(json)).toList();
+      });
+    } else {
+      throw Exception('Failed to load actividades');
+    }
+  }*/
+
+  //borrar quan backend estigui implementat
+  static List<Actividad> display_list = [
+    Actividad(
+        name: "Super3",
+        code: "AABB",
+        categoria: "infantil",
+        latitud: 2.0,
+        longitud: 3.0,
+        imageUrl:
+            "https://i.pinimg.com/originals/10/ef/0c/10ef0c804190d04cace0f0096ccb8912.jpg",
+        descripcio: "descripcio",
+        dataInici: "10-07-2024",
+        dataFi: "23-07-2024",
+        ubicacio: "ubicacio",
+        urlEntrades: Uri(),
+        preu: "preu",
+        comarca: "comarca",
+        horari: "horari"),
+    Actividad(
+        name: "Super31",
+        code: "AACC",
+        categoria: "teatre",
+        latitud: 2.0,
+        longitud: 3.0,
+        imageUrl:
+            "https://i.pinimg.com/originals/10/ef/0c/10ef0c804190d04cace0f0096ccb8912.jpg",
+        descripcio: "descripcio",
+        dataInici: "10-08-2024",
+        dataFi: "23-08-2024",
+        ubicacio: "ubicacio",
+        urlEntrades: Uri(),
+        preu: "preu",
+        comarca: "comarca",
+        horari: "horari"),
+    Actividad(
+        name: "ConcertTaylor",
+        code: "AACC",
+        categoria: "concert",
+        latitud: 2.0,
+        longitud: 3.0,
+        imageUrl:
+            "https://i.pinimg.com/originals/10/ef/0c/10ef0c804190d04cace0f0096ccb8912.jpg",
+        descripcio: "descripcio",
+        dataInici: "30-11-2024",
+        dataFi: "23-12-2024",
+        ubicacio: "ubicacio",
+        urlEntrades: Uri(),
+        preu: "preu",
+        comarca: "comarca",
+        horari: "horari"),
+  ];
+  List<Actividad> my_activities_list = List.from(display_list); //[];
+
+  Future<void> fetchMyActivities(
+      String searchQuery, String categoria, String data) async {
     setState(() {
-      my_activities_list = activities;
+      my_activities_list = display_list
+          .where((element) =>
+              element.name.toLowerCase().contains(searchQuery.toLowerCase()) &&
+              (categoria == '' || element.categoria == categoria))
+          .toList();
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchMyActivitiesFuture = fetchMyActivities();
-  }
-
-  //creant la llista que farem display i aplicarem els seus filtres:
-  List<Actividad> display_list = List.from(my_activities_list);
-
-  String selectedCategory = '';
-  String value = '';
-
-  void updateList(String value, String category) {
-    //funcio on es filtrarà la nostra llista
-    setState(
-      () {
-        display_list = my_activities_list
-            .where((element) =>
-                element.name.toLowerCase().contains(value.toLowerCase()) &&
-                (category == '' || element.categoria == category))
-            .toList();
-      },
-    );
   }
 
   @override
@@ -122,7 +126,9 @@ class _SearchMyActivitiesState extends State<SearchMyActivities> {
                   height: 20.0,
                 ),
                 TextField(
-                  onChanged: (value) => updateList(value, selectedCategory),
+                  controller: searchController,
+                  onChanged: (text) =>
+                      fetchMyActivities(text, selectedCategoria, selectedData),
                   cursorColor: Colors.white,
                   style: const TextStyle(
                     color: Colors.white,
@@ -138,7 +144,13 @@ class _SearchMyActivitiesState extends State<SearchMyActivities> {
                     hintStyle: const TextStyle(
                       color: Colors.white,
                     ),
-                    suffixIcon: const Icon(Icons.search),
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        fetchMyActivities(searchController.text,
+                            selectedCategoria, selectedData);
+                      },
+                      icon: Icon(Icons.search),
+                    ),
                     suffixIconColor: Colors.white,
                   ),
                 ),
@@ -149,11 +161,10 @@ class _SearchMyActivitiesState extends State<SearchMyActivities> {
                   SizedBox(
                     height: 30.0,
                     width: 100.0,
-                    child: FiltreCategoria(canviCategoria: (newFilter) {
+                    child: FiltreCategoria(canviCategoria: (newCategoria) {
                       setState(() {
-                        selectedCategory = newFilter;
+                        selectedCategoria = newCategoria!;
                       });
-                      updateList(value, selectedCategory);
                     }),
                   ),
                   const SizedBox(
@@ -162,7 +173,11 @@ class _SearchMyActivitiesState extends State<SearchMyActivities> {
                   SizedBox(
                     height: 30.0,
                     width: 150.0,
-                    child: FiltreData(),
+                    child: FiltreData(canviData: (newData) {
+                      setState(() {
+                        selectedData = newData!;
+                      });
+                    }),
                   )
                 ]),
                 const SizedBox(
@@ -170,20 +185,20 @@ class _SearchMyActivitiesState extends State<SearchMyActivities> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                      itemCount: display_list.length,
+                      itemCount: my_activities_list.length,
                       itemBuilder: (context, index) => ListTile(
                             contentPadding: const EdgeInsets.all(8.0),
-                            title: Text(display_list[index].name,
+                            title: Text(my_activities_list[index].name,
                                 style: const TextStyle(
                                   color: Colors.orange,
                                   fontWeight: FontWeight.bold,
                                 )),
-                            subtitle: Text(display_list[index].categoria,
+                            subtitle: Text(my_activities_list[index].categoria,
                                 style: const TextStyle(color: Colors.orange)),
-                            trailing: Text("${display_list[index].preu}",
+                            trailing: Text("${my_activities_list[index].preu}",
                                 style: TextStyle(color: Colors.orange)),
-                            leading:
-                                Image.network(display_list[index].imageUrl!),
+                            leading: Image.network(
+                                my_activities_list[index].imageUrl!),
                           )),
                 ),
               ]),

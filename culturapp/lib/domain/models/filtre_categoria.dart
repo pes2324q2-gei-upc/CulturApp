@@ -3,7 +3,7 @@ import "package:flutter/material.dart";
 
 class FiltreCategoria extends StatefulWidget {
   const FiltreCategoria(
-      {super.key, required Null Function(dynamic newFilter) canviCategoria});
+      {super.key, required Null Function(dynamic newCategoria) canviCategoria});
 
   @override
   _FiltreState createState() => _FiltreState();
@@ -14,9 +14,10 @@ class _FiltreState extends State<FiltreCategoria> {
     'concert',
     'infantil',
     'teatre'
+    //agar tots els tipus
   ];
   late String _selectedCategory = llistaCategories.first;
-  //categoria seleccionada
+  //categoria seleccionada, canviar a un filler
 
   void dropdownCallback(String? selectedValue) {
     if (selectedValue is String) {

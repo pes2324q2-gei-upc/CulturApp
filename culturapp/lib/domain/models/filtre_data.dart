@@ -4,6 +4,9 @@ import "package:flutter/material.dart";
 //o maybe quin dia
 
 class FiltreData extends StatefulWidget {
+  const FiltreData(
+      {super.key, required Null Function(dynamic newData) canviData});
+
   @override
   _FiltreState createState() => _FiltreState();
 }
