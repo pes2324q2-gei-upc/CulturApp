@@ -23,8 +23,6 @@ class _PerfilPageState extends State<PerfilPage> {
     _controladorPresentacion = controladorPresentacion;
   }
 
-
-  //no se que es esta funcuion
   @override
   void initState() {
     

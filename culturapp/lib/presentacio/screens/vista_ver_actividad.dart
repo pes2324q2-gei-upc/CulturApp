@@ -1,3 +1,4 @@
+import 'package:culturapp/domain/models/post.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -25,6 +26,12 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
   bool estaApuntado = false;
   bool mostrarDescripcionCompleta = false;
+
+  //mas adelante habra que pillarlo de la base de datos
+  List<Post> posts = [
+    Post(username: 'Usuario1', message: 'Primer mensaje', date: DateTime.now()),
+    Post(username: 'Usuario2', message: 'Mensaje de ejemplo', date: DateTime.now(), likes: 1),
+  ];
   
   _VistaVerActividadState(List<String> info_actividad, Uri uri_actividad){
     infoActividad = info_actividad;
@@ -54,6 +61,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           _descripcioActividad(infoActividad[4]), //Accedemos su descripcion
           _expansionDescripcion(),
           _infoActividad(infoActividad[7], infoActividad[5], infoActividad[6], uriActividad),
+          _foro(),
         ],  //Accedemos ubicación, dataIni, DataFi, uri actividad
       ),
     );
@@ -242,7 +250,92 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     }
   }
 
-  //aqui deveria ir el foro
+  //funcion que lista todos los posts del foro de la actividad
+  Widget _foro() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+          child: Text(
+            '${posts.length} comentarios',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: posts.length,
+          itemBuilder: (context, index) {
+            final post = posts[index];
+            return ListTile(
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      //se tendra que modificar por la imagen del usuario
+                      const Icon(Icons.account_circle, size: 45), // Icono de usuario
+                      const SizedBox(width: 5),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(post.username), // Nombre de usuario
+                          const SizedBox(width: 5),
+                          Text(
+                            '${post.date.day}/${post.date.month}/${post.date.year} ${post.date.hour}:${post.date.minute}', // Fecha y hora del mensaje
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 50),
+                    child: Text(
+                      post.message, // Mensaje del post
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 30),
+                    child: Row(
+                      children: [
+                       IconButton(
+                        icon: Icon(
+                          post.likes > 0 ? Icons.favorite : Icons.favorite_border, // Cambia el icono según si hay likes o no
+                          color: post.likes > 0 ? Colors.red : null, // Cambia el color si hay likes
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            if (post.likes > 0) {
+                              post.likes = 0; // Si ya hay likes, los elimina
+                            } else {
+                              post.likes = 1; // Si no hay likes, añade uno
+                            }
+                          });
+                        },
+                      ),
+                        //si queremos que salga un contador de me gustas
+                        //Text(post.likes.toString()),
+                        Text('Me gusta'),
+                        SizedBox(width: 20),
+                        //hacer que te permita escribir un nuevo mensaje
+                        Icon(Icons.reply), // Icono de responder
+                        SizedBox(width: 5),
+                        Text('Responder'),
+                        SizedBox(width: 20),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
 
   void _onTabChange(int index) {
     switch (index) {

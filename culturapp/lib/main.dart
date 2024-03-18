@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home: Login(controladorPresentacion: controladorPresentacion),
+      home: MapPage(controladorPresentacion: controladorPresentacion),
     );
   }
 }
