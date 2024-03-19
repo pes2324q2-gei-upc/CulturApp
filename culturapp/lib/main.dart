@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 void main() async {
   // Asegura que Flutter esté inicializado
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Inicializa Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
@@ -32,7 +32,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home: Login(controladorPresentacion: controladorPresentacion),
+      //home: Login(controladorPresentacion: controladorPresentacion),
+      home: MapPage(controladorPresentacion: controladorPresentacion),
     );
   }
 }

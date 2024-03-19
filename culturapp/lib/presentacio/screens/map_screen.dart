@@ -26,6 +26,7 @@ class _MapPageState extends State<MapPage> {
   _MapPageState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
     activitats = _controladorPresentacion.getActivitats();
+    activitat = _controladorPresentacion.getActivitats().first;
   }
 
   BitmapDescriptor iconoArte = BitmapDescriptor.defaultMarker;
@@ -550,22 +551,13 @@ class _MapPageState extends State<MapPage> {
   }
 
   var querySearch = '';
-  Actividad activitat = Actividad(
-      name: "ConcertTaylor",
-      code: "AACC",
-      categoria: "concert",
-      latitud: 2.0,
-      longitud: 3.0,
-      imageUrl:
-          "https://i.pinimg.com/originals/10/ef/0c/10ef0c804190d04cace0f0096ccb8912.jpg",
-      descripcio: "descripcio",
-      dataInici: "30-11-2024",
-      dataFi: "23-12-2024",
-      ubicacio: "ubicacio",
-      urlEntrades: Uri(),
-      preu: "preu",
-      comarca: "comarca",
-      horari: "horari"); //es pq no doni error, efectivament s'ha de treure
+  late Actividad activitat;
+
+  void moveMapToSelectedActivity() {
+    LatLng activityPosition =
+        LatLng(activitat.latitud ?? 0.0, activitat.longitud ?? 0.0);
+    _mapController?.animateCamera(CameraUpdate.newLatLng(activityPosition));
+  }
 
   Future<void> busquedaActivitat(String querySearch) async {
     //de moment res pq això es per backend
@@ -578,6 +570,9 @@ class _MapPageState extends State<MapPage> {
       setState(() {
         activitat = Actividad.fromJson(data);
       });
+
+      //una vegada actualitzat movem mapa
+      moveMapToSelectedActivity();
     } else {
       throw Exception('Failed to load actividades');
     }
