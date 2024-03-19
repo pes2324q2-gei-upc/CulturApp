@@ -142,7 +142,7 @@ class _ListaActividadesState extends State<ListaActividades> {
                                 ),
                                 Row(
                                   children: [
-                                    Icon(Icons.attach_money_rounded),
+                                    const Icon(Icons.local_atm),
                                     TextWithLink(text: "  Compra aqui", url: widget.actividades[index].urlEntrades.toString()),
                                   ],
                                 )
