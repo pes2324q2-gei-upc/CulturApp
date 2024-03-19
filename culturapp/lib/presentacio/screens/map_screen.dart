@@ -545,7 +545,22 @@ class _MapPageState extends State<MapPage> {
   }
 
   var querySearch = '';
-  Actividad activitat;
+  Actividad activitat = Actividad(
+      name: "ConcertTaylor",
+      code: "AACC",
+      categoria: "concert",
+      latitud: 2.0,
+      longitud: 3.0,
+      imageUrl:
+          "https://i.pinimg.com/originals/10/ef/0c/10ef0c804190d04cace0f0096ccb8912.jpg",
+      descripcio: "descripcio",
+      dataInici: "30-11-2024",
+      dataFi: "23-12-2024",
+      ubicacio: "ubicacio",
+      urlEntrades: Uri(),
+      preu: "preu",
+      comarca: "comarca",
+      horari: "horari"); //es pq no doni error, efectivament s'ha de treure
 
   Future<void> busquedaActivitat(String querySearch) async {
     //de moment res pq això es per backend
@@ -567,6 +582,7 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           color: Colors.white,
