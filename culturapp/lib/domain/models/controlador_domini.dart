@@ -12,7 +12,7 @@ class ControladorDomini {
   
   Future <List<Actividad>> getActivitiesAgenda() async {
 
-   final respuesta = await http.get(Uri.parse('http://${ip}:8080/read/all'));
+   final respuesta = await http.get(Uri.parse('http://${ip}:8080/activitats/cache'));
 
     
     if (respuesta.statusCode == 200) {

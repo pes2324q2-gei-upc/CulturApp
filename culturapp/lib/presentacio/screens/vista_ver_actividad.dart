@@ -31,6 +31,21 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   bool estaApuntado = false;
 
   final User? _user = FirebaseAuth.instance.currentUser;
+
+  final List<String> catsAMB = ["Residus",
+  "territori.espai_public_platges",
+  "Sostenibilitat",
+  "Aigua",
+  "territori.espai_public_parcs",
+  "Espai públic - Rius",
+  "Espai públic - Parcs",
+  "Portal de transparència",
+  "Mobilitat sostenible",
+  "Internacional",
+  "Activitat econòmica",
+  "Polítiques socials",
+  "territori.espai_public_rius",
+  "Espai públic - Platges"];
   
   _VistaVerActividadState(List<String> info_actividad, Uri uri_actividad) {
     infoActividad = info_actividad;
@@ -212,46 +227,111 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     );
   }
 
-  Image _retornaIcon (String categoria){
+  Image _retornaIcon(String categoria) {
+    if (catsAMB.contains(categoria)){
+      return Image.asset(
+            'assets/categoriareciclar.png',
+            width: 45.0,
+          );
+    }
+    else {
       switch (categoria) {
-      case 'carnavals':
-        return Image.asset('assets/categoriacarnaval.png', width: 45.0,);
-      case 'teatre':
-        return Image.asset('assets/categoriateatre.png', width: 45.0,);
-      case 'concerts':
-        return Image.asset('assets/categoriaconcert.png', width: 45.0,);
-      case 'circ':
-        return Image.asset('assets/categoriacirc.png', width: 45.0,);
-      case 'exposicions':
-        return Image.asset('assets/categoriaarte.png', width: 45.0,);
-      case 'conferencies':
-        return Image.asset('assets/categoriaconfe.png', width: 45.0,);
-      case 'commemoracions':
-        return Image.asset('assets/categoriacommemoracio.png', width: 45.0,);
-      case 'rutes-i-visites':
-        return Image.asset('assets/categoriaruta.png', width: 45.0,);
-      case 'cursos':
-        return Image.asset('assets/categoriaexpo.png', width: 45.0,);
-      case 'activitats-virtuals':
-        return Image.asset('assets/categoriavirtual.png', width: 45.0,);
-      case 'infantil':
-        return Image.asset('assets/categoriainfantil.png', width: 45.0,);
-      case 'festes':
-        return Image.asset('assets/categoriafesta.png', width: 45.0,);
-      case 'festivals-i-mostres':
-        return Image.asset('assets/categoriafesta.png', width: 45.0,);
-      case 'dansa':
-        return Image.asset('assets/categoriafesta.png', width: 45.0,);
-      case 'cicles':
-        return Image.asset('assets/categoriaexpo.png', width: 45.0,);
-      case 'cultura-digital':
-        return Image.asset('assets/categoriavirtual.png', width: 45.0,);
-      case 'fires-i-mercats':
-        return Image.asset('assets/categoriainfantil.png', width: 45.0,);
-      case 'gegants':
-        return Image.asset('assets/categoriafesta.png', width: 45.0,);
-      default:
-        return Image.asset('assets/categoriarecom.png', width: 45.0,);
+        case 'carnavals':
+          return Image.asset(
+            'assets/categoriacarnaval.png',
+            width: 45.0,
+          );
+        case 'teatre':
+          return Image.asset(
+            'assets/categoriateatre.png',
+            width: 45.0,
+          );
+        case 'concerts':
+          return Image.asset(
+            'assets/categoriaconcert.png',
+            width: 45.0,
+          );
+        case 'circ':
+          return Image.asset(
+            'assets/categoriacirc.png',
+            width: 45.0,
+          );
+        case 'exposicions':
+          return Image.asset(
+            'assets/categoriaarte.png',
+            width: 45.0,
+          );
+        case 'conferencies':
+          return Image.asset(
+            'assets/categoriaconfe.png',
+            width: 45.0,
+          );
+        case 'commemoracions':
+          return Image.asset(
+            'assets/categoriacommemoracio.png',
+            width: 45.0,
+          );
+        case 'rutes-i-visites':
+          return Image.asset(
+            'assets/categoriaruta.png',
+            width: 45.0,
+          );
+        case 'cursos':
+          return Image.asset(
+            'assets/categoriaexpo.png',
+            width: 45.0,
+          );
+        case 'activitats-virtuals':
+          return Image.asset(
+            'assets/categoriavirtual.png',
+            width: 45.0,
+          );
+        case 'infantil':
+          return Image.asset(
+            'assets/categoriainfantil.png',
+            width: 45.0,
+          );
+        case 'festes':
+          return Image.asset(
+            'assets/categoriafesta.png',
+            width: 45.0,
+          );
+        case 'festivals-i-mostres':
+          return Image.asset(
+            'assets/categoriafesta.png',
+            width: 45.0,
+          );
+        case 'dansa':
+          return Image.asset(
+            'assets/categoriafesta.png',
+            width: 45.0,
+          );
+        case 'cicles':
+          return Image.asset(
+            'assets/categoriaexpo.png',
+            width: 45.0,
+          );
+        case 'cultura-digital':
+          return Image.asset(
+            'assets/categoriavirtual.png',
+            width: 45.0,
+          );
+        case 'fires-i-mercats':
+          return Image.asset(
+            'assets/categoriainfantil.png',
+            width: 45.0,
+          );
+        case 'gegants':
+          return Image.asset(
+            'assets/categoriafesta.png',
+            width: 45.0,
+          );
+        default:
+          return Image.asset(
+            'assets/categoriarecom.png',
+            width: 45.0,
+          );
+      }
     }
   }
 
