@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:culturapp/presentacio/screens/lista_actividades.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -615,6 +616,58 @@ class _MapPageState extends State<MapPage> {
                   ),
                 ),
               ),
+            ),
+          ),
+          Positioned.fill(
+            child: DraggableScrollableSheet(
+              initialChildSize: 0.2,
+              minChildSize: 0.1,
+              maxChildSize: 1,
+              builder: (BuildContext context, ScrollController scrollController) {
+                return Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(24),
+                      topRight: Radius.circular(24),
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      //Barra gris del botón
+                      Padding( 
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Container(
+                          width: 40, 
+                          height: 5,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300], 
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                      Text(
+                        "${_actividades.length} Actividades disponibles",
+                        style: TextStyle (
+                          color: Colors.orange,
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView(
+                          controller: scrollController,
+                          children: [
+                            SizedBox(
+                              height: 500,
+                              child: ListaActividades(actividades: _actividades,),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
         ],
