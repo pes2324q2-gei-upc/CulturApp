@@ -5,6 +5,8 @@ import "package:culturapp/domain/models/actividad.dart";
 import "package:culturapp/domain/models/filtre_categoria.dart";
 import "package:flutter/material.dart";
 
+
+ /*
 class SearchMyActivities extends StatefulWidget {
   const SearchMyActivities({Key? key}) : super(key: key);
 
@@ -12,7 +14,7 @@ class SearchMyActivities extends StatefulWidget {
   State<SearchMyActivities> createState() => _SearchMyActivitiesState();
 }
 
-class _SearchMyActivitiesState extends State<SearchMyActivities> {
+ class _SearchMyActivitiesState extends State<SearchMyActivities> {
   //dummy activitats fins que tinguem les de l'api
   //fins que backend no funcioni
 
@@ -204,4 +206,4 @@ class _SearchMyActivitiesState extends State<SearchMyActivities> {
               ]),
         ));
   }
-}
+}*/

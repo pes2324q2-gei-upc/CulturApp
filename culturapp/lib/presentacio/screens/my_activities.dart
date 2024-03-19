@@ -1,5 +1,5 @@
 import "package:culturapp/domain/models/actividad.dart";
-import "package:culturapp/presentacio/routes/routes.dart";
+//import "package:culturapp/presentacio/routes/routes.dart";
 import "package:culturapp/presentacio/screens/search_my_activities.dart";
 import "package:flutter/material.dart";
 import "package:google_nav_bar/google_nav_bar.dart";
@@ -17,16 +17,16 @@ class _MyActivities extends State<MyActivities> {
   void _onTabChange(int index) {
     switch (index) {
       case 0:
-        Navigator.pushNamed(context, '/');
+        //Navigator.pushNamed(context, '/');
         break;
       case 1:
-        Navigator.pushNamed(context, Routes.misActividades);
+        //Navigator.pushNamed(context, Routes.misActividades);
         break;
       case 2:
-        Navigator.pushNamed(context, Routes.xats);
+        //Navigator.pushNamed(context, Routes.xats);
         break;
       case 3:
-        Navigator.pushNamed(context, Routes.perfil);
+        //Navigator.pushNamed(context, Routes.perfil);
         break;
       default:
         break;

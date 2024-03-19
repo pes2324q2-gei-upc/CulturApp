@@ -1,6 +1,7 @@
+import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:culturapp/presentacio/routes/routes.dart';
+//import 'package:culturapp/presentacio/routes/routes.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 
 class Logout extends StatelessWidget {
@@ -47,7 +48,7 @@ class Logout extends StatelessWidget {
     _auth.signOut();
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => Login()),
+      MaterialPageRoute(builder: (context) => Login(controladorPresentacion: ControladorPresentacion(),)),
     ); // Cierra la llamada a MaterialPageRoute
   }
 }

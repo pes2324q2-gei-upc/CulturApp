@@ -1,4 +1,4 @@
-import "package:culturapp/presentacio/routes/routes.dart";
+//import "package:culturapp/presentacio/routes/routes.dart";
 import "package:culturapp/presentacio/screens/afegir_amics.dart";
 import "package:culturapp/presentacio/screens/amics.dart";
 import "package:flutter/material.dart";
@@ -27,13 +27,13 @@ class _Xats extends State<Xats> {
         Navigator.pushNamed(context, '/');
         break;
       case 1:
-        Navigator.pushNamed(context, Routes.misActividades);
+        //Navigator.pushNamed(context, Routes.misActividades);
         break;
       case 2:
-        Navigator.pushNamed(context, Routes.xats);
+        //Navigator.pushNamed(context, Routes.xats);
         break;
       case 3:
-        Navigator.pushNamed(context, Routes.perfil);
+        //Navigator.pushNamed(context, Routes.perfil);
         break;
       default:
         break;

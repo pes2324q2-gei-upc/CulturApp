@@ -1,4 +1,5 @@
-import 'package:culturapp/presentacio/routes/routes.dart';
+import 'package:culturapp/domain/models/controlador_domini.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -21,19 +22,30 @@ class VistaVerActividad extends StatefulWidget{
 
 class _VistaVerActividadState extends State<VistaVerActividad> {
 
+  final ControladorDomini controladorDominio = new ControladorDomini();
+
   late List<String> infoActividad;
   late Uri uriActividad;
 
-  bool estaApuntado = false;
   bool mostrarDescripcionCompleta = false;
+  bool estaApuntado = false;
+
+  final User? _user = FirebaseAuth.instance.currentUser;
   
-  _VistaVerActividadState(List<String> info_actividad, Uri uri_actividad){
+  _VistaVerActividadState(List<String> info_actividad, Uri uri_actividad) {
     infoActividad = info_actividad;
     uriActividad = uri_actividad;
   }
 
   @override
+  void initState(){
+    super.initState();
+    checkApuntado(_user!.uid, infoActividad);
+  } 
+
+  @override
   Widget build(BuildContext context) {
+    checkApuntado(_user!.uid, infoActividad);
     return Scaffold(
       bottomNavigationBar: _barraNavegacion(),
       appBar: AppBar(
@@ -95,7 +107,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           ElevatedButton(
             onPressed: () {
               setState(() {
-                estaApuntado = !estaApuntado;
+                manageSignupButton(infoActividad);
               });
             },
             style: ButtonStyle(
@@ -248,16 +260,16 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   void _onTabChange(int index) {
     switch (index) {
       case 0:
-        Navigator.pushNamed(context, '/');
+        //Navigator.pushNamed(context, '/');
       break;
       case 1:
-        Navigator.pushNamed(context, Routes.misActividades);
+        //Navigator.pushNamed(context, Routes.misActividades);
       break;
       case 2:
         
       break;
       case 3:
-        Navigator.pushNamed(context, Routes.perfil);
+        //Navigator.pushNamed(context, Routes.perfil);
       break;
       default:
         break;
@@ -288,6 +300,32 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           ],
         ),
       );
+  }
+  
+  void manageSignupButton(List<String> infoactividad) {
+    if (mounted) {
+      setState(() {
+        if (estaApuntado) {
+          print("entrado en el true");
+          controladorDominio.signoutFromActivity(_user?.uid, infoActividad[1]);
+          estaApuntado = false;
+        }
+        else {
+          print("entrado en el false");
+          controladorDominio.signupInActivity(_user?.uid, infoActividad[1]);
+          estaApuntado = true;
+        }
+      });
+    }
+  }
+  
+  void checkApuntado(String uid, List<String> infoactividad) async {
+    bool apuntado = await controladorDominio.isUserInActivity(uid, infoactividad[1]);
+    if (mounted) {
+      setState(() {
+        estaApuntado = apuntado;
+      });
+    }
   }
 }
 

@@ -1,7 +1,7 @@
 class Actividad {
   late String name;
   late String code;
-  late String categoria;
+  late List<dynamic> categoria = [];
   late double latitud;
   late double longitud;
   late String imageUrl;
@@ -14,22 +14,8 @@ class Actividad {
   late String comarca;
   late String horari;
 
-  Actividad({
-    required this.name,
-    required this.code,
-    required this.categoria,
-    required this.latitud,
-    required this.longitud,
-    required this.dataInici,
-    required this.dataFi,
-    required this.horari,
-    required this.descripcio, // Corregir aquí
-    required this.comarca,
-    required this.imageUrl,
-    required this.preu,
-    required this.ubicacio,
-    required this.urlEntrades,
-  });
+  Actividad();
+
   Actividad.fromJson(Map<String, dynamic> json) {
     name = json['denominaci'];
     code = json['codi'];
@@ -38,20 +24,18 @@ class Actividad {
     descripcio =
         json['descripcio'] ?? 'No hi ha cap descripció per aquesta activitat.';
     ubicacio = json['adre_a'] ?? 'No disponible';
-
     String tagsCategorias = json['tags_categor_es'] ?? '';
+
     if (tagsCategorias.contains('agenda:categories/')) {
-      //Obtener valor del punto en el que comienza la categoria
-      int startIndex = tagsCategorias.indexOf('agenda:categories/') +
-          'agenda:categories/'.length;
-      //Obtener valor del punto en el que acaba la categoria
-      int endIndex = tagsCategorias.indexOf(',', startIndex);
-      //Coger la categoria entre punto inicio y final si ha encontrado la "," sino de inicio hasta final
-      categoria = endIndex != -1
-          ? tagsCategorias.substring(startIndex, endIndex)
-          : tagsCategorias.substring(startIndex);
+      List<String> categoriaJSON = tagsCategorias.split(',');
+
+      for (var cat in categoriaJSON) {
+        int startIndex =
+            cat.indexOf('agenda:categories/') + 'agenda:categories/'.length;
+        categoria.add(cat.substring(startIndex));
+      }
     } else {
-      categoria = ' ';
+      categoria = [''];
     }
 
     String imagenes = json['imatges'] ?? '';
