@@ -1,5 +1,6 @@
 import 'dart:math' as math;
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:culturapp/data/firebase_service.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/lista_actividades.dart';
@@ -10,8 +11,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 class MapPage extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
+  
+  final List<String>? recomenacions;
 
-  const MapPage({Key? key, required this.controladorPresentacion});
+  const MapPage({Key? key, required this.controladorPresentacion, this.recomenacions});
 
   @override
   State<MapPage> createState() => _MapPageState(controladorPresentacion);
@@ -21,10 +24,13 @@ class _MapPageState extends State<MapPage> {
   late ControladorPresentacion _controladorPresentacion;
 
   late List<Actividad> activitats;
+  late List<String> recomms;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   _MapPageState(ControladorPresentacion controladorPresentacion){
     _controladorPresentacion = controladorPresentacion;
     activitats = _controladorPresentacion.getActivitats();
+    recomms = _controladorPresentacion.getActivitatsRecomm();
   }
 
   BitmapDescriptor iconoArte = BitmapDescriptor.defaultMarker;
@@ -40,9 +46,25 @@ class _MapPageState extends State<MapPage> {
   BitmapDescriptor iconoRuta = BitmapDescriptor.defaultMarker;
   BitmapDescriptor iconoTeatro = BitmapDescriptor.defaultMarker;
   BitmapDescriptor iconoVirtual = BitmapDescriptor.defaultMarker;
+  BitmapDescriptor iconoAMB = BitmapDescriptor.defaultMarker;
   IconData iconoCategoria = Icons.category;
   LatLng myLatLng = const LatLng(41.389350, 2.113307);
   String address = 'FIB';
+
+  final List<String> catsAMB = ["Residus",
+  "territori.espai_public_platges",
+  "Sostenibilitat",
+  "Aigua",
+  "territori.espai_public_parcs",
+  "Espai públic - Rius",
+  "Espai públic - Parcs",
+  "Portal de transparència",
+  "Mobilitat sostenible",
+  "Internacional",
+  "Activitat econòmica",
+  "Polítiques socials",
+  "territori.espai_public_rius",
+  "Espai públic - Platges"];
 
   List<Actividad> _actividades = [];
   GoogleMapController? _mapController;
@@ -92,102 +114,110 @@ class _MapPageState extends State<MapPage> {
   }
 
   Image _retornaIcon(String categoria) {
-    switch (categoria) {
-      case 'carnavals':
-        return Image.asset(
-          'assets/categoriacarnaval.png',
-          width: 45.0,
-        );
-      case 'teatre':
-        return Image.asset(
-          'assets/categoriateatre.png',
-          width: 45.0,
-        );
-      case 'concerts':
-        return Image.asset(
-          'assets/categoriaconcert.png',
-          width: 45.0,
-        );
-      case 'circ':
-        return Image.asset(
-          'assets/categoriacirc.png',
-          width: 45.0,
-        );
-      case 'exposicions':
-        return Image.asset(
-          'assets/categoriaarte.png',
-          width: 45.0,
-        );
-      case 'conferencies':
-        return Image.asset(
-          'assets/categoriaconfe.png',
-          width: 45.0,
-        );
-      case 'commemoracions':
-        return Image.asset(
-          'assets/categoriacommemoracio.png',
-          width: 45.0,
-        );
-      case 'rutes-i-visites':
-        return Image.asset(
-          'assets/categoriaruta.png',
-          width: 45.0,
-        );
-      case 'cursos':
-        return Image.asset(
-          'assets/categoriaexpo.png',
-          width: 45.0,
-        );
-      case 'activitats-virtuals':
-        return Image.asset(
-          'assets/categoriavirtual.png',
-          width: 45.0,
-        );
-      case 'infantil':
-        return Image.asset(
-          'assets/categoriainfantil.png',
-          width: 45.0,
-        );
-      case 'festes':
-        return Image.asset(
-          'assets/categoriafesta.png',
-          width: 45.0,
-        );
-      case 'festivals-i-mostres':
-        return Image.asset(
-          'assets/categoriafesta.png',
-          width: 45.0,
-        );
-      case 'dansa':
-        return Image.asset(
-          'assets/categoriafesta.png',
-          width: 45.0,
-        );
-      case 'cicles':
-        return Image.asset(
-          'assets/categoriaexpo.png',
-          width: 45.0,
-        );
-      case 'cultura-digital':
-        return Image.asset(
-          'assets/categoriavirtual.png',
-          width: 45.0,
-        );
-      case 'fires-i-mercats':
-        return Image.asset(
-          'assets/categoriainfantil.png',
-          width: 45.0,
-        );
-      case 'gegants':
-        return Image.asset(
-          'assets/categoriafesta.png',
-          width: 45.0,
-        );
-      default:
-        return Image.asset(
-          'assets/categoriarecom.png',
-          width: 45.0,
-        );
+    if (catsAMB.contains(categoria)){
+      return Image.asset(
+            'assets/categoriareciclar.png',
+            width: 45.0,
+          );
+    }
+    else {
+      switch (categoria) {
+        case 'carnavals':
+          return Image.asset(
+            'assets/categoriacarnaval.png',
+            width: 45.0,
+          );
+        case 'teatre':
+          return Image.asset(
+            'assets/categoriateatre.png',
+            width: 45.0,
+          );
+        case 'concerts':
+          return Image.asset(
+            'assets/categoriaconcert.png',
+            width: 45.0,
+          );
+        case 'circ':
+          return Image.asset(
+            'assets/categoriacirc.png',
+            width: 45.0,
+          );
+        case 'exposicions':
+          return Image.asset(
+            'assets/categoriaarte.png',
+            width: 45.0,
+          );
+        case 'conferencies':
+          return Image.asset(
+            'assets/categoriaconfe.png',
+            width: 45.0,
+          );
+        case 'commemoracions':
+          return Image.asset(
+            'assets/categoriacommemoracio.png',
+            width: 45.0,
+          );
+        case 'rutes-i-visites':
+          return Image.asset(
+            'assets/categoriaruta.png',
+            width: 45.0,
+          );
+        case 'cursos':
+          return Image.asset(
+            'assets/categoriaexpo.png',
+            width: 45.0,
+          );
+        case 'activitats-virtuals':
+          return Image.asset(
+            'assets/categoriavirtual.png',
+            width: 45.0,
+          );
+        case 'infantil':
+          return Image.asset(
+            'assets/categoriainfantil.png',
+            width: 45.0,
+          );
+        case 'festes':
+          return Image.asset(
+            'assets/categoriafesta.png',
+            width: 45.0,
+          );
+        case 'festivals-i-mostres':
+          return Image.asset(
+            'assets/categoriafesta.png',
+            width: 45.0,
+          );
+        case 'dansa':
+          return Image.asset(
+            'assets/categoriafesta.png',
+            width: 45.0,
+          );
+        case 'cicles':
+          return Image.asset(
+            'assets/categoriaexpo.png',
+            width: 45.0,
+          );
+        case 'cultura-digital':
+          return Image.asset(
+            'assets/categoriavirtual.png',
+            width: 45.0,
+          );
+        case 'fires-i-mercats':
+          return Image.asset(
+            'assets/categoriainfantil.png',
+            width: 45.0,
+          );
+        case 'gegants':
+          return Image.asset(
+            'assets/categoriafesta.png',
+            width: 45.0,
+          );
+        default:
+          return Image.asset(
+            'assets/categoriarecom.png',
+            width: 45.0,
+          );
+      }
     }
   }
 
@@ -323,7 +353,7 @@ class _MapPageState extends State<MapPage> {
                         width: 400.0,
                         height: 35.0,
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             List<String> act = [actividad.name,
                                                 actividad.code,
                                                 actividad.categoria[0],
@@ -332,9 +362,19 @@ class _MapPageState extends State<MapPage> {
                                                 actividad.dataInici,
                                                 actividad.dataFi,
                                                 actividad.ubicacio];
-
                             _controladorPresentacion.mostrarVerActividad(
                                 context, act, actividad.urlEntrades);
+                            //Actualizar BD +1 Visualitzacio
+                            DocumentReference docRef = _firestore.collection('actividades').doc(actividad.code);
+                            await _firestore.runTransaction((transaction) async {
+                              DocumentSnapshot snapshot = await transaction.get(docRef);
+                              int currentValue = 0;
+                              if (snapshot.data() is Map<String, dynamic>) {
+                                currentValue = (snapshot.data() as Map<String, dynamic>)['visualitzacions'] ?? 5;
+                              } 
+                              int newValue = currentValue + 1;
+                              transaction.update(docRef, {'visualitzacions': newValue});
+                            });
                           },
                           style: ButtonStyle(
                             backgroundColor:
@@ -364,56 +404,63 @@ class _MapPageState extends State<MapPage> {
         markerId: MarkerId(actividad.code),
         position: LatLng(actividad.latitud, actividad.longitud),
         infoWindow: InfoWindow(title: actividad.name),
-        icon: _getMarkerIcon(actividad.categoria[0]), // Llama a la función para obtener el icono
+        icon: _getMarkerIcon(actividad.categoria[0], actividad.code), // Llama a la función para obtener el icono
         onTap: () => showActividadDetails(actividad),
       );
     }).toSet();
   }
 
   // En funcion de la categoria atribuye un marcador
-  BitmapDescriptor _getMarkerIcon(String categoria) {
-    /*for (int i = 0; i < 3; ++i) {
-      if (categoria == categoriasFavoritas[i]) categoria = 'recom';
-    }*/
-    switch (categoria) {
-      case 'carnavals':
-        return iconoCarnaval;
-      case 'teatre':
-        return iconoTeatro;
-      case 'concerts':
-        return iconoConcierto;
-      case 'circ':
-        return iconoCirco;
-      case 'exposicions':
-        return iconoArte;
-      case 'conferencies':
-        return iconoConferencia;
-      case 'commemoracions':
-        return iconoCommemoracion;
-      case 'rutes-i-visites':
-        return iconoRuta;
-      case 'cursos':
-        return iconoExpo;
-      case 'activitats-virtuals':
-        return iconoVirtual;
-      case 'infantil':
-        return iconoInfantil;
-      case 'festes':
-        return iconoFiesta;
-      case 'festivals-i-mostres':
-        return iconoFiesta;
-      case 'dansa':
-        return iconoFiesta;
-      case 'cicles':
-        return iconoExpo;
-      case 'cultura-digital':
-        return iconoExpo;
-      case 'fires-i-mercats':
-        return iconoInfantil;
-      case 'gegants':
-        return iconoFiesta;
-      default:
-        return iconoRecom;
+  BitmapDescriptor _getMarkerIcon(String categoria, String code) {
+    for(int i = 0; i < recomms.length; ++i){
+      if (recomms[i] == code) categoria = 'recom';
+    }
+    if (catsAMB.contains(categoria)){
+      return iconoAMB;
+    }
+    else {
+      switch (categoria) {
+        case 'carnavals':
+          return iconoCarnaval;
+        case 'teatre':
+          return iconoTeatro;
+        case 'concerts':
+          return iconoConcierto;
+        case 'circ':
+          return iconoCirco;
+        case 'exposicions':
+          return iconoArte;
+        case 'conferencies':
+          return iconoConferencia;
+        case 'commemoracions':
+          return iconoCommemoracion;
+        case 'rutes-i-visites':
+          return iconoRuta;
+        case 'cursos':
+          return iconoExpo;
+        case 'activitats-virtuals':
+          return iconoVirtual;
+        case 'infantil':
+          return iconoInfantil;
+        case 'festes':
+          return iconoFiesta;
+        case 'festivals-i-mostres':
+          return iconoFiesta;
+        case 'dansa':
+          return iconoFiesta;
+        case 'cicles':
+          return iconoExpo;
+        case 'cultura-digital':
+          return iconoExpo;
+        case 'fires-i-mercats':
+          return iconoInfantil;
+        case 'gegants':
+          return iconoFiesta;
+        case 'sardahes':
+          return iconoFiesta;
+        default:
+          return iconoRecom;
+      }
     }
   }
 
@@ -429,6 +476,12 @@ class _MapPageState extends State<MapPage> {
         const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinfesta.png');
     setState(() {
       iconoFiesta = icon;
+    });
+
+    icon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinreciclar.png');
+    setState(() {
+      iconoAMB = icon;
     });
 
     icon = await BitmapDescriptor.fromAssetImage(
@@ -565,23 +618,23 @@ class _MapPageState extends State<MapPage> {
           },
           selectedIndex: 0,
           tabs: [
-            GButton(
+            const GButton(
                 text: "Mapa",
                 textStyle: TextStyle(fontSize: 12, color: Colors.orange),
                 icon: Icons.map),
             GButton(
               text: "Mis Actividades",
-              textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+              textStyle: const TextStyle(fontSize: 12, color: Colors.orange),
               icon: Icons.event,
               onPressed: () {
                 Navigator.pushNamed(context, '/myActivities');
               },
             ),
-            GButton(
+            const GButton(
                 text: "Chats",
                 textStyle: TextStyle(fontSize: 12, color: Colors.orange),
                 icon: Icons.chat),
-            GButton(
+            const GButton(
                 text: "Perfil",
                 textStyle: TextStyle(fontSize: 12, color: Colors.orange),
                 icon: Icons.person),
