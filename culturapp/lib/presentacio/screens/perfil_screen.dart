@@ -1,3 +1,4 @@
+import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/my_activities.dart';
 //import 'package:culturapp/presentacio/routes/routes.dart';
 import 'package:culturapp/presentacio/widgets/user_info.dart';
@@ -5,13 +6,23 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
 class PerfilPage extends StatefulWidget {
-  const PerfilPage({super.key});
+  
+  final ControladorPresentacion controladorPresentacion;
+
+  const PerfilPage({Key? key, required this.controladorPresentacion}) : super(key: key);
 
   @override
-  State<PerfilPage> createState() => _PerfilPageState();
+  State<PerfilPage> createState() => _PerfilPageState(this.controladorPresentacion);
 }
 
 class _PerfilPageState extends State<PerfilPage> {
+  
+  late ControladorPresentacion _controladorPresentacion;
+  
+  _PerfilPageState(ControladorPresentacion controladorPresentacion) {
+    _controladorPresentacion = controladorPresentacion;
+  }
+
 
   //no se que es esta funcuion
   @override
@@ -56,6 +67,7 @@ class _PerfilPageState extends State<PerfilPage> {
           onPressed: () {
             //hacer que no se vea si estas viendo el perfil de otro user
             //Navigator.pushNamed(context, Routes.settings);
+            _controladorPresentacion.mostrarSettings(context);
           },
           icon: const Icon(Icons.settings, color: Colors.white),
         ),

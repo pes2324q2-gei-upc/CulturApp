@@ -1,14 +1,34 @@
+import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:flutter/material.dart';
+import "package:cloud_firestore/cloud_firestore.dart";
+import "package:firebase_auth/firebase_auth.dart";
+import 'package:culturapp/presentacio/screens/login.dart';
 
 class SettingsPerfil extends StatefulWidget {
-  const SettingsPerfil({super.key});
+
+  final ControladorPresentacion controladorPresentacion;
+
+  const SettingsPerfil({Key? key, required this.controladorPresentacion}) : super(key: key);
 
   @override
-  State<SettingsPerfil> createState() => _SettingsPerfil();
+  State<SettingsPerfil> createState() => _SettingsPerfil(this.controladorPresentacion);
 }
 
 class _SettingsPerfil extends State<SettingsPerfil> {
+  //Usuari de Firebase
+  User? _user;
+
+  //Instancia de autentificacio de Firebase
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  late ControladorPresentacion _controladorPresentacion;
+
   bool privat = false;
+  
+  _SettingsPerfil(ControladorPresentacion controladorPresentacion) {
+    _controladorPresentacion = controladorPresentacion;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +83,7 @@ class _SettingsPerfil extends State<SettingsPerfil> {
             title: const Text('Cerrar Sesión'),
             leading: const Icon(Icons.exit_to_app),
             onTap: () {
-              //cerrar sesión
+              signout(context);
             },
           ),
           const Divider(height: 0),
@@ -81,5 +101,9 @@ class _SettingsPerfil extends State<SettingsPerfil> {
         ],
       )
     );
+  }
+
+  void signout(context) {
+    _controladorPresentacion.logout(context);
   }
 }

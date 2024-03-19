@@ -1,14 +1,19 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
 
 class ControladorDomini {
+
+  final String ip = "10.0.2.2";
   
   Future <List<Actividad>> getActivitiesAgenda() async {
 
-    final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/read/all'));
+   final respuesta = await http.get(Uri.parse('http://${ip}:8080/activitats/cache'));
+
     
     if (respuesta.statusCode == 200) {
       return _convert_database_to_list(respuesta);
@@ -21,7 +26,7 @@ class ControladorDomini {
 
   Future<List<Actividad>> getUserActivities(String userID) async {
     final respuesta = await http.get(
-      Uri.parse('http://10.0.2.2:8080/activitats/user/$userID'),
+      Uri.parse('http://${ip}:8080/activitats/user/$userID'),
     );
 
     if (respuesta.statusCode == 200) {
@@ -90,6 +95,100 @@ class ControladorDomini {
       }
     
     return actividades;
+  }
+
+  Future<bool> accountExists(User? user) async {
+    final respuesta = await http.get(Uri.parse('http://${ip}:8080/user/exists?uid=${user?.uid}'));
+    
+    if (respuesta.statusCode == 200) {
+      print(respuesta);
+      return (respuesta.body == "exists");
+    }
+    else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
+
+   void createUser(User? _user, String username, List<String> selectedCategories) async {
+    try {
+      final Map<String, dynamic> userdata = {
+        'uid': _user?.uid,
+        'username': username,
+        'email': _user?.email,
+        'favcategories': jsonEncode(selectedCategories),
+      };
+
+      final respuesta = await http.post(
+        Uri.parse('http://${ip}:8080/users/create'),
+        body: jsonEncode(userdata),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (respuesta.statusCode == 200) {
+        print('Datos enviados exitosamente');
+      } else {
+        print('Error al enviar los datos: ${respuesta.statusCode}');
+      }
+    } catch (error) {
+      print('Error de red: $error');
+    }
+  }
+
+  void signoutFromActivity(String? uid, String code) async {
+    try {
+      final Map<String, dynamic> requestData = {
+        'uid': uid,
+        'activityId': code,
+      };
+
+      final respuesta = await http.post(
+        Uri.parse('http://${ip}:8080/activitats/signout'),
+        body: jsonEncode(requestData),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (respuesta.statusCode == 200) {
+        print('Datos enviados exitosamente');
+      } else {
+        print('Error al enviar los datos: ${respuesta.statusCode}');
+      }
+    } catch (error) {
+      print('Error de red: $error');
+    }
+  }
+
+  Future<bool> isUserInActivity(String? uid, String code) async {
+    final respuesta = await http.get(Uri.parse('http://${ip}:8080/activitats/isuserin?uid=${uid}&activityId=${code}'));
+    
+    if (respuesta.statusCode == 200) {
+      return (respuesta.body == "yes");
+    }
+    else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
+
+  void signupInActivity(String? uid, String code) async {
+    try {
+      final Map<String, dynamic> requestData = {
+        'uid': uid,
+        'activityId': code,
+      };
+
+      final respuesta = await http.post(
+        Uri.parse('http://${ip}:8080/activitats/signup'),
+        body: jsonEncode(requestData),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (respuesta.statusCode == 200) {
+        print('Datos enviados exitosamente');
+      } else {
+        print('Error al enviar los datos: ${respuesta.statusCode}');
+      }
+    } catch (error) {
+      print('Error de red: $error');
+    }
   }
 
 }
