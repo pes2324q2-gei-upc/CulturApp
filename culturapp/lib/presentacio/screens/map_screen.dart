@@ -622,7 +622,7 @@ class _MapPageState extends State<MapPage> {
             child: DraggableScrollableSheet(
               initialChildSize: 0.2,
               minChildSize: 0.1,
-              maxChildSize: 0.85,
+              maxChildSize: 1,
               builder: (BuildContext context, ScrollController scrollController) {
                 return Container(
                   decoration: const BoxDecoration(
