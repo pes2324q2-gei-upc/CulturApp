@@ -9,10 +9,11 @@ class ControladorDomini {
   final String ip = "10.0.2.2";
 
   Future<List<Actividad>> getActivitiesAgenda() async {
-    final respuesta = await http.get(Uri.parse('http://${ip}:8080/read/all'));
+    final respuesta =
+        await http.get(Uri.parse('http://${ip}:8080/activitats/cache'));
 
     if (respuesta.statusCode == 200) {
-      return _convert_json_to_list(respuesta);
+      return _convert_database_to_list(respuesta);
     } else {
       throw Exception('Fallo la obtención de datos');
     }
@@ -44,19 +45,10 @@ class ControladorDomini {
       actividad.descripcio = actividadJson['descripcio'] ??
           'No hi ha cap descripció per aquesta activitat.';
       actividad.ubicacio = actividadJson['adre_a'] ?? 'No disponible';
-
+      actividad.visualitzacions = actividadJson['visualitzacions'] ?? 0;
       actividad.categoria = actividadJson['tags_categor_es'] ?? '';
 
-      String imagenes = actividadJson['imatges'] ?? '';
-      if (imagenes != '') {
-        int endIndex = imagenes.indexOf(',');
-        if (endIndex != -1) {
-          actividad.imageUrl = "https://agenda.cultura.gencat.cat" +
-              imagenes.substring(0, endIndex);
-        } else {
-          actividad.imageUrl = "https://agenda.cultura.gencat.cat" + imagenes;
-        }
-      }
+      actividad.imageUrl = actividadJson['imatges'] ?? '';
 
       String data = actividadJson['data_inici'] ?? '';
       actividad.dataInici = data.isNotEmpty ? data.substring(0, 10) : '-';
@@ -95,6 +87,7 @@ class ControladorDomini {
       for (var actividadJson in actividadesJson) {
         var actividad = Actividad.fromJson(actividadJson);
         actividades.add(actividad);
+        print(actividad.visualitzacions);
       }
     }
 

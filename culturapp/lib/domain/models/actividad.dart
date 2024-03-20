@@ -13,6 +13,7 @@ class Actividad {
   late String preu;
   late String comarca;
   late String horari;
+  late int visualitzacions;
 
   Actividad();
 
