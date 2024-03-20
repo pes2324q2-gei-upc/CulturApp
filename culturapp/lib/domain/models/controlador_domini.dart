@@ -32,9 +32,8 @@ class ControladorDomini {
   }
 
   Future<List<Actividad>> searchActivitat(String squery) async {
-    final encodedQuery = Uri.encodeQueryComponent(squery);
-    final respuesta = await http
-        .get(Uri.parse('http://${ip}:8080/activitats/name/$encodedQuery'));
+    final respuesta =
+        await http.get(Uri.parse('http://${ip}:8080/activitats/name/$squery'));
 
     if (respuesta.statusCode == 200) {
       //final List<dynamic> responseData = jsonDecode(respuesta.body);
