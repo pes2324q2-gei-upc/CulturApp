@@ -31,6 +31,22 @@ class ControladorDomini {
     }
   }
 
+  Future<List<Actividad>> searchActivitat(String squery) async {
+    final encodedQuery = Uri.encodeQueryComponent(squery);
+    final respuesta = await http
+        .get(Uri.parse('http://${ip}:8080/activitats/name/$encodedQuery'));
+
+    if (respuesta.statusCode == 200) {
+      //final List<dynamic> responseData = jsonDecode(respuesta.body);
+      //return Actividad.fromJson(responseData.first);
+      return _convert_database_to_list(respuesta);
+    } else if (respuesta.statusCode == 404) {
+      throw Exception('No existe la actividad ' + squery);
+    } else {
+      throw Exception('Fallo en buscar la actividad');
+    }
+  }
+
   List<Actividad> _convert_database_to_list(response) {
     List<Actividad> actividades = <Actividad>[];
     var actividadesJson = json.decode(response.body);

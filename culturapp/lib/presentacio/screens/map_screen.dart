@@ -623,21 +623,11 @@ class _MapPageState extends State<MapPage> {
 
   Future<void> busquedaActivitat(String querySearch) async {
     //de moment res pq això es per backend
-    String url = '/activitats/search?q=$querySearch';
-    var response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      dynamic data = jsonDecode(response.body);
-
-      setState(() {
-        activitat = Actividad.fromJson(data);
-      });
-
-      //una vegada actualitzat movem mapa
-      moveMapToSelectedActivity();
-    } else {
-      throw Exception('Failed to load actividades');
-    }
+    //Metropolitan Union Quartet
+    List<Actividad> llista =
+        (await _controladorPresentacion.searchActivitat(querySearch));
+    activitat = llista.first;
+    moveMapToSelectedActivity();
   }
 
   //Se crea la ''pantalla'' para el mapa - falta añadir dock inferior y barra de busqueda
@@ -670,7 +660,7 @@ class _MapPageState extends State<MapPage> {
               textStyle: const TextStyle(fontSize: 12, color: Colors.orange),
               icon: Icons.event,
               onPressed: () {
-                Navigator.pushNamed(context, '/myActivities');
+                //Navigator.pushNamed(context, '/myActivities');
               },
             ),
             GButton(
@@ -678,7 +668,7 @@ class _MapPageState extends State<MapPage> {
               textStyle: TextStyle(fontSize: 12, color: Colors.orange),
               icon: Icons.chat,
               onPressed: () {
-                Navigator.pushNamed(context, '/xats');
+                //Navigator.pushNamed(context, '/xats');
               },
             ),
             GButton(
@@ -710,16 +700,18 @@ class _MapPageState extends State<MapPage> {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 25.0),
                 child: TextField(
-                  //en aquest cas, només "onPressed pq només pot haver-hi una"
-                  decoration: InputDecoration(
-                      hintText: 'Buscar...',
-                      border: InputBorder.none,
-                      suffixIcon: IconButton(
-                          onPressed: () {
-                            busquedaActivitat(querySearch);
-                          },
-                          icon: Icon(Icons.search))),
-                ),
+                    //en aquest cas, només "onPressed pq només pot haver-hi una"
+                    decoration: InputDecoration(
+                        hintText: 'Buscar...',
+                        border: InputBorder.none,
+                        suffixIcon: IconButton(
+                            onPressed: () {
+                              busquedaActivitat(querySearch);
+                            },
+                            icon: Icon(Icons.search))),
+                    onChanged: (value) {
+                      querySearch = value;
+                    }),
               ),
             ),
           ),
