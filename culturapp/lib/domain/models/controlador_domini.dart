@@ -9,8 +9,7 @@ class ControladorDomini {
   final String ip = "10.0.2.2";
 
   Future<List<Actividad>> getActivitiesAgenda() async {
-    final respuesta =
-        await http.get(Uri.parse('http://${ip}:8080/activitats/cache'));
+    final respuesta = await http.get(Uri.parse('http://${ip}:8080/activitats/cache'));
 
     if (respuesta.statusCode == 200) {
       return _convert_database_to_list(respuesta);

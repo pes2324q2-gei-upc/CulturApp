@@ -43,7 +43,7 @@ class _Login extends State<Login> {
     });*/
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       //Comprovar si ja hi ha una sessio iniciada
-      _controladorPresentacion.checkLoggetInUser(context);
+      _controladorPresentacion.checkLoggedInUser(context);
     });
   }
 

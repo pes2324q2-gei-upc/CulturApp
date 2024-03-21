@@ -1,32 +1,40 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/presentacio/screens/lista_actividades.dart';
-import 'package:culturapp/presentacio/screens/recomendador_actividades.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
+import 'package:culturapp/presentacio/screens/map_screen.dart';
+import 'package:culturapp/presentacio/screens/my_activities.dart';
+import 'package:culturapp/presentacio/screens/perfil_screen.dart';
+import 'package:culturapp/presentacio/screens/recomendador_actividades.dart';
 import 'package:culturapp/presentacio/screens/settings_perfil.dart';
+import 'package:culturapp/presentacio/screens/signup.dart';
 import 'package:culturapp/presentacio/screens/vista_ver_actividad.dart';
 import 'package:flutter/material.dart';
-import "package:firebase_auth/firebase_auth.dart";
-import 'package:culturapp/presentacio/screens/map_screen.dart';
-import 'package:culturapp/presentacio/screens/signup.dart';
-import 'package:culturapp/presentacio/screens/signup.dart';
-import 'package:culturapp/presentacio/screens/perfil_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ControladorPresentacion {
   final controladorDomini = ControladorDomini();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  User? _user;
-  late final List<Actividad> activitats;
-  late final List<String> recomms;
+  late User? _user;
+  late List<Actividad> activitats;
+  late List<String> recomms;
   final List<String> categsFav = ['carnavals', 'concerts', 'conferencies'];
+  late final List<Widget> _pages = [];
 
-  Future<void> initialice() async {
-    activitats = await controladorDomini.getActivitiesAgenda();
-  }
+Future<void> initialice() async {
+   activitats = await controladorDomini.getActivitiesAgenda();
 
-  void mostrarVerActividad(
-      BuildContext context, List<String> info_act, Uri uri_act) {
+  _pages.addAll([
+    MapPage(controladorPresentacion: this),
+    MyActivities(),
+    ListaActividades(actividades: activitats), // Esta línea se agregó para inicializar ListaActividades con las actividades obtenidas
+    PerfilPage(controladorPresentacion: this),
+  ]);
+ 
+}
+
+  void mostrarVerActividad(BuildContext context, List<String> info_act, Uri uri_act) {
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -34,6 +42,10 @@ class ControladorPresentacion {
             VistaVerActividad(info_actividad: info_act, uri_actividad: uri_act),
       ),
     );
+  }
+
+  Widget getPage(int index) {
+    return _pages[index];
   }
 
   Future<void> mostrarMisActividades(
@@ -73,6 +85,7 @@ class ControladorPresentacion {
   }
 
   List<Actividad> getActivitats() => activitats;
+
   List<String> getActivitatsRecomm() {
     recomms = calcularActividadesRecomendadas(categsFav, activitats);
     return recomms;
@@ -108,16 +121,14 @@ class ControladorPresentacion {
     }
   }
 
-  handleGoogleSignIn(BuildContext context) async {
+  Future<void> handleGoogleSignIn(BuildContext context) async {
     try {
-      //Iniciar la sessio amb el compte especificat per l'usuari
       GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
       final UserCredential userCredential =
           await _auth.signInWithProvider(_googleAuthProvider);
       bool userExists =
           await controladorDomini.accountExists(userCredential.user);
       _user = userCredential.user;
-
       //Si no hi ha un usuari associat al compte de google, redirigir a la pantalla de registre
       if (!userExists) {
         mostrarSignup(context);
@@ -172,7 +183,7 @@ class ControladorPresentacion {
     );
   }
 
-  void logout(context) {
+  void logout(BuildContext context) {
     _auth.signOut();
     mostrarLogin(context);
   }

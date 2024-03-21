@@ -634,50 +634,6 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(50.0)),
-        ),
-        child: GNav(
-          backgroundColor: Colors.white,
-          color: Colors.orange,
-          activeColor: Colors.orange,
-          tabBackgroundColor: Colors.grey.shade100,
-          gap: 6,
-          onTabChange: (index) {
-            _onTabChange(index);
-          },
-          selectedIndex: 0,
-          tabs: [
-            const GButton(
-                text: "Mapa",
-                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
-                icon: Icons.map),
-            GButton(
-              text: "Mis Actividades",
-              textStyle: const TextStyle(fontSize: 12, color: Colors.orange),
-              icon: Icons.event,
-              onPressed: () {
-                //Navigator.pushNamed(context, '/myActivities');
-              },
-            ),
-            GButton(
-              text: "Chats",
-              textStyle: TextStyle(fontSize: 12, color: Colors.orange),
-              icon: Icons.chat,
-              onPressed: () {
-                //Navigator.pushNamed(context, '/xats');
-              },
-            ),
-            GButton(
-                text: "Perfil",
-                textStyle: TextStyle(fontSize: 12, color: Colors.orange),
-                icon: Icons.person),
-          ],
-        ),
-      ),
       body: Stack(
         fit: StackFit.expand, // Ajusta esta línea
         children: [
