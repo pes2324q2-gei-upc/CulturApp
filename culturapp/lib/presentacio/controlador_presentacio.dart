@@ -26,7 +26,6 @@ class ControladorPresentacion {
 
 Future<void> initialice() async {
    activitats = await controladorDomini.getActivitiesAgenda();
-   misActivitats = await controladorDomini.getUserActivities(_user!.uid);
 
   _pages.addAll([
     MapPage(controladorPresentacion: this),
@@ -102,8 +101,9 @@ Future<void> initialice() async {
     return _auth;
   }
 
-  void setUser(User? event) {
+  Future<void> setUser(User? event) async {
     _user = event;
+    misActivitats = await controladorDomini.getUserActivities(_user!.uid);
   }
 
   User? getUser() {
