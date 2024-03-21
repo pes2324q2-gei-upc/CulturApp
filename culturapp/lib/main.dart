@@ -60,7 +60,7 @@ class _MyAppState extends State<MyApp> {
             backgroundColor: const Color.fromARGB(255, 245, 242, 242),
             color: Colors.orange,
             activeColor: Colors.orange,
-            tabBackgroundColor: Colors.grey.shade100,
+            tabBackgroundColor: Colors.grey.shade300,
             gap: 6,
             onTabChange: _onTabChange,
             selectedIndex: _selectedIndex,
