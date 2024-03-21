@@ -1,30 +1,38 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/presentacio/screens/lista_actividades.dart';
-import 'package:culturapp/presentacio/screens/recomendador_actividades.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
+import 'package:culturapp/presentacio/screens/map_screen.dart';
+import 'package:culturapp/presentacio/screens/my_activities.dart';
+import 'package:culturapp/presentacio/screens/perfil_screen.dart';
+import 'package:culturapp/presentacio/screens/recomendador_actividades.dart';
 import 'package:culturapp/presentacio/screens/settings_perfil.dart';
+import 'package:culturapp/presentacio/screens/signup.dart';
 import 'package:culturapp/presentacio/screens/vista_ver_actividad.dart';
 import 'package:flutter/material.dart';
-import "package:firebase_auth/firebase_auth.dart";
-import 'package:culturapp/presentacio/screens/map_screen.dart';
-import 'package:culturapp/presentacio/screens/signup.dart';
-import 'package:culturapp/presentacio/screens/signup.dart';
-import 'package:culturapp/presentacio/screens/perfil_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ControladorPresentacion {
-
   final controladorDomini = ControladorDomini();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  User? _user;
-  late final List<Actividad> activitats;
-  late final List<String> recomms;
+  late User? _user;
+  late List<Actividad> activitats;
+  late List<String> recomms;
   final List<String> categsFav = ['carnavals', 'concerts', 'conferencies'];
+  late final List<Widget> _pages = [];
 
-  Future <void> initialice() async{ 
-    activitats = await controladorDomini.getActivitiesAgenda(); 
-  }
+Future<void> initialice() async {
+   activitats = await controladorDomini.getActivitiesAgenda();
+
+  _pages.addAll([
+    MapPage(controladorPresentacion: this),
+    MyActivities(),
+    ListaActividades(actividades: activitats), // Esta línea se agregó para inicializar ListaActividades con las actividades obtenidas
+    PerfilPage(controladorPresentacion: this),
+  ]);
+ 
+}
+
   void mostrarVerActividad(BuildContext context, List<String> info_act, Uri uri_act) {
     Navigator.push(
       context,
@@ -34,42 +42,49 @@ class ControladorPresentacion {
     );
   }
 
-  Future<void> mostrarMisActividades(BuildContext context, String userID) async { 
-      getUserActivities(userID).then((actividades) => {
+  Widget getPage(int index) {
+    return _pages[index];
+  }
+
+
+  Future<void> mostrarMisActividades(BuildContext context, String userID) async {
+    getUserActivities(userID).then(
+      (actividades) {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ListaActividades(actividades: actividades,),
+            builder: (context) => ListaActividades(actividades: actividades),
           ),
-        )
-      }
+        );
+      },
     );
   }
 
-  void mostrarActividades(BuildContext context) async { 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ListaActividades(actividades: activitats,),
-        ),
-      );
+  void mostrarActividades(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ListaActividades(actividades: activitats),
+      ),
+    );
   }
 
-  void mostrarMapaActividades(BuildContext context) async { 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MapPage(controladorPresentacion: this,),
-        ),
-      );
+  void mostrarMapaActividades(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MapPage(controladorPresentacion: this),
+      ),
+    );
   }
 
   List<Actividad> getActivitats() => activitats;
+
   List<String> getActivitatsRecomm() {
-    recomms =  calcularActividadesRecomendadas(categsFav, activitats);
+    recomms = calcularActividadesRecomendadas(categsFav, activitats);
     return recomms;
-    }
-  
+  }
+
   Future<List<Actividad>> getUserActivities(String userID) => controladorDomini.getUserActivities(userID);
 
   FirebaseAuth getFirebaseAuth() {
@@ -84,35 +99,30 @@ class ControladorPresentacion {
     return _user;
   }
 
-  void checkLoggetInUser(BuildContext context) {
-     //Obte l'usuari autentificat en el moment si existeix
+  void checkLoggedInUser(BuildContext context) {
     User? currentUser = _auth.currentUser;
-    
-    //Si existeix l'usuari, estableix l'usuari de l'estat i redirigeix a la pantalla principal
     if (currentUser != null) {
       _user = currentUser;
       mostrarMapaActividades(context);
     }
   }
 
-  handleGoogleSignIn(BuildContext context) async {
+  Future<void> handleGoogleSignIn(BuildContext context) async {
     try {
-      //Iniciar la sessio amb el compte especificat per l'usuari
       GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
       final UserCredential userCredential = await _auth.signInWithProvider(_googleAuthProvider);
       bool userExists = await controladorDomini.accountExists(userCredential.user);
       _user = userCredential.user;
-      
-      //Si no hi ha un usuari associat al compte de google, redirigir a la pantalla de registre
-      if (!userExists) { mostrarSignup(context);}
-      //Altrament redirigir a la pantalla principal de l'app
-      else mostrarMapaActividades(context);
-    }
-    catch (error) {
+      if (!userExists) {
+        mostrarSignup(context);
+      } else {
+        mostrarMapaActividades(context);
+      }
+    } catch (error) {
       print(error);
     }
   }
-  
+
   void mostrarSignup(BuildContext context) {
     Navigator.push(
       context,
@@ -121,13 +131,13 @@ class ControladorPresentacion {
       ),
     );
   }
-  
+
   void mostrarLogin(BuildContext context) {
     Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Login(controladorPresentacion: this),
-        ),
+      context,
+      MaterialPageRoute(
+        builder: (context) => Login(controladorPresentacion: this),
+      ),
     );
   }
 
@@ -154,9 +164,8 @@ class ControladorPresentacion {
     );
   }
 
-  void logout(context) {
+  void logout(BuildContext context) {
     _auth.signOut();
     mostrarLogin(context);
   }
-
 }
