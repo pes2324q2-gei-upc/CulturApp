@@ -8,6 +8,8 @@ import 'package:culturapp/presentacio/screens/perfil_screen.dart';
 import 'package:culturapp/presentacio/screens/recomendador_actividades.dart';
 import 'package:culturapp/presentacio/screens/settings_perfil.dart';
 import 'package:culturapp/presentacio/screens/signup.dart';
+import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
+import 'package:culturapp/presentacio/screens/vista_mis_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_ver_actividad.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,7 +28,7 @@ Future<void> initialice() async {
 
   _pages.addAll([
     MapPage(controladorPresentacion: this),
-    MyActivities(),
+    ListaMisActividades(actividades: activitats,),
     ListaActividades(actividades: activitats), // Esta línea se agregó para inicializar ListaActividades con las actividades obtenidas
     PerfilPage(controladorPresentacion: this),
   ]);
@@ -54,7 +56,7 @@ Future<void> initialice() async {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ListaActividades(
+              builder: (context) => ListaMisActividades(
                 actividades: actividades,
               ),
             ),
@@ -66,7 +68,7 @@ Future<void> initialice() async {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ListaActividades(
+        builder: (context) => ListaActividadesDisponibles(
           actividades: activitats,
         ),
       ),

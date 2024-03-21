@@ -4,15 +4,15 @@ import 'package:culturapp/presentacio/widgets/widgetsUtils/text_with_link.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class ListaActividades extends StatefulWidget {
+class ListaActividadesDisponibles extends StatefulWidget {
   final List<Actividad> actividades;
-  const ListaActividades({super.key, required this.actividades});
+  const ListaActividadesDisponibles({super.key, required this.actividades});
 
   @override
-  State<ListaActividades> createState() => _ListaActividadesState();
+  State<ListaActividadesDisponibles> createState() => _ListaActividadesDisponiblesState();
 }
 
-class _ListaActividadesState extends State<ListaActividades> {
+class _ListaActividadesDisponiblesState extends State<ListaActividadesDisponibles> {
 
   @override
   void initState() {
@@ -30,6 +30,10 @@ class _ListaActividadesState extends State<ListaActividades> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.orange,
+        title: const Text("Actividades Disponibles"),
+      ),
     body: ListView.builder(
       itemBuilder: (context, index) {
           return Container(
