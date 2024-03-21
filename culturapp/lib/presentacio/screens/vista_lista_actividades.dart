@@ -161,7 +161,7 @@ class _ListaActividadesDisponiblesState extends State<ListaActividadesDisponible
                               ),
                             ],
                           )
-                        )
+                        ),
                       ],
                     ),
                   ],

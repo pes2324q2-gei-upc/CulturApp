@@ -20,7 +20,7 @@ class ControladorDomini {
 
   Future<List<Actividad>> getUserActivities(String userID) async {
     final respuesta = await http.get(
-      Uri.parse('http://${ip}:8080/activitats/user/$userID'),
+      Uri.parse('http://${ip}:8080/user/activitats/$userID'),
     );
 
     if (respuesta.statusCode == 200) {

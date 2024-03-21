@@ -19,16 +19,18 @@ class ControladorPresentacion {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   late User? _user;
   late List<Actividad> activitats;
+  late List<Actividad> misActivitats; 
   late List<String> recomms;
   final List<String> categsFav = ['carnavals', 'concerts', 'conferencies'];
   late final List<Widget> _pages = [];
 
 Future<void> initialice() async {
    activitats = await controladorDomini.getActivitiesAgenda();
+   misActivitats = await controladorDomini.getUserActivities(_user!.uid);
 
   _pages.addAll([
     MapPage(controladorPresentacion: this),
-    ListaMisActividades(actividades: activitats,),
+    ListaMisActividades(actividades: misActivitats,),
     ListaActividades(actividades: activitats), // Esta línea se agregó para inicializar ListaActividades con las actividades obtenidas
     PerfilPage(controladorPresentacion: this),
   ]);
