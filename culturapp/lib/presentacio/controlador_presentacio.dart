@@ -19,7 +19,6 @@ class ControladorPresentacion {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   late User? _user;
   late List<Actividad> activitats;
-  late List<Actividad> misActivitats; 
   late List<String> recomms;
   final List<String> categsFav = ['carnavals', 'concerts', 'conferencies'];
   late final List<Widget> _pages = [];
@@ -29,7 +28,7 @@ Future<void> initialice() async {
 
   _pages.addAll([
     MapPage(controladorPresentacion: this),
-    ListaMisActividades(actividades: misActivitats,),
+    ListaMisActividades(actividades: activitats,),
     ListaActividades(actividades: activitats), // Esta línea se agregó para inicializar ListaActividades con las actividades obtenidas
     PerfilPage(controladorPresentacion: this),
   ]);
@@ -37,7 +36,6 @@ Future<void> initialice() async {
 }
 
   void mostrarVerActividad(BuildContext context, List<String> info_act, Uri uri_act) {
-
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -101,9 +99,8 @@ Future<void> initialice() async {
     return _auth;
   }
 
-  Future<void> setUser(User? event) async {
+  void setUser(User? event) async {
     _user = event;
-    misActivitats = await controladorDomini.getUserActivities(_user!.uid);
   }
 
   User? getUser() {
