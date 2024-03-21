@@ -34,10 +34,12 @@ Future<void> initialice() async {
 }
 
   void mostrarVerActividad(BuildContext context, List<String> info_act, Uri uri_act) {
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => VistaVerActividad(info_actividad: info_act, uri_actividad: uri_act),
+        builder: (context) =>
+            VistaVerActividad(info_actividad: info_act, uri_actividad: uri_act),
       ),
     );
   }
@@ -46,34 +48,38 @@ Future<void> initialice() async {
     return _pages[index];
   }
 
-
-  Future<void> mostrarMisActividades(BuildContext context, String userID) async {
-    getUserActivities(userID).then(
-      (actividades) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ListaActividades(actividades: actividades),
-          ),
-        );
-      },
-    );
+  Future<void> mostrarMisActividades(
+      BuildContext context, String userID) async {
+    getUserActivities(userID).then((actividades) => {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ListaActividades(
+                actividades: actividades,
+              ),
+            ),
+          )
+        });
   }
 
-  void mostrarActividades(BuildContext context) {
+  void mostrarActividades(BuildContext context) async {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ListaActividades(actividades: activitats),
+        builder: (context) => ListaActividades(
+          actividades: activitats,
+        ),
       ),
     );
   }
 
-  void mostrarMapaActividades(BuildContext context) {
+  void mostrarMapaActividades(BuildContext context) async {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MapPage(controladorPresentacion: this),
+        builder: (context) => MapPage(
+          controladorPresentacion: this,
+        ),
       ),
     );
   }
@@ -85,7 +91,8 @@ Future<void> initialice() async {
     return recomms;
   }
 
-  Future<List<Actividad>> getUserActivities(String userID) => controladorDomini.getUserActivities(userID);
+  Future<List<Actividad>> getUserActivities(String userID) =>
+      controladorDomini.getUserActivities(userID);
 
   FirebaseAuth getFirebaseAuth() {
     return _auth;
@@ -99,8 +106,15 @@ Future<void> initialice() async {
     return _user;
   }
 
-  void checkLoggedInUser(BuildContext context) {
+  Future<List<Actividad>> searchActivitat(String squery) {
+    return controladorDomini.searchActivitat(squery);
+  }
+
+  void checkLoggetInUser(BuildContext context) {
+    //Obte l'usuari autentificat en el moment si existeix
     User? currentUser = _auth.currentUser;
+
+    //Si existeix l'usuari, estableix l'usuari de l'estat i redirigeix a la pantalla principal
     if (currentUser != null) {
       _user = currentUser;
       mostrarMapaActividades(context);
@@ -110,14 +124,18 @@ Future<void> initialice() async {
   Future<void> handleGoogleSignIn(BuildContext context) async {
     try {
       GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
-      final UserCredential userCredential = await _auth.signInWithProvider(_googleAuthProvider);
-      bool userExists = await controladorDomini.accountExists(userCredential.user);
+      final UserCredential userCredential =
+          await _auth.signInWithProvider(_googleAuthProvider);
+      bool userExists =
+          await controladorDomini.accountExists(userCredential.user);
       _user = userCredential.user;
+      //Si no hi ha un usuari associat al compte de google, redirigir a la pantalla de registre
       if (!userExists) {
         mostrarSignup(context);
-      } else {
-        mostrarMapaActividades(context);
       }
+      //Altrament redirigir a la pantalla principal de l'app
+      else
+        mostrarMapaActividades(context);
     } catch (error) {
       print(error);
     }
@@ -141,7 +159,8 @@ Future<void> initialice() async {
     );
   }
 
-  void createUser(String username, List<String> selectedCategories, BuildContext context) async {
+  void createUser(String username, List<String> selectedCategories,
+      BuildContext context) async {
     controladorDomini.createUser(_user, username, selectedCategories);
     mostrarPerfil(context);
   }

@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "238144672947-7md473i4bb5l0oneo5ue1ovr8qnkq8hj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.culturapp",
+            "certificate_hash": "132b3dc87d696bd87a0f4b7c9c69d07a834718bd"
+          }
+        },
+        {
           "client_id": "238144672947-lcfgms5p78ppmfd49cu8oc8t8t6ucqp3.apps.googleusercontent.com",
           "client_type": 3
         }

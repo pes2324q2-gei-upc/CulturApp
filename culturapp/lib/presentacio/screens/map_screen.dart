@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math' as math;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/data/firebase_service.dart';
@@ -8,13 +9,15 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
 class MapPage extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
-  
+
   final List<String>? recomenacions;
 
-  const MapPage({Key? key, required this.controladorPresentacion, this.recomenacions});
+  const MapPage(
+      {Key? key, required this.controladorPresentacion, this.recomenacions});
 
   @override
   State<MapPage> createState() => _MapPageState(controladorPresentacion);
@@ -27,7 +30,7 @@ class _MapPageState extends State<MapPage> {
   late List<String> recomms;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  _MapPageState(ControladorPresentacion controladorPresentacion){
+  _MapPageState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
     activitats = _controladorPresentacion.getActivitats();
     recomms = _controladorPresentacion.getActivitatsRecomm();
@@ -51,20 +54,22 @@ class _MapPageState extends State<MapPage> {
   LatLng myLatLng = const LatLng(41.389350, 2.113307);
   String address = 'FIB';
 
-  final List<String> catsAMB = ["Residus",
-  "territori.espai_public_platges",
-  "Sostenibilitat",
-  "Aigua",
-  "territori.espai_public_parcs",
-  "Espai públic - Rius",
-  "Espai públic - Parcs",
-  "Portal de transparència",
-  "Mobilitat sostenible",
-  "Internacional",
-  "Activitat econòmica",
-  "Polítiques socials",
-  "territori.espai_public_rius",
-  "Espai públic - Platges"];
+  final List<String> catsAMB = [
+    "Residus",
+    "territori.espai_public_platges",
+    "Sostenibilitat",
+    "Aigua",
+    "territori.espai_public_parcs",
+    "Espai públic - Rius",
+    "Espai públic - Parcs",
+    "Portal de transparència",
+    "Mobilitat sostenible",
+    "Internacional",
+    "Activitat econòmica",
+    "Polítiques socials",
+    "territori.espai_public_rius",
+    "Espai públic - Platges"
+  ];
 
   List<Actividad> _actividades = [];
   GoogleMapController? _mapController;
@@ -95,7 +100,7 @@ class _MapPageState extends State<MapPage> {
   // Obtener actividades del JSON para mostrarlas por pantalla
   Future<List<Actividad>> fetchActivities(LatLng center, double zoom) async {
     double radius = 1500 * (16 / zoom);
-    var actividadesaux = <Actividad> [];
+    var actividadesaux = <Actividad>[];
     for (var actividad in activitats) {
       // Comprobar si la actividad está dentro del radio
       if (calculateDistance(center,
@@ -114,13 +119,12 @@ class _MapPageState extends State<MapPage> {
   }
 
   Image _retornaIcon(String categoria) {
-    if (catsAMB.contains(categoria)){
+    if (catsAMB.contains(categoria)) {
       return Image.asset(
-            'assets/categoriareciclar.png',
-            width: 45.0,
-          );
-    }
-    else {
+        'assets/categoriareciclar.png',
+        width: 45.0,
+      );
+    } else {
       switch (categoria) {
         case 'carnavals':
           return Image.asset(
@@ -275,8 +279,10 @@ class _MapPageState extends State<MapPage> {
                                     ),
                                   ),
                                 ),
-                                const Padding(padding: EdgeInsets.only(right: 5.0)),
-                                _retornaIcon(actividad.categoria[0]), //Obtener el icono de la categoria
+                                const Padding(
+                                    padding: EdgeInsets.only(right: 5.0)),
+                                _retornaIcon(actividad.categoria[
+                                    0]), //Obtener el icono de la categoria
                               ],
                             ),
                             const Padding(padding: EdgeInsets.only(top: 7.5)),
@@ -354,26 +360,35 @@ class _MapPageState extends State<MapPage> {
                         height: 35.0,
                         child: ElevatedButton(
                           onPressed: () async {
-                            List<String> act = [actividad.name,
-                                                actividad.code,
-                                                actividad.categoria[0],
-                                                actividad.imageUrl,
-                                                actividad.descripcio,
-                                                actividad.dataInici,
-                                                actividad.dataFi,
-                                                actividad.ubicacio];
+                            List<String> act = [
+                              actividad.name,
+                              actividad.code,
+                              actividad.categoria[0],
+                              actividad.imageUrl,
+                              actividad.descripcio,
+                              actividad.dataInici,
+                              actividad.dataFi,
+                              actividad.ubicacio
+                            ];
                             _controladorPresentacion.mostrarVerActividad(
                                 context, act, actividad.urlEntrades);
                             //Actualizar BD +1 Visualitzacio
-                            DocumentReference docRef = _firestore.collection('actividades').doc(actividad.code);
-                            await _firestore.runTransaction((transaction) async {
-                              DocumentSnapshot snapshot = await transaction.get(docRef);
+                            DocumentReference docRef = _firestore
+                                .collection('actividades')
+                                .doc(actividad.code);
+                            await _firestore
+                                .runTransaction((transaction) async {
+                              DocumentSnapshot snapshot =
+                                  await transaction.get(docRef);
                               int currentValue = 0;
                               if (snapshot.data() is Map<String, dynamic>) {
-                                currentValue = (snapshot.data() as Map<String, dynamic>)['visualitzacions'] ?? 5;
-                              } 
+                                currentValue = (snapshot.data() as Map<String,
+                                        dynamic>)['visualitzacions'] ??
+                                    5;
+                              }
                               int newValue = currentValue + 1;
-                              transaction.update(docRef, {'visualitzacions': newValue});
+                              transaction.update(
+                                  docRef, {'visualitzacions': newValue});
                             });
                           },
                           style: ButtonStyle(
@@ -404,7 +419,8 @@ class _MapPageState extends State<MapPage> {
         markerId: MarkerId(actividad.code),
         position: LatLng(actividad.latitud, actividad.longitud),
         infoWindow: InfoWindow(title: actividad.name),
-        icon: _getMarkerIcon(actividad.categoria[0], actividad.code), // Llama a la función para obtener el icono
+        icon: _getMarkerIcon(actividad.categoria[0],
+            actividad.code), // Llama a la función para obtener el icono
         onTap: () => showActividadDetails(actividad),
       );
     }).toSet();
@@ -412,13 +428,12 @@ class _MapPageState extends State<MapPage> {
 
   // En funcion de la categoria atribuye un marcador
   BitmapDescriptor _getMarkerIcon(String categoria, String code) {
-    for(int i = 0; i < recomms.length; ++i){
+    for (int i = 0; i < recomms.length; ++i) {
       if (recomms[i] == code) categoria = 'recom';
     }
-    if (catsAMB.contains(categoria)){
+    if (catsAMB.contains(categoria)) {
       return iconoAMB;
-    }
-    else {
+    } else {
       switch (categoria) {
         case 'carnavals':
           return iconoCarnaval;
@@ -479,7 +494,8 @@ class _MapPageState extends State<MapPage> {
     });
 
     icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(devicePixelRatio: 2.5), 'assets/pinreciclar.png');
+        const ImageConfiguration(devicePixelRatio: 2.5),
+        'assets/pinreciclar.png');
     setState(() {
       iconoAMB = icon;
     });
@@ -569,7 +585,6 @@ class _MapPageState extends State<MapPage> {
         fetchActivities(position.target, zoom).then((value) {
           setState(() {
             _actividades = value;
-
           });
         });
       });
@@ -588,7 +603,6 @@ class _MapPageState extends State<MapPage> {
       case 1:
         break;
       case 2:
-        
         break;
       case 3:
         _controladorPresentacion.mostrarPerfil(context);
@@ -596,6 +610,24 @@ class _MapPageState extends State<MapPage> {
       default:
         break;
     }
+  }
+
+  var querySearch = '';
+  late Actividad activitat;
+
+  void moveMapToSelectedActivity() {
+    LatLng activityPosition =
+        LatLng(activitat.latitud ?? 0.0, activitat.longitud ?? 0.0);
+    _mapController?.animateCamera(CameraUpdate.newLatLng(activityPosition));
+  }
+
+  Future<void> busquedaActivitat(String querySearch) async {
+    //de moment res pq això es per backend
+    //Metropolitan Union Quartet
+    List<Actividad> llista =
+        (await _controladorPresentacion.searchActivitat(querySearch));
+    activitat = llista.first;
+    moveMapToSelectedActivity();
   }
 
   //Se crea la ''pantalla'' para el mapa - falta añadir dock inferior y barra de busqueda
@@ -621,14 +653,21 @@ class _MapPageState extends State<MapPage> {
                 border: Border.all(color: Colors.black, width: 1.5),
                 borderRadius: BorderRadius.circular(25.0),
               ),
-              child: const Padding(
+              child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 25.0),
                 child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Buscar...',
-                    border: InputBorder.none,
-                  ),
-                ),
+                    //en aquest cas, només "onPressed pq només pot haver-hi una"
+                    decoration: InputDecoration(
+                        hintText: 'Buscar...',
+                        border: InputBorder.none,
+                        suffixIcon: IconButton(
+                            onPressed: () {
+                              busquedaActivitat(querySearch);
+                            },
+                            icon: Icon(Icons.search))),
+                    onChanged: (value) {
+                      querySearch = value;
+                    }),
               ),
             ),
           ),
@@ -637,7 +676,8 @@ class _MapPageState extends State<MapPage> {
               initialChildSize: 0.2,
               minChildSize: 0.1,
               maxChildSize: 1,
-              builder: (BuildContext context, ScrollController scrollController) {
+              builder:
+                  (BuildContext context, ScrollController scrollController) {
                 return Container(
                   decoration: const BoxDecoration(
                     color: Colors.white,
@@ -650,20 +690,20 @@ class _MapPageState extends State<MapPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       //Barra gris del botón
-                      Padding( 
+                      Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: Container(
-                          width: 40, 
+                          width: 40,
                           height: 5,
                           decoration: BoxDecoration(
-                            color: Colors.grey[300], 
+                            color: Colors.grey[300],
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
                       Text(
                         "${_actividades.length} Actividades disponibles",
-                        style: TextStyle (
+                        style: TextStyle(
                           color: Colors.orange,
                         ),
                       ),
@@ -673,7 +713,9 @@ class _MapPageState extends State<MapPage> {
                           children: [
                             SizedBox(
                               height: 500,
-                              child: ListaActividades(actividades: _actividades,),
+                              child: ListaActividades(
+                                actividades: _actividades,
+                              ),
                             ),
                           ],
                         ),

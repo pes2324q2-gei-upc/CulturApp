@@ -13,6 +13,7 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   
+  // Inicializa Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   final controladorPresentacion = ControladorPresentacion();

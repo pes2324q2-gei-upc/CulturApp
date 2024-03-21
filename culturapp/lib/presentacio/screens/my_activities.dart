@@ -23,6 +23,7 @@ class _MyActivities extends State<MyActivities> {
         //Navigator.pushNamed(context, Routes.misActividades);
         break;
       case 2:
+        //Navigator.pushNamed(context, Routes.xats);
         break;
       case 3:
         //Navigator.pushNamed(context, Routes.perfil);
