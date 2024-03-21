@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
             borderRadius: BorderRadius.vertical(top: Radius.circular(50.0)),
           ),
           child: GNav(
-            backgroundColor: Colors.white,
+            backgroundColor: const Color.fromARGB(255, 245, 242, 242),
             color: Colors.orange,
             activeColor: Colors.orange,
             tabBackgroundColor: Colors.grey.shade100,

@@ -110,7 +110,7 @@ Future<void> initialice() async {
     return controladorDomini.searchActivitat(squery);
   }
 
-  void checkLoggetInUser(BuildContext context) {
+  void checkLoggedInUser(BuildContext context) {
     //Obte l'usuari autentificat en el moment si existeix
     User? currentUser = _auth.currentUser;
 
