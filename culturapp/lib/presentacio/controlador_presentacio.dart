@@ -51,8 +51,8 @@ Future<void> initialice() async {
   }
 
   Future<void> mostrarMisActividades(
-      BuildContext context, String userID) async {
-    getUserActivities(userID).then((actividades) => {
+      BuildContext context) async {
+    getUserActivities(_user!.uid).then((actividades) => {
           Navigator.push(
             context,
             MaterialPageRoute(
