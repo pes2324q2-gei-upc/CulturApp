@@ -120,17 +120,17 @@ class ControladorDomini {
     }
   }
 
-   /* Future<List<String>> obteCatsFavs(User? user) async {
-    final respuesta = await http
-        .get(Uri.parse('http://${ip}:8080/users/${user?.uid}/favcategories'));
+Future<List<String>> obteCatsFavs(User? user) async {
+  final respuesta = await http.get(Uri.parse('http://${ip}:8080/users/${user?.uid}/favcategories'));
+  List<String> categorias = [];
 
-    if (respuesta.statusCode == 200) {
-      print(respuesta);
-      List<String>a = respuesta.body;
-    } else {
-      throw Exception('Fallo la obtención de datos');
-    }
-  }*/
+  if (respuesta.statusCode == 200) {
+    List<dynamic> jsonResponse = jsonDecode(respuesta.body);
+    categorias = jsonResponse.cast<String>();
+  } 
+  return categorias;
+
+}
 
   void createUser(
       User? _user, String username, List<String> selectedCategories) async {

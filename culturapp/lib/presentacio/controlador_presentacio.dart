@@ -22,7 +22,7 @@ class ControladorPresentacion {
   late List<Actividad> activitats;
   late List<Actividad> activitatsUser;
   late List<String> recomms;
-  final List<String> categsFav = ['carnavals', 'concerts', 'conferencies'];
+  late List<String> categsFav = [];
   late final List<Widget> _pages = [];
 
 Future<void> initialice() async {
@@ -37,9 +37,8 @@ Future<void> initialice2() async {
   }
 
   if (userLogged()) {
-    String id = 'b1TfJ01Xd1cUS5EbZG3JR9BNypL2';
-    //categsFav = await controladorDomini.getUserActivities(id);
-    activitatsUser = await controladorDomini.getUserActivities(id);
+    categsFav = await controladorDomini.obteCatsFavs(_user);
+    activitatsUser = await controladorDomini.getUserActivities(_user!.uid);
   }
 
   _pages.addAll([
@@ -166,8 +165,9 @@ Future<void> initialice2() async {
         mostrarSignup(context);
       }
       //Altrament redirigir a la pantalla principal de l'app
-      else
+      else {
         obtenerActividadesUser();
+      }
         mostrarMapaActividades(context);
         
     } catch (error) {
