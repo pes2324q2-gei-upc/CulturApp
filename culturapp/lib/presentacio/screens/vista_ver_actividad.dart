@@ -62,7 +62,6 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   Widget build(BuildContext context) {
     checkApuntado(_user!.uid, infoActividad);
     return Scaffold(
-      bottomNavigationBar: _barraNavegacion(),
       appBar: AppBar(
         backgroundColor: Colors.orange,
         title: const Text("Actividad"),
@@ -356,31 +355,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     }
   }
   
-  Widget _barraNavegacion() {
-    return Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(50.0)),
-        ),
-        child: GNav(
-          backgroundColor: Colors.white,
-          color: Colors.orange,
-          activeColor: Colors.orange,
-          tabBackgroundColor: Colors.grey.shade100,
-          gap: 6,
-          onTabChange: (index) {
-            _onTabChange(index);
-          },
-          selectedIndex: 0,
-          tabs: const [
-            GButton(text: "Mapa", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.map),
-            GButton(text: "Mis Actividades", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.event),
-            GButton(text: "Chats", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.chat),
-            GButton(text: "Perfil", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.person),
-          ],
-        ),
-      );
-  }
+  
   
   void manageSignupButton(List<String> infoactividad) {
     if (mounted) {

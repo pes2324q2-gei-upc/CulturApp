@@ -24,7 +24,7 @@ class ControladorDomini {
     );
 
     if (respuesta.statusCode == 200) {
-      return _convert_json_to_list(respuesta);
+      return _convert_database_to_list(respuesta);
     } else {
       throw Exception('Fallo la obtención de datos');
     }
@@ -120,6 +120,18 @@ class ControladorDomini {
     }
   }
 
+Future<List<String>> obteCatsFavs(User? user) async {
+  final respuesta = await http.get(Uri.parse('http://${ip}:8080/users/${user?.uid}/favcategories'));
+  List<String> categorias = [];
+
+  if (respuesta.statusCode == 200) {
+    List<dynamic> jsonResponse = jsonDecode(respuesta.body);
+    categorias = jsonResponse.cast<String>();
+  } 
+  return categorias;
+
+}
+
   void createUser(
       User? _user, String username, List<String> selectedCategories) async {
     try {
@@ -128,6 +140,7 @@ class ControladorDomini {
         'username': username,
         'email': _user?.email,
         'favcategories': jsonEncode(selectedCategories),
+        'activities': [],
       };
 
       final respuesta = await http.post(

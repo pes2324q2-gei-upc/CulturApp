@@ -46,7 +46,8 @@ class Logout extends StatelessWidget {
 
   void signout(context) {
     _auth.signOut();
-    Navigator.push(
+
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => Login(controladorPresentacion: ControladorPresentacion(),)),
     ); // Cierra la llamada a MaterialPageRoute
