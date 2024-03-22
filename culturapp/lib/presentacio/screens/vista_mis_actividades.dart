@@ -33,7 +33,8 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   static const List<String> llistaCategories = <String>[
     'concert',
     'infantil',
-    'teatre'
+    'teatre',
+    'festes'
     //agar tots els tipus
     //Ponte la ventana categoría en el main y ejecuta, te saldrá un listado con todas
   ];
@@ -65,7 +66,6 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   void searchMyActivities(String squery) async {
     //do this
     //Festa Major de Sant Vicenç
-
     activitats = await _controladorPresentacion.searchMyActivitats(squery);
     setState(() {});
   }
@@ -75,8 +75,13 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   }
 
   void filterActivitiesByCategory(String category) async {
-    activitats =
-        activitats.where((activity) => activity.categoria == category).toList();
+    //si no funciona fer back
+
+    setState(() {
+      activitats = activitats
+          .where((activity) => activity.categoria.contains(category))
+          .toList();
+    });
   }
 
   @override
@@ -149,6 +154,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                               onChanged: (String? newValue) async {
                                 setState(() {
                                   _selectedCategory = newValue;
+                                  filterActivitiesByCategory(newValue!);
                                 });
                               },
                               borderRadius: BorderRadius.circular(10),
