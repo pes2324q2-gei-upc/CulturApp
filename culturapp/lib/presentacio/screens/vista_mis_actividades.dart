@@ -29,6 +29,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   late String squery;
   late String? _selectedCategory;
   late String selectedData;
+  TextEditingController _dateController = TextEditingController();
 
   static const List<String> llistaCategories = <String>[
     'concert',
@@ -70,8 +71,19 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     setState(() {});
   }
 
-  void canviFiltreData(value) {
+  void canviFiltreData(String date) {
     //filtre
+    setState(() {
+      /*activitats = activitats.where((activity) {
+        if (activity.dataInici != 'No disponible') {
+          DateTime activityDate = DateTime.parse(activity.dataInici);
+          return activityDate.isAfter(date as DateTime) ||
+              activityDate.isAtSameMomentAs(date as DateTime);
+        } else {
+          return false;
+        }
+      }).toList();*/
+    });
   }
 
   void filterActivitiesByCategory(String category) async {
@@ -175,15 +187,36 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                     width: 10.0,
                   ),
                   SizedBox(
-                    //filtre data
-                    height: 30.0,
-                    width: 150.0,
-                    child: FiltreData(canviData: (newData) {
-                      setState(() {
-                        selectedData = newData!;
-                      });
-                    }),
-                  )
+                      //filtre data
+                      height: 30.0,
+                      width: 150.0,
+                      child: Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                              width: 500.0,
+                              child: TextField(
+                                  style: const TextStyle(
+                                      fontSize: 14, color: Colors.white),
+                                  controller: _dateController,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Data',
+                                      labelStyle: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                      filled: true,
+                                      fillColor:
+                                          Color.fromRGBO(255, 170, 102, 0.5),
+                                      prefixIcon: Icon(Icons.calendar_today,
+                                          size: 18, color: Colors.white),
+                                      enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide.none),
+                                      focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Colors.orange))),
+                                  readOnly: true,
+                                  onTap: () {
+                                    _selectDate();
+                                  }))))
                 ]),
               ],
             ),
@@ -363,5 +396,21 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
             ),
           )
         ]));
+  }
+
+  Future<void> _selectDate() async {
+    DateTime? _picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2100));
+
+    if (_picked != null) {
+      String formattedDate = DateFormat('yyyy-MM-dd').format(_picked);
+      setState(() {
+        _dateController.text = formattedDate;
+        canviFiltreData(formattedDate);
+      });
+    }
   }
 }
