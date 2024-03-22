@@ -3,8 +3,9 @@ import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
-import 'package:culturapp/presentacio/screens/my_activities.dart'; // Assuming this screen exists
+import 'package:culturapp/presentacio/screens/my_activities.dart';
 import 'package:culturapp/presentacio/screens/perfil_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -18,6 +19,7 @@ void main() async {
 
   final controladorPresentacion = ControladorPresentacion();
   await controladorPresentacion.initialice();
+  await controladorPresentacion.initialice2();
   
   runApp(MyApp(controladorPresentacion: controladorPresentacion));
 }
@@ -32,13 +34,28 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   int _selectedIndex = 0;
+  bool _isLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Llamar a userLogged al inicio
+    userLogged();
+  }
+
+  void userLogged() {
+    User? currentUser = _auth.currentUser;
+    setState(() {
+      _isLoggedIn = currentUser != null;
+      _selectedIndex = _isLoggedIn ? _selectedIndex : 4; // Si no está logueado, selecciona el índice 4
+    });
+  }
 
   void _onTabChange(int index) {
     setState(() {
-      if (index != 2){
-        _selectedIndex = index;
-      }
+      _selectedIndex = index;
     });
   }
 
@@ -50,8 +67,8 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.orange,
       ),
       home: Scaffold(
-        body: widget.controladorPresentacion.getPage(_selectedIndex),
-        bottomNavigationBar: Container(
+        body: _isLoggedIn ? widget.controladorPresentacion.getPage(_selectedIndex) : Login(controladorPresentacion: widget.controladorPresentacion,),
+        bottomNavigationBar: _isLoggedIn ? Container(
           decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(50.0)),
@@ -87,7 +104,7 @@ class _MyAppState extends State<MyApp> {
               ),
             ],
           ),
-        ),
+        ) : null, 
       ),
     );
   }

@@ -128,13 +128,6 @@ class _ListaActividadesState extends State<ListaActividades> {
                                     )
                                   ],
                                 ),
-                                const Row(
-                                  children: [
-                                    Icon(Icons.card_giftcard),
-                                    Text('  -')
-                                    //Text(_actividades[index].regal ?? '-')
-                                  ],
-                                ),
                                 Row(
                                   children: [
                                     const Icon(Icons.local_atm),

@@ -11,6 +11,7 @@ import 'package:culturapp/presentacio/screens/signup.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_mis_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_ver_actividad.dart';
+import 'package:culturapp/presentacio/screens/xats.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -19,21 +20,46 @@ class ControladorPresentacion {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   late User? _user;
   late List<Actividad> activitats;
+  late List<Actividad> activitatsUser;
   late List<String> recomms;
   final List<String> categsFav = ['carnavals', 'concerts', 'conferencies'];
   late final List<Widget> _pages = [];
 
 Future<void> initialice() async {
-   activitats = await controladorDomini.getActivitiesAgenda();
+  activitats = await controladorDomini.getActivitiesAgenda();
+
+}
+
+Future<void> initialice2() async {
+  User? currentUser = _auth.currentUser;
+  if (currentUser != null){
+    _user = currentUser;
+  }
+
+  if (userLogged()) {
+    String id = 'b1TfJ01Xd1cUS5EbZG3JR9BNypL2';
+    //categsFav = await controladorDomini.getUserActivities(id);
+    activitatsUser = await controladorDomini.getUserActivities(id);
+  }
 
   _pages.addAll([
     MapPage(controladorPresentacion: this),
-    ListaMisActividades(actividades: activitats,),
-    ListaActividades(actividades: activitats), // Esta línea se agregó para inicializar ListaActividades con las actividades obtenidas
+    ListaMisActividades(controladorPresentacion: this,),
+    const Xats(),
     PerfilPage(controladorPresentacion: this),
   ]);
- 
 }
+
+  bool userLogged(){
+    User? currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      _user = currentUser;
+      return true;
+    } 
+    else {
+      return false;
+    }
+  }
 
   void mostrarVerActividad(BuildContext context, List<String> info_act, Uri uri_act) {
     Navigator.push(
@@ -55,12 +81,15 @@ Future<void> initialice() async {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ListaMisActividades(
-                actividades: actividades,
+              builder: (context) => ListaMisActividades(controladorPresentacion: this,
               ),
             ),
           )
         });
+  }
+
+  Future<void> obtenerActividadesUser() async {
+    activitatsUser = await getUserActivities(_user!.uid);
   }
 
   void mostrarActividades(BuildContext context) async {
@@ -68,7 +97,7 @@ Future<void> initialice() async {
       context,
       MaterialPageRoute(
         builder: (context) => ListaActividadesDisponibles(
-          actividades: activitats,
+          actividades: activitats, controladorPresentacion: this,
         ),
       ),
     );
@@ -86,6 +115,8 @@ Future<void> initialice() async {
   }
 
   List<Actividad> getActivitats() => activitats;
+
+  List<Actividad> getActivitatsUser() => activitatsUser;
 
   List<String> getActivitatsRecomm() {
     recomms = calcularActividadesRecomendadas(categsFav, activitats);
@@ -136,7 +167,9 @@ Future<void> initialice() async {
       }
       //Altrament redirigir a la pantalla principal de l'app
       else
+        obtenerActividadesUser();
         mostrarMapaActividades(context);
+        
     } catch (error) {
       print(error);
     }
@@ -189,3 +222,6 @@ Future<void> initialice() async {
     mostrarLogin(context);
   }
 }
+
+
+

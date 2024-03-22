@@ -5,6 +5,7 @@ import 'package:culturapp/data/firebase_service.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/lista_actividades.dart';
+import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -51,7 +52,7 @@ class _MapPageState extends State<MapPage> {
   BitmapDescriptor iconoVirtual = BitmapDescriptor.defaultMarker;
   BitmapDescriptor iconoAMB = BitmapDescriptor.defaultMarker;
   IconData iconoCategoria = Icons.category;
-  LatLng myLatLng = const LatLng(41.389350, 2.113307);
+  LatLng myLatLng = const LatLng(41.6543172, 2.2233522);
   String address = 'FIB';
 
   final List<String> catsAMB = [
@@ -99,7 +100,7 @@ class _MapPageState extends State<MapPage> {
 
   // Obtener actividades del JSON para mostrarlas por pantalla
   Future<List<Actividad>> fetchActivities(LatLng center, double zoom) async {
-    double radius = 1500 * (16 / zoom);
+    double radius = 500 * (16 / zoom);
     var actividadesaux = <Actividad>[];
     for (var actividad in activitats) {
       // Comprobar si la actividad está dentro del radio
@@ -372,7 +373,7 @@ class _MapPageState extends State<MapPage> {
                             ];
                             _controladorPresentacion.mostrarVerActividad(
                                 context, act, actividad.urlEntrades);
-                            //Actualizar BD +1 Visualitzacio
+                            //Actualizar BD + 1 Visualitzacio
                             DocumentReference docRef = _firestore
                                 .collection('actividades')
                                 .doc(actividad.code);
@@ -596,22 +597,6 @@ class _MapPageState extends State<MapPage> {
     _mapController = controller;
   }
 
-  void _onTabChange(int index) {
-    switch (index) {
-      case 0:
-        break;
-      case 1:
-        break;
-      case 2:
-        break;
-      case 3:
-        _controladorPresentacion.mostrarPerfil(context);
-        break;
-      default:
-        break;
-    }
-  }
-
   var querySearch = '';
   late Actividad activitat;
 
@@ -654,7 +639,7 @@ class _MapPageState extends State<MapPage> {
                 borderRadius: BorderRadius.circular(25.0),
               ),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 25.0),
+                padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: TextField(
                     //en aquest cas, només "onPressed pq només pot haver-hi una"
                     decoration: InputDecoration(
@@ -664,7 +649,7 @@ class _MapPageState extends State<MapPage> {
                             onPressed: () {
                               busquedaActivitat(querySearch);
                             },
-                            icon: Icon(Icons.search))),
+                            icon: const Icon(Icons.search))),
                     onChanged: (value) {
                       querySearch = value;
                     }),
@@ -703,7 +688,7 @@ class _MapPageState extends State<MapPage> {
                       ),
                       Text(
                         "${_actividades.length} Actividades disponibles",
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.orange,
                         ),
                       ),
@@ -713,9 +698,7 @@ class _MapPageState extends State<MapPage> {
                           children: [
                             SizedBox(
                               height: 500,
-                              child: ListaActividades(
-                                actividades: _actividades,
-                              ),
+                              child: ListaActividadesDisponibles(actividades: _actividades, controladorPresentacion: _controladorPresentacion,),
                             ),
                           ],
                         ),
