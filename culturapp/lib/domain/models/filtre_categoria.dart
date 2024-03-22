@@ -1,28 +1,34 @@
-import "package:culturapp/domain/models/actividad.dart";
+/*import "package:culturapp/domain/models/actividad.dart";
 import "package:flutter/material.dart";
 
 class FiltreCategoria extends StatefulWidget {
-  const FiltreCategoria(
-      {super.key, required Null Function(dynamic newCategoria) canviCategoria});
+  final String categoria;
+  const FiltreCategoria({super.key, required String categoria});
 
   @override
-  _FiltreState createState() => _FiltreState();
+  _FiltreState createState() => _FiltreState(categoria);
 }
 
 class _FiltreState extends State<FiltreCategoria> {
+  late String _categoria = ;
+
+  _FilterState(String categoria) {
+    llistaCategories = //funcio crida backend que retorna totes les categories or smth
+        _categoria = llistaCategories.first;
+  }
+
   static const List<String> llistaCategories = <String>[
     'concert',
     'infantil',
     'teatre'
     //agar tots els tipus
   ];
-  late String _selectedCategory = llistaCategories.first;
-  //categoria seleccionada, canviar a un filler
 
-  void dropdownCallback(String? selectedValue) {
+  void categoriaCanviada(String? selectedValue) {
+    //el string ha de ser igual a la categoria clicada
     if (selectedValue is String) {
       setState(() {
-        _selectedCategory = selectedValue;
+        _categoria = selectedValue;
       });
     }
   }
@@ -44,7 +50,7 @@ class _FiltreState extends State<FiltreCategoria> {
               items: llistaCategories.map((String item) {
                 return DropdownMenuItem(value: item, child: Text(item));
               }).toList(),
-              onChanged: dropdownCallback,
+              onChanged: categoriaCanviada,
               borderRadius: BorderRadius.circular(10),
               dropdownColor: Color.fromRGBO(255, 170, 102, 0.5),
               icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
@@ -59,3 +65,4 @@ class _FiltreState extends State<FiltreCategoria> {
     ));
   }
 }
+*/

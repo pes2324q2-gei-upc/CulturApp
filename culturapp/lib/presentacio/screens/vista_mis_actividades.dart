@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/filtre_categoria.dart';
+import 'package:culturapp/domain/models/filtre_data.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/widgets/widgetsUtils/image_category.dart';
 import 'package:culturapp/presentacio/widgets/widgetsUtils/text_with_link.dart';
@@ -7,23 +9,40 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ListaMisActividades extends StatefulWidget {
-  
   final ControladorPresentacion controladorPresentacion;
 
-  ListaMisActividades({super.key, required this.controladorPresentacion,});
+  ListaMisActividades({
+    super.key,
+    required this.controladorPresentacion,
+  });
 
   @override
-  State<ListaMisActividades> createState() => _ListaMisActividadesState(controladorPresentacion,);
+  State<ListaMisActividades> createState() => _ListaMisActividadesState(
+        controladorPresentacion,
+      );
 }
 
 class _ListaMisActividadesState extends State<ListaMisActividades> {
   late List<Actividad> activitats;
   late ControladorPresentacion _controladorPresentacion;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late String squery;
+  late String? _selectedCategory;
+  late String selectedData;
+
+  static const List<String> llistaCategories = <String>[
+    'concert',
+    'infantil',
+    'teatre'
+    //agar tots els tipus
+    //Ponte la ventana categoría en el main y ejecuta, te saldrá un listado con todas
+  ];
 
   _ListaMisActividadesState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
     activitats = controladorPresentacion.getActivitatsUser();
+    squery = '';
+    _selectedCategory = 'concert';
   }
 
   @override
@@ -39,181 +58,465 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     }
   }
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      backgroundColor: Colors.orange,
-      title: const Text("Mis actividades"),
-    ),
-    body: ListView.builder(
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () async {
-            List<String> act = [
-              activitats[index].name,
-              activitats[index].code,
-              activitats[index].categoria[0],
-              activitats[index].imageUrl,
-              activitats[index].descripcio,
-              activitats[index].dataInici,
-              activitats[index].dataFi,
-              activitats[index].ubicacio
-            ];
-            _controladorPresentacion.mostrarVerActividad(
-              context, 
-              act, 
-              activitats[index].urlEntrades
-            );
-            //Actualizar BD + 1 Visualitzacio
-              DocumentReference docRef = _firestore
-              .collection('actividades')
-                  .doc(activitats[index].code);
-              await _firestore
-                  .runTransaction((transaction) async {
-                DocumentSnapshot snapshot =
-                    await transaction.get(docRef);
-                int currentValue = 0;
-                if (snapshot.data() is Map<String, dynamic>) {
-                  currentValue = (snapshot.data() as Map<String,
-                          dynamic>)['visualitzacions'] ??
-                      5;
-                }
-                int newValue = currentValue + 1;
-                transaction.update(
-                    docRef, {'visualitzacions': newValue});
-              });  
-          },
-          child: Container(
-            padding: const EdgeInsets.all(8.0), // Adjust as needed
-            child: Card(
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  top: 16.0, bottom: 32.0, right: 16.0, left: 16.0),
-                child: Column(
-                  children: [
-                    Row(children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: Text(
-                            activitats[index].name,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.orange),
-                          ),
-                        ),
-                      )
-                    ]),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                child: Image.network(
-                                  activitats[index].imageUrl,
-                                  fit: BoxFit.cover,
-                                )
-                              )
-                            ]
-                          ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 8),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start, // Add this line
-                                  children: [
-                                    const Icon(Icons.location_on),
-                                    Expanded(
-                                      child: Text(
-                                        "  ${activitats[index].ubicacio}",
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+  void changeSquery(String text) {
+    squery = text;
+  }
 
-                                Row(
-                                  children: [
-                                    const Icon(Icons.calendar_month),
-                                    Text("  Inicio: ${() {
-                                      try {
-                                        return DateFormat('yyyy-MM-dd').format(
-                                            DateTime.parse(
-                                                activitats[index].dataInici));
-                                      } catch (e) {
-                                        return 'Unknown';
-                                      }
-                                    }()}"
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.calendar_month),
-                                    Text("  Fin: ${() {
-                                      try {
-                                        return DateFormat('yyyy-MM-dd').format(
-                                            DateTime.parse(
-                                                activitats[index].dataFi));
-                                      } catch (e) {
-                                        return 'Unknown';
-                                      }
-                                    }()}"
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.local_atm),
-                                    TextWithLink(text: "  Compra aqui",
-                                      url: activitats[index].urlEntrades.toString()),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.only(left: 5),
-                                width: 50,
-                                child: ImageCategory(
-                                  categoria: getCategoria(activitats[index])
-                                )
-                              )
-                            ],
-                          )
-                        )
-                      ],
+  void searchMyActivities(String squery) async {
+    //do this
+    //Festa Major de Sant Vicenç
+    activitats = await _controladorPresentacion.searchMyActivitats(squery);
+  }
+
+  void canviFiltreData(value) {
+    //filtre
+  }
+
+  void filterActivitiesByCategory(String category) async {
+    activitats =
+        activitats.where((activity) => activity.categoria == category).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.orange,
+          title: const Text("Mis actividades"),
+        ),
+        body: Column(children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 40.0,
+                  child: TextField(
+                    //cercador
+                    onChanged: (text) => changeSquery(text),
+                    cursorColor: Colors.white,
+                    style: const TextStyle(
+                      color: Colors.white,
                     ),
-                  ],
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: const Color.fromRGBO(240, 186, 132, 1),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      hintText: "Search...",
+                      hintStyle: const TextStyle(
+                        color: Colors.white,
+                      ),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          //FUNCIÓN
+                          searchMyActivities(squery);
+                        },
+                        icon: Icon(Icons.search),
+                      ),
+                      suffixIconColor: Colors.white,
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(
+                  height: 10.0,
+                ),
+                Row(children: [
+                  SizedBox(
+                    //filtre categoria
+                    height: 30.0,
+                    width: 100.0,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                          width: 100,
+                          height: 60,
+                          decoration: BoxDecoration(
+                              color: Color.fromRGBO(255, 170, 102, 0.5),
+                              borderRadius: BorderRadius.circular(8)),
+                          child: Center(
+                            child: DropdownButton<String>(
+                              //dropdown en si
+                              value: _selectedCategory,
+                              items: llistaCategories.map((String item) {
+                                return DropdownMenuItem(
+                                    value: item, child: Text(item));
+                              }).toList(),
+                              onChanged: (String? newValue) async {
+                                setState(() {
+                                  _selectedCategory = newValue;
+                                });
+                              },
+                              borderRadius: BorderRadius.circular(10),
+                              dropdownColor: Color.fromRGBO(255, 170, 102, 0.5),
+                              icon: const Icon(Icons.arrow_drop_down,
+                                  color: Colors.white),
+                              iconSize: 20,
+                              style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                              underline: Container(),
+                            ),
+                          )),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10.0,
+                  ),
+                  SizedBox(
+                    //filtre data
+                    height: 30.0,
+                    width: 150.0,
+                    child: FiltreData(canviData: (newData) {
+                      setState(() {
+                        selectedData = newData!;
+                      });
+                    }),
+                  )
+                ]),
+              ],
             ),
           ),
-        );
-      },
-      itemCount: activitats.length,
-    ),
-  );
-}
+          Expanded(
+            child: ListView.builder(
+              itemBuilder: (context, index) {
+                if (squery.isNotEmpty && activitats.length == 1 && index == 0) {
+                  //si canvia logica busqueda, canviar
+                  final Actividad activitat = activitats.first;
+                  return GestureDetector(
+                    onTap: () async {
+                      List<String> act = [
+                        activitat.name,
+                        activitat.code,
+                        activitat.categoria[0],
+                        activitat.imageUrl,
+                        activitat.descripcio,
+                        activitat.dataInici,
+                        activitat.dataFi,
+                        activitat.ubicacio
+                      ];
+                      _controladorPresentacion.mostrarVerActividad(
+                          context, act, activitat.urlEntrades);
+                      //Actualizar BD + 1 Visualitzacio
+                      DocumentReference docRef = _firestore
+                          .collection('actividades')
+                          .doc(activitat.code);
+                      await _firestore.runTransaction((transaction) async {
+                        DocumentSnapshot snapshot =
+                            await transaction.get(docRef);
+                        int currentValue = 0;
+                        if (snapshot.data() is Map<String, dynamic>) {
+                          currentValue = (snapshot.data()
+                                  as Map<String, dynamic>)['visualitzacions'] ??
+                              5;
+                        }
+                        int newValue = currentValue + 1;
+                        transaction
+                            .update(docRef, {'visualitzacions': newValue});
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(8.0), // Adjust as needed
+                      child: Card(
+                        color: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              top: 16.0, bottom: 32.0, right: 16.0, left: 16.0),
+                          child: Column(
+                            children: [
+                              Row(children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(bottom: 20),
+                                    child: Text(
+                                      activitat.name,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.orange),
+                                    ),
+                                  ),
+                                )
+                              ]),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    flex: 2,
+                                    child: Column(children: [
+                                      SizedBox(
+                                          child: Image.network(
+                                        activitat.imageUrl,
+                                        fit: BoxFit.cover,
+                                      ))
+                                    ]),
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 8),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment
+                                                    .start, // Add this line
+                                            children: [
+                                              const Icon(Icons.location_on),
+                                              Expanded(
+                                                child: Text(
+                                                  "  ${activitat.ubicacio}",
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              const Icon(Icons.calendar_month),
+                                              Text("  Inicio: ${() {
+                                                try {
+                                                  return DateFormat(
+                                                          'yyyy-MM-dd')
+                                                      .format(DateTime.parse(
+                                                          activitat.dataInici));
+                                                } catch (e) {
+                                                  return 'Unknown';
+                                                }
+                                              }()}")
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              const Icon(Icons.calendar_month),
+                                              Text("  Fin: ${() {
+                                                try {
+                                                  return DateFormat(
+                                                          'yyyy-MM-dd')
+                                                      .format(DateTime.parse(
+                                                          activitat.dataFi));
+                                                } catch (e) {
+                                                  return 'Unknown';
+                                                }
+                                              }()}")
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              const Icon(Icons.local_atm),
+                                              TextWithLink(
+                                                  text: "  Compra aqui",
+                                                  url: activitat.urlEntrades
+                                                      .toString()),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                      flex: 1,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Container(
+                                              padding: const EdgeInsets.only(
+                                                  left: 5),
+                                              width: 50,
+                                              child: ImageCategory(
+                                                  categoria:
+                                                      getCategoria(activitat)))
+                                        ],
+                                      ))
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                } else {
+                  return GestureDetector(
+                    onTap: () async {
+                      List<String> act = [
+                        activitats[index].name,
+                        activitats[index].code,
+                        activitats[index].categoria[0],
+                        activitats[index].imageUrl,
+                        activitats[index].descripcio,
+                        activitats[index].dataInici,
+                        activitats[index].dataFi,
+                        activitats[index].ubicacio
+                      ];
+                      _controladorPresentacion.mostrarVerActividad(
+                          context, act, activitats[index].urlEntrades);
+                      //Actualizar BD + 1 Visualitzacio
+                      DocumentReference docRef = _firestore
+                          .collection('actividades')
+                          .doc(activitats[index].code);
+                      await _firestore.runTransaction((transaction) async {
+                        DocumentSnapshot snapshot =
+                            await transaction.get(docRef);
+                        int currentValue = 0;
+                        if (snapshot.data() is Map<String, dynamic>) {
+                          currentValue = (snapshot.data()
+                                  as Map<String, dynamic>)['visualitzacions'] ??
+                              5;
+                        }
+                        int newValue = currentValue + 1;
+                        transaction
+                            .update(docRef, {'visualitzacions': newValue});
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(8.0), // Adjust as needed
+                      child: Card(
+                        color: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              top: 16.0, bottom: 32.0, right: 16.0, left: 16.0),
+                          child: Column(
+                            children: [
+                              Row(children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(bottom: 20),
+                                    child: Text(
+                                      activitats[index].name,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.orange),
+                                    ),
+                                  ),
+                                )
+                              ]),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    flex: 2,
+                                    child: Column(children: [
+                                      SizedBox(
+                                          child: Image.network(
+                                        activitats[index].imageUrl,
+                                        fit: BoxFit.cover,
+                                      ))
+                                    ]),
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 8),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment
+                                                    .start, // Add this line
+                                            children: [
+                                              const Icon(Icons.location_on),
+                                              Expanded(
+                                                child: Text(
+                                                  "  ${activitats[index].ubicacio}",
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              const Icon(Icons.calendar_month),
+                                              Text("  Inicio: ${() {
+                                                try {
+                                                  return DateFormat(
+                                                          'yyyy-MM-dd')
+                                                      .format(DateTime.parse(
+                                                          activitats[index]
+                                                              .dataInici));
+                                                } catch (e) {
+                                                  return 'Unknown';
+                                                }
+                                              }()}")
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              const Icon(Icons.calendar_month),
+                                              Text("  Fin: ${() {
+                                                try {
+                                                  return DateFormat(
+                                                          'yyyy-MM-dd')
+                                                      .format(DateTime.parse(
+                                                          activitats[index]
+                                                              .dataFi));
+                                                } catch (e) {
+                                                  return 'Unknown';
+                                                }
+                                              }()}")
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              const Icon(Icons.local_atm),
+                                              TextWithLink(
+                                                  text: "  Compra aqui",
+                                                  url: activitats[index]
+                                                      .urlEntrades
+                                                      .toString()),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                      flex: 1,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Container(
+                                              padding: const EdgeInsets.only(
+                                                  left: 5),
+                                              width: 50,
+                                              child: ImageCategory(
+                                                  categoria: getCategoria(
+                                                      activitats[index])))
+                                        ],
+                                      ))
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+              },
+              itemCount: activitats.length,
+            ),
+          )
+        ]));
+  }
 }
