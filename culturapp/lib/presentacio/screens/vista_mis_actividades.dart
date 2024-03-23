@@ -24,6 +24,7 @@ class ListaMisActividades extends StatefulWidget {
 
 class _ListaMisActividadesState extends State<ListaMisActividades> {
   late List<Actividad> activitats;
+  late List<Actividad> display_list;
   late ControladorPresentacion _controladorPresentacion;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late String squery;
@@ -35,7 +36,16 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     'concert',
     'infantil',
     'teatre',
-    'festes'
+    'festes',
+    'circ',
+    'nadal',
+    'fires-i-mercats',
+    'rutes-i-visites',
+    'cursos',
+    'dansa',
+    'festivals-i-mostres',
+    'activitats-virtuals',
+    'exposicions'
     //agar tots els tipus
     //Ponte la ventana categoría en el main y ejecuta, te saldrá un listado con todas
   ];
@@ -44,7 +54,9 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     _controladorPresentacion = controladorPresentacion;
     activitats = controladorPresentacion.getActivitatsUser();
     squery = '';
-    _selectedCategory = 'concert';
+    _selectedCategory = 'activitats-virtuals';
+    display_list = activitats;
+    selectedData = '';
   }
 
   @override
@@ -67,22 +79,25 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   void searchMyActivities(String squery) async {
     //do this
     //Festa Major de Sant Vicenç
-    activitats = await _controladorPresentacion.searchMyActivitats(squery);
+    display_list = await _controladorPresentacion.searchMyActivitats(squery);
     setState(() {});
   }
 
   void canviFiltreData(String date) {
-    //filtre
+    // Parse the input date string into a DateTime object
+    DateTime selectedDate = DateTime.parse(date);
+
+    // Update the state based on the filtered data
     setState(() {
-      /*activitats = activitats.where((activity) {
+      display_list = activitats.where((activity) {
         if (activity.dataInici != 'No disponible') {
           DateTime activityDate = DateTime.parse(activity.dataInici);
-          return activityDate.isAfter(date as DateTime) ||
-              activityDate.isAtSameMomentAs(date as DateTime);
+          return activityDate.isAfter(selectedDate) ||
+              activityDate.isAtSameMomentAs(selectedDate);
         } else {
           return false;
         }
-      }).toList();*/
+      }).toList();
     });
   }
 
@@ -90,7 +105,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     //si no funciona fer back
 
     setState(() {
-      activitats = activitats
+      display_list = activitats
           .where((activity) => activity.categoria.contains(category))
           .toList();
     });
@@ -146,12 +161,12 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                   SizedBox(
                     //filtre categoria
                     height: 30.0,
-                    width: 100.0,
+                    width: 200.0,
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Container(
-                          width: 100,
-                          height: 60,
+                          width: 200,
+                          height: 30,
                           decoration: BoxDecoration(
                               color: Color.fromRGBO(255, 170, 102, 0.5),
                               borderRadius: BorderRadius.circular(8)),
@@ -171,6 +186,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                               },
                               borderRadius: BorderRadius.circular(10),
                               dropdownColor: Color.fromRGBO(255, 170, 102, 0.5),
+
                               icon: const Icon(Icons.arrow_drop_down,
                                   color: Colors.white),
                               iconSize: 20,
@@ -189,7 +205,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                   SizedBox(
                       //filtre data
                       height: 30.0,
-                      width: 150.0,
+                      width: 110.0,
                       child: Align(
                           alignment: Alignment.center,
                           child: Container(
@@ -223,11 +239,11 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: activitats.length,
+              itemCount: display_list.length,
               itemBuilder: (context, index) {
                 final Actividad activitat;
-                if (index < activitats.length) {
-                  activitat = activitats[index];
+                if (index < display_list.length) {
+                  activitat = display_list[index];
                   return GestureDetector(
                     onTap: () async {
                       List<String> act = [
