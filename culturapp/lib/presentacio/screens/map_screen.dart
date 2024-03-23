@@ -697,7 +697,7 @@ class _MapPageState extends State<MapPage> {
                           controller: scrollController,
                           children: [
                             SizedBox(
-                              height: 500,
+                              height: 750,
                               child: ListaActividadesDisponibles(actividades: _actividades, controladorPresentacion: _controladorPresentacion,),
                             ),
                           ],
