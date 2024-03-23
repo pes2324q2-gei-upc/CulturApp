@@ -6,6 +6,7 @@ import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/widgets/widgetsUtils/image_category.dart';
 import 'package:culturapp/presentacio/widgets/widgetsUtils/text_with_link.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 class ListaMisActividades extends StatefulWidget {
@@ -128,20 +129,26 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                   child: TextField(
                     //cercador
                     onChanged: (text) => changeSquery(text),
-                    cursorColor: Colors.white,
+                    cursorColor: Colors.orange,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: Colors.orange,
                     ),
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: const Color.fromRGBO(240, 186, 132, 1),
+                      fillColor: const Color.fromRGBO(255, 229, 204, 0.815),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
                         borderSide: BorderSide.none,
                       ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: const BorderSide(
+                            color: Colors.orange), // Orange border on focus
+                      ),
                       hintText: "Search...",
                       hintStyle: const TextStyle(
-                        color: Colors.white,
+                        color: Colors.orange,
+                        fontWeight: FontWeight.bold,
                       ),
                       suffixIcon: IconButton(
                         onPressed: () {
@@ -150,7 +157,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                         },
                         icon: Icon(Icons.search),
                       ),
-                      suffixIconColor: Colors.white,
+                      suffixIconColor: Colors.orange,
                     ),
                   ),
                 ),
@@ -168,8 +175,9 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                           width: 200,
                           height: 30,
                           decoration: BoxDecoration(
-                              color: Color.fromRGBO(255, 170, 102, 0.5),
-                              borderRadius: BorderRadius.circular(8)),
+                            color: Color.fromRGBO(255, 229, 204, 0.815),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                           child: Center(
                             child: DropdownButton<String>(
                               //dropdown en si
@@ -185,15 +193,17 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                 });
                               },
                               borderRadius: BorderRadius.circular(10),
-                              dropdownColor: Color.fromRGBO(255, 170, 102, 0.5),
+
+                              dropdownColor:
+                                  Color.fromRGBO(255, 229, 204, 0.815),
 
                               icon: const Icon(Icons.arrow_drop_down,
-                                  color: Colors.white),
+                                  color: Colors.orange),
                               iconSize: 20,
                               style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white),
+                                  color: Colors.orange),
                               underline: Container(),
                             ),
                           )),
@@ -205,25 +215,27 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                   SizedBox(
                       //filtre data
                       height: 30.0,
-                      width: 110.0,
+                      width: 150.0,
                       child: Align(
                           alignment: Alignment.center,
                           child: Container(
                               width: 500.0,
                               child: TextField(
                                   style: const TextStyle(
-                                      fontSize: 14, color: Colors.white),
+                                      fontSize: 14,
+                                      color: Colors.orange,
+                                      fontWeight: FontWeight.bold),
                                   controller: _dateController,
                                   decoration: const InputDecoration(
                                       labelText: 'Data',
                                       labelStyle: TextStyle(
-                                          color: Colors.white,
+                                          color: Colors.orange,
                                           fontWeight: FontWeight.bold),
                                       filled: true,
                                       fillColor:
-                                          Color.fromRGBO(255, 170, 102, 0.5),
+                                          Color.fromRGBO(255, 229, 204, 0.815),
                                       prefixIcon: Icon(Icons.calendar_today,
-                                          size: 18, color: Colors.white),
+                                          size: 18, color: Colors.orange),
                                       enabledBorder: OutlineInputBorder(
                                           borderSide: BorderSide.none),
                                       focusedBorder: OutlineInputBorder(
