@@ -154,6 +154,7 @@ Future<void> initialice2() async {
 
   Future<void> handleGoogleSignIn(BuildContext context) async {
     try {
+      print("HAndleando signin");
       GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
       final UserCredential userCredential =
           await _auth.signInWithProvider(_googleAuthProvider);
@@ -167,9 +168,8 @@ Future<void> initialice2() async {
       //Altrament redirigir a la pantalla principal de l'app
       else {
         obtenerActividadesUser();
-      }
         mostrarMapaActividades(context);
-        
+      }
     } catch (error) {
       print(error);
     }
@@ -220,6 +220,10 @@ Future<void> initialice2() async {
   void logout(BuildContext context) {
     _auth.signOut();
     mostrarLogin(context);
+  }
+
+  Future<bool> usernameUnique(String username) {
+    return controladorDomini.usernameUnique(username);
   }
 }
 
