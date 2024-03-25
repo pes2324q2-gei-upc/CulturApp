@@ -25,23 +25,18 @@ class _SignupState extends State<Signup> {
   List<String> selectedCategories = [];
 
   final List<String> _categories = [
-    'carnavals',
-    'teatre',
-    'concerts',
-    'circ',
-    'exposicions',
-    'commemoracions',
-    'rutes-i-visites',
-    'cursos',
-    'activitats-virtuals',
-    'infantil',
-    'festes',
-    'festivals-i-mostres',
-    'dansa',
-    'cicles',
-    'cultura-digital',
-    'fires-i-mercats',
-    'gegants',
+    'Festa',
+    'Infantil',
+    'Circ',
+    'Commemoració',
+    'Exposicions',
+    'Art',
+    'Carnaval',
+    'Concerts',
+    'Conferencies',
+    'Rutes',
+    'Activitats Virtuals',
+    'Teatre'
   ];
   
   late ControladorPresentacion _controladorPresentacion;
@@ -53,9 +48,12 @@ class _SignupState extends State<Signup> {
     user = controladorPresentacion.getUser();
   }
 
+  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldMessengerKey,
       body: _signupScreen(context),
     );
   }
@@ -164,8 +162,19 @@ class _SignupState extends State<Signup> {
     );
   }
 
-  void createUser() {
-    _controladorPresentacion.createUser(usernameController.text, selectedCategories, context);
+  Future<void> createUser() async {
+    if (await _controladorPresentacion.usernameUnique(usernameController.text)) {
+      _controladorPresentacion.createUser(usernameController.text, selectedCategories, context);
+    }
+    else {
+      final scaffoldMessenger = ScaffoldMessenger.of(context);
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text('Ja hi ha un usuari amb aquest username'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   void _showMultiSelect() async {
@@ -179,7 +188,7 @@ class _SignupState extends State<Signup> {
           listType: MultiSelectListType.CHIP,
           initialValue: selectedCategories,
           onConfirm: (values) {
-            selectedCategories = values;
+             selectedCategories = values.take(3).toList();
           },
           selectedColor: Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
           checkColor: Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
