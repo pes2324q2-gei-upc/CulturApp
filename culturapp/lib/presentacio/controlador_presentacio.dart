@@ -144,8 +144,7 @@ class ControladorPresentacion {
   }
 
   Future<List<Actividad>> searchMyActivitats(String name) {
-    String id = 'b1TfJ01Xd1cUS5EbZG3JR9BNypL2';
-    return controladorDomini.searchMyActivities(id, name);
+    return controladorDomini.searchMyActivities(_user!.uid, name);
   }
 
   void checkLoggedInUser(BuildContext context) {

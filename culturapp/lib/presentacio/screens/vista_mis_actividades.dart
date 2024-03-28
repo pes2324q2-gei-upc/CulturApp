@@ -34,11 +34,12 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   TextEditingController _dateController = TextEditingController();
 
   static const List<String> llistaCategories = <String>[
-    'concert',
+    'concerts',
     'infantil',
     'teatre',
     'festes',
     'circ',
+    'cicles',
     'nadal',
     'fires-i-mercats',
     'rutes-i-visites',
@@ -47,8 +48,6 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     'festivals-i-mostres',
     'activitats-virtuals',
     'exposicions'
-    //agar tots els tipus
-    //Ponte la ventana categoría en el main y ejecuta, te saldrá un listado con todas
   ];
 
   _ListaMisActividadesState(ControladorPresentacion controladorPresentacion) {
@@ -80,7 +79,12 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   void searchMyActivities(String squery) async {
     //do this
     //Festa Major de Sant Vicenç
-    display_list = await _controladorPresentacion.searchMyActivitats(squery);
+    try {
+      display_list = await _controladorPresentacion.searchMyActivitats(squery);
+    } on Exception catch (_, ex) {
+      print(ex);
+    }
+
     setState(() {});
   }
 
