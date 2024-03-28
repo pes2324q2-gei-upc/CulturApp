@@ -1,12 +1,10 @@
-import "dart:convert";
+/*import "dart:convert";
 import 'package:http/http.dart' as http;
 import "package:culturapp/domain/models/filtre_data.dart";
 import "package:culturapp/domain/models/actividad.dart";
 import "package:culturapp/domain/models/filtre_categoria.dart";
 import "package:flutter/material.dart";
 
-
- /*
 class SearchMyActivities extends StatefulWidget {
   const SearchMyActivities({Key? key}) : super(key: key);
 
@@ -14,7 +12,7 @@ class SearchMyActivities extends StatefulWidget {
   State<SearchMyActivities> createState() => _SearchMyActivitiesState();
 }
 
- class _SearchMyActivitiesState extends State<SearchMyActivities> {
+class _SearchMyActivitiesState extends State<SearchMyActivities> {
   //dummy activitats fins que tinguem les de l'api
   //fins que backend no funcioni
 
@@ -40,56 +38,7 @@ class SearchMyActivities extends StatefulWidget {
   }*/
 
   //borrar quan backend estigui implementat
-  static List<Actividad> display_list = [
-    Actividad(
-        name: "Super3",
-        code: "AABB",
-        categoria: "infantil",
-        latitud: 2.0,
-        longitud: 3.0,
-        imageUrl:
-            "https://i.pinimg.com/originals/10/ef/0c/10ef0c804190d04cace0f0096ccb8912.jpg",
-        descripcio: "descripcio",
-        dataInici: "10-07-2024",
-        dataFi: "23-07-2024",
-        ubicacio: "ubicacio",
-        urlEntrades: Uri(),
-        preu: "preu",
-        comarca: "comarca",
-        horari: "horari"),
-    Actividad(
-        name: "Super31",
-        code: "AACC",
-        categoria: "teatre",
-        latitud: 2.0,
-        longitud: 3.0,
-        imageUrl:
-            "https://i.pinimg.com/originals/10/ef/0c/10ef0c804190d04cace0f0096ccb8912.jpg",
-        descripcio: "descripcio",
-        dataInici: "10-08-2024",
-        dataFi: "23-08-2024",
-        ubicacio: "ubicacio",
-        urlEntrades: Uri(),
-        preu: "preu",
-        comarca: "comarca",
-        horari: "horari"),
-    Actividad(
-        name: "ConcertTaylor",
-        code: "AACC",
-        categoria: "concert",
-        latitud: 2.0,
-        longitud: 3.0,
-        imageUrl:
-            "https://i.pinimg.com/originals/10/ef/0c/10ef0c804190d04cace0f0096ccb8912.jpg",
-        descripcio: "descripcio",
-        dataInici: "30-11-2024",
-        dataFi: "23-12-2024",
-        ubicacio: "ubicacio",
-        urlEntrades: Uri(),
-        preu: "preu",
-        comarca: "comarca",
-        horari: "horari"),
-  ];
+  static List<Actividad> display_list = [];
   List<Actividad> my_activities_list = List.from(display_list); //[];
 
   Future<void> fetchMyActivities(
@@ -195,7 +144,8 @@ class SearchMyActivities extends StatefulWidget {
                                   color: Colors.orange,
                                   fontWeight: FontWeight.bold,
                                 )),
-                            subtitle: Text(my_activities_list[index].categoria,
+                            subtitle: Text(
+                                my_activities_list[index].categoria as String,
                                 style: const TextStyle(color: Colors.orange)),
                             trailing: Text("${my_activities_list[index].preu}",
                                 style: TextStyle(color: Colors.orange)),

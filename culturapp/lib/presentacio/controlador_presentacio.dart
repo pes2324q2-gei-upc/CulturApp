@@ -25,42 +25,43 @@ class ControladorPresentacion {
   late List<String> categsFav = [];
   late final List<Widget> _pages = [];
 
-Future<void> initialice() async {
-  activitats = await controladorDomini.getActivitiesAgenda();
-
-}
-
-Future<void> initialice2() async {
-  User? currentUser = _auth.currentUser;
-  if (currentUser != null){
-    _user = currentUser;
+  Future<void> initialice() async {
+    activitats = await controladorDomini.getActivitiesAgenda();
   }
 
-  if (userLogged()) {
-    categsFav = await controladorDomini.obteCatsFavs(_user);
-    activitatsUser = await controladorDomini.getUserActivities(_user!.uid);
+  Future<void> initialice2() async {
+    User? currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      _user = currentUser;
+    }
+
+    if (userLogged()) {
+      categsFav = await controladorDomini.obteCatsFavs(_user);
+      activitatsUser = await controladorDomini.getUserActivities(_user!.uid);
+    }
+
+    _pages.addAll([
+      MapPage(controladorPresentacion: this),
+      ListaMisActividades(
+        controladorPresentacion: this,
+      ),
+      const Xats(),
+      PerfilPage(controladorPresentacion: this),
+    ]);
   }
 
-  _pages.addAll([
-    MapPage(controladorPresentacion: this),
-    ListaMisActividades(controladorPresentacion: this,),
-    const Xats(),
-    PerfilPage(controladorPresentacion: this),
-  ]);
-}
-
-  bool userLogged(){
+  bool userLogged() {
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
       _user = currentUser;
       return true;
-    } 
-    else {
+    } else {
       return false;
     }
   }
 
-  void mostrarVerActividad(BuildContext context, List<String> info_act, Uri uri_act) {
+  void mostrarVerActividad(
+      BuildContext context, List<String> info_act, Uri uri_act) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -74,13 +75,13 @@ Future<void> initialice2() async {
     return _pages[index];
   }
 
-  Future<void> mostrarMisActividades(
-      BuildContext context) async {
+  Future<void> mostrarMisActividades(BuildContext context) async {
     getUserActivities(_user!.uid).then((actividades) => {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ListaMisActividades(controladorPresentacion: this,
+              builder: (context) => ListaMisActividades(
+                controladorPresentacion: this,
               ),
             ),
           )
@@ -96,7 +97,8 @@ Future<void> initialice2() async {
       context,
       MaterialPageRoute(
         builder: (context) => ListaActividadesDisponibles(
-          actividades: activitats, controladorPresentacion: this,
+          actividades: activitats,
+          controladorPresentacion: this,
         ),
       ),
     );
@@ -139,6 +141,11 @@ Future<void> initialice2() async {
 
   Future<List<Actividad>> searchActivitat(String squery) {
     return controladorDomini.searchActivitat(squery);
+  }
+
+  Future<List<Actividad>> searchMyActivitats(String name) {
+    String id = 'b1TfJ01Xd1cUS5EbZG3JR9BNypL2';
+    return controladorDomini.searchMyActivities(id, name);
   }
 
   void checkLoggedInUser(BuildContext context) {
@@ -226,6 +233,3 @@ Future<void> initialice2() async {
     return controladorDomini.usernameUnique(username);
   }
 }
-
-
-

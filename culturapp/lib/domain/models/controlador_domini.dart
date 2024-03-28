@@ -30,6 +30,20 @@ class ControladorDomini {
     }
   }
 
+  Future<List<Actividad>> searchMyActivities(String userID, String name) async {
+    final respuesta = await http.get(
+      Uri.parse('http://${ip}:8080/user/activitats/$userID/search/$name'),
+    );
+
+    if (respuesta.statusCode == 200) {
+      return _convert_database_to_list(respuesta);
+    } else if (respuesta.statusCode == 404) {
+      throw Exception('No existe la actividad ' + name);
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
+
   Future<List<Actividad>> searchActivitat(String squery) async {
     final respuesta =
         await http.get(Uri.parse('http://${ip}:8080/activitats/name/$squery'));
