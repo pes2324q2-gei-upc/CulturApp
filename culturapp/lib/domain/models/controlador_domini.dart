@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
 class ControladorDomini {
-  final String ip = "10.2.2.0";
+  final String ip = "10.0.2.2";
 
   Future<List<Actividad>> getActivitiesAgenda() async {
     final respuesta = await http.get(Uri.parse('http://${ip}:8080/read/all'));
@@ -49,7 +49,7 @@ class ControladorDomini {
     List<Actividad> actividades = <Actividad>[];
     var actividadesJson = json.decode(response.body);
 
-    for (var actividadJson in actividadesJson) {
+    for (var actividadJson in actividadesJson.entries) {
       Actividad actividad = Actividad();
 
       actividad.name = actividadJson['denominaci'];
@@ -120,17 +120,17 @@ class ControladorDomini {
     }
   }
 
-Future<List<String>> obteCatsFavs(User? user) async {
-  final respuesta = await http.get(Uri.parse('http://${ip}:8080/users/${user?.uid}/favcategories'));
-  List<String> categorias = [];
+  Future<List<String>> obteCatsFavs(User? user) async {
+    final respuesta = await http
+        .get(Uri.parse('http://${ip}:8080/users/${user?.uid}/favcategories'));
+    List<String> categorias = [];
 
-  if (respuesta.statusCode == 200) {
-    List<dynamic> jsonResponse = jsonDecode(respuesta.body);
-    categorias = jsonResponse.cast<String>();
-  } 
-  return categorias;
-
-}
+    if (respuesta.statusCode == 200) {
+      List<dynamic> jsonResponse = jsonDecode(respuesta.body);
+      categorias = jsonResponse.cast<String>();
+    }
+    return categorias;
+  }
 
   void createUser(
       User? _user, String username, List<String> selectedCategories) async {
@@ -217,8 +217,8 @@ Future<List<String>> obteCatsFavs(User? user) async {
   }
 
   Future<bool> usernameUnique(String username) async {
-    final respuesta = await http
-        .get(Uri.parse('http://${ip}:8080/user/uniqueUsername?username=${username}'));
+    final respuesta = await http.get(Uri.parse(
+        'http://${ip}:8080/user/uniqueUsername?username=${username}'));
 
     if (respuesta.statusCode == 200) {
       print(respuesta);
