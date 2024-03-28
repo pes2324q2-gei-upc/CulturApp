@@ -91,14 +91,21 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   void canviFiltreData(String date) {
     // Parse the input date string into a DateTime object
     DateTime selectedDate = DateTime.parse(date);
+    selectedData = date;
 
     // Update the state based on the filtered data
     setState(() {
       display_list = activitats.where((activity) {
         if (activity.dataInici != 'No disponible') {
           DateTime activityDate = DateTime.parse(activity.dataInici);
-          return activityDate.isAfter(selectedDate) ||
-              activityDate.isAtSameMomentAs(selectedDate);
+          if (_selectedCategory != '') {
+            return (activityDate.isAfter(selectedDate) ||
+                    activityDate.isAtSameMomentAs(selectedDate)) &&
+                activity.categoria.contains(_selectedCategory);
+          } else {
+            return activityDate.isAfter(selectedDate) ||
+                activityDate.isAtSameMomentAs(selectedDate);
+          }
         } else {
           return false;
         }
@@ -110,9 +117,20 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     //si no funciona fer back
 
     setState(() {
-      display_list = activitats
-          .where((activity) => activity.categoria.contains(category))
-          .toList();
+      if (selectedData != '') {
+        display_list = activitats.where((activity) {
+          DateTime activityDate = DateTime.parse(activity.dataInici);
+          DateTime selectedDate = DateTime.parse(selectedData);
+
+          return (activity.categoria.contains(category)) &&
+              (activityDate.isAfter(selectedDate) ||
+                  activityDate.isAtSameMomentAs(selectedDate));
+        }).toList();
+      } else {
+        display_list = activitats
+            .where((activity) => activity.categoria.contains(category))
+            .toList();
+      }
     });
   }
 
