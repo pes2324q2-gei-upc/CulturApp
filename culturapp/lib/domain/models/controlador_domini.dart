@@ -63,7 +63,49 @@ class ControladorDomini {
     List<Actividad> actividades = <Actividad>[];
     var actividadesJson = json.decode(response.body);
 
-    for (var actividadJson in actividadesJson.entries) {
+    if (actividadesJson is List) {
+      actividadesJson.forEach((actividadJson) {
+        Actividad actividad = Actividad();
+
+        actividad.name = actividadJson['denominaci'];
+        actividad.code = actividadJson['codi'];
+        actividad.latitud = actividadJson['latitud'].toDouble();
+        actividad.longitud = actividadJson['longitud'].toDouble();
+        actividad.descripcio = actividadJson['descripcio'] ??
+            'No hi ha cap descripció per aquesta activitat.';
+        actividad.ubicacio = actividadJson['adre_a'] ?? 'No disponible';
+        actividad.visualitzacions = actividadJson['visualitzacions'] ?? 0;
+        actividad.categoria = actividadJson['tags_categor_es'] ?? '';
+
+        actividad.imageUrl = actividadJson['imatges'] ?? '';
+
+        String data = actividadJson['data_inici'] ?? '';
+        actividad.dataInici = data.isNotEmpty ? data.substring(0, 10) : '-';
+        if (actividad.dataInici == '9999-09-09')
+          actividad.dataInici = 'Sense Data';
+
+        data = actividadJson['data_fi'] ?? '';
+        actividad.dataFi = data.isNotEmpty ? data.substring(0, 10) : '-';
+        if (actividad.dataFi == '9999-09-09') actividad.dataFi = 'Sense Data';
+
+        String url = actividadJson['enlla_os'] ?? '';
+        if (url.isNotEmpty) {
+          int endIndex = url.indexOf(',');
+          actividad.urlEntrades =
+              Uri.parse(endIndex != -1 ? url.substring(0, endIndex) : url);
+        }
+
+        String entrades = actividadJson['entrades'] ?? 'Veure més informació';
+        if (entrades.isNotEmpty) {
+          int endIndex = entrades.indexOf('€');
+          actividad.preu =
+              endIndex != -1 ? entrades.substring(0, endIndex) : entrades;
+        }
+
+        actividades.add(actividad);
+      });
+    }
+    /*for (var actividadJson in actividadesJson) {
       Actividad actividad = Actividad();
 
       actividad.name = actividadJson['denominaci'];
@@ -102,7 +144,7 @@ class ControladorDomini {
       }
 
       actividades.add(actividad);
-    }
+    }*/
 
     return actividades;
   }
