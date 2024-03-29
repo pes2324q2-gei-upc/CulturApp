@@ -1,4 +1,6 @@
 import 'package:culturapp/domain/models/post.dart';
+import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:culturapp/presentacio/widgets/foro.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -29,8 +31,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
   //mas adelante habra que pillarlo de la base de datos
   List<Post> posts = [
-    Post(username: 'Usuario1', message: 'Primer mensaje', date: DateTime.now()),
-    Post(username: 'Usuario2', message: 'Mensaje de ejemplo', date: DateTime.now(), likes: 1),
+    //Post(userId: 'Usuario1', message: 'Primer mensaje', date: DateTime.now()),
+    //Post(userId: 'Usuario2', message: 'Mensaje de ejemplo', date: DateTime.now(), likes: 1),
   ];
   
   _VistaVerActividadState(List<String> info_actividad, Uri uri_actividad){
@@ -62,6 +64,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           _expansionDescripcion(),
           _infoActividad(infoActividad[7], infoActividad[5], infoActividad[6], uriActividad),
           _foro(),
+          Foro(addMessage: (message) => print(message)),
         ],  //Accedemos ubicación, dataIni, DataFi, uri actividad
       ),
     );
@@ -252,12 +255,20 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
   //funcion que lista todos los posts del foro de la actividad
   Widget _foro() {
+
+    final controladorPresentacion = ControladorPresentacion();
+
+    //verificar que tenga un foro
+    controladorPresentacion.getForo(infoActividad[1]);
+
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
           child: Text(
+            //'${posts.length} comentarios',
             '${posts.length} comentarios',
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
@@ -280,7 +291,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(post.username), // Nombre de usuario
+                          Text(post.userId), // Nombre de usuario
                           const SizedBox(width: 5),
                           Text(
                             '${post.date.day}/${post.date.month}/${post.date.year} ${post.date.hour}:${post.date.minute}', // Fecha y hora del mensaje
