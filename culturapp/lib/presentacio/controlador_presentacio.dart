@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/foro_model.dart';
+import 'package:culturapp/domain/models/post.dart';
 import 'package:culturapp/presentacio/screens/lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
@@ -223,6 +225,7 @@ class ControladorPresentacion {
     mostrarLogin(context);
   }
 
+
   //funcions del forum
   Future<void> getForo(String code) async {
     try {
@@ -244,19 +247,26 @@ class ControladorPresentacion {
     }
   }
 
-  //agafar posts
-  void getPost(){
+  Future<String?> getForoId(String activitatCode) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('foros')
+          .where('activitat_code', isEqualTo: activitatCode)
+          .limit(1)
+          .get();
 
-  }
-
-  //crear posts
-  void createPost() {
-
-  }
-
-  //editar post
-  void updatePost(){
-    
+      if (querySnapshot.docs.isNotEmpty) {
+        // Si hay al menos un documento con el código de actividad dado
+        return querySnapshot.docs.first.id; // Devuelve el ID del primer documento
+      } else {
+        // Si no se encontró ningún documento con el código de actividad dado
+        return null;
+      }
+    } catch (error) {
+      // Si ocurre algún error al obtener el ID del foro
+      print('Error al obtener el ID del foro: $error');
+      return null;
+    }
   }
 
 }

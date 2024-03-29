@@ -2,17 +2,20 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-class Foro extends StatefulWidget {
-  const Foro({required this.addMessage, super.key});
+class Missatge extends StatefulWidget {
+  const Missatge({
+    required this.addPost, 
+    //required this.foroId,
+    Key? key}) : super(key: key);
 
-  final FutureOr<void> Function(String message) addMessage;
+  final FutureOr<void> Function(String foroId, String id, String username, String mensaje, DateTime fecha, int numeroLikes) addPost;
 
   @override
-  State<Foro> createState() => _ForoState();
+  State<Missatge> createState() => _MissatgeState();
 }
 
-class _ForoState extends State<Foro> {
-  final _formKey = GlobalKey<FormState>(debugLabel: '_ForoState');
+class _MissatgeState extends State<Missatge> {
+  final _formKey = GlobalKey<FormState>(debugLabel: '_MissatgeState');
   final _controller = TextEditingController();
 
   @override
@@ -41,7 +44,17 @@ class _ForoState extends State<Foro> {
             ElevatedButton(
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  await widget.addMessage(_controller.text);
+                  //final String username = obtainUsername(); // Obtener el nombre de usuario de alguna manera
+                  //final String foroId = widget.foroId; // Obtener el ID del foro de alguna manera
+      
+                  await widget.addPost(
+                    'foroId', 
+                    'id', //este param seguramente lo borre
+                    'username', 
+                    _controller.text, 
+                    DateTime.now(), //cambiar por timeStamp
+                    0, //número de likes en 0
+                  );
                   _controller.clear();
                 }
               },

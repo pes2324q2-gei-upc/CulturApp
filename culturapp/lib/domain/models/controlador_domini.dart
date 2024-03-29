@@ -176,25 +176,65 @@ class ControladorDomini {
     }
   }
 
+  void signoutFromActivity(String? uid, String code) async {
+    try {
+      final Map<String, dynamic> requestData = {
+        'uid': uid,
+        'activityId': code,
+      };
 
-  //foro existe? si no es asi crealo
-  /*
-  Future<bool> foroExists(Actividad activitat) async {
-    final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/foros/exists?activitat_code=${activitat.code}')); //editarlo por el codigo de la actividad
-    
-    if (respuesta.statusCode == 200) {
-      final data = json.decode(respuesta.body);
+      final respuesta = await http.post(
+        Uri.parse('http://${ip}:8080/activitats/signout'),
+        body: jsonEncode(requestData),
+        headers: {'Content-Type': 'application/json'},
+      );
 
-      print(respuesta);
-      return (respuesta.body == "exists");
+      if (respuesta.statusCode == 200) {
+        print('Datos enviados exitosamente');
+      } else {
+        print('Error al enviar los datos: ${respuesta.statusCode}');
+      }
+    } catch (error) {
+      print('Error de red: $error');
     }
-    else {
-      //si no existe crear foro
+  }
+
+  Future<bool> isUserInActivity(String? uid, String code) async {
+    final respuesta = await http.get(Uri.parse(
+        'http://${ip}:8080/activitats/isuserin?uid=${uid}&activityId=${code}'));
+
+    if (respuesta.statusCode == 200) {
+      return (respuesta.body == "yes");
+    } else {
       throw Exception('Fallo la obtención de datos');
     }
   }
-  */
 
+  void signupInActivity(String? uid, String code) async {
+    try {
+      final Map<String, dynamic> requestData = {
+        'uid': uid,
+        'activityId': code,
+      };
+
+      final respuesta = await http.post(
+        Uri.parse('http://${ip}:8080/activitats/signup'),
+        body: jsonEncode(requestData),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (respuesta.statusCode == 200) {
+        print('Datos enviados exitosamente');
+      } else {
+        print('Error al enviar los datos: ${respuesta.statusCode}');
+      }
+    } catch (error) {
+      print('Error de red: $error');
+    }
+  }
+
+
+  //foro existe? si no es asi crealo
   Future<Foro?> foroExists(String code) async {
     try {
       final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/foros/exists?activitat_code=${code}'));
@@ -248,29 +288,51 @@ class ControladorDomini {
       return false; // Indica que ocurrió un error al crear el foro
     }
   }
+
+  //getPosts
+  Future<List<Post>> getPostsForo(String foroId) async {
+    //print("este es el foro : $foroId");
+    try {
+      final response = await http.get(Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts'));
+      
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        // Mapear los datos de los posts a una lista de objetos Post
+        List<Post> posts = data.map((json) => Post.fromJson(json)).toList();
+        return posts;
+      } else {
+        throw Exception('Error al obtener los posts del foro: ${response.statusCode}');
+      }
+    } catch (error) {
+      throw Exception('Error de red: $error');
+    }
+  }
  
 
   //crear post
-  Future<void> addPost(String message) {
-    final String currentUserId = FirebaseAuth.instance.currentUser!.uid;
-    final DateTime data = DateTime.now();
-    
-    Post newPost = Post(
-      userId: currentUserId,
-      message: message, 
-      date: data,
-      likes: 0,
-    );
+  Future<void> addPost(String foroId, String id, String username, String mensaje, DateTime fecha, int numeroLikes) async {
+    try {
+      final url = Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'id': id,
+          'username': username,
+          'mensaje': mensaje,
+          'fecha': fecha.toIso8601String(), // Convertir la fecha a una cadena ISO8601 para enviarla al servidor
+          'numero_likes': numeroLikes,
+        }),
+      );
 
-    //no se si es necesaria esta parte
-    return FirebaseFirestore.instance
-        .collection('foro')
-        .add(<String, dynamic>{
-      'message': message,
-      'date': DateTime.now().millisecondsSinceEpoch,
-      //'name': FirebaseAuth.instance.currentUser!.displayName,
-      'userId': FirebaseAuth.instance.currentUser!.uid,
-    });
+      if (response.statusCode == 201) {
+        print('Post agregado exitosamente al foro');
+      } else {
+        print('Error al agregar post al foro: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error al realizar la solicitud HTTP: $error');
+    }
   }
 
 }

@@ -1,6 +1,8 @@
+import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/post.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
-import 'package:culturapp/presentacio/widgets/foro.dart';
+import 'package:culturapp/presentacio/widgets/missatge.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -23,27 +25,54 @@ class VistaVerActividad extends StatefulWidget{
 
 class _VistaVerActividadState extends State<VistaVerActividad> {
 
+  final ControladorDomini controladorDominio = new ControladorDomini();
+  final ControladorPresentacion controladorPresentacion = ControladorPresentacion();
+
   late List<String> infoActividad;
   late Uri uriActividad;
 
   bool estaApuntado = false;
   bool mostrarDescripcionCompleta = false;
 
+  final User? _user = FirebaseAuth.instance.currentUser;
+
   //mas adelante habra que pillarlo de la base de datos
-  List<Post> posts = [
-    //Post(userId: 'Usuario1', message: 'Primer mensaje', date: DateTime.now()),
-    //Post(userId: 'Usuario2', message: 'Mensaje de ejemplo', date: DateTime.now(), likes: 1),
-  ];
+  List<Post> posts = [];
+  String? idForo = " ";
   
-  _VistaVerActividadState(List<String> info_actividad, Uri uri_actividad){
+  final List<String> catsAMB = ["Residus",
+  "territori.espai_public_platges",
+  "Sostenibilitat",
+  "Aigua",
+  "territori.espai_public_parcs",
+  "Espai públic - Rius",
+  "Espai públic - Parcs",
+  "Portal de transparència",
+  "Mobilitat sostenible",
+  "Internacional",
+  "Activitat econòmica",
+  "Polítiques socials",
+  "territori.espai_public_rius",
+  "Espai públic - Platges"];
+  
+  _VistaVerActividadState(List<String> info_actividad, Uri uri_actividad) {
     infoActividad = info_actividad;
     uriActividad = uri_actividad;
   }
 
   @override
+  void initState(){
+    super.initState();
+    checkApuntado(_user!.uid, infoActividad);
+    //verificar que tenga un foro
+    controladorPresentacion.getForo(infoActividad[1]);
+    getPosts();
+  } 
+
+  @override
   Widget build(BuildContext context) {
+    checkApuntado(_user!.uid, infoActividad);
     return Scaffold(
-      bottomNavigationBar: _barraNavegacion(),
       appBar: AppBar(
         backgroundColor: Colors.orange,
         title: const Text("Actividad"),
@@ -64,7 +93,14 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           _expansionDescripcion(),
           _infoActividad(infoActividad[7], infoActividad[5], infoActividad[6], uriActividad),
           _foro(),
-          Foro(addMessage: (message) => print(message)),
+          //barra para añadir mensajes
+          Missatge(
+            addPost: (foroId, id, username, mensaje, fecha, numeroLikes) async {
+              // Llama a la función addPost con los parámetros adecuados
+              await controladorDominio.addPost(foroId, id, username, mensaje, fecha, numeroLikes);
+            },
+            //foroId: idForo,
+          ),
         ],  //Accedemos ubicación, dataIni, DataFi, uri actividad
       ),
     );
@@ -105,7 +141,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           ElevatedButton(
             onPressed: () {
               setState(() {
-                estaApuntado = !estaApuntado;
+                manageSignupButton(infoActividad);
               });
             },
             style: ButtonStyle(
@@ -186,7 +222,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     );
   } 
 
-  Widget _getIconPlusTexto(String categoria, String texto){
+ Widget _getIconPlusTexto(String categoria, String texto){
 
     late Icon icono; //late para indicar que se inicializará en el futuro y que cuando se acceda a su valor no sea nulo
 
@@ -210,65 +246,139 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     );
   }
 
-  Image _retornaIcon (String categoria){
+  Image _retornaIcon(String categoria) {
+    if (catsAMB.contains(categoria)){
+      return Image.asset(
+            'assets/categoriareciclar.png',
+            width: 45.0,
+          );
+    }
+    else {
       switch (categoria) {
-      case 'carnavals':
-        return Image.asset('assets/categoriacarnaval.png', width: 45.0,);
-      case 'teatre':
-        return Image.asset('assets/categoriateatre.png', width: 45.0,);
-      case 'concerts':
-        return Image.asset('assets/categoriaconcert.png', width: 45.0,);
-      case 'circ':
-        return Image.asset('assets/categoriacirc.png', width: 45.0,);
-      case 'exposicions':
-        return Image.asset('assets/categoriaarte.png', width: 45.0,);
-      case 'conferencies':
-        return Image.asset('assets/categoriaconfe.png', width: 45.0,);
-      case 'commemoracions':
-        return Image.asset('assets/categoriacommemoracio.png', width: 45.0,);
-      case 'rutes-i-visites':
-        return Image.asset('assets/categoriaruta.png', width: 45.0,);
-      case 'cursos':
-        return Image.asset('assets/categoriaexpo.png', width: 45.0,);
-      case 'activitats-virtuals':
-        return Image.asset('assets/categoriavirtual.png', width: 45.0,);
-      case 'infantil':
-        return Image.asset('assets/categoriainfantil.png', width: 45.0,);
-      case 'festes':
-        return Image.asset('assets/categoriafesta.png', width: 45.0,);
-      case 'festivals-i-mostres':
-        return Image.asset('assets/categoriafesta.png', width: 45.0,);
-      case 'dansa':
-        return Image.asset('assets/categoriafesta.png', width: 45.0,);
-      case 'cicles':
-        return Image.asset('assets/categoriaexpo.png', width: 45.0,);
-      case 'cultura-digital':
-        return Image.asset('assets/categoriavirtual.png', width: 45.0,);
-      case 'fires-i-mercats':
-        return Image.asset('assets/categoriainfantil.png', width: 45.0,);
-      case 'gegants':
-        return Image.asset('assets/categoriafesta.png', width: 45.0,);
-      default:
-        return Image.asset('assets/categoriarecom.png', width: 45.0,);
+        case 'carnavals':
+          return Image.asset(
+            'assets/categoriacarnaval.png',
+            width: 45.0,
+          );
+        case 'teatre':
+          return Image.asset(
+            'assets/categoriateatre.png',
+            width: 45.0,
+          );
+        case 'concerts':
+          return Image.asset(
+            'assets/categoriaconcert.png',
+            width: 45.0,
+          );
+        case 'circ':
+          return Image.asset(
+            'assets/categoriacirc.png',
+            width: 45.0,
+          );
+        case 'exposicions':
+          return Image.asset(
+            'assets/categoriaarte.png',
+            width: 45.0,
+          );
+        case 'conferencies':
+          return Image.asset(
+            'assets/categoriaconfe.png',
+            width: 45.0,
+          );
+        case 'commemoracions':
+          return Image.asset(
+            'assets/categoriacommemoracio.png',
+            width: 45.0,
+          );
+        case 'rutes-i-visites':
+          return Image.asset(
+            'assets/categoriaruta.png',
+            width: 45.0,
+          );
+        case 'cursos':
+          return Image.asset(
+            'assets/categoriaexpo.png',
+            width: 45.0,
+          );
+        case 'activitats-virtuals':
+          return Image.asset(
+            'assets/categoriavirtual.png',
+            width: 45.0,
+          );
+        case 'infantil':
+          return Image.asset(
+            'assets/categoriainfantil.png',
+            width: 45.0,
+          );
+        case 'festes':
+          return Image.asset(
+            'assets/categoriafesta.png',
+            width: 45.0,
+          );
+        case 'festivals-i-mostres':
+          return Image.asset(
+            'assets/categoriafesta.png',
+            width: 45.0,
+          );
+        case 'dansa':
+          return Image.asset(
+            'assets/categoriafesta.png',
+            width: 45.0,
+          );
+        case 'cicles':
+          return Image.asset(
+            'assets/categoriaexpo.png',
+            width: 45.0,
+          );
+        case 'cultura-digital':
+          return Image.asset(
+            'assets/categoriavirtual.png',
+            width: 45.0,
+          );
+        case 'fires-i-mercats':
+          return Image.asset(
+            'assets/categoriainfantil.png',
+            width: 45.0,
+          );
+        case 'gegants':
+          return Image.asset(
+            'assets/categoriafesta.png',
+            width: 45.0,
+          );
+        default:
+          return Image.asset(
+            'assets/categoriarecom.png',
+            width: 45.0,
+          );
+      }
+    }
+  }
+
+  //conseguir posts del foro
+  Future<void> getPosts() async {
+    try {
+      String? foroId = await controladorPresentacion.getForoId(infoActividad[1]);
+      print(foroId);
+      idForo = foroId;
+      if (foroId != null) {
+        List<Post> fetchedPosts = await controladorDominio.getPostsForo(foroId);
+        setState(() {
+          posts = fetchedPosts;
+        });
+      }
+    } catch (error) {
+      print('Error al obtener los posts: $error');
     }
   }
 
   //funcion que lista todos los posts del foro de la actividad
   Widget _foro() {
-
-    final controladorPresentacion = ControladorPresentacion();
-
-    //verificar que tenga un foro
-    controladorPresentacion.getForo(infoActividad[1]);
-
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
           child: Text(
-            //'${posts.length} comentarios',
             '${posts.length} comentarios',
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
@@ -291,10 +401,10 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(post.userId), // Nombre de usuario
+                          Text(post.username), // Nombre de usuario
                           const SizedBox(width: 5),
                           Text(
-                            '${post.date.day}/${post.date.month}/${post.date.year} ${post.date.hour}:${post.date.minute}', // Fecha y hora del mensaje
+                            '${post.fecha.day}/${post.fecha.month}/${post.fecha.year} ${post.fecha.hour}:${post.fecha.minute}', // Fecha y hora del mensaje
                             style: const TextStyle(color: Colors.grey),
                           ),
                         ],
@@ -304,7 +414,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                   Padding(
                     padding: const EdgeInsets.only(left: 50),
                     child: Text(
-                      post.message, // Mensaje del post
+                      post.mensaje, // Mensaje del post
                       style: const TextStyle(fontSize: 16),
                     ),
                   ),
@@ -314,15 +424,15 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                       children: [
                        IconButton(
                         icon: Icon(
-                          post.likes > 0 ? Icons.favorite : Icons.favorite_border, // Cambia el icono según si hay likes o no
-                          color: post.likes > 0 ? Colors.red : null, // Cambia el color si hay likes
+                          post.numero_likes > 0 ? Icons.favorite : Icons.favorite_border, // Cambia el icono según si hay likes o no
+                          color: post.numero_likes > 0 ? Colors.red : null, // Cambia el color si hay likes
                         ),
                         onPressed: () {
                           setState(() {
-                            if (post.likes > 0) {
-                              post.likes = 0; // Si ya hay likes, los elimina
+                            if (post.numero_likes > 0) {
+                              post.numero_likes = 0; // Si ya hay likes, los elimina
                             } else {
-                              post.likes = 1; // Si no hay likes, añade uno
+                              post.numero_likes = 1; // Si no hay likes, añade uno
                             }
                           });
                         },
@@ -348,49 +458,31 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     );
   }
 
-  void _onTabChange(int index) {
-    switch (index) {
-      case 0:
-        //Navigator.pushNamed(context, '/');
-      break;
-      case 1:
-        //Navigator.pushNamed(context, Routes.misActividades);
-      break;
-      case 2:
-        
-      break;
-      case 3:
-        //Navigator.pushNamed(context, Routes.perfil);
-      break;
-      default:
-        break;
+  void manageSignupButton(List<String> infoactividad) {
+    if (mounted) {
+      setState(() {
+        if (estaApuntado) {
+          print("entrado en el true");
+          controladorDominio.signoutFromActivity(_user?.uid, infoActividad[1]);
+          estaApuntado = false;
+        }
+        else {
+          print("entrado en el false");
+          controladorDominio.signupInActivity(_user?.uid, infoActividad[1]);
+          estaApuntado = true;
+        }
+      });
+    }
+  }
+
+  void checkApuntado(String uid, List<String> infoactividad) async {
+    bool apuntado = await controladorDominio.isUserInActivity(uid, infoactividad[1]);
+    if (mounted) {
+      setState(() {
+        estaApuntado = apuntado;
+      });
     }
   }
   
-  Widget _barraNavegacion() {
-    return Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(50.0)),
-        ),
-        child: GNav(
-          backgroundColor: Colors.white,
-          color: Colors.orange,
-          activeColor: Colors.orange,
-          tabBackgroundColor: Colors.grey.shade100,
-          gap: 6,
-          onTabChange: (index) {
-            _onTabChange(index);
-          },
-          selectedIndex: 0,
-          tabs: const [
-            GButton(text: "Mapa", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.map),
-            GButton(text: "Mis Actividades", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.event),
-            GButton(text: "Chats", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.chat),
-            GButton(text: "Perfil", textStyle: TextStyle(fontSize: 12, color: Colors.orange), icon: Icons.person),
-          ],
-        ),
-      );
-  }
 }
 

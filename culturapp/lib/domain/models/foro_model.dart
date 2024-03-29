@@ -8,9 +8,9 @@ class Foro {
 
 
   Foro({
-    int numComentaris = 0,
     required this.activitat_code,
-    required num_comentaris,
-    List<Post> posts = const [], 
+    required this.num_comentaris,
+    this.uid = '', // inicializamos uid con un valor predeterminado
+    this.posts = const [], // inicializamos posts con una lista vacía por defecto
   });
 }
