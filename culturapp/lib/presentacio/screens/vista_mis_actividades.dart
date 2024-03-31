@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
-//import 'package:culturapp/domain/models/filtre_categoria.dart';
-//import 'package:culturapp/domain/models/filtre_data.dart';
+import 'package:culturapp/domain/models/filtre_categoria.dart';
+import 'package:culturapp/domain/models/filtre_data.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/widgets/widgetsUtils/image_category.dart';
 import 'package:culturapp/presentacio/widgets/widgetsUtils/text_with_link.dart';
@@ -80,7 +80,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     //do this
     //Festa Major de Sant Vicenç
     try {
-      //display_list = await _controladorPresentacion.searchMyActivitats(squery);
+      display_list = await _controladorPresentacion.searchMyActivitats(squery);
     } on Exception catch (_, ex) {
       print(ex);
     }

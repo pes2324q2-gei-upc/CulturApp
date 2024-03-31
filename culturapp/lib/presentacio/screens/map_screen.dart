@@ -34,7 +34,7 @@ class _MapPageState extends State<MapPage> {
   _MapPageState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
     activitats = _controladorPresentacion.getActivitats();
-    //recomms = _controladorPresentacion.getActivitatsRecomm();
+    recomms = _controladorPresentacion.getActivitatsRecomm();
   }
 
   BitmapDescriptor iconoArte = BitmapDescriptor.defaultMarker;
@@ -429,9 +429,9 @@ class _MapPageState extends State<MapPage> {
 
   // En funcion de la categoria atribuye un marcador
   BitmapDescriptor _getMarkerIcon(String categoria, String code) {
-    //for (int i = 0; i < recomms.length; ++i) {
-      //if (recomms[i] == code) categoria = 'recom';
-    //}
+    for (int i = 0; i < recomms.length; ++i) {
+      if (recomms[i] == code) categoria = 'recom';
+    }
     if (catsAMB.contains(categoria)) {
       return iconoAMB;
     } else {

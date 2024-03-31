@@ -1,8 +1,10 @@
+/*import "dart:convert";
+import 'package:http/http.dart' as http;
+import "package:culturapp/domain/models/filtre_data.dart";
 import "package:culturapp/domain/models/actividad.dart";
+import "package:culturapp/domain/models/filtre_categoria.dart";
 import "package:flutter/material.dart";
 
-
- /*
 class SearchMyActivities extends StatefulWidget {
   const SearchMyActivities({Key? key}) : super(key: key);
 
@@ -10,72 +12,44 @@ class SearchMyActivities extends StatefulWidget {
   State<SearchMyActivities> createState() => _SearchMyActivitiesState();
 }
 
- class _SearchMyActivitiesState extends State<SearchMyActivities> {
+class _SearchMyActivitiesState extends State<SearchMyActivities> {
   //dummy activitats fins que tinguem les de l'api
-  static List<Actividad> my_activities_list = [
-    Actividad(
-        name: "Super3",
-        code: "AABB",
-        categoria: "infantil",
-        latitud: 2.0,
-        longitud: 3.0,
-        imageUrl:
-            "https://i.pinimg.com/originals/10/ef/0c/10ef0c804190d04cace0f0096ccb8912.jpg",
-        descripcio: "descripcio",
-        dataInici: "10-07-2024",
-        dataFi: "23-07-2024",
-        ubicacio: "ubicacio",
-        urlEntrades: Uri(),
-        preu: "preu",
-        comarca: "comarca",
-        horari: "horari"),
-    Actividad(
-        name: "Super31",
-        code: "AACC",
-        categoria: "teatre",
-        latitud: 2.0,
-        longitud: 3.0,
-        imageUrl:
-            "https://i.pinimg.com/originals/10/ef/0c/10ef0c804190d04cace0f0096ccb8912.jpg",
-        descripcio: "descripcio",
-        dataInici: "10-08-2024",
-        dataFi: "23-08-2024",
-        ubicacio: "ubicacio",
-        urlEntrades: Uri(),
-        preu: "preu",
-        comarca: "comarca",
-        horari: "horari"),
-    Actividad(
-        name: "ConcertTaylor",
-        code: "AACC",
-        categoria: "concert",
-        latitud: 2.0,
-        longitud: 3.0,
-        imageUrl:
-            "https://i.pinimg.com/originals/10/ef/0c/10ef0c804190d04cace0f0096ccb8912.jpg",
-        descripcio: "descripcio",
-        dataInici: "30-11-2024",
-        dataFi: "23-12-2024",
-        ubicacio: "ubicacio",
-        urlEntrades: Uri(),
-        preu: "preu",
-        comarca: "comarca",
-        horari: "horari"),
-  ];
+  //fins que backend no funcioni
 
-  //creant la llista que farem display i aplicarem els seus filtres:
-  List<Actividad> display_list = List.from(my_activities_list);
+  TextEditingController searchController = TextEditingController();
+  String selectedCategoria = '';
+  String selectedData = '';
 
-  void updateList(String value) {
-    //funcio on es filtrarà la nostra llista
-    setState(
-      () {
-        display_list = my_activities_list
-            .where((element) =>
-                element.name!.toLowerCase().contains(value.toLowerCase()))
-            .toList();
-      },
-    );
+  /*Future<void> fetchMyActivities(
+      String searchQuery, String categoria, String data) async {
+    String url =
+        '/activitats/user/:id/search?q=$searchQuery&filterCategoria=$categoria&filterData=$data';
+    var response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = jsonDecode(response.body);
+      setState(() {
+        my_activities_list =
+            data.map((json) => Actividad.fromJson(json)).toList();
+      });
+    } else {
+      throw Exception('Failed to load actividades');
+    }
+  }*/
+
+  //borrar quan backend estigui implementat
+  static List<Actividad> display_list = [];
+  List<Actividad> my_activities_list = List.from(display_list); //[];
+
+  Future<void> fetchMyActivities(
+      String searchQuery, String categoria, String data) async {
+    setState(() {
+      my_activities_list = display_list
+          .where((element) =>
+              element.name.toLowerCase().contains(searchQuery.toLowerCase()) &&
+              (categoria == '' || element.categoria == categoria))
+          .toList();
+    });
   }
 
   @override
@@ -103,7 +77,9 @@ class SearchMyActivities extends StatefulWidget {
                   height: 20.0,
                 ),
                 TextField(
-                  onChanged: (value) => updateList(value),
+                  controller: searchController,
+                  onChanged: (text) =>
+                      fetchMyActivities(text, selectedCategoria, selectedData),
                   cursorColor: Colors.white,
                   style: const TextStyle(
                     color: Colors.white,
@@ -119,31 +95,64 @@ class SearchMyActivities extends StatefulWidget {
                     hintStyle: const TextStyle(
                       color: Colors.white,
                     ),
-                    suffixIcon: const Icon(Icons.search),
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        fetchMyActivities(searchController.text,
+                            selectedCategoria, selectedData);
+                      },
+                      icon: Icon(Icons.search),
+                    ),
                     suffixIconColor: Colors.white,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
+                  height: 10.0,
+                ),
+                Row(children: [
+                  SizedBox(
+                    height: 30.0,
+                    width: 100.0,
+                    child: FiltreCategoria(canviCategoria: (newCategoria) {
+                      setState(() {
+                        selectedCategoria = newCategoria!;
+                      });
+                    }),
+                  ),
+                  const SizedBox(
+                    width: 10.0,
+                  ),
+                  SizedBox(
+                    height: 30.0,
+                    width: 150.0,
+                    child: FiltreData(canviData: (newData) {
+                      setState(() {
+                        selectedData = newData!;
+                      });
+                    }),
+                  )
+                ]),
+                const SizedBox(
                   height: 20.0,
                 ),
                 Expanded(
                   child: ListView.builder(
-                      itemCount: display_list.length,
+                      itemCount: my_activities_list.length,
                       itemBuilder: (context, index) => ListTile(
                             contentPadding: const EdgeInsets.all(8.0),
-                            title: Text(display_list[index].name,
+                            title: Text(my_activities_list[index].name,
                                 style: const TextStyle(
                                   color: Colors.orange,
                                   fontWeight: FontWeight.bold,
                                 )),
-                            subtitle: Text(display_list[index].categoria,
+                            subtitle: Text(
+                                my_activities_list[index].categoria as String,
                                 style: const TextStyle(color: Colors.orange)),
-                            trailing: Text("${display_list[index].preu}",
+                            trailing: Text("${my_activities_list[index].preu}",
                                 style: TextStyle(color: Colors.orange)),
-                            leading:
-                                Image.network(display_list[index].imageUrl!),
+                            leading: Image.network(
+                                my_activities_list[index].imageUrl!),
                           )),
-                )
+                ),
               ]),
         ));
   }

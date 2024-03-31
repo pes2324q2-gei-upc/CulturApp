@@ -31,12 +31,12 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   late List<String> infoActividad;
   late Uri uriActividad;
 
-  bool estaApuntado = false;
   bool mostrarDescripcionCompleta = false;
-
+  
+  bool estaApuntado = false;
+  
   final User? _user = FirebaseAuth.instance.currentUser;
 
-  //mas adelante habra que pillarlo de la base de datos
   List<Post> posts = [];
   String? idForo = " ";
   
@@ -55,6 +55,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   "territori.espai_public_rius",
   "Espai públic - Platges"];
   
+
   _VistaVerActividadState(List<String> info_actividad, Uri uri_actividad) {
     infoActividad = info_actividad;
     uriActividad = uri_actividad;
@@ -458,6 +459,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     );
   }
 
+
   void manageSignupButton(List<String> infoactividad) {
     if (mounted) {
       setState(() {
@@ -474,6 +476,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       });
     }
   }
+  
+ 
 
   void checkApuntado(String uid, List<String> infoactividad) async {
     bool apuntado = await controladorDominio.isUserInActivity(uid, infoactividad[1]);
