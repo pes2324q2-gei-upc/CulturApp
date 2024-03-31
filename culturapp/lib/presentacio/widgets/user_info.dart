@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:http/http.dart';
 
 class UserInfoWidget extends StatefulWidget {
   const UserInfoWidget({super.key});
@@ -9,6 +12,9 @@ class UserInfoWidget extends StatefulWidget {
 }
 
 class _UserInfoWidgetState extends State<UserInfoWidget> {
+
+  //String username = FirebaseAuth.instance.currentUser!.username,
+
   String _selectedText = 'Historico actividades';
   int _selectedIndex = 0;
 
@@ -34,7 +40,6 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
 
   @override
   Widget build(BuildContext context) {
-    //faltaria adaptar el padding en % per a cualsevol dispositiu
     //columna para la parte del username, xp i imagen perfil
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

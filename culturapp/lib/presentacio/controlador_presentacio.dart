@@ -1,5 +1,7 @@
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
+import 'package:culturapp/domain/models/foro_model.dart';
+import 'package:culturapp/domain/models/post.dart';
 import 'package:culturapp/presentacio/screens/lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
@@ -24,6 +26,7 @@ class ControladorPresentacion {
   late List<String> recomms;
   late List<String> categsFav = [];
   late final List<Widget> _pages = [];
+
 
   Future<void> initialice() async {
     activitats = await controladorDomini.getActivitiesAgenda();
@@ -147,6 +150,7 @@ class ControladorPresentacion {
     return controladorDomini.searchMyActivities(_user!.uid, name);
   }
 
+
   void checkLoggedInUser(BuildContext context) {
     //Obte l'usuari autentificat en el moment si existeix
     User? currentUser = _auth.currentUser;
@@ -231,4 +235,48 @@ class ControladorPresentacion {
   Future<bool> usernameUnique(String username) {
     return controladorDomini.usernameUnique(username);
   }
+
+  //funcions del forum
+  Future<void> getForo(String code) async {
+    try {
+      Foro? foro = await controladorDomini.foroExists(code);
+      if (foro != null) {
+        // El foro existe, imprimir sus detalles
+        print('Foro existente: $foro');
+      } else {
+        // El foro no existe, crear uno nuevo
+        bool creadoExitosamente = await controladorDomini.createForo(code);
+        if (creadoExitosamente) {
+          print('Nuevo foro creado');
+        } else {
+          print('Error al crear el foro');
+        }
+      }
+    } catch (error) {
+      print('Error al obtener o crear el foro: $error');
+    }
+  }
+
+  Future<String?> getForoId(String activitatCode) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('foros')
+          .where('activitat_code', isEqualTo: activitatCode)
+          .limit(1)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        // Si hay al menos un documento con el código de actividad dado
+        return querySnapshot.docs.first.id; // Devuelve el ID del primer documento
+      } else {
+        // Si no se encontró ningún documento con el código de actividad dado
+        return null;
+      }
+    } catch (error) {
+      // Si ocurre algún error al obtener el ID del foro
+      print('Error al obtener el ID del foro: $error');
+      return null;
+    }
+  }
+
 }

@@ -1,4 +1,7 @@
 import 'package:culturapp/domain/models/controlador_domini.dart';
+import 'package:culturapp/domain/models/post.dart';
+import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:culturapp/presentacio/widgets/missatge.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -23,15 +26,20 @@ class VistaVerActividad extends StatefulWidget{
 class _VistaVerActividadState extends State<VistaVerActividad> {
 
   final ControladorDomini controladorDominio = new ControladorDomini();
+  final ControladorPresentacion controladorPresentacion = ControladorPresentacion();
 
   late List<String> infoActividad;
   late Uri uriActividad;
 
   bool mostrarDescripcionCompleta = false;
+  
   bool estaApuntado = false;
-
+  
   final User? _user = FirebaseAuth.instance.currentUser;
 
+  List<Post> posts = [];
+  String? idForo = " ";
+  
   final List<String> catsAMB = ["Residus",
   "territori.espai_public_platges",
   "Sostenibilitat",
@@ -47,6 +55,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   "territori.espai_public_rius",
   "Espai públic - Platges"];
   
+
   _VistaVerActividadState(List<String> info_actividad, Uri uri_actividad) {
     infoActividad = info_actividad;
     uriActividad = uri_actividad;
@@ -56,6 +65,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   void initState(){
     super.initState();
     checkApuntado(_user!.uid, infoActividad);
+    //verificar que tenga un foro
+    controladorPresentacion.getForo(infoActividad[1]);
+    getPosts();
   } 
 
   @override
@@ -81,6 +93,15 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           _descripcioActividad(infoActividad[4]), //Accedemos su descripcion
           _expansionDescripcion(),
           _infoActividad(infoActividad[7], infoActividad[5], infoActividad[6], uriActividad),
+          _foro(),
+          //barra para añadir mensajes
+          Missatge(
+            addPost: (foroId, id, username, mensaje, fecha, numeroLikes) async {
+              // Llama a la función addPost con los parámetros adecuados
+              await controladorDominio.addPost(foroId, id, username, mensaje, fecha, numeroLikes);
+            },
+            //foroId: idForo,
+          ),
         ],  //Accedemos ubicación, dataIni, DataFi, uri actividad
       ),
     );
@@ -202,7 +223,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     );
   } 
 
-  Widget _getIconPlusTexto(String categoria, String texto){
+ Widget _getIconPlusTexto(String categoria, String texto){
 
     late Icon icono; //late para indicar que se inicializará en el futuro y que cuando se acceda a su valor no sea nulo
 
@@ -334,29 +355,111 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     }
   }
 
-  //aqui deveria ir el foro
-
-  void _onTabChange(int index) {
-    switch (index) {
-      case 0:
-        //Navigator.pushNamed(context, '/');
-      break;
-      case 1:
-        //Navigator.pushNamed(context, Routes.misActividades);
-      break;
-      case 2:
-        
-      break;
-      case 3:
-        //Navigator.pushNamed(context, Routes.perfil);
-      break;
-      default:
-        break;
+  //conseguir posts del foro
+  Future<void> getPosts() async {
+    try {
+      String? foroId = await controladorPresentacion.getForoId(infoActividad[1]);
+      print(foroId);
+      idForo = foroId;
+      if (foroId != null) {
+        List<Post> fetchedPosts = await controladorDominio.getPostsForo(foroId);
+        setState(() {
+          posts = fetchedPosts;
+        });
+      }
+    } catch (error) {
+      print('Error al obtener los posts: $error');
     }
   }
-  
-  
-  
+
+  //funcion que lista todos los posts del foro de la actividad
+  Widget _foro() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+          child: Text(
+            '${posts.length} comentarios',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: posts.length,
+          itemBuilder: (context, index) {
+            final post = posts[index];
+            return ListTile(
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      //se tendra que modificar por la imagen del usuario
+                      const Icon(Icons.account_circle, size: 45), // Icono de usuario
+                      const SizedBox(width: 5),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(post.username), // Nombre de usuario
+                          const SizedBox(width: 5),
+                          Text(
+                            '${post.fecha.day}/${post.fecha.month}/${post.fecha.year} ${post.fecha.hour}:${post.fecha.minute}', // Fecha y hora del mensaje
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 50),
+                    child: Text(
+                      post.mensaje, // Mensaje del post
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 30),
+                    child: Row(
+                      children: [
+                       IconButton(
+                        icon: Icon(
+                          post.numero_likes > 0 ? Icons.favorite : Icons.favorite_border, // Cambia el icono según si hay likes o no
+                          color: post.numero_likes > 0 ? Colors.red : null, // Cambia el color si hay likes
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            if (post.numero_likes > 0) {
+                              post.numero_likes = 0; // Si ya hay likes, los elimina
+                            } else {
+                              post.numero_likes = 1; // Si no hay likes, añade uno
+                            }
+                          });
+                        },
+                      ),
+                        //si queremos que salga un contador de me gustas
+                        //Text(post.likes.toString()),
+                        Text('Me gusta'),
+                        SizedBox(width: 20),
+                        //hacer que te permita escribir un nuevo mensaje
+                        Icon(Icons.reply), // Icono de responder
+                        SizedBox(width: 5),
+                        Text('Responder'),
+                        SizedBox(width: 20),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+
   void manageSignupButton(List<String> infoactividad) {
     if (mounted) {
       setState(() {
@@ -374,6 +477,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     }
   }
   
+ 
+
   void checkApuntado(String uid, List<String> infoactividad) async {
     bool apuntado = await controladorDominio.isUserInActivity(uid, infoactividad[1]);
     if (mounted) {
@@ -382,5 +487,6 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       });
     }
   }
+  
 }
 

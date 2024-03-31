@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/foro_model.dart';
+import 'package:culturapp/domain/models/post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
@@ -19,9 +21,9 @@ class ControladorDomini {
     }
   }
 
-  Future<List<Actividad>> getUserActivities(String userID) async {
+ Future<List<Actividad>> getUserActivities(String userID) async {
     final respuesta = await http.get(
-      Uri.parse('http://${ip}:8080/users/$userID/activitats'),
+      Uri.parse('http://${ip}:8080/user/activitats/$userID'),
     );
 
     if (respuesta.statusCode == 200) {
@@ -232,6 +234,110 @@ class ControladorDomini {
       print('Error de red: $error');
     }
   }
+
+
+  //foro existe? si no es asi crealo
+  Future<Foro?> foroExists(String code) async {
+    try {
+      final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/foros/exists?activitat_code=${code}'));
+
+      if (respuesta.statusCode == 200) {
+        final data = json.decode(respuesta.body);
+        if (data['exists']) {
+          // El foro existe, devuelve sus detalles
+          return Foro(
+          activitat_code: data['data']['activitat_code'],
+          num_comentaris: data['data']['num_comentaris'],
+          posts: List<Post>.from(data['data']['posts'].map((post) => Post.fromJson(post))),
+        );
+        } else {
+          // El foro no existe
+          return null;
+        }
+      } else {
+        // Si hay un error en la solicitud HTTP
+        throw Exception('Fallo la obtención de datos: ${respuesta.statusCode}');
+      }
+    } catch (error) {
+      // Si hay un error de red u otro tipo de error
+      throw Exception('Fallo la obtención de datos: $error');
+    }
+  }
+
+  Future<bool> createForo(String code) async {
+    try {
+      final Map<String, dynamic> forodata = {
+        //'num_comentaris' : 0,
+        'activitat_code': code,
+        //'posts': [],
+      };
+
+      final respuesta = await http.post(
+        Uri.parse('http://10.0.2.2:8080/foros/create'),
+        body: jsonEncode(forodata),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (respuesta.statusCode == 201) {  
+        print('Foro creado exitosamente');
+        return true; 
+      } else {
+        print('Error al crear el foro: ${respuesta.statusCode}');
+        return false; // Indica que ocurrió un error al crear el foro
+      }
+    } catch (error) {
+      print('Error de red: $error');
+      return false; // Indica que ocurrió un error al crear el foro
+    }
+  }
+
+  //getPosts
+  Future<List<Post>> getPostsForo(String foroId) async {
+    //print("este es el foro : $foroId");
+    try {
+      final response = await http.get(Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts'));
+      
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        // Mapear los datos de los posts a una lista de objetos Post
+        List<Post> posts = data.map((json) => Post.fromJson(json)).toList();
+        return posts;
+      } else {
+        throw Exception('Error al obtener los posts del foro: ${response.statusCode}');
+      }
+    } catch (error) {
+      throw Exception('Error de red: $error');
+    }
+  }
+ 
+
+  //crear post
+  Future<void> addPost(String foroId, String id, String username, String mensaje, DateTime fecha, int numeroLikes) async {
+    try {
+      final url = Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'id': id,
+          'username': username,
+          'mensaje': mensaje,
+          'fecha': fecha.toIso8601String(), // Convertir la fecha a una cadena ISO8601 para enviarla al servidor
+          'numero_likes': numeroLikes,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        print('Post agregado exitosamente al foro');
+      } else {
+        print('Error al agregar post al foro: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error al realizar la solicitud HTTP: $error');
+    }
+  }
+
+}
 
   Future<bool> usernameUnique(String username) async {
     final respuesta = await http.get(Uri.parse(
