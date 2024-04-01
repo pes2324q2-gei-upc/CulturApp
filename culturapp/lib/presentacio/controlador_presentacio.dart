@@ -45,7 +45,7 @@ class ControladorPresentacion {
       ListaMisActividades(
         controladorPresentacion: this,
       ),
-      const Xats(),
+      Xats(controladorPresentacion: this,),
       PerfilPage(controladorPresentacion: this),
     ]);
   }
@@ -66,7 +66,35 @@ class ControladorPresentacion {
       context,
       MaterialPageRoute(
         builder: (context) =>
-            VistaVerActividad(info_actividad: info_act, uri_actividad: uri_act),
+            VistaVerActividad(info_actividad: info_act, uri_actividad: uri_act, controladorPresentacion: this,),
+      ),
+    );
+  }
+
+  void mostrarMapa(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            MapPage(controladorPresentacion: this),
+      ),
+    );
+  }
+  void mostrarXats(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            Xats(controladorPresentacion: this,),
+      ),
+    );
+  }
+    void mostrarPerfil(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            PerfilPage(controladorPresentacion: this),
       ),
     );
   }
@@ -104,13 +132,12 @@ class ControladorPresentacion {
     );
   }
 
-  void mostrarMapaActividades(BuildContext context) async {
+  void mostrarActividadesUser(BuildContext context) async {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MapPage(
-          controladorPresentacion: this,
-        ),
+        builder: (context) => ListaMisActividades(
+          controladorPresentacion: this),
       ),
     );
   }
@@ -154,7 +181,7 @@ class ControladorPresentacion {
     //Si existeix l'usuari, estableix l'usuari de l'estat i redirigeix a la pantalla principal
     if (currentUser != null) {
       _user = currentUser;
-      mostrarMapaActividades(context);
+      mostrarMapa(context);
     }
   }
 
@@ -174,7 +201,7 @@ class ControladorPresentacion {
       //Altrament redirigir a la pantalla principal de l'app
       else {
         obtenerActividadesUser();
-        mostrarMapaActividades(context);
+        mostrarMapa(context);
       }
     } catch (error) {
       print(error);
@@ -205,14 +232,6 @@ class ControladorPresentacion {
     mostrarPerfil(context);
   }
 
-  void mostrarPerfil(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PerfilPage(controladorPresentacion: this),
-      ),
-    );
-  }
 
   void mostrarSettings(BuildContext context) {
     Navigator.push(

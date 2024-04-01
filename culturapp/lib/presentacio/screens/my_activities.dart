@@ -14,24 +14,7 @@ class MyActivities extends StatefulWidget {
 class _MyActivities extends State<MyActivities> {
   //List<Actividad> activitats = null; quan tinguem de base de dades fer-ho bé
 
-  void _onTabChange(int index) {
-    switch (index) {
-      case 0:
-        //Navigator.pushNamed(context, '/');
-        break;
-      case 1:
-        //Navigator.pushNamed(context, Routes.misActividades);
-        break;
-      case 2:
-        //Navigator.pushNamed(context, Routes.xats);
-        break;
-      case 3:
-        //Navigator.pushNamed(context, Routes.perfil);
-        break;
-      default:
-        break;
-    }
-  }
+
 
   @override
   Widget build(BuildContext context) {

@@ -1,7 +1,7 @@
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/my_activities.dart';
-//import 'package:culturapp/presentacio/routes/routes.dart';
 import 'package:culturapp/presentacio/widgets/user_info.dart';
+import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
@@ -16,7 +16,7 @@ class PerfilPage extends StatefulWidget {
 }
 
 class _PerfilPageState extends State<PerfilPage> {
-  
+  int _selectedIndex = 3;
   late ControladorPresentacion _controladorPresentacion;
   
   _PerfilPageState(ControladorPresentacion controladorPresentacion) {
@@ -31,22 +31,26 @@ class _PerfilPageState extends State<PerfilPage> {
     super.initState();
   }
   
-  void _onTabChange(int index) {
+    void _onTabChange(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    
     switch (index) {
       case 0:
-       Navigator.pushNamed(context, '/');
-      break;
+        _controladorPresentacion.mostrarMapa(context);
+        break;
       case 1:
-        //Navigator.pushNamed(context, Routes.misActividades);
-      break;
+          _controladorPresentacion.mostrarActividadesUser(context);
+        break;
       case 2:
-        //Navigator.pushNamed(context, Routes.chat);
-      break;
+         _controladorPresentacion.mostrarXats(context);
+        break;
       case 3:
-        //Navigator.pushNamed(context, Routes.perfil);
-      break;
+          _controladorPresentacion.mostrarPerfil(context);
+        break;
       default:
-      break;
+        break;
     }
   }
 
@@ -72,6 +76,10 @@ class _PerfilPageState extends State<PerfilPage> {
           icon: const Icon(Icons.settings, color: Colors.white),
         ),
       ],
+    ),
+    bottomNavigationBar: CustomBottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTabChange: _onTabChange,
     ),
     body: const Stack(
         children: [

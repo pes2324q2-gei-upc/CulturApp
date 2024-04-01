@@ -5,6 +5,7 @@ import 'package:culturapp/domain/models/filtre_data.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/widgets/widgetsUtils/image_category.dart';
 import 'package:culturapp/presentacio/widgets/widgetsUtils/text_with_link.dart';
+import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
@@ -31,6 +32,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   late String squery;
   late String? _selectedCategory;
   late String selectedData;
+  int _selectedIndex = 1;
   TextEditingController _dateController = TextEditingController();
 
   static const List<String> llistaCategories = <String>[
@@ -134,6 +136,29 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     });
   }
 
+  void _onTabChange(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  
+    switch (index) {
+      case 0:
+        _controladorPresentacion.mostrarMapa(context);
+        break;
+      case 1:
+          _controladorPresentacion.mostrarActividadesUser(context);
+        break;
+      case 2:
+         _controladorPresentacion.mostrarXats(context);
+        break;
+      case 3:
+          _controladorPresentacion.mostrarPerfil(context);
+        break;
+      default:
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -141,6 +166,10 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
           backgroundColor: Colors.orange,
           title: const Text("Mis actividades"),
         ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTabChange: _onTabChange,
+    ),      
         body: Column(children: [
           Padding(
             padding: const EdgeInsets.all(8.0),

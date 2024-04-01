@@ -1,4 +1,6 @@
 import 'package:culturapp/domain/models/controlador_domini.dart';
+import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -11,19 +13,19 @@ import 'package:url_launcher/url_launcher.dart';
 class VistaVerActividad extends StatefulWidget{
 
   final List<String> info_actividad;
-
+  final ControladorPresentacion controladorPresentacion;
   final Uri uri_actividad;
 
-  const VistaVerActividad({super.key, required this.info_actividad, required this.uri_actividad});
+  const VistaVerActividad({super.key, required this.info_actividad, required this.uri_actividad, required this.controladorPresentacion});
 
   @override
-  State<VistaVerActividad> createState() => _VistaVerActividadState(info_actividad, uri_actividad);
+  State<VistaVerActividad> createState() => _VistaVerActividadState(controladorPresentacion ,info_actividad, uri_actividad);
 }
 
 class _VistaVerActividadState extends State<VistaVerActividad> {
-
+  late ControladorPresentacion _controladorPresentacion; 
   final ControladorDomini controladorDominio = new ControladorDomini();
-
+  int _selectedIndex = 0;
   late List<String> infoActividad;
   late Uri uriActividad;
 
@@ -47,9 +49,10 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   "territori.espai_public_rius",
   "Espai públic - Platges"];
   
-  _VistaVerActividadState(List<String> info_actividad, Uri uri_actividad) {
+  _VistaVerActividadState(ControladorPresentacion controladorPresentacion ,List<String> info_actividad, Uri uri_actividad) {
     infoActividad = info_actividad;
     uriActividad = uri_actividad;
+    _controladorPresentacion = controladorPresentacion;
   }
 
   @override
@@ -58,9 +61,31 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     checkApuntado(_user!.uid, infoActividad);
   } 
 
+    void _onTabChange(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  
+    switch (index) {
+      case 0:
+        _controladorPresentacion.mostrarMapa(context);
+        break;
+      case 1:
+          _controladorPresentacion.mostrarActividadesUser(context);
+        break;
+      case 2:
+         _controladorPresentacion.mostrarXats(context);
+        break;
+      case 3:
+          _controladorPresentacion.mostrarPerfil(context);
+        break;
+      default:
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    checkApuntado(_user!.uid, infoActividad);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
@@ -72,6 +97,10 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           fontSize: 20.0,
           fontWeight: FontWeight.bold
         ),
+      ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTabChange: _onTabChange,
       ),
       body: ListView(
         children: [
@@ -85,6 +114,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       ),
     );
   }
+
 
   Widget _imagenActividad(String imagenUrl){
     return Container(
@@ -333,28 +363,6 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       }
     }
   }
-
-  //aqui deveria ir el foro
-
-  void _onTabChange(int index) {
-    switch (index) {
-      case 0:
-        //Navigator.pushNamed(context, '/');
-      break;
-      case 1:
-        //Navigator.pushNamed(context, Routes.misActividades);
-      break;
-      case 2:
-        
-      break;
-      case 3:
-        //Navigator.pushNamed(context, Routes.perfil);
-      break;
-      default:
-        break;
-    }
-  }
-  
   
   
   void manageSignupButton(List<String> infoactividad) {

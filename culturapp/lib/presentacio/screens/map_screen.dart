@@ -6,6 +6,7 @@ import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
+import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -26,7 +27,7 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   late ControladorPresentacion _controladorPresentacion;
-
+  int _selectedIndex = 0;
   late List<Actividad> activitats;
   late List<String> recomms;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -614,11 +615,37 @@ class _MapPageState extends State<MapPage> {
     activitat = llista.first;
     moveMapToSelectedActivity();
   }
-
+  
+  void _onTabChange(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  
+    switch (index) {
+      case 0:
+        _controladorPresentacion.mostrarMapa(context);
+        break;
+      case 1:
+          _controladorPresentacion.mostrarActividadesUser(context);
+        break;
+      case 2:
+         _controladorPresentacion.mostrarXats(context);
+        break;
+      case 3:
+          _controladorPresentacion.mostrarPerfil(context);
+        break;
+      default:
+        break;
+    }
+  }
   //Se crea la ''pantalla'' para el mapa - falta añadir dock inferior y barra de busqueda
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: CustomBottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTabChange: _onTabChange,
+      ),
       body: Stack(
         fit: StackFit.expand, // Ajusta esta línea
         children: [
