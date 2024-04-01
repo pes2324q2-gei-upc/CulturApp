@@ -5,6 +5,7 @@ import 'package:culturapp/data/firebase_service.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/lista_actividades.dart';
+import 'package:culturapp/presentacio/widgets/carousel.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -30,6 +31,18 @@ class _MapPageState extends State<MapPage> {
   late List<Actividad> activitats;
   late List<String> recomms;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late List<String> categoriesFiltres;
+
+  void clickCarouselCat(String cat) {
+    setState(() {
+      if (categoriesFiltres.contains(cat)) {
+        categoriesFiltres.remove(cat);
+      } else {
+        categoriesFiltres.add(cat);
+      }
+    });
+  }
+
 
   _MapPageState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
@@ -107,7 +120,9 @@ class _MapPageState extends State<MapPage> {
       if (calculateDistance(center,
               LatLng(actividad.latitud ?? 0.0, actividad.longitud ?? 0.0)) <=
           radius) {
-        actividadesaux.add(actividad);
+        if(actividad.categoria.where((element) => categoriesFiltres.contains(element)).isNotEmpty) {
+          actividadesaux.add(actividad);
+        }
       }
     }
     return actividadesaux;
@@ -655,6 +670,12 @@ class _MapPageState extends State<MapPage> {
                     }),
               ),
             ),
+          ),
+          Positioned(
+            top: 100.0, // Adjust this value as needed
+            left: 25.0,
+            right: 25.0,
+            child: MyCarousel(clickCarouselCat)
           ),
           Positioned.fill(
             child: DraggableScrollableSheet(
