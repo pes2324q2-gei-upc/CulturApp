@@ -34,6 +34,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   late String selectedData;
   int _selectedIndex = 1;
   TextEditingController _dateController = TextEditingController();
+  TextEditingController _searchController = TextEditingController();
 
   static const List<String> llistaCategories = <String>[
     'concerts',
@@ -78,6 +79,10 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     squery = text;
   }
 
+  void clearSearchBar() {
+    _searchController.clear();
+  }
+
   void searchMyActivities(String squery) async {
     //do this
     //Festa Major de Sant Vicenç
@@ -94,6 +99,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     // Parse the input date string into a DateTime object
     DateTime selectedDate = DateTime.parse(date);
     selectedData = date;
+    clearSearchBar();
 
     // Update the state based on the filtered data
     setState(() {
@@ -116,7 +122,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   }
 
   void filterActivitiesByCategory(String category) async {
-    //si no funciona fer back
+    clearSearchBar();
 
     setState(() {
       if (selectedData != '') {
@@ -140,19 +146,19 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     setState(() {
       _selectedIndex = index;
     });
-  
+
     switch (index) {
       case 0:
         _controladorPresentacion.mostrarMapa(context);
         break;
       case 1:
-          _controladorPresentacion.mostrarActividadesUser(context);
+        _controladorPresentacion.mostrarActividadesUser(context);
         break;
       case 2:
-         _controladorPresentacion.mostrarXats(context);
+        _controladorPresentacion.mostrarXats(context);
         break;
       case 3:
-          _controladorPresentacion.mostrarPerfil(context);
+        _controladorPresentacion.mostrarPerfil(context);
         break;
       default:
         break;
@@ -166,10 +172,10 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
           backgroundColor: Colors.orange,
           title: const Text("Mis actividades"),
         ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTabChange: _onTabChange,
-    ),      
+        bottomNavigationBar: CustomBottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTabChange: _onTabChange,
+        ),
         body: Column(children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -179,6 +185,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                   height: 40.0,
                   child: TextField(
                     //cercador
+                    controller: _searchController,
                     onChanged: (text) => changeSquery(text),
                     cursorColor: Colors.orange,
                     style: const TextStyle(
