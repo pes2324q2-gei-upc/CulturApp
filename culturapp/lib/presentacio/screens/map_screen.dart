@@ -31,7 +31,7 @@ class _MapPageState extends State<MapPage> {
   late List<Actividad> activitats;
   late List<String> recomms;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  late List<String> categoriesFiltres;
+  late List<String> categoriesFiltres = [];
 
   void clickCarouselCat(String cat) {
     setState(() {
@@ -120,9 +120,10 @@ class _MapPageState extends State<MapPage> {
       if (calculateDistance(center,
               LatLng(actividad.latitud ?? 0.0, actividad.longitud ?? 0.0)) <=
           radius) {
-        if(actividad.categoria.where((element) => categoriesFiltres.contains(element)).isNotEmpty) {
+          if(actividad.categoria.where((element) => categoriesFiltres.contains(element)).isNotEmpty) {
           actividadesaux.add(actividad);
         }
+        
       }
     }
     return actividadesaux;

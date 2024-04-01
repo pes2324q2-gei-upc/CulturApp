@@ -1,33 +1,39 @@
 import 'package:flutter/material.dart';
 
-class MyCarousel extends StatelessWidget {
-
+class MyCarousel extends StatefulWidget {
   final Function(String) clickCarouselCat; // Callback function
 
   MyCarousel(this.clickCarouselCat); // Constructor to receive the callback
 
   @override
+  _MyCarouselState createState() => _MyCarouselState();
+}
+
+class _MyCarouselState extends State<MyCarousel> {
+  List<int> selectedIndices = [];
+
+  @override
   Widget build(BuildContext context) {
     List<Widget> carouselItems = [
-      _buildCarouselItem(context, 'Festa', 'festes'),
-      _buildCarouselItem(context, 'Infantil', 'infantil'),
-      _buildCarouselItem(context, 'Circ', 'circ'),
-      _buildCarouselItem(context, 'Commemoracio', 'commemoracions'),
-      _buildCarouselItem(context, 'Exposicions', 'exposicions'),
-      _buildCarouselItem(context, 'Art', ''),
-      _buildCarouselItem(context, 'Carnaval', 'carnavals'),
-      _buildCarouselItem(context, 'Concerts', 'concerts'),
-      _buildCarouselItem(context, 'Conferencies', 'conferencies'),
-      _buildCarouselItem(context, 'Rutes', 'rutes-i-visites'),
-      _buildCarouselItem(context, 'Activitats Virtuals', 'activitats-virtuals'),
-      _buildCarouselItem(context, 'Teatre', 'teatre'),
+      _buildCarouselItem(context, 'Festa', 'festes', 0),
+      _buildCarouselItem(context, 'Infantil', 'infantil', 1),
+      _buildCarouselItem(context, 'Circ', 'circ', 2),
+      _buildCarouselItem(context, 'Commemoracio', 'commemoracions', 3),
+      _buildCarouselItem(context, 'Exposicions', 'exposicions', 4),
+      _buildCarouselItem(context, 'Art', '', 5),
+      _buildCarouselItem(context, 'Carnaval', 'carnavals', 6),
+      _buildCarouselItem(context, 'Concerts', 'concerts', 7),
+      _buildCarouselItem(context, 'Conferencies', 'conferencies', 8),
+      _buildCarouselItem(context, 'Rutes', 'rutes-i-visites', 9),
+      _buildCarouselItem(context, 'Activitats Virtuals', 'activitats-virtuals', 10),
+      _buildCarouselItem(context, 'Teatre', 'teatre', 11),
     ];
 
     return Row(
       children: [ 
         Expanded(child: Center(
             child: Container(
-              height: 80, // specify the height you want here
+              height: 60, // specify the height you want here
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: carouselItems.length,
@@ -165,18 +171,25 @@ Image _retornaIcon(String categoria) {
     }
   }
 
-  Widget _buildCarouselItem(BuildContext context, String label, String iconName) {
+  Widget _buildCarouselItem(BuildContext context, String label, String iconName, int index) {
   return Padding(
     padding: EdgeInsets.all(5.0), // Add padding between items
     child: GestureDetector(
       onTap: () {
-        clickCarouselCat(label);
+        setState(() {
+            if (selectedIndices.contains(index)) {
+              selectedIndices.remove(index);
+            } else {
+              selectedIndices.add(index);
+            }
+        });
+        widget.clickCarouselCat(label);
       },
       child: IntrinsicWidth(
         child: Container(
           margin: EdgeInsets.symmetric(horizontal: 5.0),
           decoration: BoxDecoration(
-            color: Colors.white70,
+          color: selectedIndices.contains(index) ? Colors.white70 : Colors.grey[300],
             borderRadius: BorderRadius.circular(20.0),
           ),
           child: Center(

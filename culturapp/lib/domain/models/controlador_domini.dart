@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
 class ControladorDomini {
-  final String ip = "10.0.2.2";
+  final String ip = "192.168.0.35";
 
   Future<List<Actividad>> getActivitiesAgenda() async {
     final respuesta =
