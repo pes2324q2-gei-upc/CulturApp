@@ -116,9 +116,11 @@ class ControladorPresentacion {
         });
   }
 
-  Future<void> obtenerActividadesUser() async {
-    activitatsUser = await getUserActivities(_user!.uid);
+    Future<List<Actividad>> getMisActivitats() async {
+    activitatsUser = await controladorDomini.getUserActivities(_user!.uid);
+    return activitatsUser;
   }
+
 
   void mostrarActividades(BuildContext context) async {
     Navigator.push(
@@ -200,7 +202,6 @@ class ControladorPresentacion {
       }
       //Altrament redirigir a la pantalla principal de l'app
       else {
-        obtenerActividadesUser();
         mostrarMapa(context);
       }
     } catch (error) {

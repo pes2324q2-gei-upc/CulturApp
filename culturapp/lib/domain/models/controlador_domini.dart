@@ -197,6 +197,7 @@ class ControladorDomini {
     } catch (error) {
       print('Error de red: $error');
     }
+
   }
 
   Future<bool> isUserInActivity(String? uid, String code) async {

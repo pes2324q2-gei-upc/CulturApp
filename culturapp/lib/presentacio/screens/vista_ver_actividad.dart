@@ -369,12 +369,10 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     if (mounted) {
       setState(() {
         if (estaApuntado) {
-          print("entrado en el true");
           controladorDominio.signoutFromActivity(_user?.uid, infoActividad[1]);
           estaApuntado = false;
         }
         else {
-          print("entrado en el false");
           controladorDominio.signupInActivity(_user?.uid, infoActividad[1]);
           estaApuntado = true;
         }
