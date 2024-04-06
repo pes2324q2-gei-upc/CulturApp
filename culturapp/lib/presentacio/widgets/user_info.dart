@@ -1,19 +1,36 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
-import 'package:http/http.dart';
 
 class UserInfoWidget extends StatefulWidget {
   const UserInfoWidget({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _UserInfoWidgetState createState() => _UserInfoWidgetState();
 }
 
 class _UserInfoWidgetState extends State<UserInfoWidget> {
+  final ControladorPresentacion _controladorPresentacion = ControladorPresentacion();
+  late String username = '';
 
-  //String username = FirebaseAuth.instance.currentUser!.username,
+  @override
+  void initState() {
+    super.initState();
+    _loadUsername();
+  }
+
+  Future<void> _loadUsername() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      if (snapshot.exists) {
+        setState(() {
+          username = snapshot.data()?['username'] ?? '';
+        });
+      }
+    }
+  }
 
   String _selectedText = 'Historico actividades';
   int _selectedIndex = 0;
@@ -56,19 +73,19 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                 height: 100, 
               ),
               const SizedBox(width: 10),
-              const Padding(
-                padding: EdgeInsets.only(top: 15),
+              Padding(
+                padding: const EdgeInsets.only(top: 15),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     //username
                     Text(
-                      'Username',
-                      style: TextStyle(fontSize: 20),
+                      username,
+                      style: const TextStyle(fontSize: 20),
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     //XP
-                    Text(
+                    const Text(
                       'XP',
                       style: TextStyle(fontSize: 20),
                     ),
@@ -83,7 +100,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                   child: IconButton(
                     onPressed: () {
                       //hacer que no se vea si estas viendo el perfil de otro user
-                      //Navigator.pushNamed(context, Routes.updatePerfil);
+                        _controladorPresentacion.mostrarEdit(context);
                     },
                     icon: const Icon(Icons.edit, color: Colors.orange),
                   ),

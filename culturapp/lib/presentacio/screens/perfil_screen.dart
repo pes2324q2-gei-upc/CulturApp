@@ -24,7 +24,6 @@ class _PerfilPageState extends State<PerfilPage> {
 
   @override
   void initState() {
-    
     super.initState();
   }
 

@@ -5,6 +5,7 @@ import 'package:culturapp/presentacio/widgets/missatge.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 //name, code, categoria, imageUrl, description, dataInici, dataFi, ubicacio
@@ -25,7 +26,7 @@ class VistaVerActividad extends StatefulWidget{
 
 class _VistaVerActividadState extends State<VistaVerActividad> {
 
-  final ControladorDomini controladorDominio = new ControladorDomini();
+  final ControladorDomini controladorDominio = ControladorDomini();
   final ControladorPresentacion controladorPresentacion = ControladorPresentacion();
 
   late List<String> infoActividad;
@@ -38,7 +39,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   final User? _user = FirebaseAuth.instance.currentUser;
 
   List<Post> posts = [];
-  String? idForo = " ";
+  String idForo = "";
   
   final List<String> catsAMB = ["Residus",
   "territori.espai_public_platges",
@@ -85,24 +86,33 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           fontWeight: FontWeight.bold
         ),
       ),
-      body: ListView(
-        children: [
-          _imagenActividad(infoActividad[3]), //Accedemos imagenUrl
-          _tituloBoton(infoActividad[0], infoActividad[2]), //Accedemos al nombre de la actividad y su categoria
-          const SizedBox(height: 10),
-          _descripcioActividad(infoActividad[4]), //Accedemos su descripcion
-          _expansionDescripcion(),
-          _infoActividad(infoActividad[7], infoActividad[5], infoActividad[6], uriActividad),
-          _foro(),
-          //barra para añadir mensajes
-          Missatge(
-            addPost: (foroId, id, username, mensaje, fecha, numeroLikes) async {
-              // Llama a la función addPost con los parámetros adecuados
-              await controladorDominio.addPost(foroId, id, username, mensaje, fecha, numeroLikes);
-            },
-            //foroId: idForo,
+      body: Column(
+        children:[ 
+          Expanded(
+            child: ListView(
+              children: [
+                _imagenActividad(infoActividad[3]), //Accedemos imagenUrl
+                _tituloBoton(infoActividad[0], infoActividad[2]), //Accedemos al nombre de la actividad y su categoria
+                const SizedBox(height: 10),
+                _descripcioActividad(infoActividad[4]), //Accedemos su descripcion
+                _expansionDescripcion(),
+                _infoActividad(infoActividad[7], infoActividad[5], infoActividad[6], uriActividad),
+                _foro(),
+              ], //Accedemos ubicación, dataIni, DataFi, uri actividad
+            ),
           ),
-        ],  //Accedemos ubicación, dataIni, DataFi, uri actividad
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            //barra para añadir mensajes
+            child: Missatge(
+              addPost: (foroId, id, username, mensaje, fecha, numeroLikes) async {
+                // Llama a la función addPost con los parámetros adecuados
+                await controladorDominio.addPost(foroId, id, username, mensaje, fecha, numeroLikes);
+              },
+              foroId: idForo
+            ),
+          ),
+        ],  
       ),
     );
   }
@@ -357,18 +367,13 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
   //conseguir posts del foro
   Future<void> getPosts() async {
-    try {
-      String? foroId = await controladorPresentacion.getForoId(infoActividad[1]);
-      print(foroId);
+    String? foroId = await controladorPresentacion.getForoId(infoActividad[1]);
+    if (foroId != null) {
       idForo = foroId;
-      if (foroId != null) {
-        List<Post> fetchedPosts = await controladorDominio.getPostsForo(foroId);
-        setState(() {
-          posts = fetchedPosts;
-        });
-      }
-    } catch (error) {
-      print('Error al obtener los posts: $error');
+      List<Post> fetchedPosts = await controladorDominio.getPostsForo(foroId);
+      setState(() {
+        posts = fetchedPosts;
+      });
     }
   }
 
@@ -386,10 +391,12 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         ),
         ListView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           itemCount: posts.length,
           itemBuilder: (context, index) {
             final post = posts[index];
+            DateTime dateTime = DateTime.parse(post.fecha);
+            String formattedDate = DateFormat('yyyy/MM/dd HH:mm').format(dateTime);
             return ListTile(
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -405,7 +412,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                           Text(post.username), // Nombre de usuario
                           const SizedBox(width: 5),
                           Text(
-                            '${post.fecha.day}/${post.fecha.month}/${post.fecha.year} ${post.fecha.hour}:${post.fecha.minute}', // Fecha y hora del mensaje
+                            formattedDate,
                             style: const TextStyle(color: Colors.grey),
                           ),
                         ],
@@ -440,13 +447,13 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                       ),
                         //si queremos que salga un contador de me gustas
                         //Text(post.likes.toString()),
-                        Text('Me gusta'),
-                        SizedBox(width: 20),
+                        const Text('Me gusta'),
+                        const SizedBox(width: 20),
                         //hacer que te permita escribir un nuevo mensaje
-                        Icon(Icons.reply), // Icono de responder
-                        SizedBox(width: 5),
-                        Text('Responder'),
-                        SizedBox(width: 20),
+                        const Icon(Icons.reply), // Icono de responder
+                        const SizedBox(width: 5),
+                        const Text('Responder'),
+                        const SizedBox(width: 20),
                       ],
                     ),
                   ),
@@ -464,12 +471,12 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     if (mounted) {
       setState(() {
         if (estaApuntado) {
-          print("entrado en el true");
+          //print("entrado en el true");
           controladorDominio.signoutFromActivity(_user?.uid, infoActividad[1]);
           estaApuntado = false;
         }
         else {
-          print("entrado en el false");
+          //print("entrado en el false");
           controladorDominio.signupInActivity(_user?.uid, infoActividad[1]);
           estaApuntado = true;
         }

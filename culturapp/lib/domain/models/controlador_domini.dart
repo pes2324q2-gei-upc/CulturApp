@@ -312,7 +312,7 @@ class ControladorDomini {
  
 
   //crear post
-  Future<void> addPost(String foroId, String id, String username, String mensaje, DateTime fecha, int numeroLikes) async {
+  Future<void> addPost(String foroId, String id, String username, String mensaje, String fecha, int numeroLikes) async {
     try {
       final url = Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts');
       final response = await http.post(
@@ -322,7 +322,7 @@ class ControladorDomini {
           'id': id,
           'username': username,
           'mensaje': mensaje,
-          'fecha': fecha.toIso8601String(), // Convertir la fecha a una cadena ISO8601 para enviarla al servidor
+          'fecha': fecha,
           'numero_likes': numeroLikes,
         }),
       );

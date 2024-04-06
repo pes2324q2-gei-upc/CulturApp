@@ -11,6 +11,7 @@ import 'package:culturapp/presentacio/screens/perfil_screen.dart';
 import 'package:culturapp/presentacio/screens/recomendador_actividades.dart';
 import 'package:culturapp/presentacio/screens/settings_perfil.dart';
 import 'package:culturapp/presentacio/screens/signup.dart';
+import 'package:culturapp/presentacio/screens/update_perfil.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_mis_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_ver_actividad.dart';
@@ -224,6 +225,15 @@ class ControladorPresentacion {
       context,
       MaterialPageRoute(
         builder: (context) => SettingsPerfil(controladorPresentacion: this),
+      ),
+    );
+  }
+
+  void mostrarEdit(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UpdatePerfil(controladorPresentacion: this),
       ),
     );
   }
