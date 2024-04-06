@@ -105,9 +105,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             padding: const EdgeInsets.all(8.0),
             //barra para añadir mensajes
             child: Missatge(
-              addPost: (foroId, id, username, mensaje, fecha, numeroLikes) async {
+              addPost: (foroId, username, mensaje, fecha, numeroLikes) async {
                 // Llama a la función addPost con los parámetros adecuados
-                await controladorDominio.addPost(foroId, id, username, mensaje, fecha, numeroLikes);
+                await controladorDominio.addPost(foroId, username, mensaje, fecha, numeroLikes);
               },
               foroId: idForo
             ),

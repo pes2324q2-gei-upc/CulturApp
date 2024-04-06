@@ -13,7 +13,7 @@ class Missatge extends StatefulWidget {
     required this.foroId,
     super.key});
 
-  final FutureOr<void> Function(String foroId, String id, String username, String mensaje, String fecha, int numeroLikes) addPost;
+  final FutureOr<void> Function(String foroId, String username, String mensaje, String fecha, int numeroLikes) addPost;
 
   @override
   State<Missatge> createState() => _MissatgeState();
@@ -73,7 +73,6 @@ class _MissatgeState extends State<Missatge> {
       
                   await widget.addPost(
                     foro, 
-                    'id', //este param seguramente lo borre
                     _username, 
                     _controller.text, 
                     data, 

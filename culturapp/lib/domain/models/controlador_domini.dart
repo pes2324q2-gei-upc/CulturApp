@@ -246,10 +246,10 @@ class ControladorDomini {
         if (data['exists']) {
           // El foro existe, devuelve sus detalles
           return Foro(
-          activitat_code: data['data']['activitat_code'],
-          num_comentaris: data['data']['num_comentaris'],
-          posts: List<Post>.from(data['data']['posts'].map((post) => Post.fromJson(post))),
-        );
+            activitat_code: data['data']['activitat_code'],
+            //posts: List<Post>.from(data['data']['posts'].map((post) => Post.fromJson(post))),
+            posts: data['data']['posts'] != null ? List<Post>.from(data['data']['posts'].map((post) => Post.fromJson(post))) : null,
+          );
         } else {
           // El foro no existe
           return null;
@@ -267,9 +267,7 @@ class ControladorDomini {
   Future<bool> createForo(String code) async {
     try {
       final Map<String, dynamic> forodata = {
-        //'num_comentaris' : 0,
         'activitat_code': code,
-        //'posts': [],
       };
 
       final respuesta = await http.post(
@@ -302,6 +300,9 @@ class ControladorDomini {
         // Mapear los datos de los posts a una lista de objetos Post
         List<Post> posts = data.map((json) => Post.fromJson(json)).toList();
         return posts;
+      } else if (response.statusCode == 404) {
+        // Devolver una lista vacía si no hay posts para este foro
+        return [];
       } else {
         throw Exception('Error al obtener los posts del foro: ${response.statusCode}');
       }
@@ -312,14 +313,13 @@ class ControladorDomini {
  
 
   //crear post
-  Future<void> addPost(String foroId, String id, String username, String mensaje, String fecha, int numeroLikes) async {
+  Future<void> addPost(String foroId, String username, String mensaje, String fecha, int numeroLikes) async {
     try {
       final url = Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts');
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'id': id,
           'username': username,
           'mensaje': mensaje,
           'fecha': fecha,
