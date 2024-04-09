@@ -120,10 +120,10 @@ class _MapPageState extends State<MapPage> {
       if (calculateDistance(center,
               LatLng(actividad.latitud ?? 0.0, actividad.longitud ?? 0.0)) <=
           radius) {
-          if(actividad.categoria.where((element) => categoriesFiltres.contains(element)).isNotEmpty) {
-          actividadesaux.add(actividad);
-        }
-        
+            categoriesFiltres.length;
+          if(categoriesFiltres.isEmpty || actividad.categoria.any((element) => categoriesFiltres.contains(element))) {
+           actividadesaux.add(actividad);
+          }
       }
     }
     return actividadesaux;

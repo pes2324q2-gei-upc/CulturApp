@@ -183,7 +183,7 @@ Image _retornaIcon(String categoria) {
               selectedIndices.add(index);
             }
         });
-        widget.clickCarouselCat(label);
+        widget.clickCarouselCat(iconName);
       },
       child: IntrinsicWidth(
         child: Container(
