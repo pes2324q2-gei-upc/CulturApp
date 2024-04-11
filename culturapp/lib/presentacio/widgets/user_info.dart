@@ -3,12 +3,13 @@ import 'package:culturapp/presentacio/controlador_presentacio.dart';
 
 class UserInfoWidget extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
+  final String uid;
 
-  const UserInfoWidget({Key? key, required this.controladorPresentacion}) : super(key: key);
+  const UserInfoWidget({Key? key, required this.controladorPresentacion, required String this.uid}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _UserInfoWidgetState createState() => _UserInfoWidgetState(this.controladorPresentacion);
+  _UserInfoWidgetState createState() => _UserInfoWidgetState(this.controladorPresentacion, this.uid);
 }
 
 class _UserInfoWidgetState extends State<UserInfoWidget> {
@@ -16,16 +17,18 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
   int _selectedIndex = 0;
 
   late ControladorPresentacion _controladorPresentacion;
+  late String _uid;
   late Future<String?> _usernameFuture;
   
-  _UserInfoWidgetState(ControladorPresentacion controladorPresentacion) {
+  _UserInfoWidgetState(ControladorPresentacion controladorPresentacion, String uid) {
     _controladorPresentacion = controladorPresentacion;
+    _uid = uid;
   }
 
   @override
   void initState() {
     super.initState();
-    _usernameFuture = widget.controladorPresentacion.getUsername();
+    _usernameFuture = widget.controladorPresentacion.getUsername(_uid);
   }
 
   void _onTabChange(int index) {
@@ -121,6 +124,18 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
             ],
           ),
         ),
+        Container(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildInfoColumn('Esdeveniments assistits', '10'),
+              _buildInfoColumn('Seguidors', '12'),
+              _buildInfoColumn('Seguits', '40'),
+            ]
+          )
+        ),
         //contenedor para elegir ver el historico o las insignias
         Container(
           height: 50,
@@ -172,6 +187,27 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildInfoColumn(String label, String value) {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            value,
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold,),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 16),
+            textAlign: TextAlign.center,
+          ),
+      ],
+    ),
     );
   }
 }

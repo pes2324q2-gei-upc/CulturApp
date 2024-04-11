@@ -8,19 +8,22 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 class PerfilPage extends StatefulWidget {
   
   final ControladorPresentacion controladorPresentacion;
+  final String uid;
 
-  const PerfilPage({Key? key, required this.controladorPresentacion}) : super(key: key);
+  const PerfilPage({Key? key, required this.controladorPresentacion, required String this.uid}) : super(key: key);
 
   @override
-  State<PerfilPage> createState() => _PerfilPageState(this.controladorPresentacion);
+  State<PerfilPage> createState() => _PerfilPageState(this.controladorPresentacion, this.uid);
 }
 
 class _PerfilPageState extends State<PerfilPage> {
   int _selectedIndex = 3;
   late ControladorPresentacion _controladorPresentacion;
+  late String _uid;
   
-  _PerfilPageState(ControladorPresentacion controladorPresentacion) {
+  _PerfilPageState(ControladorPresentacion controladorPresentacion, String uid) {
     _controladorPresentacion = controladorPresentacion;
+    _uid = uid;
   }
 
 
@@ -81,12 +84,9 @@ class _PerfilPageState extends State<PerfilPage> {
         currentIndex: _selectedIndex,
         onTabChange: _onTabChange,
     ),
-    body: Stack(
-      children: [
-        UserInfoWidget(controladorPresentacion: _controladorPresentacion) 
-      ],
-    ),
+    body: UserInfoWidget(controladorPresentacion: _controladorPresentacion, uid: _uid),
     //container amb les diferents pantalles
     );
   }
+
 }

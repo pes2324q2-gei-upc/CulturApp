@@ -46,7 +46,7 @@ class ControladorPresentacion {
         controladorPresentacion: this,
       ),
       Xats(controladorPresentacion: this,),
-      PerfilPage(controladorPresentacion: this),
+      PerfilPage(controladorPresentacion: this, uid: _user!.uid),
     ]);
   }
 
@@ -94,7 +94,7 @@ class ControladorPresentacion {
       context,
       MaterialPageRoute(
         builder: (context) =>
-            PerfilPage(controladorPresentacion: this),
+            PerfilPage(controladorPresentacion: this, uid: _user!.uid),
       ),
     );
   }
@@ -251,7 +251,7 @@ class ControladorPresentacion {
     return controladorDomini.usernameUnique(username);
   }
 
-  Future<String> getUsername() {
-    return controladorDomini.getUsername(_user!.uid);
+  Future<String> getUsername(String uid) {
+    return controladorDomini.getUsername(uid);
   }
 }
