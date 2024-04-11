@@ -6,10 +6,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
 class ControladorDomini {
-  final String ip = "10.0.2.2";
+  final String ip = "192.168.181.171";
 
   Future<List<Actividad>> getActivitiesAgenda() async {
-    final respuesta = await http.get(Uri.parse('http://${ip}:8080/read/all'));
+    final respuesta =
+        await http.get(Uri.parse('http://${ip}:8080/activitats/read/all'));
 
     if (respuesta.statusCode == 200) {
       return _convert_database_to_list(respuesta);
@@ -20,7 +21,7 @@ class ControladorDomini {
 
   Future<List<Actividad>> getUserActivities(String userID) async {
     final respuesta = await http.get(
-      Uri.parse('http://${ip}:8080/user/activitats/$userID'),
+      Uri.parse('http://${ip}:8080/users/$userID/activitats'),
     );
 
     if (respuesta.statusCode == 200) {
@@ -32,7 +33,7 @@ class ControladorDomini {
 
   Future<List<Actividad>> searchMyActivities(String userID, String name) async {
     final respuesta = await http.get(
-      Uri.parse('http://${ip}:8080/user/activitats/$userID/search/$name'),
+      Uri.parse('http://${ip}:8080/users/activitats/$userID/search/$name'),
     );
 
     if (respuesta.statusCode == 200) {
@@ -126,7 +127,7 @@ class ControladorDomini {
 
   Future<bool> accountExists(User? user) async {
     final respuesta = await http
-        .get(Uri.parse('http://${ip}:8080/user/exists?uid=${user?.uid}'));
+        .get(Uri.parse('http://${ip}:8080/users/exists?uid=${user?.uid}'));
 
     if (respuesta.statusCode == 200) {
       print(respuesta);
@@ -183,7 +184,7 @@ class ControladorDomini {
       };
 
       final respuesta = await http.post(
-        Uri.parse('http://${ip}:8080/activitats/signout'),
+        Uri.parse('http://${ip}:8080/users/activitats/signout'),
         body: jsonEncode(requestData),
         headers: {'Content-Type': 'application/json'},
       );
@@ -200,7 +201,7 @@ class ControladorDomini {
 
   Future<bool> isUserInActivity(String? uid, String code) async {
     final respuesta = await http.get(Uri.parse(
-        'http://${ip}:8080/activitats/isuserin?uid=${uid}&activityId=${code}'));
+        'http://${ip}:8080/users/activitats/isuserin?uid=${uid}&activityId=${code}'));
 
     if (respuesta.statusCode == 200) {
       return (respuesta.body == "yes");
@@ -217,7 +218,7 @@ class ControladorDomini {
       };
 
       final respuesta = await http.post(
-        Uri.parse('http://${ip}:8080/activitats/signup'),
+        Uri.parse('http://${ip}:8080/users/activitats/signup'),
         body: jsonEncode(requestData),
         headers: {'Content-Type': 'application/json'},
       );
@@ -234,7 +235,7 @@ class ControladorDomini {
 
   Future<bool> usernameUnique(String username) async {
     final respuesta = await http.get(Uri.parse(
-        'http://${ip}:8080/user/uniqueUsername?username=${username}'));
+        'http://${ip}:8080/users/uniqueUsername?username=${username}'));
 
     if (respuesta.statusCode == 200) {
       print(respuesta);

@@ -1,4 +1,5 @@
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:flutter/material.dart';
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
@@ -17,6 +18,7 @@ class SettingsPerfil extends StatefulWidget {
 class _SettingsPerfil extends State<SettingsPerfil> {
   //Usuari de Firebase
   User? _user;
+  int _selectedIndex = 3;
 
   //Instancia de autentificacio de Firebase
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -29,6 +31,29 @@ class _SettingsPerfil extends State<SettingsPerfil> {
     _controladorPresentacion = controladorPresentacion;
   }
 
+    void _onTabChange(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    
+    switch (index) {
+      case 0:
+        _controladorPresentacion.mostrarMapa(context);
+        break;
+      case 1:
+          _controladorPresentacion.mostrarActividadesUser(context);
+        break;
+      case 2:
+         _controladorPresentacion.mostrarXats(context);
+        break;
+      case 3:
+          _controladorPresentacion.mostrarPerfil(context);
+        break;
+      default:
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,6 +64,10 @@ class _SettingsPerfil extends State<SettingsPerfil> {
           'Seetings',
           style: TextStyle(color: Colors.white),
         ),
+      ),      
+      bottomNavigationBar: CustomBottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTabChange: _onTabChange,
       ),
       //opcions de configuracio
       body: Column (

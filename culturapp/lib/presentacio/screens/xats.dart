@@ -1,19 +1,27 @@
 //import "package:culturapp/presentacio/routes/routes.dart";
+import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/screens/afegir_amics.dart";
 import "package:culturapp/presentacio/screens/amics.dart";
+import "package:culturapp/widgetsUtils/bnav_bar.dart";
 import "package:flutter/material.dart";
 import "package:google_nav_bar/google_nav_bar.dart";
 
 class Xats extends StatefulWidget {
-  const Xats({super.key});
-
+  final ControladorPresentacion controladorPresentacion;
+  const Xats({super.key, required this.controladorPresentacion});
   @override
-  State<Xats> createState() => _Xats();
+  State<Xats> createState() => _Xats(controladorPresentacion);
 }
 
 class _Xats extends State<Xats> {
+  late ControladorPresentacion _controladorPresentacion;
+  int _selectedIndex = 2; 
   //List<Actividad> activitats = null; quan tinguem de base de dades fer-ho bé
   Widget currentContent = Amics();
+  
+  _Xats(ControladorPresentacion controladorPresentacion) {
+    _controladorPresentacion = controladorPresentacion;
+  }
 
   void changeContent(Widget newContent) {
     setState(() {
@@ -21,19 +29,23 @@ class _Xats extends State<Xats> {
     });
   }
 
-  void _onTabChange(int index) {
+    void _onTabChange(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    
     switch (index) {
       case 0:
-        Navigator.pushNamed(context, '/');
+        _controladorPresentacion.mostrarMapa(context);
         break;
       case 1:
-        //Navigator.pushNamed(context, Routes.misActividades);
+          _controladorPresentacion.mostrarActividadesUser(context);
         break;
       case 2:
-        //Navigator.pushNamed(context, Routes.xats);
+         _controladorPresentacion.mostrarXats(context);
         break;
       case 3:
-        //Navigator.pushNamed(context, Routes.perfil);
+          _controladorPresentacion.mostrarPerfil(context);
         break;
       default:
         break;
@@ -72,6 +84,10 @@ class _Xats extends State<Xats> {
           'Xats',
           style: TextStyle(color: Colors.white),
         ),
+      ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTabChange: _onTabChange,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),

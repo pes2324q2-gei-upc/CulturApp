@@ -5,7 +5,9 @@ import 'package:culturapp/data/firebase_service.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/lista_actividades.dart';
+import 'package:culturapp/presentacio/widgets/carousel.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
+import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -26,10 +28,22 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   late ControladorPresentacion _controladorPresentacion;
-
+  int _selectedIndex = 0;
   late List<Actividad> activitats;
   late List<String> recomms;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late List<String> categoriesFiltres = [];
+
+  void clickCarouselCat(String cat) {
+    setState(() {
+      if (categoriesFiltres.contains(cat)) {
+        categoriesFiltres.remove(cat);
+      } else {
+        categoriesFiltres.add(cat);
+      }
+    });
+  }
+
 
   _MapPageState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
@@ -107,7 +121,10 @@ class _MapPageState extends State<MapPage> {
       if (calculateDistance(center,
               LatLng(actividad.latitud ?? 0.0, actividad.longitud ?? 0.0)) <=
           radius) {
-        actividadesaux.add(actividad);
+            categoriesFiltres.length;
+          if(categoriesFiltres.isEmpty || actividad.categoria.any((element) => categoriesFiltres.contains(element))) {
+           actividadesaux.add(actividad);
+          }
       }
     }
     return actividadesaux;
@@ -614,11 +631,37 @@ class _MapPageState extends State<MapPage> {
     activitat = llista.first;
     moveMapToSelectedActivity();
   }
-
+  
+  void _onTabChange(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  
+    switch (index) {
+      case 0:
+        _controladorPresentacion.mostrarMapa(context);
+        break;
+      case 1:
+          _controladorPresentacion.mostrarActividadesUser(context);
+        break;
+      case 2:
+         _controladorPresentacion.mostrarXats(context);
+        break;
+      case 3:
+          _controladorPresentacion.mostrarPerfil(context);
+        break;
+      default:
+        break;
+    }
+  }
   //Se crea la ''pantalla'' para el mapa - falta añadir dock inferior y barra de busqueda
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: CustomBottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTabChange: _onTabChange,
+      ),
       body: Stack(
         fit: StackFit.expand, // Ajusta esta línea
         children: [
@@ -655,6 +698,12 @@ class _MapPageState extends State<MapPage> {
                     }),
               ),
             ),
+          ),
+          Positioned(
+            top: 100.0, // Adjust this value as needed
+            left: 25.0,
+            right: 25.0,
+            child: MyCarousel(clickCarouselCat)
           ),
           Positioned.fill(
             child: DraggableScrollableSheet(
