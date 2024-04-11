@@ -250,4 +250,8 @@ class ControladorPresentacion {
   Future<bool> usernameUnique(String username) {
     return controladorDomini.usernameUnique(username);
   }
+
+  Future<String> getUsername() {
+    return controladorDomini.getUsername(_user!.uid);
+  }
 }

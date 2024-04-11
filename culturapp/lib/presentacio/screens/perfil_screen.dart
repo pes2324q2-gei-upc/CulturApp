@@ -81,11 +81,11 @@ class _PerfilPageState extends State<PerfilPage> {
         currentIndex: _selectedIndex,
         onTabChange: _onTabChange,
     ),
-    body: const Stack(
-        children: [
-          UserInfoWidget(), // Calling the UserInfoWidget
-        ],
-      ),
+    body: Stack(
+      children: [
+        UserInfoWidget(controladorPresentacion: _controladorPresentacion) 
+      ],
+    ),
     //container amb les diferents pantalles
     );
   }

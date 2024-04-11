@@ -1,16 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:culturapp/presentacio/controlador_presentacio.dart';
 
 class UserInfoWidget extends StatefulWidget {
-  const UserInfoWidget({super.key});
+  final ControladorPresentacion controladorPresentacion;
+
+  const UserInfoWidget({Key? key, required this.controladorPresentacion}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _UserInfoWidgetState createState() => _UserInfoWidgetState();
+  _UserInfoWidgetState createState() => _UserInfoWidgetState(this.controladorPresentacion);
 }
 
 class _UserInfoWidgetState extends State<UserInfoWidget> {
   String _selectedText = 'Historico actividades';
   int _selectedIndex = 0;
+
+  late ControladorPresentacion _controladorPresentacion;
+  late Future<String?> _usernameFuture;
+  
+  _UserInfoWidgetState(ControladorPresentacion controladorPresentacion) {
+    _controladorPresentacion = controladorPresentacion;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _usernameFuture = widget.controladorPresentacion.getUsername();
+  }
 
   void _onTabChange(int index) {
     setState(() {
@@ -31,9 +47,27 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder<String?>(
+      future: _usernameFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Muestra un indicador de carga mientras se obtiene el nombre de usuario
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          // Muestra un mensaje de error si falla la obtención del nombre de usuario
+          return Text('Error al obtener el nombre de usuario');
+        } else {
+          // Muestra el nombre de usuario obtenido
+          final username = snapshot.data ?? '';
+          return _buildUserInfo(username);
+        }
+      },
+    );
+  }
+
+  Widget _buildUserInfo(String username) {
     //faltaria adaptar el padding en % per a cualsevol dispositiu
     //columna para la parte del username, xp i imagen perfil
     return Column(
@@ -51,14 +85,14 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                 height: 100, 
               ),
               const SizedBox(width: 10),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.only(top: 15),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     //username
                     Text(
-                      'Username',
+                      username,
                       style: TextStyle(fontSize: 20),
                     ),
                     SizedBox(height: 5),

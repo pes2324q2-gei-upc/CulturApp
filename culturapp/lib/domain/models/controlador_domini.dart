@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
 class ControladorDomini {
-  final String ip = "192.168.181.171";
+  final String ip = "192.168.1.38";
 
   Future<List<Actividad>> getActivitiesAgenda() async {
     final respuesta =
@@ -240,6 +240,17 @@ class ControladorDomini {
     if (respuesta.statusCode == 200) {
       print(respuesta);
       return (respuesta.body == "unique");
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
+
+  Future<String> getUsername(String uid) async {
+    final respuesta = await http.get(Uri.parse(
+        'http://${ip}:8080/users/username?uid=${uid}'));
+
+    if (respuesta.statusCode == 200) {
+      return respuesta.body;
     } else {
       throw Exception('Fallo la obtención de datos');
     }
