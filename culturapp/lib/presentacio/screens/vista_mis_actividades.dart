@@ -127,20 +127,33 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
 
   void filterActivitiesByCategory(String category) async {
     clearSearchBar();
-    setState(() {
-      if (selectedData != '') {
-        display_list = activitats.where((activity) {
-          DateTime activityDate = DateTime.parse(activity.dataInici);
-          DateTime selectedDate = DateTime.parse(selectedData);
 
-          return (activity.categoria.contains(category)) &&
-              (activityDate.isAfter(selectedDate) ||
-                  activityDate.isAtSameMomentAs(selectedDate));
-        }).toList();
+    setState(() {
+      if (category == '-totes-') {
+        if (selectedData != '') {
+          display_list = activitats.where((activity) {
+            DateTime activityDate = DateTime.parse(activity.dataInici);
+            DateTime selectedDate = DateTime.parse(selectedData);
+
+            return (activityDate.isAfter(selectedDate) ||
+                activityDate.isAtSameMomentAs(selectedDate));
+          }).toList();
+        }
       } else {
-        display_list = activitats
-            .where((activity) => activity.categoria.contains(category))
-            .toList();
+        if (selectedData != '') {
+          display_list = activitats.where((activity) {
+            DateTime activityDate = DateTime.parse(activity.dataInici);
+            DateTime selectedDate = DateTime.parse(selectedData);
+
+            return (activity.categoria.contains(category)) &&
+                (activityDate.isAfter(selectedDate) ||
+                    activityDate.isAtSameMomentAs(selectedDate));
+          }).toList();
+        } else {
+          display_list = activitats
+              .where((activity) => activity.categoria.contains(category))
+              .toList();
+        }
       }
     });
   }
