@@ -1,24 +1,18 @@
+import "package:culturapp/domain/models/grup.dart";
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
 
-class Grups extends StatefulWidget {
+class GrupsScreen extends StatefulWidget {
   @override
-  State<Grups> createState() => _GrupsState();
+  State<GrupsScreen> createState() => _GrupsScreenState();
 }
 
-class _GrupsState extends State<Grups> {
-  static List<String> llista_grups = [
-    'grup1',
-    'concerts_grups',
-    'maira',
-    'marta',
-    'laia',
-    'felip',
-    'marc'
-  ]; //eventualment substituir-ho per crida a backend o el q sigui
+class _GrupsScreenState extends State<GrupsScreen> {
+  static List<Grup> llista_grups =
+      allGroups; //eventualment substituir-ho per crida a backend o el q sigui
 
-  List<String> display_list = List.from(llista_grups);
+  List<Grup> display_list = allGroups; //llista_grups
 
   String value = '';
 
@@ -28,7 +22,7 @@ class _GrupsState extends State<Grups> {
       () {
         display_list = llista_grups
             .where((element) =>
-                element.toLowerCase().contains(value.toLowerCase()))
+                element.titleGroup.toLowerCase().contains(value.toLowerCase()))
             .toList();
       },
     );
@@ -45,15 +39,7 @@ class _GrupsState extends State<Grups> {
         height: 420.0,
         child: ListView.builder(
           itemCount: display_list.length,
-          itemBuilder: (context, index) => ListTile(
-              //una vegada tingui mes info del model
-              //dels perfils lo seu seria canviar-ho
-              contentPadding: EdgeInsets.all(8.0),
-              title: Text(display_list[index],
-                  style: const TextStyle(
-                    color: Colors.orange,
-                    fontWeight: FontWeight.bold,
-                  ))),
+          itemBuilder: (context, index) => _buildGrupItem(context, index),
         ),
       )
     ]);
@@ -84,5 +70,28 @@ class _GrupsState extends State<Grups> {
             suffixIconColor: Colors.white,
           ),
         ));
+  }
+
+  Widget _buildGrupItem(context, index) {
+    return ListTile(
+      //una vegada tingui mes info del model
+      //dels perfils lo seu seria canviar-ho
+      contentPadding: EdgeInsets.all(8.0),
+      leading: Image.network(
+        display_list[index].imageGroup,
+        fit: BoxFit.cover,
+        width: 50,
+        height: 50,
+      ),
+      title: Text(display_list[index].titleGroup,
+          style: const TextStyle(
+            color: Colors.orange,
+            fontWeight: FontWeight.bold,
+          )),
+      subtitle: Text(display_list[index].lastMessage),
+      trailing: Text(
+        display_list[index].timeLastMessage,
+      ),
+    );
   }
 }

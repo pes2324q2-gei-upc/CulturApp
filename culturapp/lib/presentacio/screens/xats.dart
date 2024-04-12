@@ -1,7 +1,7 @@
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/screens/afegir_amics.dart";
 import "package:culturapp/presentacio/screens/amics.dart";
-import "package:culturapp/presentacio/screens/grups.dart";
+import "package:culturapp/presentacio/screens/grups_screen.dart";
 import "package:culturapp/widgetsUtils/bnav_bar.dart";
 import "package:flutter/material.dart";
 import "package:google_nav_bar/google_nav_bar.dart";
@@ -126,7 +126,7 @@ class _Xats extends State<Xats> {
                           ),
                           onPressed: () {
                             _changeButtonColor(2);
-                            changeContent(Grups());
+                            changeContent(GrupsScreen());
                           },
                           child: Text('Grups'),
                         )),
