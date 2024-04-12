@@ -1,22 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
-import 'package:culturapp/domain/models/filtre_categoria.dart';
-import 'package:culturapp/domain/models/filtre_data.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/widgets/widgetsUtils/image_category.dart';
 import 'package:culturapp/presentacio/widgets/widgetsUtils/text_with_link.dart';
 import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 class ListaMisActividades extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
 
   ListaMisActividades({
-    super.key,
+    Key? key,
     required this.controladorPresentacion,
-  });
+  }) : super(key: key);
 
   @override
   State<ListaMisActividades> createState() => _ListaMisActividadesState(
@@ -25,8 +22,8 @@ class ListaMisActividades extends StatefulWidget {
 }
 
 class _ListaMisActividadesState extends State<ListaMisActividades> {
-  late List<Actividad> activitats;
-  late List<Actividad> display_list;
+  late List<Actividad> activitats = [];
+  late List<Actividad> display_list = [];
   late ControladorPresentacion _controladorPresentacion;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late String squery;
@@ -37,6 +34,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   TextEditingController _searchController = TextEditingController();
 
   static const List<String> llistaCategories = <String>[
+    '-totes-',
     'concerts',
     'infantil',
     'teatre',
@@ -55,16 +53,28 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
 
   _ListaMisActividadesState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
-    activitats = controladorPresentacion.getActivitatsUser();
     squery = '';
-    _selectedCategory = 'activitats-virtuals';
-    display_list = activitats;
+    _selectedCategory = '-totes-';
     selectedData = '';
   }
 
   @override
   void initState() {
     super.initState();
+    fetchActivities().then((value) {
+      setState(() {
+        activitats = value;
+        display_list = activitats;
+      });
+    }).catchError((error) {
+      print("Error fetching activities: $error");
+    });
+  }
+
+  Future<List<Actividad>> fetchActivities() async {
+    var actividadesaux = <Actividad>[];
+    actividadesaux = await _controladorPresentacion.getMisActivitats();
+    return actividadesaux;
   }
 
   String getCategoria(Actividad actividad) {
@@ -84,29 +94,23 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   }
 
   void searchMyActivities(String squery) async {
-    //do this
-    //Festa Major de Sant Vicenç
     try {
       display_list = await _controladorPresentacion.searchMyActivitats(squery);
     } on Exception catch (_, ex) {
       print(ex);
     }
-
     setState(() {});
   }
 
   void canviFiltreData(String date) {
-    // Parse the input date string into a DateTime object
     DateTime selectedDate = DateTime.parse(date);
     selectedData = date;
     clearSearchBar();
-
-    // Update the state based on the filtered data
     setState(() {
       display_list = activitats.where((activity) {
         if (activity.dataInici != 'No disponible') {
           DateTime activityDate = DateTime.parse(activity.dataInici);
-          if (_selectedCategory != '') {
+          if (_selectedCategory != '-totes-') {
             return (activityDate.isAfter(selectedDate) ||
                     activityDate.isAtSameMomentAs(selectedDate)) &&
                 activity.categoria.contains(_selectedCategory);
@@ -125,19 +129,31 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     clearSearchBar();
 
     setState(() {
-      if (selectedData != '') {
-        display_list = activitats.where((activity) {
-          DateTime activityDate = DateTime.parse(activity.dataInici);
-          DateTime selectedDate = DateTime.parse(selectedData);
+      if (category == '-totes-') {
+        if (selectedData != '') {
+          display_list = activitats.where((activity) {
+            DateTime activityDate = DateTime.parse(activity.dataInici);
+            DateTime selectedDate = DateTime.parse(selectedData);
 
-          return (activity.categoria.contains(category)) &&
-              (activityDate.isAfter(selectedDate) ||
-                  activityDate.isAtSameMomentAs(selectedDate));
-        }).toList();
+            return (activityDate.isAfter(selectedDate) ||
+                activityDate.isAtSameMomentAs(selectedDate));
+          }).toList();
+        }
       } else {
-        display_list = activitats
-            .where((activity) => activity.categoria.contains(category))
-            .toList();
+        if (selectedData != '') {
+          display_list = activitats.where((activity) {
+            DateTime activityDate = DateTime.parse(activity.dataInici);
+            DateTime selectedDate = DateTime.parse(selectedData);
+
+            return (activity.categoria.contains(category)) &&
+                (activityDate.isAfter(selectedDate) ||
+                    activityDate.isAtSameMomentAs(selectedDate));
+          }).toList();
+        } else {
+          display_list = activitats
+              .where((activity) => activity.categoria.contains(category))
+              .toList();
+        }
       }
     });
   }
@@ -168,142 +184,33 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.orange,
-          title: const Text("Mis actividades"),
-        ),
-        bottomNavigationBar: CustomBottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTabChange: _onTabChange,
-        ),
-        body: Column(children: [
+      appBar: AppBar(
+        backgroundColor: Colors.orange,
+        title: const Text("Mis actividades"),
+      ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTabChange: _onTabChange,
+      ),
+      body: Column(
+        children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                SizedBox(
-                  height: 40.0,
-                  child: TextField(
-                    //cercador
-                    controller: _searchController,
-                    onChanged: (text) => changeSquery(text),
-                    cursorColor: Colors.orange,
-                    style: const TextStyle(
-                      color: Colors.orange,
-                    ),
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: const Color.fromRGBO(255, 229, 204, 0.815),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: const BorderSide(
-                            color: Colors.orange), // Orange border on focus
-                      ),
-                      hintText: "Search...",
-                      hintStyle: const TextStyle(
-                        color: Colors.orange,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          //FUNCIÓN
-                          searchMyActivities(squery);
-                        },
-                        icon: Icon(Icons.search),
-                      ),
-                      suffixIconColor: Colors.orange,
-                    ),
-                  ),
-                ),
+                _buildCercador(),
                 const SizedBox(
                   height: 10.0,
                 ),
-                Row(children: [
-                  SizedBox(
-                    //filtre categoria
-                    height: 30.0,
-                    width: 200.0,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                          width: 200,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            color: Color.fromRGBO(255, 229, 204, 0.815),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Center(
-                            child: DropdownButton<String>(
-                              //dropdown en si
-                              value: _selectedCategory,
-                              items: llistaCategories.map((String item) {
-                                return DropdownMenuItem(
-                                    value: item, child: Text(item));
-                              }).toList(),
-                              onChanged: (String? newValue) async {
-                                setState(() {
-                                  _selectedCategory = newValue;
-                                  filterActivitiesByCategory(newValue!);
-                                });
-                              },
-                              borderRadius: BorderRadius.circular(10),
-
-                              dropdownColor:
-                                  Color.fromRGBO(255, 229, 204, 0.815),
-
-                              icon: const Icon(Icons.arrow_drop_down,
-                                  color: Colors.orange),
-                              iconSize: 20,
-                              style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.orange),
-                              underline: Container(),
-                            ),
-                          )),
+                Row(
+                  children: [
+                    _buildFiltreCategoria(),
+                    const SizedBox(
+                      width: 10.0,
                     ),
-                  ),
-                  const SizedBox(
-                    width: 10.0,
-                  ),
-                  SizedBox(
-                      //filtre data
-                      height: 30.0,
-                      width: 150.0,
-                      child: Align(
-                          alignment: Alignment.center,
-                          child: Container(
-                              width: 500.0,
-                              child: TextField(
-                                  style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.orange,
-                                      fontWeight: FontWeight.bold),
-                                  controller: _dateController,
-                                  decoration: const InputDecoration(
-                                      labelText: 'Data',
-                                      labelStyle: TextStyle(
-                                          color: Colors.orange,
-                                          fontWeight: FontWeight.bold),
-                                      filled: true,
-                                      fillColor:
-                                          Color.fromRGBO(255, 229, 204, 0.815),
-                                      prefixIcon: Icon(Icons.calendar_today,
-                                          size: 18, color: Colors.orange),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide.none),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Colors.orange))),
-                                  readOnly: true,
-                                  onTap: () {
-                                    _selectDate();
-                                  }))))
-                ]),
+                    _buildFiltreData(),
+                  ],
+                ),
               ],
             ),
           ),
@@ -328,7 +235,6 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                       ];
                       _controladorPresentacion.mostrarVerActividad(
                           context, act, activitat.urlEntrades);
-                      //Actualizar BD + 1 Visualitzacio
                       DocumentReference docRef = _firestore
                           .collection('actividades')
                           .doc(activitat.code);
@@ -347,41 +253,52 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                       });
                     },
                     child: Container(
-                      padding: const EdgeInsets.all(8.0), // Adjust as needed
+                      padding: const EdgeInsets.all(8.0),
                       child: Card(
                         color: Colors.white,
                         child: Padding(
                           padding: const EdgeInsets.only(
-                              top: 16.0, bottom: 32.0, right: 16.0, left: 16.0),
+                            top: 16.0,
+                            bottom: 32.0,
+                            right: 16.0,
+                            left: 16.0,
+                          ),
                           child: Column(
                             children: [
-                              Row(children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(bottom: 20),
-                                    child: Text(
-                                      activitat.name,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 20),
+                                      child: Text(
+                                        activitat.name,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.orange),
+                                          color: Colors.orange,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                )
-                              ]),
+                                ],
+                              ),
                               Row(
                                 children: [
                                   Expanded(
                                     flex: 2,
-                                    child: Column(children: [
-                                      SizedBox(
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
                                           child: Image.network(
-                                        activitat.imageUrl,
-                                        fit: BoxFit.cover,
-                                      ))
-                                    ]),
+                                            activitat.imageUrl,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   Expanded(
                                     flex: 3,
@@ -395,8 +312,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                         children: [
                                           Row(
                                             crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .start, // Add this line
+                                                CrossAxisAlignment.start,
                                             children: [
                                               const Icon(Icons.location_on),
                                               Expanded(
@@ -412,61 +328,69 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                           Row(
                                             children: [
                                               const Icon(Icons.calendar_month),
-                                              Text("  Inicio: ${() {
-                                                try {
-                                                  return DateFormat(
-                                                          'yyyy-MM-dd')
-                                                      .format(DateTime.parse(
-                                                          activitat.dataInici));
-                                                } catch (e) {
-                                                  return 'Unknown';
-                                                }
-                                              }()}")
+                                              Text(
+                                                "  Inicio: ${() {
+                                                  try {
+                                                    return DateFormat(
+                                                            'yyyy-MM-dd')
+                                                        .format(DateTime.parse(
+                                                            activitat
+                                                                .dataInici));
+                                                  } catch (e) {
+                                                    return 'Unknown';
+                                                  }
+                                                }()}",
+                                              ),
                                             ],
                                           ),
                                           Row(
                                             children: [
                                               const Icon(Icons.calendar_month),
-                                              Text("  Fin: ${() {
-                                                try {
-                                                  return DateFormat(
-                                                          'yyyy-MM-dd')
-                                                      .format(DateTime.parse(
-                                                          activitat.dataFi));
-                                                } catch (e) {
-                                                  return 'Unknown';
-                                                }
-                                              }()}")
+                                              Text(
+                                                "  Fin: ${() {
+                                                  try {
+                                                    return DateFormat(
+                                                            'yyyy-MM-dd')
+                                                        .format(DateTime.parse(
+                                                            activitat.dataFi));
+                                                  } catch (e) {
+                                                    return 'Unknown';
+                                                  }
+                                                }()}",
+                                              ),
                                             ],
                                           ),
                                           Row(
                                             children: [
                                               const Icon(Icons.local_atm),
                                               TextWithLink(
-                                                  text: "  Compra aqui",
-                                                  url: activitat.urlEntrades
-                                                      .toString()),
+                                                text: "  Compra aqui",
+                                                url: activitat.urlEntrades
+                                                    .toString(),
+                                              ),
                                             ],
-                                          )
+                                          ),
                                         ],
                                       ),
                                     ),
                                   ),
                                   Expanded(
-                                      flex: 1,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Container(
-                                              padding: const EdgeInsets.only(
-                                                  left: 5),
-                                              width: 50,
-                                              child: ImageCategory(
-                                                  categoria:
-                                                      getCategoria(activitat)))
-                                        ],
-                                      ))
+                                    flex: 1,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Container(
+                                          padding:
+                                              const EdgeInsets.only(left: 5),
+                                          width: 50,
+                                          child: ImageCategory(
+                                            categoria: getCategoria(activitat),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                             ],
@@ -480,16 +404,154 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                 }
               },
             ),
-          )
-        ]));
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCercador() {
+    return SizedBox(
+      height: 40.0,
+      child: TextField(
+        controller: _searchController,
+        onChanged: (text) => changeSquery(text),
+        cursorColor: Colors.orange,
+        style: const TextStyle(
+          color: Colors.orange,
+        ),
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: const Color.fromRGBO(255, 229, 204, 0.815),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: const BorderSide(
+              color: Colors.orange,
+            ),
+          ),
+          hintText: "Search...",
+          hintStyle: const TextStyle(
+            color: Colors.orange,
+            fontWeight: FontWeight.bold,
+          ),
+          suffixIcon: IconButton(
+            onPressed: () {
+              searchMyActivities(squery);
+            },
+            icon: Icon(Icons.search),
+          ),
+          suffixIconColor: Colors.orange,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFiltreCategoria() {
+    return SizedBox(
+      height: 30.0,
+      width: 200.0,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Container(
+          width: 200,
+          height: 30,
+          decoration: BoxDecoration(
+            color: Color.fromRGBO(255, 229, 204, 0.815),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Center(
+            child: DropdownButton<String>(
+              value: _selectedCategory,
+              items: llistaCategories.map((String item) {
+                return DropdownMenuItem(
+                  value: item,
+                  child: Text(item),
+                );
+              }).toList(),
+              onChanged: (String? newValue) async {
+                setState(() {
+                  _selectedCategory = newValue;
+                  filterActivitiesByCategory(newValue!);
+                });
+              },
+              borderRadius: BorderRadius.circular(10),
+              dropdownColor: Color.fromRGBO(255, 229, 204, 0.815),
+              icon: const Icon(
+                Icons.arrow_drop_down,
+                color: Colors.orange,
+              ),
+              iconSize: 20,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.orange,
+              ),
+              underline: Container(),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFiltreData() {
+    return SizedBox(
+      height: 30.0,
+      width: 150.0,
+      child: Align(
+        alignment: Alignment.center,
+        child: Container(
+          width: 500.0,
+          child: TextField(
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.orange,
+              fontWeight: FontWeight.bold,
+            ),
+            controller: _dateController,
+            decoration: const InputDecoration(
+              labelText: 'Data',
+              labelStyle: TextStyle(
+                color: Colors.orange,
+                fontWeight: FontWeight.bold,
+              ),
+              filled: true,
+              fillColor: Color.fromRGBO(255, 229, 204, 0.815),
+              prefixIcon: Icon(
+                Icons.calendar_today,
+                size: 18,
+                color: Colors.orange,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.orange,
+                ),
+              ),
+            ),
+            readOnly: true,
+            onTap: () {
+              _selectDate();
+            },
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _selectDate() async {
     DateTime? _picked = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2000),
-        lastDate: DateTime(2100));
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
 
     if (_picked != null) {
       String formattedDate = DateFormat('yyyy-MM-dd').format(_picked);

@@ -10,7 +10,7 @@ class ControladorDomini {
 
   Future<List<Actividad>> getActivitiesAgenda() async {
     final respuesta =
-        await http.get(Uri.parse('http://${ip}:8080/activitats/read/all'));
+        await http.get(Uri.parse('https://culturapp-back.onrender.com/activitats/read/all'));
 
     if (respuesta.statusCode == 200) {
       return _convert_database_to_list(respuesta);
@@ -21,7 +21,7 @@ class ControladorDomini {
 
   Future<List<Actividad>> getUserActivities(String userID) async {
     final respuesta = await http.get(
-      Uri.parse('http://${ip}:8080/users/$userID/activitats'),
+      Uri.parse('https://culturapp-back.onrender.com/users/$userID/activitats'),
     );
 
     if (respuesta.statusCode == 200) {
@@ -33,7 +33,7 @@ class ControladorDomini {
 
   Future<List<Actividad>> searchMyActivities(String userID, String name) async {
     final respuesta = await http.get(
-      Uri.parse('http://${ip}:8080/users/activitats/$userID/search/$name'),
+      Uri.parse('https://culturapp-back.onrender.com/users/activitats/$userID/search/$name'),
     );
 
     if (respuesta.statusCode == 200) {
@@ -47,7 +47,7 @@ class ControladorDomini {
 
   Future<List<Actividad>> searchActivitat(String squery) async {
     final respuesta =
-        await http.get(Uri.parse('http://${ip}:8080/activitats/name/$squery'));
+        await http.get(Uri.parse('https://culturapp-back.onrender.com/activitats/name/$squery'));
 
     if (respuesta.statusCode == 200) {
       //final List<dynamic> responseData = jsonDecode(respuesta.body);
@@ -127,7 +127,7 @@ class ControladorDomini {
 
   Future<bool> accountExists(User? user) async {
     final respuesta = await http
-        .get(Uri.parse('http://${ip}:8080/users/exists?uid=${user?.uid}'));
+        .get(Uri.parse('https://culturapp-back.onrender.com/users/exists?uid=${user?.uid}'));
 
     if (respuesta.statusCode == 200) {
       print(respuesta);
@@ -139,7 +139,7 @@ class ControladorDomini {
 
   Future<List<String>> obteCatsFavs(User? user) async {
     final respuesta = await http
-        .get(Uri.parse('http://${ip}:8080/users/${user?.uid}/favcategories'));
+        .get(Uri.parse('https://culturapp-back.onrender.com/users/${user?.uid}/favcategories'));
     List<String> categorias = [];
 
     if (respuesta.statusCode == 200) {
@@ -161,7 +161,7 @@ class ControladorDomini {
       };
 
       final respuesta = await http.post(
-        Uri.parse('http://${ip}:8080/users/create'),
+        Uri.parse('https://culturapp-back.onrender.com/users/create'),
         body: jsonEncode(userdata),
         headers: {'Content-Type': 'application/json'},
       );
@@ -184,7 +184,7 @@ class ControladorDomini {
       };
 
       final respuesta = await http.post(
-        Uri.parse('http://${ip}:8080/users/activitats/signout'),
+        Uri.parse('https://culturapp-back.onrender.com/users/activitats/signout'),
         body: jsonEncode(requestData),
         headers: {'Content-Type': 'application/json'},
       );
@@ -197,11 +197,12 @@ class ControladorDomini {
     } catch (error) {
       print('Error de red: $error');
     }
+
   }
 
   Future<bool> isUserInActivity(String? uid, String code) async {
     final respuesta = await http.get(Uri.parse(
-        'http://${ip}:8080/users/activitats/isuserin?uid=${uid}&activityId=${code}'));
+        'https://culturapp-back.onrender.com/users/activitats/isuserin?uid=${uid}&activityId=${code}'));
 
     if (respuesta.statusCode == 200) {
       return (respuesta.body == "yes");
@@ -218,7 +219,7 @@ class ControladorDomini {
       };
 
       final respuesta = await http.post(
-        Uri.parse('http://${ip}:8080/users/activitats/signup'),
+        Uri.parse('https://culturapp-back.onrender.com/users/activitats/signup'),
         body: jsonEncode(requestData),
         headers: {'Content-Type': 'application/json'},
       );
@@ -235,7 +236,7 @@ class ControladorDomini {
 
   Future<bool> usernameUnique(String username) async {
     final respuesta = await http.get(Uri.parse(
-        'http://${ip}:8080/users/uniqueUsername?username=${username}'));
+        'https://culturapp-back.onrender.com/users/uniqueUsername?username=${username}'));
 
     if (respuesta.statusCode == 200) {
       print(respuesta);
