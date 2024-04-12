@@ -148,13 +148,13 @@ class _Xats extends State<Xats> {
                         )),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20.0,
                 ),
                 Container(
-                  padding: EdgeInsets.all(20),
-                  color: Colors.grey[200],
-                  child: currentContent,
+                  child: Column(
+                    children: [currentContent],
+                  ),
                 ),
               ]),
         ),

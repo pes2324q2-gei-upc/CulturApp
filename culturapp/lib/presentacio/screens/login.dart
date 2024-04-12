@@ -60,20 +60,20 @@ class _Login extends State<Login> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("Benvingut a CulturApp",
+        const Text("Benvingut a CulturApp",
         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
-        SizedBox(height: 70),
+        const SizedBox(height: 70),
         Container(
           width: double.infinity,
           height: MediaQuery.of(context).size.height * 0.3,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage('assets/loginpicture.png'),
               fit: BoxFit.cover,
             )
           ),
         ),
-        SizedBox(height: 70),
+        const SizedBox(height: 70),
         _googleSignInButton(),
       ],
     );
@@ -89,7 +89,7 @@ class _Login extends State<Login> {
           _handleGoogleSignIn();
         },
         text: "Accedeix amb Google",
-        padding: EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10.0),
       )
     ));
   }

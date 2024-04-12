@@ -1,11 +1,13 @@
+// ignore_for_file: non_constant_identifier_names, no_leading_underscores_for_local_identifiers, use_build_context_synchronously, avoid_print
+
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
-import 'package:culturapp/presentacio/screens/lista_actividades.dart';
+import 'package:culturapp/domain/models/user.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
-import 'package:culturapp/presentacio/screens/my_activities.dart';
 import 'package:culturapp/presentacio/screens/perfil_screen.dart';
 import 'package:culturapp/presentacio/screens/recomendador_actividades.dart';
+import 'package:culturapp/presentacio/screens/recomendador_users.dart';
 import 'package:culturapp/presentacio/screens/settings_perfil.dart';
 import 'package:culturapp/presentacio/screens/signup.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
@@ -23,10 +25,11 @@ class ControladorPresentacion {
   late List<Actividad> activitatsUser;
   late List<String> recomms;
   late List<String> categsFav = [];
-  late final List<Widget> _pages = [];
+  late List<Usuario> usersRecom;
 
   Future<void> initialice() async {
     activitats = await controladorDomini.getActivitiesAgenda();
+    usersRecom = await controladorDomini.getUsers();
   }
 
   Future<void> initialice2() async {
@@ -38,16 +41,8 @@ class ControladorPresentacion {
     if (userLogged()) {
       categsFav = await controladorDomini.obteCatsFavs(_user);
       activitatsUser = await controladorDomini.getUserActivities(_user!.uid);
+      calculaUsuariosRecomendados(usersRecom, _user!.uid, categsFav);
     }
-
-    _pages.addAll([
-      MapPage(controladorPresentacion: this),
-      ListaMisActividades(
-        controladorPresentacion: this,
-      ),
-      Xats(controladorPresentacion: this,),
-      PerfilPage(controladorPresentacion: this),
-    ]);
   }
 
   bool userLogged() {
@@ -97,10 +92,6 @@ class ControladorPresentacion {
             PerfilPage(controladorPresentacion: this),
       ),
     );
-  }
-
-  Widget getPage(int index) {
-    return _pages[index];
   }
 
   Future<void> mostrarMisActividades(BuildContext context) async {
@@ -189,7 +180,6 @@ class ControladorPresentacion {
 
   Future<void> handleGoogleSignIn(BuildContext context) async {
     try {
-      print("HAndleando signin");
       GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
       final UserCredential userCredential =
           await _auth.signInWithProvider(_googleAuthProvider);
