@@ -34,6 +34,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   TextEditingController _searchController = TextEditingController();
 
   static const List<String> llistaCategories = <String>[
+    '-escollir-',
     'concerts',
     'infantil',
     'teatre',
@@ -53,7 +54,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   _ListaMisActividadesState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
     squery = '';
-    _selectedCategory = 'activitats-virtuals';
+    _selectedCategory = '-escollir-';
     selectedData = '';
   }
 
@@ -109,7 +110,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
       display_list = activitats.where((activity) {
         if (activity.dataInici != 'No disponible') {
           DateTime activityDate = DateTime.parse(activity.dataInici);
-          if (_selectedCategory != '') {
+          if (_selectedCategory != '-escollir-') {
             return (activityDate.isAfter(selectedDate) ||
                     activityDate.isAtSameMomentAs(selectedDate)) &&
                 activity.categoria.contains(_selectedCategory);
@@ -131,6 +132,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
         display_list = activitats.where((activity) {
           DateTime activityDate = DateTime.parse(activity.dataInici);
           DateTime selectedDate = DateTime.parse(selectedData);
+
           return (activity.categoria.contains(category)) &&
               (activityDate.isAfter(selectedDate) ||
                   activityDate.isAtSameMomentAs(selectedDate));
@@ -344,16 +346,21 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                       ];
                       _controladorPresentacion.mostrarVerActividad(
                           context, act, activitat.urlEntrades);
-                      DocumentReference docRef =
-                          _firestore.collection('actividades').doc(activitat.code);
+                      DocumentReference docRef = _firestore
+                          .collection('actividades')
+                          .doc(activitat.code);
                       await _firestore.runTransaction((transaction) async {
-                        DocumentSnapshot snapshot = await transaction.get(docRef);
+                        DocumentSnapshot snapshot =
+                            await transaction.get(docRef);
                         int currentValue = 0;
                         if (snapshot.data() is Map<String, dynamic>) {
-                          currentValue = (snapshot.data() as Map<String, dynamic>)['visualitzacions'] ?? 5;
+                          currentValue = (snapshot.data()
+                                  as Map<String, dynamic>)['visualitzacions'] ??
+                              5;
                         }
                         int newValue = currentValue + 1;
-                        transaction.update(docRef, {'visualitzacions': newValue});
+                        transaction
+                            .update(docRef, {'visualitzacions': newValue});
                       });
                     },
                     child: Container(
@@ -373,7 +380,8 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                 children: [
                                   Expanded(
                                     child: Padding(
-                                      padding: const EdgeInsets.only(bottom: 20),
+                                      padding:
+                                          const EdgeInsets.only(bottom: 20),
                                       child: Text(
                                         activitat.name,
                                         maxLines: 2,
@@ -422,7 +430,8 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                                 child: Text(
                                                   "  ${activitat.ubicacio}",
                                                   maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                               ),
                                             ],
@@ -433,7 +442,11 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                               Text(
                                                 "  Inicio: ${() {
                                                   try {
-                                                    return DateFormat('yyyy-MM-dd').format(DateTime.parse(activitat.dataInici));
+                                                    return DateFormat(
+                                                            'yyyy-MM-dd')
+                                                        .format(DateTime.parse(
+                                                            activitat
+                                                                .dataInici));
                                                   } catch (e) {
                                                     return 'Unknown';
                                                   }
@@ -447,7 +460,10 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                               Text(
                                                 "  Fin: ${() {
                                                   try {
-                                                    return DateFormat('yyyy-MM-dd').format(DateTime.parse(activitat.dataFi));
+                                                    return DateFormat(
+                                                            'yyyy-MM-dd')
+                                                        .format(DateTime.parse(
+                                                            activitat.dataFi));
                                                   } catch (e) {
                                                     return 'Unknown';
                                                   }
@@ -472,10 +488,12 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                   Expanded(
                                     flex: 1,
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
                                       children: [
                                         Container(
-                                          padding: const EdgeInsets.only(left: 5),
+                                          padding:
+                                              const EdgeInsets.only(left: 5),
                                           width: 50,
                                           child: ImageCategory(
                                             categoria: getCategoria(activitat),
