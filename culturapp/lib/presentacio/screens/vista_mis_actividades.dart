@@ -34,7 +34,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   TextEditingController _searchController = TextEditingController();
 
   static const List<String> llistaCategories = <String>[
-    '-escollir-',
+    '-totes-',
     'concerts',
     'infantil',
     'teatre',
@@ -54,7 +54,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   _ListaMisActividadesState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
     squery = '';
-    _selectedCategory = '-escollir-';
+    _selectedCategory = '-totes-';
     selectedData = '';
   }
 
@@ -110,7 +110,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
       display_list = activitats.where((activity) {
         if (activity.dataInici != 'No disponible') {
           DateTime activityDate = DateTime.parse(activity.dataInici);
-          if (_selectedCategory != '-escollir-') {
+          if (_selectedCategory != '-totes-') {
             return (activityDate.isAfter(selectedDate) ||
                     activityDate.isAtSameMomentAs(selectedDate)) &&
                 activity.categoria.contains(_selectedCategory);
