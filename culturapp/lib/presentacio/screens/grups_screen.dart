@@ -1,14 +1,25 @@
 import "package:culturapp/domain/models/grup.dart";
-import "package:flutter/cupertino.dart";
+import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
 
 class GrupsScreen extends StatefulWidget {
+  final ControladorPresentacion controladorPresentacion;
+
+  const GrupsScreen({Key? key, required this.controladorPresentacion})
+      : super(key: key);
+
   @override
-  State<GrupsScreen> createState() => _GrupsScreenState();
+  State<GrupsScreen> createState() =>
+      _GrupsScreenState(this.controladorPresentacion);
 }
 
 class _GrupsScreenState extends State<GrupsScreen> {
+  late ControladorPresentacion _controladorPresentacion;
+
+  _GrupsScreenState(ControladorPresentacion controladorPresentacion) {
+    _controladorPresentacion = controladorPresentacion;
+  }
+
   static List<Grup> llista_grups =
       allGroups; //eventualment substituir-ho per crida a backend o el q sigui
 
@@ -90,7 +101,9 @@ class _GrupsScreenState extends State<GrupsScreen> {
         backgroundColor: const Color.fromRGBO(240, 186, 132, 1),
         foregroundColor: Colors.white,
       ),
-      onPressed: () {},
+      onPressed: () {
+        _controladorPresentacion.mostrarCrearNouGrup(context);
+      },
       child: Text('+'),
     );
   }

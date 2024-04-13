@@ -4,6 +4,7 @@ import 'package:culturapp/presentacio/screens/lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
 import 'package:culturapp/presentacio/screens/my_activities.dart';
+import 'package:culturapp/presentacio/screens/nou_grup_screen.dart';
 import 'package:culturapp/presentacio/screens/perfil_screen.dart';
 import 'package:culturapp/presentacio/screens/recomendador_actividades.dart';
 import 'package:culturapp/presentacio/screens/settings_perfil.dart';
@@ -45,7 +46,9 @@ class ControladorPresentacion {
       ListaMisActividades(
         controladorPresentacion: this,
       ),
-      Xats(controladorPresentacion: this,),
+      Xats(
+        controladorPresentacion: this,
+      ),
       PerfilPage(controladorPresentacion: this),
     ]);
   }
@@ -65,8 +68,11 @@ class ControladorPresentacion {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            VistaVerActividad(info_actividad: info_act, uri_actividad: uri_act, controladorPresentacion: this,),
+        builder: (context) => VistaVerActividad(
+          info_actividad: info_act,
+          uri_actividad: uri_act,
+          controladorPresentacion: this,
+        ),
       ),
     );
   }
@@ -75,26 +81,27 @@ class ControladorPresentacion {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            MapPage(controladorPresentacion: this),
+        builder: (context) => MapPage(controladorPresentacion: this),
       ),
     );
   }
+
   void mostrarXats(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            Xats(controladorPresentacion: this,),
+        builder: (context) => Xats(
+          controladorPresentacion: this,
+        ),
       ),
     );
   }
-    void mostrarPerfil(BuildContext context) {
+
+  void mostrarPerfil(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            PerfilPage(controladorPresentacion: this),
+        builder: (context) => PerfilPage(controladorPresentacion: this),
       ),
     );
   }
@@ -116,11 +123,10 @@ class ControladorPresentacion {
         });
   }
 
-    Future<List<Actividad>> getMisActivitats() async {
+  Future<List<Actividad>> getMisActivitats() async {
     activitatsUser = await controladorDomini.getUserActivities(_user!.uid);
     return activitatsUser;
   }
-
 
   void mostrarActividades(BuildContext context) async {
     Navigator.push(
@@ -138,8 +144,8 @@ class ControladorPresentacion {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ListaMisActividades(
-          controladorPresentacion: this),
+        builder: (context) =>
+            ListaMisActividades(controladorPresentacion: this),
       ),
     );
   }
@@ -233,6 +239,14 @@ class ControladorPresentacion {
     mostrarPerfil(context);
   }
 
+  void mostrarCrearNouGrup(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NouGrupScreen(controladorPresentacion: this),
+      ),
+    );
+  }
 
   void mostrarSettings(BuildContext context) {
     Navigator.push(
