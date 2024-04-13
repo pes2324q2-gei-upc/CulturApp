@@ -84,18 +84,14 @@ class _GrupsScreenState extends State<GrupsScreen> {
   }
 
   Widget _buildNewGroupButton() {
-    return Container(
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        color: const Color.fromRGBO(240, 186, 132, 1),
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        shape: const CircleBorder(),
+        backgroundColor: const Color.fromRGBO(240, 186, 132, 1),
+        foregroundColor: Colors.white,
       ),
-      child: TextButton(
-        style: ButtonStyle(
-          foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-        ),
-        onPressed: () {},
-        child: Text('+'),
-      ),
+      onPressed: () {},
+      child: Text('+'),
     );
   }
 
