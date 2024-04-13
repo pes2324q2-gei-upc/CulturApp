@@ -30,24 +30,35 @@ class _GrupsScreenState extends State<GrupsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      _buildCercador(),
-      const SizedBox(
-        height: 20.0,
-      ),
-      SizedBox(
-        height: 420.0,
-        child: ListView.builder(
-          itemCount: display_list.length,
-          itemBuilder: (context, index) => _buildGrupItem(context, index),
+    return Column(
+      children: [
+        Row(
+          children: [
+            _buildCercador(),
+            const SizedBox(
+              width: 5.0,
+            ),
+            _buildNewGroupButton(),
+          ],
         ),
-      )
-    ]);
+        const SizedBox(
+          height: 20.0,
+        ),
+        SizedBox(
+          height: 420.0,
+          child: ListView.builder(
+            itemCount: display_list.length,
+            itemBuilder: (context, index) => _buildGrupItem(context, index),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildCercador() {
     return SizedBox(
         height: 40.0,
+        width: 250.0,
         child: TextField(
           onChanged: (value) => updateList(value),
           cursorColor: Colors.white,
@@ -70,6 +81,22 @@ class _GrupsScreenState extends State<GrupsScreen> {
             suffixIconColor: Colors.white,
           ),
         ));
+  }
+
+  Widget _buildNewGroupButton() {
+    return Container(
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: const Color.fromRGBO(240, 186, 132, 1),
+      ),
+      child: TextButton(
+        style: ButtonStyle(
+          foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+        ),
+        onPressed: () {},
+        child: Text('+'),
+      ),
+    );
   }
 
   Widget _buildGrupItem(context, index) {
