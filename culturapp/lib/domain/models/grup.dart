@@ -42,4 +42,18 @@ const List<Grup> allGroups = [
     lastMessage: 'Hbu?',
     timeLastMessage: '06:30',
   ),
+  Grup(
+    titleGroup: 'Group5',
+    imageGroup:
+        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+    lastMessage: 'No',
+    timeLastMessage: '16:30',
+  ),
+  Grup(
+    titleGroup: 'Avemaria',
+    imageGroup:
+        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+    lastMessage: 'Si',
+    timeLastMessage: '16:30',
+  ),
 ];

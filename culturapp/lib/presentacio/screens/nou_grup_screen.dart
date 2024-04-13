@@ -41,30 +41,45 @@ class _NouGrupScreen extends State<NouGrupScreen> {
           color: Colors.white,
         ),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          const SizedBox(
-            height: 10.0,
+          Column(
+            children: [
+              const SizedBox(
+                height: 10.0,
+              ),
+              const SizedBox(
+                child: Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: Text(
+                      'Escolleix els participants del nou grup: ',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blueGrey,
+                      ),
+                    )),
+              ),
+              _buildCercador(),
+              const SizedBox(
+                height: 10.0,
+              ),
+              const SizedBox(
+                child: Text('aqui anirien el llistat usuaris'),
+              ),
+            ],
           ),
-          const SizedBox(
-            child: Padding(
-                padding: EdgeInsets.all(20.0),
-                child: Text(
-                  'Escolleix els participants del nou grup: ',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blueGrey,
-                  ),
-                )),
+          Positioned(
+            bottom: 16.0,
+            right: 16.0,
+            child: _buildNextPageButton(),
           ),
-          _buildCercadorBlanc(),
         ],
       ),
     );
   }
 
-  Widget _buildCercadorBlanc() {
+  Widget _buildCercador() {
     return SizedBox(
         height: 40.0,
         width: 350.0,
@@ -90,5 +105,16 @@ class _NouGrupScreen extends State<NouGrupScreen> {
             suffixIconColor: Colors.white,
           ),
         ));
+  }
+
+  Widget _buildNextPageButton() {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color.fromRGBO(240, 186, 132, 1),
+        foregroundColor: Colors.white,
+      ),
+      child: const Icon(Icons.arrow_forward),
+      onPressed: () {},
+    );
   }
 }
