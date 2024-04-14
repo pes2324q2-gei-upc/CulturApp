@@ -16,6 +16,8 @@ class NouGrupScreen extends StatefulWidget {
 
 class _NouGrupScreen extends State<NouGrupScreen> {
   late ControladorPresentacion _controladorPresentacion;
+  bool afegit = false;
+  Color taronja_fluix = const Color.fromRGBO(240, 186, 132, 1);
 
   _NouGrupScreen(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
@@ -145,7 +147,7 @@ class _NouGrupScreen extends State<NouGrupScreen> {
           ),
           decoration: InputDecoration(
             filled: true,
-            fillColor: const Color.fromRGBO(240, 186, 132, 1),
+            fillColor: taronja_fluix,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
               borderSide: BorderSide.none,
@@ -197,11 +199,15 @@ class _NouGrupScreen extends State<NouGrupScreen> {
         foregroundColor: Colors.white,
       ),
       onPressed: () {
+        afegit = !afegit;
         afegirParticipant(participant);
       },
-      child: Text('+'),
+      child: Text(
+        afegit ? '-' : '+',
+      ),
     );
-  }
+  } //com de moment no tinc l'estructura dels models
+  //dels participant i això serà un atribut d'ells, no val la pena continuar de moment
 
   Widget _buildNextPageButton() {
     return ElevatedButton(
