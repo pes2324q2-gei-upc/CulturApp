@@ -1,5 +1,7 @@
 import "package:culturapp/presentacio/controlador_presentacio.dart";
+import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
+import "package:flutter/widgets.dart";
 
 class NouGrupScreen extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
@@ -32,7 +34,7 @@ class _NouGrupScreen extends State<NouGrupScreen> {
   - bool de si han sigut afegits
   */
 
-  List<String> participantsAfegits = [];
+  List<String> participantsAfegits = ['usuaris  afegits'];
 
   void updateList(String value) {
     //funcio on es filtrarà la nostra llista
@@ -84,7 +86,7 @@ class _NouGrupScreen extends State<NouGrupScreen> {
               ),
               Row(
                 children: [
-                  const Padding(
+                  Container(
                     padding: EdgeInsets.all(10.0),
                     child: Text(
                       'Afegits: ',
@@ -94,13 +96,19 @@ class _NouGrupScreen extends State<NouGrupScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    child: ListView.builder(
-                      itemCount: participantsAfegits.length,
-                      itemBuilder: (context, index) =>
-                          _buildParticipantAfegit(context, index),
+                  /*Container(
+                    padding: EdgeInsets.all(10.0),
+                    color: Colors.blue,
+                    width: 320.0,
+                    child: SizedBox(
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: mockParticipants.length,
+                        itemBuilder: (context, index) =>
+                            _buildParticipantAfegit(context, index),
+                      ),
                     ),
-                  ),
+                  ),*/
                   //un altre element que seria el dels noms dels participants una vegada ficats dins
                 ],
               ),
@@ -152,13 +160,14 @@ class _NouGrupScreen extends State<NouGrupScreen> {
         ));
   }
 
-  Widget _buildParticipantAfegit(context, index) {
+  /*Widget _buildParticipantAfegit(context, index) {
     return ListTile(
       title: Text(
-        participantsAfegits[index],
+        mockParticipants[index],
+        //participantsAfegits[index],
       ),
     );
-  }
+  }*/
 
   Widget _buildParticipant(context, index) {
     return ListTile(
