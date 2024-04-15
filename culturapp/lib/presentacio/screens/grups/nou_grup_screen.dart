@@ -1,7 +1,5 @@
 import "package:culturapp/presentacio/controlador_presentacio.dart";
-import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
 
 class NouGrupScreen extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
@@ -216,7 +214,9 @@ class _NouGrupScreen extends State<NouGrupScreen> {
         foregroundColor: Colors.white,
       ),
       child: const Icon(Icons.arrow_forward),
-      onPressed: () {},
+      onPressed: () {
+        _controladorPresentacion.mostrarConfigGrup(context);
+      },
     );
   }
 }
