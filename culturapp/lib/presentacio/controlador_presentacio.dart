@@ -5,7 +5,7 @@ import 'package:culturapp/presentacio/screens/lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
 import 'package:culturapp/presentacio/screens/my_activities.dart';
-import 'package:culturapp/presentacio/screens/grups/nou_grup_screen.dart';
+import 'package:culturapp/presentacio/screens/grups/crear_grup_screen.dart';
 import 'package:culturapp/presentacio/screens/perfil_screen.dart';
 import 'package:culturapp/presentacio/screens/recomendador_actividades.dart';
 import 'package:culturapp/presentacio/screens/settings_perfil.dart';
@@ -244,7 +244,7 @@ class ControladorPresentacion {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => NouGrupScreen(controladorPresentacion: this),
+        builder: (context) => CrearGrupScreen(controladorPresentacion: this),
       ),
     );
   }

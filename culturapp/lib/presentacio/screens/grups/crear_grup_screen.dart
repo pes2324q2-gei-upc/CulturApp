@@ -1,23 +1,23 @@
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:flutter/material.dart";
 
-class NouGrupScreen extends StatefulWidget {
+class CrearGrupScreen extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
 
-  const NouGrupScreen({Key? key, required this.controladorPresentacion})
+  const CrearGrupScreen({Key? key, required this.controladorPresentacion})
       : super(key: key);
 
   @override
-  State<NouGrupScreen> createState() =>
-      _NouGrupScreen(this.controladorPresentacion);
+  State<CrearGrupScreen> createState() =>
+      _CrearGrupScreen(this.controladorPresentacion);
 }
 
-class _NouGrupScreen extends State<NouGrupScreen> {
+class _CrearGrupScreen extends State<CrearGrupScreen> {
   late ControladorPresentacion _controladorPresentacion;
   bool afegit = false;
   Color taronja_fluix = const Color.fromRGBO(240, 186, 132, 1);
 
-  _NouGrupScreen(ControladorPresentacion controladorPresentacion) {
+  _CrearGrupScreen(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
   }
 
@@ -125,7 +125,7 @@ class _NouGrupScreen extends State<NouGrupScreen> {
                 ),
                 Container(
                   padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-                  height: 420.0,
+                  height: 500.0,
                   child: ListView.builder(
                     itemCount: amics.length,
                     itemBuilder: (context, index) =>
