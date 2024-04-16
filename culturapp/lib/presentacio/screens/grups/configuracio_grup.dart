@@ -1,6 +1,5 @@
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
 
 class ConfigGrup extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
@@ -15,8 +14,10 @@ class ConfigGrup extends StatefulWidget {
 class _ConfigGrup extends State<ConfigGrup> {
   late ControladorPresentacion _controladorPresentacion;
   double llargadaPantalla = 440;
+  double llargadaPantallaTitols = 438;
+  Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
   bool afegit = false;
-  Color taronja_fluix = const Color.fromRGBO(240, 186, 132, 1);
+
   List<String> participants = [
     'participant1',
     'participant2',
@@ -34,7 +35,10 @@ class _ConfigGrup extends State<ConfigGrup> {
     //ficar valor a "nom" de Grup
   }
 
-  void crearGrup() {}
+  void crearGrup() {
+    //funcio de post al back
+    _controladorPresentacion.mostrarXats(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +118,6 @@ class _ConfigGrup extends State<ConfigGrup> {
           alignment: Alignment.centerLeft,
           child: const Text(
             'Nom:',
-            selectionColor: Colors.blue,
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -158,7 +161,7 @@ class _ConfigGrup extends State<ConfigGrup> {
       children: [
         Container(
           padding: const EdgeInsets.only(top: 10.0),
-          width: llargadaPantalla - 3,
+          width: llargadaPantallaTitols,
           alignment: Alignment.centerLeft,
           child: const Text(
             'Descripció:',
@@ -205,7 +208,7 @@ class _ConfigGrup extends State<ConfigGrup> {
       children: [
         Container(
           padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-          width: llargadaPantalla - 3,
+          width: llargadaPantallaTitols,
           alignment: Alignment.centerLeft,
           child: const Text(
             'Participants:',
@@ -251,7 +254,7 @@ class _ConfigGrup extends State<ConfigGrup> {
   Widget _buildCrearGrupButton() {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color.fromRGBO(240, 186, 132, 1),
+        backgroundColor: taronjaFluix,
         foregroundColor: Colors.white,
       ),
       child: const Icon(Icons.check),
