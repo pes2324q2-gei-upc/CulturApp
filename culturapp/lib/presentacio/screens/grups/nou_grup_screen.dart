@@ -21,9 +21,18 @@ class _NouGrupScreen extends State<NouGrupScreen> {
     _controladorPresentacion = controladorPresentacion;
   }
 
-  static List<String> mockParticipants = [
+  static List<String> amics = [
     'user1',
     'user2',
+    'user3',
+    'user4',
+    'user5',
+    'user6',
+    'user7',
+    'user8',
+    'user9',
+    'user10',
+    'user11',
   ];
 
   /*
@@ -34,7 +43,7 @@ class _NouGrupScreen extends State<NouGrupScreen> {
   - bool de si han sigut afegits
   */
 
-  List<String> participantsAfegits = ['usuaris  afegits'];
+  List<String> participants = ['usuaris  afegits'];
 
   void updateList(String value) {
     //funcio on es filtrarà la nostra llista
@@ -44,12 +53,13 @@ class _NouGrupScreen extends State<NouGrupScreen> {
   }
 
   void afegirParticipant(participant) {
-    participantsAfegits.add(participant);
+    participants.add(participant);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: Colors.orange,
         title: const Text(
@@ -60,74 +70,77 @@ class _NouGrupScreen extends State<NouGrupScreen> {
           color: Colors.white,
         ),
       ),
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              const SizedBox(
-                height: 10.0,
-              ),
-              const SizedBox(
-                child: Padding(
-                  padding: EdgeInsets.all(20.0),
-                  child: Text(
-                    'Escolleix els participants del nou grup: ',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blueGrey,
-                    ),
-                  ),
+      body: SingleChildScrollView(
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                const SizedBox(
+                  height: 10.0,
                 ),
-              ),
-              _buildCercador(),
-              const SizedBox(
-                height: 10.0,
-              ),
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10.0),
-                    child: const Text(
-                      'Afegits: ',
+                const SizedBox(
+                  child: Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: Text(
+                      'Escolleix els participants del nou grup: ',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                         color: Colors.blueGrey,
                       ),
                     ),
                   ),
-                  /*Container(
+                ),
+                _buildCercador(),
+                const SizedBox(
+                  height: 10.0,
+                ),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10.0),
+                      child: const Text(
+                        'Afegits: ',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.blueGrey,
+                        ),
+                      ),
+                    ),
+                    /*Container(
                     padding: EdgeInsets.all(10.0),
                     color: Colors.blue,
                     width: 320.0,
                     child: SizedBox(
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: mockParticipants.length,
+                        itemCount: amics.length,
                         itemBuilder: (context, index) =>
                             _buildParticipantAfegit(context, index),
                       ),
                     ),
                   ),*/
-                  //un altre element que seria el dels noms dels participants una vegada ficats dins
-                ],
-              ),
-              SizedBox(
-                height: 420.0,
-                child: ListView.builder(
-                  itemCount: mockParticipants.length,
-                  itemBuilder: (context, index) =>
-                      _buildParticipant(context, index),
+                    //un altre element que seria el dels noms dels participants una vegada ficats dins
+                  ],
                 ),
-              ),
-            ],
-          ),
-          Positioned(
-            bottom: 20.0,
-            right: 20.0,
-            child: _buildNextPageButton(),
-          ),
-        ],
+                Container(
+                  padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+                  height: 420.0,
+                  child: ListView.builder(
+                    itemCount: amics.length,
+                    itemBuilder: (context, index) =>
+                        _buildParticipant(context, index),
+                  ),
+                ),
+              ],
+            ),
+            Positioned(
+              bottom: 20.0,
+              right: 20.0,
+              child: _buildNextPageButton(),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -163,8 +176,8 @@ class _NouGrupScreen extends State<NouGrupScreen> {
   /*Widget _buildParticipantAfegit(context, index) {
     return ListTile(
       title: Text(
-        mockParticipants[index],
-        //participantsAfegits[index],
+        amics[index],
+        //participants[index],
       ),
     );
   }*/
@@ -173,19 +186,19 @@ class _NouGrupScreen extends State<NouGrupScreen> {
     return ListTile(
       //una vegada tingui mes info del model
       //dels perfils lo seu seria canviar-ho
-      contentPadding: EdgeInsets.all(8.0),
+      contentPadding: const EdgeInsets.all(8.0),
       leading: Image.network(
         'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
         fit: BoxFit.cover,
         width: 50,
         height: 50,
       ),
-      title: Text(mockParticipants[index],
+      title: Text(amics[index],
           style: const TextStyle(
             color: Colors.orange,
             fontWeight: FontWeight.bold,
           )),
-      trailing: _buildBotoAfegir(mockParticipants[index]),
+      trailing: _buildBotoAfegir(amics[index]),
     );
   }
 

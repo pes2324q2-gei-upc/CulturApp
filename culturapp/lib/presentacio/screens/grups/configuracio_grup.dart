@@ -43,6 +43,7 @@ class _ConfigGrup extends State<ConfigGrup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: Colors.orange,
         title: const Text(
@@ -53,35 +54,39 @@ class _ConfigGrup extends State<ConfigGrup> {
           color: Colors.white,
         ),
       ),
-      body: Stack(children: [
-        Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              Row(
+      body: SingleChildScrollView(
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
                 children: [
-                  _buildEscollirImatge(),
-                  const SizedBox(
-                    width: 10,
+                  Row(
+                    children: [
+                      _buildEscollirImatge(),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      _buildInsertarNom(),
+                    ],
                   ),
-                  _buildInsertarNom(),
+                  Column(
+                    children: [
+                      _buildInsertarDescripcio(),
+                      _buildLlistarParticipants(),
+                    ],
+                  ),
                 ],
               ),
-              Column(
-                children: [
-                  _buildInsertarDescripcio(),
-                  _buildLlistarParticipants(),
-                ],
-              ),
-            ],
-          ),
+            ),
+            Positioned(
+              bottom: 20.0,
+              right: 20.0,
+              child: _buildCrearGrupButton(),
+            ),
+          ],
         ),
-        Positioned(
-          bottom: 20.0,
-          right: 20.0,
-          child: _buildCrearGrupButton(),
-        ),
-      ]),
+      ),
     );
   }
 
