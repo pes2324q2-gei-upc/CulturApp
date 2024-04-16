@@ -87,8 +87,8 @@ class _NouGrupScreen extends State<NouGrupScreen> {
               Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text(
+                    padding: const EdgeInsets.all(10.0),
+                    child: const Text(
                       'Afegits: ',
                       style: TextStyle(
                         fontSize: 12,
@@ -123,8 +123,8 @@ class _NouGrupScreen extends State<NouGrupScreen> {
             ],
           ),
           Positioned(
-            bottom: 16.0,
-            right: 16.0,
+            bottom: 20.0,
+            right: 20.0,
             child: _buildNextPageButton(),
           ),
         ],
