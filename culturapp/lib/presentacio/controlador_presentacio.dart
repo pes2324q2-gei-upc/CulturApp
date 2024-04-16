@@ -1,5 +1,6 @@
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
+import 'package:culturapp/presentacio/screens/edit_perfil.dart';
 import 'package:culturapp/presentacio/screens/lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
@@ -46,7 +47,7 @@ class ControladorPresentacion {
         controladorPresentacion: this,
       ),
       Xats(controladorPresentacion: this,),
-      PerfilPage(controladorPresentacion: this),
+      PerfilPage(controladorPresentacion: this, uid: _user!.uid),
     ]);
   }
 
@@ -94,7 +95,7 @@ class ControladorPresentacion {
       context,
       MaterialPageRoute(
         builder: (context) =>
-            PerfilPage(controladorPresentacion: this),
+            PerfilPage(controladorPresentacion: this, uid: _user!.uid),
       ),
     );
   }
@@ -245,10 +246,35 @@ class ControladorPresentacion {
 
   void logout(BuildContext context) {
     _auth.signOut();
+    Future.delayed(Duration(seconds: 2), () {
     mostrarLogin(context);
+  });
   }
 
   Future<bool> usernameUnique(String username) {
     return controladorDomini.usernameUnique(username);
+  }
+
+  Future<String> getUsername(String uid) {
+    return controladorDomini.getUsername(uid);
+  }
+
+  void mostrarEditPerfil(BuildContext context, String uid) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditPerfil(controladorPresentacion: this, uid: uid),
+      ),
+    );
+  }
+
+  List<String> getCategsFav() {
+    return categsFav;
+  }
+
+  void editUser(String username, List<String> selectedCategories, BuildContext context) async {
+    controladorDomini.editUser(_user, username, selectedCategories);
+    categsFav = selectedCategories;
+    mostrarPerfil(context);
   }
 }
