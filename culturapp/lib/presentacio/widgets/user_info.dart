@@ -1,3 +1,5 @@
+import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
 import 'package:flutter/material.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 
@@ -15,14 +17,17 @@ class UserInfoWidget extends StatefulWidget {
 class _UserInfoWidgetState extends State<UserInfoWidget> {
   String _selectedText = 'Historico actividades';
   int _selectedIndex = 0;
-
   late ControladorPresentacion _controladorPresentacion;
   late String _uid;
   late Future<String?> _usernameFuture;
+  late List<Actividad> activitats;
+  late List<Actividad> display_list;
   
   _UserInfoWidgetState(ControladorPresentacion controladorPresentacion, String uid) {
     _controladorPresentacion = controladorPresentacion;
     _uid = uid;
+    activitats = controladorPresentacion.getActivitatsUser();
+    display_list = activitats;
   }
 
   @override
@@ -52,12 +57,20 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<String?>(
+    return Scaffold(
+      body: Center(
+        child: FutureBuilder<String?>(
       future: _usernameFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Muestra un indicador de carga mientras se obtiene el nombre de usuario
-          return CircularProgressIndicator();
+          return Container(
+            alignment: Alignment.center,
+            // Asigna un tamaño específico al contenedor
+            width: 50, // Por ejemplo, puedes ajustar el ancho según tus necesidades
+            height: 50, // También puedes ajustar la altura según tus necesidades
+            child: CircularProgressIndicator(color: Colors.orange),
+          );
         } else if (snapshot.hasError) {
           // Muestra un mensaje de error si falla la obtención del nombre de usuario
           return Text('Error al obtener el nombre de usuario');
@@ -67,7 +80,8 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
           return _buildUserInfo(username);
         }
       },
-    );
+    ),
+      ));
   }
 
   Widget _buildUserInfo(String username) {
@@ -77,47 +91,37 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 16, top: 10, bottom:20),
+          padding: const EdgeInsets.only(left: 16, top: 25, bottom:20),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             //imagen
             children: [
-              Image.asset(
-                'assets/userImage.png',
-                width: 100, 
-                height: 100, 
+              Container(
+                  height: 100,
+                  width: 100,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    image: DecorationImage(image: NetworkImage(_controladorPresentacion.getUser()!.photoURL!), fit: BoxFit.cover),)
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 20),
               Padding(
-                padding: EdgeInsets.only(top: 15),
+                padding: EdgeInsets.only(top: 25),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     //username
                     Text(
                       username,
-                      style: TextStyle(fontSize: 20),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 5),
                     //XP
                     Text(
-                      'XP',
-                      style: TextStyle(fontSize: 20),
+                      '1500 XP',
+                      style: TextStyle(fontSize: 14),
                     ),
                   ],
-                ),
-              ),
-              //edit username
-              Transform.translate(
-                offset: const Offset(0, 5),
-                child: Transform.scale(
-                  scale: 0.9, 
-                  child: IconButton(
-                    onPressed: () {
-                      _controladorPresentacion.mostrarEditPerfil(this.context, this._uid);
-                    },
-                    icon: const Icon(Icons.edit, color: Colors.orange),
-                  ),
                 ),
               ),
             ],
@@ -129,30 +133,45 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildInfoColumn('Esdeveniments assistits', '10'),
+              _buildInfoColumn('Esdeveniments assistits', '1'),
               _buildInfoColumn('Seguidors', '12'),
               _buildInfoColumn('Seguits', '40'),
             ]
-          )
-        ),
-        //contenedor para elegir ver el historico o las insignias
-        Container(
-          height: 50,
-          color: Colors.orange,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildNavItem(Icons.event_available, 'Historico actividades', 0),
-              _buildNavItem(Icons.stars, 'Insignias', 1),
-            ],
           ),
         ),
-        //Texto de historico o insignias
-        const SizedBox(height: 10),
-        Center(
-          child: Text(
-            _selectedText, 
-            style: const TextStyle(fontSize: 16, color: Colors.black),
+        Expanded(
+          child: DefaultTabController(
+            length: 2,
+            child: Column(
+              children: [
+                TabBar(
+                  tabs: [
+                    Tab(text: 'Esdeveniments assistits'),
+                    Tab(text: 'Insígnies'),
+                  ],
+                  indicatorColor: Colors.orange,
+                  labelColor: Colors.orange,
+
+                ),
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      Expanded(
+                        child: ListView(
+                          children: [
+                            SizedBox(
+                              height: 750,
+                              child: ListaActividadesDisponibles(actividades: activitats, controladorPresentacion: _controladorPresentacion,),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text("Insignias"),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -197,7 +216,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
         children: [
           Text(
             value,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold,),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold,),
           ),
           const SizedBox(height: 8),
           Text(

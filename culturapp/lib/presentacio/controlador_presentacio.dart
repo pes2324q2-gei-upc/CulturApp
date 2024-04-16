@@ -245,7 +245,9 @@ class ControladorPresentacion {
 
   void logout(BuildContext context) {
     _auth.signOut();
+    Future.delayed(Duration(seconds: 2), () {
     mostrarLogin(context);
+  });
   }
 
   Future<bool> usernameUnique(String username) {

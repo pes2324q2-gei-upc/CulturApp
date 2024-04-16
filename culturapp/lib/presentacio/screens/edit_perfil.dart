@@ -96,10 +96,14 @@ class _EditPerfil extends State<EditPerfil> {
       future: _usernameFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // Muestra un indicador de carga mientras se obtiene el nombre de usuario
-          return CircularProgressIndicator();
+          return Container(
+            alignment: Alignment.center,
+            // Asigna un tamaño específico al contenedor
+            width: 50, // Por ejemplo, puedes ajustar el ancho según tus necesidades
+            height: 50, // También puedes ajustar la altura según tus necesidades
+            child: CircularProgressIndicator(color: Colors.orange),
+          );
         } else if (snapshot.hasError) {
-          // Muestra un mensaje de error si falla la obtención del nombre de usuario
           return Text('Error al obtener el nombre de usuario');
         } else {
           // Muestra el nombre de usuario obtenido

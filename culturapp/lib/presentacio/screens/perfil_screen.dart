@@ -1,3 +1,4 @@
+import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/my_activities.dart';
 import 'package:culturapp/presentacio/widgets/user_info.dart';
@@ -70,6 +71,18 @@ class _PerfilPageState extends State<PerfilPage> {
       ),
       //boton de settings
       actions: [
+        IconButton(
+          onPressed: () {
+            
+          },
+          icon: const Icon(Icons.notifications, color: Colors.white),
+        ),
+        IconButton(
+          onPressed: () {
+            _controladorPresentacion.mostrarEditPerfil(this.context, this._uid);
+          },
+          icon: const Icon(Icons.edit, color: Colors.white),
+        ),
         IconButton(
           onPressed: () {
             //hacer que no se vea si estas viendo el perfil de otro user
