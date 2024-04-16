@@ -98,6 +98,7 @@ class _PerfilPageState extends State<PerfilPage> {
         onTabChange: _onTabChange,
     ),
     body: UserInfoWidget(controladorPresentacion: _controladorPresentacion, uid: _uid),
+    
     //container amb les diferents pantalles
     );
   }
