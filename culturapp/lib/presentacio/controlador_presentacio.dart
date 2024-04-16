@@ -1,5 +1,6 @@
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
+import 'package:culturapp/presentacio/screens/edit_perfil.dart';
 import 'package:culturapp/presentacio/screens/lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
@@ -253,5 +254,24 @@ class ControladorPresentacion {
 
   Future<String> getUsername(String uid) {
     return controladorDomini.getUsername(uid);
+  }
+
+  void mostrarEditPerfil(BuildContext context, String uid) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditPerfil(controladorPresentacion: this, uid: uid),
+      ),
+    );
+  }
+
+  List<String> getCategsFav() {
+    return categsFav;
+  }
+
+  void editUser(String username, List<String> selectedCategories, BuildContext context) async {
+    controladorDomini.editUser(_user, username, selectedCategories);
+    categsFav = selectedCategories;
+    mostrarPerfil(context);
   }
 }

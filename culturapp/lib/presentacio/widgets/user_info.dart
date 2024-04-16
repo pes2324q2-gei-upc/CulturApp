@@ -114,8 +114,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                   scale: 0.9, 
                   child: IconButton(
                     onPressed: () {
-                      //hacer que no se vea si estas viendo el perfil de otro user
-                      //Navigator.pushNamed(context, Routes.updatePerfil);
+                      _controladorPresentacion.mostrarEditPerfil(this.context, this._uid);
                     },
                     icon: const Icon(Icons.edit, color: Colors.orange),
                   ),

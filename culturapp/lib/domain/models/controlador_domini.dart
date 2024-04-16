@@ -255,4 +255,29 @@ class ControladorDomini {
       throw Exception('Fallo la obtención de datos');
     }
   }
+
+  void editUser(User? _user, String username, List<String> selectedCategories) async {
+    try {
+      final Map<String, dynamic> userdata = {
+        'uid': _user?.uid,
+        'username': username,
+        'favcategories': jsonEncode(selectedCategories),
+      };
+
+      final respuesta = await http.post(
+        Uri.parse('http://${ip}:8080/users/edit'),
+        body: jsonEncode(userdata),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (respuesta.statusCode == 200) {
+        print('Datos enviados exitosamente');
+      } else {
+        print('Error al enviar los datos: ${respuesta.statusCode}');
+      }
+    } catch (error) {
+      print('Error de red: $error');
+    }
+  }
+
 }
