@@ -158,9 +158,10 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                     children: [
                       Expanded(
                         child: ListView(
+                          controller: ScrollController(),
                           children: [
                             SizedBox(
-                              height: 750,
+                              height: 350,
                               child: ListaActividadesDisponibles(actividades: activitats, controladorPresentacion: _controladorPresentacion,),
                             ),
                           ],
