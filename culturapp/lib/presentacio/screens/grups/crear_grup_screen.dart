@@ -46,6 +46,12 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
   List<String> participants = [
     'participant1',
     'participant2',
+    'participant3',
+    'participant4',
+    'participant5',
+    'participant6',
+    'participant7',
+    'participant8',
   ];
 
   void updateList(String value) {
@@ -100,9 +106,9 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
                 ),
                 _buildAfegits(),
                 Container(
-                  padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-                  height: 300.0,
-                  //height: 500.0,
+                  padding:
+                      const EdgeInsets.only(left: 12.0, right: 12.0, top: 4),
+                  height: 460.0,
                   child: ListView.builder(
                     itemCount: amics.length,
                     itemBuilder: (context, index) =>
@@ -151,36 +157,20 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
   }
 
   Widget _buildAfegits() {
-    return Row(
-      children: [
-        Container(
-          alignment: Alignment.centerLeft,
-          height: 60,
-          padding: const EdgeInsets.only(
-              top: 10.0, bottom: 10.0, right: 2.0, left: 2.0),
-          child: const Text(
-            'Afegits: ',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.blueGrey,
-            ),
-          ),
-        ),
-        Container(
-          padding: EdgeInsets.only(left: 10.0),
-          alignment: Alignment.centerLeft,
-          height: 60,
-          width: 300,
-          //child: Text('hello'),
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: participants.length,
-            itemBuilder: (context, index) {
-              return _buildParticipantAfegit(context, index);
-            },
-          ),
-        ),
-      ],
+    return Container(
+      padding: const EdgeInsets.only(left: 10.0),
+      alignment: Alignment.center,
+      height: 75,
+      width: 370,
+      color: Colors.pink,
+      child: ListView.builder(
+        shrinkWrap: true,
+        scrollDirection: Axis.horizontal,
+        itemCount: participants.length,
+        itemBuilder: (context, index) {
+          return _buildParticipantAfegit(context, index);
+        },
+      ),
     );
   }
 
@@ -188,48 +178,42 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
     return Container(
       width: 80.0,
       height: 60.0,
-      padding: EdgeInsets.only(right: 1.0),
+      padding: const EdgeInsets.only(right: 1.0),
       child: ListTile(
-        tileColor: Colors.red,
+        contentPadding: EdgeInsets.zero,
         title: Stack(
           children: [
             Container(
-              padding: const EdgeInsets.all(1),
+              alignment: Alignment.topCenter,
               child: Image.network(
                 'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
-                fit: BoxFit.cover,
-                width: 50,
-                height: 50,
+                fit: BoxFit.fill,
+                width: 55.0,
+                height: 55.0,
               ),
+              //),
             ),
             Positioned(
-              bottom: 0,
-              child: Container(
-                color: Colors.white,
-                child: Text(
-                  participants[index],
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 10,
+              bottom: 9,
+              child: ClipRRect(
+                borderRadius:
+                    BorderRadius.circular(8.0), // Adjust the radius as needed
+                child: Container(
+                  color: taronja_fluix.withOpacity(0.90),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                  child: Text(
+                    participants[index],
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                    ),
                   ),
                 ),
               ),
             ),
           ],
         ),
-        /*title: Image.network(
-          'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
-          fit: BoxFit.cover,
-          width: 40,
-          height: 40,
-        ),
-        subtitle: Text(
-          participants[index],
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 10,
-          ),
-        ),*/
       ),
     );
   }
