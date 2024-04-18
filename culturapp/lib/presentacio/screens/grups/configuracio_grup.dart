@@ -3,12 +3,17 @@ import "package:flutter/material.dart";
 
 class ConfigGrup extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
+  final List<String> participants;
 
-  const ConfigGrup({Key? key, required this.controladorPresentacion})
+  const ConfigGrup(
+      {Key? key,
+      required this.controladorPresentacion,
+      required this.participants})
       : super(key: key);
 
   @override
-  State<ConfigGrup> createState() => _ConfigGrup(this.controladorPresentacion);
+  State<ConfigGrup> createState() =>
+      _ConfigGrup(this.controladorPresentacion, this.participants);
 }
 
 class _ConfigGrup extends State<ConfigGrup> {
@@ -18,17 +23,19 @@ class _ConfigGrup extends State<ConfigGrup> {
   Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
   bool afegit = false;
 
-  List<String> participants = [
-    'participant1',
+  List<String> _participants = [];
+
+  /*'participant1',
     'participant2',
     'participant3',
     'participant4',
     'participant5',
-    'participant6',
-  ];
+    'participant6', */
 
-  _ConfigGrup(ControladorPresentacion controladorPresentacion) {
+  _ConfigGrup(ControladorPresentacion controladorPresentacion,
+      List<String> participants) {
     _controladorPresentacion = controladorPresentacion;
+    _participants = participants;
   }
 
   void assignarNomGrup(String value) {
@@ -229,7 +236,7 @@ class _ConfigGrup extends State<ConfigGrup> {
           height: 300,
           width: llargadaPantalla,
           child: ListView.builder(
-            itemCount: participants.length,
+            itemCount: _participants.length,
             itemBuilder: (context, index) => _buildParticipant(context, index),
           ),
         ),
@@ -248,7 +255,7 @@ class _ConfigGrup extends State<ConfigGrup> {
         width: 50,
         height: 50,
       ),
-      title: Text(participants[index],
+      title: Text(_participants[index],
           style: const TextStyle(
             color: Colors.orange,
             fontWeight: FontWeight.bold,

@@ -268,7 +268,7 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
       ),
       child: const Icon(Icons.arrow_forward),
       onPressed: () {
-        _controladorPresentacion.mostrarConfigGrup(context);
+        _controladorPresentacion.mostrarConfigGrup(context, participants);
       },
     );
   }

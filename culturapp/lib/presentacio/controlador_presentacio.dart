@@ -249,11 +249,12 @@ class ControladorPresentacion {
     );
   }
 
-  void mostrarConfigGrup(BuildContext context) {
+  void mostrarConfigGrup(BuildContext context, List<String> participants) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ConfigGrup(controladorPresentacion: this),
+        builder: (context) => ConfigGrup(
+            controladorPresentacion: this, participants: participants),
       ),
     );
   }
