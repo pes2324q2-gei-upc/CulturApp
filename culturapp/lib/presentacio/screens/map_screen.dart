@@ -725,7 +725,17 @@ class _MapPageState extends State<MapPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       //Barra gris del botón
-                      _buildCercador(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Container(
+                          width: 40,
+                          height: 5,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
                       Text(
                         "${_actividades.length} Actividades disponibles",
                         style: const TextStyle(
@@ -754,20 +764,6 @@ class _MapPageState extends State<MapPage> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildCercador() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Container(
-        width: 40,
-        height: 5,
-        decoration: BoxDecoration(
-          color: Colors.grey[300],
-          borderRadius: BorderRadius.circular(10),
-        ),
       ),
     );
   }

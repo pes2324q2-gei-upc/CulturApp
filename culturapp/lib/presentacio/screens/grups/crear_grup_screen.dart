@@ -161,8 +161,6 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
       padding: const EdgeInsets.only(left: 10.0),
       alignment: Alignment.center,
       height: 75,
-      width: 370,
-      color: Colors.pink,
       child: ListView.builder(
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
@@ -175,10 +173,9 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
   }
 
   Widget _buildParticipantAfegit(context, index) {
-    return Container(
+    return SizedBox(
       width: 80.0,
       height: 60.0,
-      padding: const EdgeInsets.only(right: 1.0),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         title: Stack(
