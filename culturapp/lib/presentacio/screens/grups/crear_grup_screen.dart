@@ -14,11 +14,13 @@ class CrearGrupScreen extends StatefulWidget {
 
 class _CrearGrupScreen extends State<CrearGrupScreen> {
   late ControladorPresentacion _controladorPresentacion;
-  bool afegit = false;
   Color taronja_fluix = const Color.fromRGBO(240, 186, 132, 1);
+  late List<bool> participantAfegit;
 
   _CrearGrupScreen(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
+    participantAfegit = List.filled(displayList.length, false);
+    displayList = amics;
   }
 
   static List<String> amics = [
@@ -43,26 +45,26 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
   - bool de si han sigut afegits
   */
 
-  List<String> participants = [
-    'participant1',
-    'participant2',
-    'participant3',
-    'participant4',
-    'participant5',
-    'participant6',
-    'participant7',
-    'participant8',
-  ];
+  List<String> participants = [];
+
+  List<String> displayList = amics;
 
   void updateList(String value) {
     //funcio on es filtrarà la nostra llista
     setState(
-      () {},
+      () {
+        displayList = amics
+            .where((element) =>
+                element.toLowerCase().contains(value.toLowerCase()))
+            .toList();
+      },
     );
   }
 
   void afegirParticipant(participant) {
-    participants.add(participant);
+    setState(() {
+      participants.add(participant);
+    });
   }
 
   @override
@@ -85,11 +87,9 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
             Column(
               children: [
                 const SizedBox(
-                  height: 10.0,
-                ),
-                const SizedBox(
                   child: Padding(
-                    padding: EdgeInsets.all(20.0),
+                    padding: EdgeInsets.only(
+                        bottom: 20.0, left: 20.0, right: 20.0, top: 30.0),
                     child: Text(
                       'Escolleix els participants del nou grup: ',
                       style: TextStyle(
@@ -110,7 +110,7 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
                       const EdgeInsets.only(left: 12.0, right: 12.0, top: 4),
                   height: 460.0,
                   child: ListView.builder(
-                    itemCount: amics.length,
+                    itemCount: displayList.length,
                     itemBuilder: (context, index) =>
                         _buildParticipant(context, index),
                   ),
@@ -159,7 +159,7 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
   Widget _buildAfegits() {
     return Container(
       padding: const EdgeInsets.only(left: 10.0),
-      alignment: Alignment.center,
+      alignment: Alignment.centerLeft,
       height: 75,
       child: ListView.builder(
         shrinkWrap: true,
@@ -226,16 +226,16 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
         width: 50,
         height: 50,
       ),
-      title: Text(amics[index],
+      title: Text(displayList[index],
           style: const TextStyle(
             color: Colors.orange,
             fontWeight: FontWeight.bold,
           )),
-      trailing: _buildBotoAfegir(amics[index]),
+      trailing: _buildBotoAfegir(displayList[index], index),
     );
   }
 
-  Widget _buildBotoAfegir(participant) {
+  Widget _buildBotoAfegir(participant, int index) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         shape: const CircleBorder(),
@@ -243,11 +243,18 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
         foregroundColor: Colors.white,
       ),
       onPressed: () {
-        afegit = !afegit;
-        afegirParticipant(participant);
+        setState(() {
+          participantAfegit[index] = !participantAfegit[index];
+          if (participantAfegit[index]) {
+            afegirParticipant(displayList[index]);
+          } else {
+            // Remove participant if button is toggled off
+            participants.remove(displayList[index]);
+          }
+        });
       },
       child: Text(
-        afegit ? '-' : '+',
+        participantAfegit[index] ? '-' : '+',
       ),
     );
   } //com de moment no tinc l'estructura dels models
