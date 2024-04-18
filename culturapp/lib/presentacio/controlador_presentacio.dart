@@ -285,7 +285,32 @@ class ControladorPresentacion {
       }
     } catch (error) {
       // Si ocurre algún error al obtener el ID del foro
-      print('Error al obtener el ID del foro: $error');
+      //print('Error al obtener el ID del foro: $error');
+      return null;
+    }
+  }
+
+  //modificar el como se encuentra el post, maybe añadir param que sea id = username + fecha
+  Future<String?> getPostId(String foroId, String data) async{
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('foros')
+          .doc(foroId)
+          .collection('posts')
+          .where('fecha', isEqualTo: data)
+          .limit(1)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        //Si se encuentra un doc con la misma fecha
+        return querySnapshot.docs.first.id; 
+      } else {
+        //Si no se encuentra ningún doc con la misma fecha
+        return null;
+      }
+    } catch (error) {
+      // Si ocurre algún error al obtener el ID del foro
+      //print('Error al obtener el ID del foro: $error');
       return null;
     }
   }

@@ -247,7 +247,6 @@ class ControladorDomini {
           // El foro existe, devuelve sus detalles
           return Foro(
             activitat_code: data['data']['activitat_code'],
-            //posts: List<Post>.from(data['data']['posts'].map((post) => Post.fromJson(post))),
             posts: data['data']['posts'] != null ? List<Post>.from(data['data']['posts'].map((post) => Post.fromJson(post))) : null,
           );
         } else {
@@ -334,6 +333,53 @@ class ControladorDomini {
       }
     } catch (error) {
       print('Error al realizar la solicitud HTTP: $error');
+    }
+  }
+
+  //crear reply
+  Future<void> addReplyPost(String foroId, String postId, String username, String mensaje, String fecha, int numeroLikes) async {
+    try {
+      final url = Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts/$postId/reply');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'username': username,
+          'mensaje': mensaje,
+          'fecha': fecha,
+          'numero_likes': numeroLikes,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        print('Reply agregada exitosamente al post');
+      } else {
+        print('Error al agregar reply al post: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error al realizar la solicitud HTTP: $error');
+    }
+  }
+
+  //getReplies
+  Future<List<Post>> getReplyForo(String foroId, String postId) async {
+    //print("este es el foro : $foroId");
+    try {
+      final response = await http.get(Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts/$postId/reply'));
+      
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        // Mapear los datos de las replies a una lista de objetos Post
+        List<Post> reply = data.map((json) => Post.fromJson(json)).toList();
+        return reply;
+      } else if (response.statusCode == 404) {
+        // Devolver una lista vacía si no hay replies para este post
+        return [];
+      } else {
+        throw Exception('Error al obtener los replies del post: ${response.statusCode}');
+      }
+    } catch (error) {
+      throw Exception('Error de red: $error');
     }
   }
 

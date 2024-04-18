@@ -4,7 +4,6 @@ import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/widgets/missatge.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -38,8 +37,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   
   final User? _user = FirebaseAuth.instance.currentUser;
 
-  List<Post> posts = [];
+  Future<List<Post>>? posts;
   String idForo = "";
+  String idPost = "";
   
   final List<String> catsAMB = ["Residus",
   "territori.espai_public_platges",
@@ -66,14 +66,16 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   void initState(){
     super.initState();
     checkApuntado(_user!.uid, infoActividad);
-    //verificar que tenga un foro
-    controladorPresentacion.getForo(infoActividad[1]);
-    getPosts();
   } 
 
   @override
   Widget build(BuildContext context) {
-    checkApuntado(_user!.uid, infoActividad);
+    //verificar que tenga un foro
+    controladorPresentacion.getForo(infoActividad[1]).then((_) {
+      // Obtener los posts del foro después de verificar/obtenerlo
+      posts = getPosts();
+    });
+    //checkApuntado(_user!.uid, infoActividad); esto es lo que hacia que hubiera muchas lecturas
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
@@ -106,10 +108,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             //barra para añadir mensajes
             child: Missatge(
               addPost: (foroId, username, mensaje, fecha, numeroLikes) async {
-                // Llama a la función addPost con los parámetros adecuados
                 await controladorDominio.addPost(foroId, username, mensaje, fecha, numeroLikes);
               },
-              foroId: idForo
+              foroId: idForo,
             ),
           ),
         ],  
@@ -366,15 +367,27 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   }
 
   //conseguir posts del foro
-  Future<void> getPosts() async {
+  Future<List<Post>> getPosts() async {
     String? foroId = await controladorPresentacion.getForoId(infoActividad[1]);
     if (foroId != null) {
       idForo = foroId;
       List<Post> fetchedPosts = await controladorDominio.getPostsForo(foroId);
-      setState(() {
-        posts = fetchedPosts;
-      });
+      return fetchedPosts;
     }
+    return[];
+  }
+
+  //conseguir posts del foro
+  Future<List<Post>> getReplies(String data) async {
+    print("entra a getReplies");
+    String? postId = await controladorPresentacion.getPostId(idForo, data);
+    if (postId != null) {
+      print("id del post: $postId");
+      idPost = postId;
+      List<Post> fetchedReply = await controladorDominio.getReplyForo(idForo, postId);
+      return fetchedReply;
+    }
+    return [];
   }
 
   //funcion que lista todos los posts del foro de la actividad
@@ -385,6 +398,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
           child: Text(
+            //quereis que añada tambien el numero de replies?
             '${posts.length} comentarios',
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
@@ -395,6 +409,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           itemCount: posts.length,
           itemBuilder: (context, index) {
             final post = posts[index];
+            Future<List<Post>> replies = getReplies(post.fecha);
             DateTime dateTime = DateTime.parse(post.fecha);
             String formattedDate = DateFormat('yyyy/MM/dd HH:mm').format(dateTime);
             return ListTile(
@@ -450,7 +465,17 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                         const Text('Me gusta'),
                         const SizedBox(width: 20),
                         //hacer que te permita escribir un nuevo mensaje
-                        const Icon(Icons.reply), // Icono de responder
+                        IconButton(
+                          icon: const Icon(Icons.reply), // Icono de responder
+                          onPressed: () {
+                            Missatge(
+                              addReply: (foroId, postId, username, mensaje, fecha, numeroLikes) async {
+                                await controladorDominio.addReplyPost(foroId, postId, username, mensaje, fecha, numeroLikes);
+                              },
+                              foroId: idForo,
+                            );
+                          },
+                        ), 
                         const SizedBox(width: 5),
                         const Text('Responder'),
                         const SizedBox(width: 20),
