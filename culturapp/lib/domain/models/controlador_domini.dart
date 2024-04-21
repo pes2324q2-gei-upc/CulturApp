@@ -298,6 +298,7 @@ class ControladorDomini {
         final List<dynamic> data = json.decode(response.body);
         // Mapear los datos de los posts a una lista de objetos Post
         List<Post> posts = data.map((json) => Post.fromJson(json)).toList();
+        posts.sort((a, b) => a.fecha.compareTo(b.fecha));
         return posts;
       } else if (response.statusCode == 404) {
         // Devolver una lista vacía si no hay posts para este foro
@@ -330,6 +331,25 @@ class ControladorDomini {
         print('Post agregado exitosamente al foro');
       } else {
         print('Error al agregar post al foro: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error al realizar la solicitud HTTP: $error');
+    }
+  }
+
+  //eliminar post
+  Future<void> deletePost(String foroId, String? postId) async {
+    try {
+      final url = Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts/$postId');
+      final response = await http.delete(
+        url,
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 201) {
+        print('Post eliminado exitosamente al foro');
+      } else {
+        print('Error al eliminar post del foro: ${response.statusCode}');
       }
     } catch (error) {
       print('Error al realizar la solicitud HTTP: $error');

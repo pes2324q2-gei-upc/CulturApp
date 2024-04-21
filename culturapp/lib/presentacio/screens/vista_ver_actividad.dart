@@ -1,7 +1,7 @@
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/post.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
-import 'package:culturapp/presentacio/widgets/missatge.dart';
+import 'package:culturapp/presentacio/widgets/post_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -71,10 +71,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   @override
   Widget build(BuildContext context) {
     //verificar que tenga un foro
-    controladorPresentacion.getForo(infoActividad[1]).then((_) {
-      // Obtener los posts del foro después de verificar/obtenerlo
-      posts = getPosts();
-    });
+    controladorPresentacion.getForo(infoActividad[1]);
     //checkApuntado(_user!.uid, infoActividad); esto es lo que hacia que hubiera muchas lecturas
     return Scaffold(
       appBar: AppBar(
@@ -106,9 +103,15 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             //barra para añadir mensajes
-            child: Missatge(
+            child: PostWidget(
               addPost: (foroId, username, mensaje, fecha, numeroLikes) async {
                 await controladorDominio.addPost(foroId, username, mensaje, fecha, numeroLikes);
+
+                // Update the UI to include the new post
+                setState(() {
+                  // Fetch the updated list of posts and assign it to the posts variable
+                  posts = controladorDominio.getPostsForo(idForo);
+                });
               },
               foroId: idForo,
             ),
@@ -377,6 +380,43 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     return[];
   }
 
+  void _showDeleteOption(BuildContext context, Post post) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Eliminar Post'),
+          content: const Text('Estas segur de que vols eliminar aquest post?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                _deletePost(post);
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Eliminar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  //fer que nomes el pugui eliminar el que l'ha creat
+  void _deletePost(Post post) async {
+    String? postId = await controladorPresentacion.getPostId(idForo, post.fecha);
+    await controladorDominio.deletePost(idForo, postId);
+    setState(() {
+      // Fetch the updated list of posts and assign it to the posts variable
+      posts = controladorDominio.getPostsForo(idForo);
+    });
+  }
+
   //conseguir posts del foro
   Future<List<Post>> getReplies(String data) async {
     print("entra a getReplies");
@@ -392,102 +432,124 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
   //funcion que lista todos los posts del foro de la actividad
   Widget _foro() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-          child: Text(
-            //quereis que añada tambien el numero de replies?
-            '${posts.length} comentarios',
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: posts.length,
-          itemBuilder: (context, index) {
-            final post = posts[index];
-            Future<List<Post>> replies = getReplies(post.fecha);
-            DateTime dateTime = DateTime.parse(post.fecha);
-            String formattedDate = DateFormat('yyyy/MM/dd HH:mm').format(dateTime);
-            return ListTile(
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      //se tendra que modificar por la imagen del usuario
-                      const Icon(Icons.account_circle, size: 45), // Icono de usuario
-                      const SizedBox(width: 5),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(post.username), // Nombre de usuario
-                          const SizedBox(width: 5),
-                          Text(
-                            formattedDate,
-                            style: const TextStyle(color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 50),
-                    child: Text(
-                      post.mensaje, // Mensaje del post
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30),
-                    child: Row(
+    return FutureBuilder<List<Post>>(
+      future: getPosts(), 
+      builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Mentres no acaba el future
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          // Si hi ha hagut algun error
+          return Text('Error: ${snapshot.error}');
+        } else {
+          List<Post> posts = snapshot.data!;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                child: Text(
+                  //quereis que añada tambien el numero de replies?
+                  '${posts.length} comentarios',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: posts.length,
+                itemBuilder: (context, index) {
+                  final post = posts[index];
+                  Future<List<Post>> replies = getReplies(post.fecha);
+                  DateTime dateTime = DateTime.parse(post.fecha);
+                  String formattedDate = DateFormat('yyyy/MM/dd HH:mm').format(dateTime);
+                  return ListTile(
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                       IconButton(
-                        icon: Icon(
-                          post.numero_likes > 0 ? Icons.favorite : Icons.favorite_border, // Cambia el icono según si hay likes o no
-                          color: post.numero_likes > 0 ? Colors.red : null, // Cambia el color si hay likes
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            if (post.numero_likes > 0) {
-                              post.numero_likes = 0; // Si ya hay likes, los elimina
-                            } else {
-                              post.numero_likes = 1; // Si no hay likes, añade uno
-                            }
-                          });
-                        },
-                      ),
-                        //si queremos que salga un contador de me gustas
-                        //Text(post.likes.toString()),
-                        const Text('Me gusta'),
-                        const SizedBox(width: 20),
-                        //hacer que te permita escribir un nuevo mensaje
-                        IconButton(
-                          icon: const Icon(Icons.reply), // Icono de responder
-                          onPressed: () {
-                            Missatge(
-                              addReply: (foroId, postId, username, mensaje, fecha, numeroLikes) async {
-                                await controladorDominio.addReplyPost(foroId, postId, username, mensaje, fecha, numeroLikes);
+                        Row(
+                          children: [
+                            //se tendra que modificar por la imagen del usuario
+                            const Icon(Icons.account_circle, size: 45), // Icono de usuario
+                            const SizedBox(width: 5),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(post.username), // Nombre de usuario
+                                const SizedBox(width: 5),
+                                Text(
+                                  formattedDate,
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
+                            //fer que nomes el que l'ha creat ho pugui veure
+                            GestureDetector(
+                              onTap: () {
+                                _showDeleteOption(context, post);
                               },
-                              foroId: idForo,
-                            );
-                          },
-                        ), 
-                        const SizedBox(width: 5),
-                        const Text('Responder'),
-                        const SizedBox(width: 20),
+                              child: const Icon(Icons.more_vert, size: 20),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 50),
+                          child: Text(
+                            post.mensaje, // Mensaje del post
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 30),
+                          child: Row(
+                            children: [
+                            IconButton(
+                              icon: Icon(
+                                post.numero_likes > 0 ? Icons.favorite : Icons.favorite_border, // Cambia el icono según si hay likes o no
+                                color: post.numero_likes > 0 ? Colors.red : null, // Cambia el color si hay likes
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  if (post.numero_likes > 0) {
+                                    post.numero_likes = 0; // Si ya hay likes, los elimina
+                                  } else {
+                                    post.numero_likes = 1; // Si no hay likes, añade uno
+                                  }
+                                });
+                              },
+                            ),
+                              //si queremos que salga un contador de me gustas
+                              //Text(post.likes.toString()),
+                              const Text('Me gusta'),
+                              const SizedBox(width: 20),
+                              //hacer que te permita escribir un nuevo mensaje
+                              IconButton(
+                                icon: const Icon(Icons.reply), // Icono de responder
+                                onPressed: () {
+                                  PostWidget(
+                                    addReply: (foroId, postId, username, mensaje, fecha, numeroLikes) async {
+                                      await controladorDominio.addReplyPost(foroId, postId, username, mensaje, fecha, numeroLikes);
+                                    },
+                                    foroId: idForo,
+                                  );
+                                },
+                              ), 
+                              const SizedBox(width: 5),
+                              const Text('Responder'),
+                              const SizedBox(width: 20),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                ],
+                  );
+                },
               ),
-            );
-          },
-        ),
-      ],
+            ],
+          );
+        }
+      },
     );
   }
 

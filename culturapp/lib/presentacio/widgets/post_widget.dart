@@ -4,11 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 //se puede reutilizar para el chat si añado un parametro que al llamarlo especifique si es el foro o el chat, para pasar unos atributos u otros
-class Missatge extends StatefulWidget {
+class PostWidget extends StatefulWidget {
   final String foroId;
   final String? postId; // Nullable postId to handle replies
 
-  const Missatge({
+  const PostWidget({
     required this.foroId,
     this.addPost,
     this.addReply,
@@ -19,11 +19,11 @@ class Missatge extends StatefulWidget {
   final FutureOr<void> Function(String foroId, String postId, String username, String mensaje, String fecha, int numeroLikes)? addReply;
 
   @override
-  State<Missatge> createState() => _MissatgeState();
+  State<PostWidget> createState() => _PostWidgetState();
 }
 
-class _MissatgeState extends State<Missatge> {
-  final _formKey = GlobalKey<FormState>(debugLabel: '_MissatgeState');
+class _PostWidgetState extends State<PostWidget> {
+  final _formKey = GlobalKey<FormState>(debugLabel: '_PostState');
   final _controller = TextEditingController();
   late String _username;
 
