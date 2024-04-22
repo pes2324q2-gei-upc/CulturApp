@@ -43,7 +43,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    // Llamar a userLogged al inicio
     userLogged();
   }
 
@@ -71,5 +70,4 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
-  
 }

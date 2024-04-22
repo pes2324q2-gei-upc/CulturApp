@@ -26,10 +26,11 @@ class ControladorPresentacion {
   late List<String> recomms;
   late List<String> categsFav = [];
   late List<Usuario> usersRecom;
+  late List<Usuario> usersBD;
 
   Future<void> initialice() async {
     activitats = await controladorDomini.getActivitiesAgenda();
-    usersRecom = await controladorDomini.getUsers();
+    usersBD = await controladorDomini.getUsers();
   }
 
   Future<void> initialice2() async {
@@ -41,7 +42,8 @@ class ControladorPresentacion {
     if (userLogged()) {
       categsFav = await controladorDomini.obteCatsFavs(_user);
       activitatsUser = await controladorDomini.getUserActivities(_user!.uid);
-      calculaUsuariosRecomendados(usersRecom, _user!.uid, categsFav);
+      usersRecom = calculaUsuariosRecomendados(usersBD, _user!.uid, categsFav);
+      usersBD.removeWhere((usuario) => usuario.identificador == _user!.uid);
     }
   }
 
@@ -80,10 +82,11 @@ class ControladorPresentacion {
       context,
       MaterialPageRoute(
         builder: (context) =>
-            Xats(controladorPresentacion: this,),
+            Xats(controladorPresentacion: this, recomms: usersRecom,usersBD: usersBD,),
       ),
     );
   }
+
     void mostrarPerfil(BuildContext context) {
     Navigator.push(
       context,
@@ -100,7 +103,7 @@ class ControladorPresentacion {
             context,
             MaterialPageRoute(
               builder: (context) => ListaMisActividades(
-                controladorPresentacion: this,
+                controladorPresentacion: this, user: _user,
               ),
             ),
           )
@@ -130,7 +133,7 @@ class ControladorPresentacion {
       context,
       MaterialPageRoute(
         builder: (context) => ListaMisActividades(
-          controladorPresentacion: this),
+          controladorPresentacion: this, user: _user,), 
       ),
     );
   }

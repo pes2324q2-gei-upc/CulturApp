@@ -1,7 +1,19 @@
 import 'package:culturapp/domain/models/user.dart';
 
-
-
+int calculaCoincidencias(List<String>categFav, List<String>categsUserActual){
+  int coincidencias = 0;
+  
+  for (int i = 0; i < 3; ++i){
+    bool cont = true;
+    for(int j = 0; j < 3 && cont; ++j){
+      if (categsUserActual[i] == categFav[j]){
+        ++coincidencias;
+        cont = false;
+      }
+    }
+  }
+  return coincidencias;
+}
 
 List<Usuario> calculaUsuariosRecomendados(List<Usuario>users, String idActual, List<String>categoriasFavoritas){
   List<Usuario>recomms = [];
@@ -10,10 +22,27 @@ List<Usuario> calculaUsuariosRecomendados(List<Usuario>users, String idActual, L
     if (users[i].identificador != idActual){
       List<String> favcats = [];
       favcats = users[i].favCats.cast<String>();
-    //Funcion para calcular cuales son los usuarios similares
+      if (calculaCoincidencias(favcats, categoriasFavoritas) > 0) {
+        recomms.add(users[i]);
+      }
     }
   }
+/*
+  for (int i = 0; i < recomms.length; ++i){
+    print("------------------------------------------------");
+    for (int j = 0; j < 3; ++ j){
+      print(recomms[i].favCats[j]);
+    }
+    print (recomms[i].identificador);
+    print("------------------------------------------------");
+  }
 
+  print("--dslkdkladlkdlkslñadlñadlñaslñdkaslñd----------------------------------------------");
+    for (int j = 0; j < 3; ++ j){
+      print(categoriasFavoritas[j]);
+    }
+    print("---------dslkdlñakdlñakdlñaksldsaldñlasdlñkadlñ---------------------------------------");
+*/
   return recomms;
 }
 

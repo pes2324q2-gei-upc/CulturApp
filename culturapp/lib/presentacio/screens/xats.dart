@@ -1,4 +1,5 @@
 //import "package:culturapp/presentacio/routes/routes.dart";
+import "package:culturapp/domain/models/user.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/screens/afegir_amics.dart";
 import "package:culturapp/presentacio/screens/amics.dart";
@@ -8,19 +9,25 @@ import "package:google_nav_bar/google_nav_bar.dart";
 
 class Xats extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
-  const Xats({super.key, required this.controladorPresentacion});
+  final List<Usuario>recomms;
+  final List<Usuario>usersBD;
+  const Xats({super.key, required this.controladorPresentacion, required this.recomms, required this.usersBD});
   @override
-  State<Xats> createState() => _Xats(controladorPresentacion);
+  State<Xats> createState() => _Xats(controladorPresentacion, recomms, usersBD);
 }
 
 class _Xats extends State<Xats> {
   late ControladorPresentacion _controladorPresentacion;
   int _selectedIndex = 2; 
+  late List<Usuario>usersRecom;
+  late List<Usuario>usersBD;
   //List<Actividad> activitats = null; quan tinguem de base de dades fer-ho bé
   Widget currentContent = Amics();
   
-  _Xats(ControladorPresentacion controladorPresentacion) {
+  _Xats(ControladorPresentacion controladorPresentacion, List<Usuario>recomms, List<Usuario>usBD) {
     _controladorPresentacion = controladorPresentacion;
+    usersRecom = recomms;
+    usersBD = usBD;
   }
 
   void changeContent(Widget newContent) {
@@ -142,7 +149,7 @@ class _Xats extends State<Xats> {
                           ),
                           onPressed: () {
                             _changeButtonColor(3);
-                            changeContent(AfegirAmics());
+                            changeContent(AfegirAmics(recomms: usersRecom, usersBD: usersBD,));
                           },
                           child: Text('Afegir Amics'),
                         )),
