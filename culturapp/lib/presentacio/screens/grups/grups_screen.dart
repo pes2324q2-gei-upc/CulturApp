@@ -104,7 +104,7 @@ class _GrupsScreenState extends State<GrupsScreen> {
       onPressed: () {
         _controladorPresentacion.mostrarCrearNouGrup(context);
       },
-      child: Text('+'),
+      child: const Text('+'),
     );
   }
 

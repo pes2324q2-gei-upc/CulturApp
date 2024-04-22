@@ -22,15 +22,16 @@ class _XatGrupScreen extends State<XatGrupScreen> {
     _controladorPresentacion = controladorPresentacion;
   }
 
-  /*List<Message> missatges = [
-    Message('hola', 'jo'),
-    Message('jeje', 'jo'),
-    Message('xd', 'jo'),
-  ];*/
-
   List<Message> missatges = [
     Message(text: 'text', sender: 'Rosa'),
     Message(text: 'text llarggggggggggggggggggg', sender: 'Rosa'),
+    Message(text: 'text', sender: 'Me'),
+    Message(text: 'text', sender: 'Rosa'),
+    Message(text: 'text', sender: 'Me'),
+    Message(text: 'text', sender: 'Rosa'),
+    Message(text: 'text', sender: 'Me'),
+    Message(text: 'text', sender: 'Rosa'),
+    Message(text: 'text', sender: 'Andreu'),
   ];
 
   final TextEditingController _controller = TextEditingController();
@@ -46,16 +47,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        backgroundColor: Colors.orange,
-        title: const Text(
-          'Nom Grup',
-          style: TextStyle(color: Colors.white),
-        ),
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
-      ),
+      appBar: _buildAppBar(),
       body: Column(
         children: [
           Expanded(
@@ -64,6 +56,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
               alignment: Alignment.topCenter,
               child: ListView.builder(
                 reverse: true,
+                shrinkWrap: true,
                 itemCount: missatges.length,
                 itemBuilder: (context, index) {
                   return ChatBubble(
@@ -84,6 +77,54 @@ class _XatGrupScreen extends State<XatGrupScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
+      backgroundColor: Colors.orange,
+      leading: IconButton(
+        icon: const Icon(
+          Icons.arrow_back,
+          color: Colors.white,
+        ),
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      title: const Row(
+        children: [
+          CircleAvatar(
+            backgroundImage: AssetImage('assets/userImage.png'),
+          ),
+          SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Nom del grup',
+                style: TextStyle(color: Colors.white),
+              ),
+              Text(
+                'Participants',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14.0,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      actions: [
+        IconButton(
+          icon: const Icon(
+            Icons.more_vert,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            //de moment res
+          },
+        ),
+      ],
     );
   }
 
