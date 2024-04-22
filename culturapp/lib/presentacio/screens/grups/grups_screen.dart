@@ -109,24 +109,30 @@ class _GrupsScreenState extends State<GrupsScreen> {
   }
 
   Widget _buildGrupItem(context, index) {
-    return ListTile(
-      //una vegada tingui mes info del model
-      //dels perfils lo seu seria canviar-ho
-      contentPadding: EdgeInsets.all(8.0),
-      leading: Image.network(
-        display_list[index].imageGroup,
-        fit: BoxFit.cover,
-        width: 50,
-        height: 50,
-      ),
-      title: Text(display_list[index].titleGroup,
-          style: const TextStyle(
-            color: Colors.orange,
-            fontWeight: FontWeight.bold,
-          )),
-      subtitle: Text(display_list[index].lastMessage),
-      trailing: Text(
-        display_list[index].timeLastMessage,
+    return GestureDetector(
+      onTap: () {
+        //anar cap a la pantalla de un xat
+        _controladorPresentacion.mostrarXatGrup(context);
+      },
+      child: ListTile(
+        //una vegada tingui mes info del model
+        //dels perfils lo seu seria canviar-ho
+        contentPadding: const EdgeInsets.all(8.0),
+        leading: Image.network(
+          display_list[index].imageGroup,
+          fit: BoxFit.cover,
+          width: 50,
+          height: 50,
+        ),
+        title: Text(display_list[index].titleGroup,
+            style: const TextStyle(
+              color: Colors.orange,
+              fontWeight: FontWeight.bold,
+            )),
+        subtitle: Text(display_list[index].lastMessage),
+        trailing: Text(
+          display_list[index].timeLastMessage,
+        ),
       ),
     );
   }

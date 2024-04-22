@@ -1,6 +1,7 @@
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/presentacio/screens/grups/configuracio_grup.dart';
+import 'package:culturapp/presentacio/screens/grups/xat_grup.dart';
 import 'package:culturapp/presentacio/screens/lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
@@ -13,7 +14,7 @@ import 'package:culturapp/presentacio/screens/signup.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_mis_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_ver_actividad.dart';
-import 'package:culturapp/presentacio/screens/xats.dart';
+import 'package:culturapp/presentacio/screens/xats/xats.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -255,6 +256,15 @@ class ControladorPresentacion {
       MaterialPageRoute(
         builder: (context) => ConfigGrup(
             controladorPresentacion: this, participants: participants),
+      ),
+    );
+  }
+
+  void mostrarXatGrup(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => XatGrupScreen(controladorPresentacion: this),
       ),
     );
   }
