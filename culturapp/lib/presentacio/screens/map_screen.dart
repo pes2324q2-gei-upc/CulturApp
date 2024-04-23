@@ -44,7 +44,6 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
-
   _MapPageState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
     activitats = _controladorPresentacion.getActivitats();
@@ -121,10 +120,12 @@ class _MapPageState extends State<MapPage> {
       if (calculateDistance(center,
               LatLng(actividad.latitud ?? 0.0, actividad.longitud ?? 0.0)) <=
           radius) {
-            categoriesFiltres.length;
-          if(categoriesFiltres.isEmpty || actividad.categoria.any((element) => categoriesFiltres.contains(element))) {
-           actividadesaux.add(actividad);
-          }
+        categoriesFiltres.length;
+        if (categoriesFiltres.isEmpty ||
+            actividad.categoria
+                .any((element) => categoriesFiltres.contains(element))) {
+          actividadesaux.add(actividad);
+        }
       }
     }
     return actividadesaux;
@@ -631,29 +632,30 @@ class _MapPageState extends State<MapPage> {
     activitat = llista.first;
     moveMapToSelectedActivity();
   }
-  
+
   void _onTabChange(int index) {
     setState(() {
       _selectedIndex = index;
     });
-  
+
     switch (index) {
       case 0:
         _controladorPresentacion.mostrarMapa(context);
         break;
       case 1:
-          _controladorPresentacion.mostrarActividadesUser(context);
+        _controladorPresentacion.mostrarActividadesUser(context);
         break;
       case 2:
-         _controladorPresentacion.mostrarXats(context);
+        _controladorPresentacion.mostrarXats(context);
         break;
       case 3:
-          _controladorPresentacion.mostrarPerfil(context);
+        _controladorPresentacion.mostrarPerfil(context);
         break;
       default:
         break;
     }
   }
+
   //Se crea la ''pantalla'' para el mapa - falta añadir dock inferior y barra de busqueda
   @override
   Widget build(BuildContext context) {
@@ -700,11 +702,10 @@ class _MapPageState extends State<MapPage> {
             ),
           ),
           Positioned(
-            top: 100.0, // Adjust this value as needed
-            left: 25.0,
-            right: 25.0,
-            child: MyCarousel(clickCarouselCat)
-          ),
+              top: 100.0, // Adjust this value as needed
+              left: 25.0,
+              right: 25.0,
+              child: MyCarousel(clickCarouselCat)),
           Positioned.fill(
             child: DraggableScrollableSheet(
               initialChildSize: 0.2,
@@ -747,7 +748,11 @@ class _MapPageState extends State<MapPage> {
                           children: [
                             SizedBox(
                               height: 750,
-                              child: ListaActividadesDisponibles(actividades: _actividades, controladorPresentacion: _controladorPresentacion,),
+                              child: ListaActividadesDisponibles(
+                                actividades: _actividades,
+                                controladorPresentacion:
+                                    _controladorPresentacion,
+                              ),
                             ),
                           ],
                         ),
