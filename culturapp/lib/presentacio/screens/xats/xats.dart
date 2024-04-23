@@ -7,19 +7,24 @@ import "package:flutter/material.dart";
 
 class Xats extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
+
   const Xats({super.key, required this.controladorPresentacion});
+
   @override
   State<Xats> createState() => _Xats(controladorPresentacion);
 }
 
 class _Xats extends State<Xats> {
   late ControladorPresentacion _controladorPresentacion;
+
+  late Widget currentContent;
   int _selectedIndex = 2;
-  //List<Actividad> activitats = null; quan tinguem de base de dades fer-ho bé
-  Widget currentContent = AmicsScreen();
 
   _Xats(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
+    currentContent = AmicsScreen(
+      controladorPresentacion: _controladorPresentacion,
+    );
   }
 
   void changeContent(Widget newContent) {
@@ -109,9 +114,11 @@ class _Xats extends State<Xats> {
                           ),
                           onPressed: () {
                             _changeButtonColor(1);
-                            changeContent(AmicsScreen());
+                            changeContent(AmicsScreen(
+                              controladorPresentacion: _controladorPresentacion,
+                            ));
                           },
-                          child: Text('Amics'),
+                          child: const Text('Amics'),
                         )),
                     SizedBox(
                         height: 50.0,
@@ -125,11 +132,14 @@ class _Xats extends State<Xats> {
                           ),
                           onPressed: () {
                             _changeButtonColor(2);
-                            changeContent(GrupsScreen(
-                              controladorPresentacion: _controladorPresentacion,
-                            ));
+                            changeContent(
+                              GrupsScreen(
+                                controladorPresentacion:
+                                    _controladorPresentacion,
+                              ),
+                            );
                           },
-                          child: Text('Grups'),
+                          child: const Text('Grups'),
                         )),
                     SizedBox(
                         height: 50.0,
@@ -145,15 +155,15 @@ class _Xats extends State<Xats> {
                             _changeButtonColor(3);
                             changeContent(AfegirAmics());
                           },
-                          child: Text('Afegir Amics'),
+                          child: const Text('Afegir Amics'),
                         )),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20.0,
                 ),
                 Container(
-                  padding: EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(20),
                   color: Colors.grey[200],
                   child: currentContent,
                 ),

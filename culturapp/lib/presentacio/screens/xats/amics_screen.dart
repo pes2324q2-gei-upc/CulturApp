@@ -1,12 +1,24 @@
 import "package:culturapp/domain/models/usuari.dart";
+import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:flutter/material.dart";
 
 class AmicsScreen extends StatefulWidget {
+  final ControladorPresentacion controladorPresentacion;
+
+  const AmicsScreen({super.key, required this.controladorPresentacion});
+
   @override
-  State<AmicsScreen> createState() => _AmicsScreenState();
+  State<AmicsScreen> createState() =>
+      _AmicsScreenState(this.controladorPresentacion);
 }
 
 class _AmicsScreenState extends State<AmicsScreen> {
+  late ControladorPresentacion _controladorPresentacion;
+
+  _AmicsScreenState(ControladorPresentacion controladorPresentacion) {
+    _controladorPresentacion = controladorPresentacion;
+  }
+
   static List<Usuari> llista_amics = allAmics;
 
   List<Usuari> display_list = List.from(llista_amics);
@@ -74,6 +86,7 @@ class _AmicsScreenState extends State<AmicsScreen> {
     return GestureDetector(
       onTap: () {
         //anar cap a la pantalla de un xat amb l'usuari
+        _controladorPresentacion.mostrarXatAmic(context);
       },
       child: ListTile(
         //una vegada tingui mes info del model

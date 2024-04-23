@@ -15,6 +15,7 @@ import 'package:culturapp/presentacio/screens/signup.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_mis_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_ver_actividad.dart';
+import 'package:culturapp/presentacio/screens/xats/xat_amic.dart';
 import 'package:culturapp/presentacio/screens/xats/xats.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -267,6 +268,15 @@ class ControladorPresentacion {
       context,
       MaterialPageRoute(
         builder: (context) => XatGrupScreen(controladorPresentacion: this),
+      ),
+    );
+  }
+
+  void mostrarXatAmic(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => XatAmicScreen(controladorPresentacion: this),
       ),
     );
   }
