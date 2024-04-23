@@ -69,8 +69,11 @@ Widget build(BuildContext context) {
       SizedBox(
         child: Column(
           children: [
-            const Padding(padding: EdgeInsets.all(10.0)),
-            const Align(
+            
+            const Padding(padding: EdgeInsets.only(top: 20.0)),
+            if (value == "" || value == " ")
+              ...[
+              const Align(
               alignment: Alignment.topLeft,
               child: Text(
                 "Recomendaciones:",
@@ -81,9 +84,7 @@ Widget build(BuildContext context) {
                 ),
               ),
             ),
-            const Padding(padding: EdgeInsets.only(top: 20.0)),
-            if (value == "" || value == " ")
-              ...[
+            const Padding(padding: EdgeInsets.all(10.0)),
                 for (var user in usersRecom)
                   Padding(
                     padding: const EdgeInsets.only(top: 5.0),
