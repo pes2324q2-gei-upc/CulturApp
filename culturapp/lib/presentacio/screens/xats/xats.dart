@@ -1,7 +1,7 @@
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/screens/afegir_amics.dart";
-import "package:culturapp/presentacio/screens/amics.dart";
-import "package:culturapp/presentacio/screens/grups/grups_screen.dart";
+import "package:culturapp/presentacio/screens/xats/amics_screen.dart";
+import "package:culturapp/presentacio/screens/xats/grups/grups_screen.dart";
 import "package:culturapp/widgetsUtils/bnav_bar.dart";
 import "package:flutter/material.dart";
 
@@ -16,7 +16,7 @@ class _Xats extends State<Xats> {
   late ControladorPresentacion _controladorPresentacion;
   int _selectedIndex = 2;
   //List<Actividad> activitats = null; quan tinguem de base de dades fer-ho bé
-  Widget currentContent = Amics();
+  Widget currentContent = AmicsScreen();
 
   _Xats(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
@@ -109,7 +109,7 @@ class _Xats extends State<Xats> {
                           ),
                           onPressed: () {
                             _changeButtonColor(1);
-                            changeContent(Amics());
+                            changeContent(AmicsScreen());
                           },
                           child: Text('Amics'),
                         )),

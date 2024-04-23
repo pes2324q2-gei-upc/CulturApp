@@ -1,13 +1,13 @@
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/presentacio/screens/edit_perfil.dart';
-import 'package:culturapp/presentacio/screens/grups/configuracio_grup.dart';
-import 'package:culturapp/presentacio/screens/grups/xat_grup.dart';
+import 'package:culturapp/presentacio/screens/xats/grups/configuracio_grup.dart';
+import 'package:culturapp/presentacio/screens/xats/grups/xat_grup.dart';
 import 'package:culturapp/presentacio/screens/lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
 import 'package:culturapp/presentacio/screens/my_activities.dart';
-import 'package:culturapp/presentacio/screens/grups/crear_grup_screen.dart';
+import 'package:culturapp/presentacio/screens/xats/grups/crear_grup_screen.dart';
 import 'package:culturapp/presentacio/screens/perfil_screen.dart';
 import 'package:culturapp/presentacio/screens/recomendador_actividades.dart';
 import 'package:culturapp/presentacio/screens/settings_perfil.dart';
