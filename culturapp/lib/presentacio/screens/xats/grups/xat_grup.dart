@@ -1,3 +1,4 @@
+import "package:culturapp/domain/models/grup.dart";
 import "package:culturapp/domain/models/message.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/chat_bubble.dart";
@@ -5,22 +6,26 @@ import "package:flutter/material.dart";
 
 class XatGrupScreen extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
+  final Grup grup;
 
-  const XatGrupScreen({Key? key, required this.controladorPresentacion})
+  const XatGrupScreen(
+      {Key? key, required this.controladorPresentacion, required this.grup})
       : super(key: key);
 
   @override
   State<XatGrupScreen> createState() =>
-      _XatGrupScreen(this.controladorPresentacion);
+      _XatGrupScreen(this.controladorPresentacion, this.grup);
 }
 
 class _XatGrupScreen extends State<XatGrupScreen> {
   late ControladorPresentacion _controladorPresentacion;
+  late Grup _grup;
   Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
 
-  _XatGrupScreen(ControladorPresentacion controladorPresentacion) {
+  _XatGrupScreen(ControladorPresentacion controladorPresentacion, Grup grup) {
     _controladorPresentacion = controladorPresentacion;
+    _grup = grup;
   }
 
   List<Message> missatges = [
@@ -91,17 +96,17 @@ class _XatGrupScreen extends State<XatGrupScreen> {
         ),
         onPressed: () => Navigator.of(context).pop(),
       ),
-      title: const Row(
+      title: Row(
         children: [
           CircleAvatar(
-            backgroundImage: AssetImage('assets/userImage.png'),
+            backgroundImage: AssetImage(_grup.imageGroup),
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Nom del grup',
+                _grup.titleGroup,
                 style: TextStyle(color: Colors.white),
               ),
               Text(

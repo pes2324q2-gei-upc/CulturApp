@@ -1,5 +1,7 @@
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
+import 'package:culturapp/domain/models/grup.dart';
+import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/screens/edit_perfil.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/configuracio_grup.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/xat_grup.dart';
@@ -263,20 +265,24 @@ class ControladorPresentacion {
     );
   }
 
-  void mostrarXatGrup(BuildContext context) {
+  void mostrarXatGrup(BuildContext context, Grup grup) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => XatGrupScreen(controladorPresentacion: this),
+        builder: (context) =>
+            XatGrupScreen(controladorPresentacion: this, grup: grup),
       ),
     );
   }
 
-  void mostrarXatAmic(BuildContext context) {
+  void mostrarXatAmic(BuildContext context, Usuari usuari) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => XatAmicScreen(controladorPresentacion: this),
+        builder: (context) => XatAmicScreen(
+          controladorPresentacion: this,
+          usuari: usuari,
+        ),
       ),
     );
   }

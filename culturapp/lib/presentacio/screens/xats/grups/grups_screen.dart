@@ -112,7 +112,7 @@ class _GrupsScreenState extends State<GrupsScreen> {
     return GestureDetector(
       onTap: () {
         //anar cap a la pantalla de un xat
-        _controladorPresentacion.mostrarXatGrup(context);
+        _controladorPresentacion.mostrarXatGrup(context, display_list[index]);
       },
       child: ListTile(
         //una vegada tingui mes info del model

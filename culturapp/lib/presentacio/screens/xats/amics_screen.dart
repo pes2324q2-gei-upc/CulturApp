@@ -87,7 +87,7 @@ class _AmicsScreenState extends State<AmicsScreen> {
     return GestureDetector(
       onTap: () {
         //anar cap a la pantalla de un xat amb l'usuari
-        _controladorPresentacion.mostrarXatAmic(context);
+        _controladorPresentacion.mostrarXatAmic(context, display_list[index]);
       },
       child: ListTile(
         //una vegada tingui mes info del model

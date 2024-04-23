@@ -1,26 +1,32 @@
 import "package:culturapp/domain/models/message.dart";
+import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/chat_bubble.dart";
 import "package:flutter/material.dart";
 
 class XatAmicScreen extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
+  final Usuari usuari;
 
-  const XatAmicScreen({Key? key, required this.controladorPresentacion})
+  const XatAmicScreen(
+      {Key? key, required this.controladorPresentacion, required this.usuari})
       : super(key: key);
 
   @override
   State<XatAmicScreen> createState() =>
-      _XatAmicScreen(this.controladorPresentacion);
+      _XatAmicScreen(this.controladorPresentacion, this.usuari);
 }
 
 class _XatAmicScreen extends State<XatAmicScreen> {
   late ControladorPresentacion _controladorPresentacion;
+  late Usuari _usuari;
   Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
 
-  _XatAmicScreen(ControladorPresentacion controladorPresentacion) {
+  _XatAmicScreen(
+      ControladorPresentacion controladorPresentacion, Usuari usuari) {
     _controladorPresentacion = controladorPresentacion;
+    _usuari = usuari;
   }
 
   final TextEditingController _controller = TextEditingController();
@@ -73,7 +79,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
           const Divider(height: 1.0),
           Container(
             decoration: BoxDecoration(color: Theme.of(context).cardColor),
-            child: _BottomInputField(),
+            child: _bottomInputField(),
           ),
         ],
       ),
@@ -90,18 +96,18 @@ class _XatAmicScreen extends State<XatAmicScreen> {
         ),
         onPressed: () => Navigator.of(context).pop(),
       ),
-      title: const Row(
+      title: Row(
         children: [
           CircleAvatar(
-            backgroundImage: AssetImage('assets/userImage.png'),
+            backgroundImage: AssetImage(_usuari.image),
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Nom de amic',
-                style: TextStyle(color: Colors.white),
+                _usuari.nom,
+                style: const TextStyle(color: Colors.white),
               ),
             ],
           ),
@@ -121,11 +127,11 @@ class _XatAmicScreen extends State<XatAmicScreen> {
     );
   }
 
-  Widget _BottomInputField() {
+  Widget _bottomInputField() {
     return IconTheme(
-      data: IconThemeData(color: Colors.orange),
+      data: const IconThemeData(color: Colors.orange),
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 8.0),
+        margin: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
           children: <Widget>[
             Flexible(
@@ -133,11 +139,11 @@ class _XatAmicScreen extends State<XatAmicScreen> {
                 controller: _controller,
                 onSubmitted: _handleSubmitted,
                 decoration:
-                    InputDecoration.collapsed(hintText: 'Send a message'),
+                    const InputDecoration.collapsed(hintText: 'Send a message'),
               ),
             ),
             IconButton(
-              icon: Icon(Icons.send),
+              icon: const Icon(Icons.send),
               onPressed: () => _handleSubmitted(_controller.text),
             ),
           ],
