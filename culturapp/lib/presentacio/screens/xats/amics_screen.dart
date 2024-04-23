@@ -93,8 +93,8 @@ class _AmicsScreenState extends State<AmicsScreen> {
         //una vegada tingui mes info del model
         //dels perfils lo seu seria canviar-ho
         contentPadding: const EdgeInsets.all(8.0),
-        leading: Image.network(
-          display_list[index].image,
+        leading: Image(
+          image: AssetImage(display_list[index].image),
           fit: BoxFit.cover,
           width: 50,
           height: 50,

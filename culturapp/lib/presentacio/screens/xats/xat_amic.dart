@@ -33,14 +33,14 @@ class _XatAmicScreen extends State<XatAmicScreen> {
   }
 
   List<Message> missatges = [
-    Message(text: 'text', sender: 'Rosa'),
-    Message(text: 'text llarggggggggggggggggggg', sender: 'Rosa'),
+    Message(text: 'text', sender: 'Amic'),
+    Message(text: 'text llarggggggggggggggggggg', sender: 'Amic'),
     Message(text: 'text', sender: 'Me'),
-    Message(text: 'text', sender: 'Rosa'),
+    Message(text: 'text', sender: 'Amic'),
     Message(text: 'text', sender: 'Me'),
-    Message(text: 'text', sender: 'Rosa'),
+    Message(text: 'text', sender: 'Amic'),
     Message(text: 'text', sender: 'Me'),
-    Message(text: 'text', sender: 'Rosa'),
+    Message(text: 'text', sender: 'Amic'),
   ];
 
   @override

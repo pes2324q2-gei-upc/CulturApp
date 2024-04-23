@@ -110,12 +110,11 @@ class _ConfigGrup extends State<ConfigGrup> {
         ),
         Padding(
           padding: const EdgeInsets.all(14),
-          child: Image.network(
-            'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
-            //cambiar imatge this one is pochilla
-            fit: BoxFit.cover,
-            width: 70,
-            height: 70,
+          child: Image(
+            image: AssetImage('assets/userImage.png'),
+            fit: BoxFit.fill,
+            width: 70.0,
+            height: 70.0,
           ),
         ),
       ],
@@ -249,11 +248,11 @@ class _ConfigGrup extends State<ConfigGrup> {
       //una vegada tingui mes info del model
       //dels perfils lo seu seria canviar-ho
       contentPadding: const EdgeInsets.all(8.0),
-      leading: Image.network(
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
-        fit: BoxFit.cover,
-        width: 50,
-        height: 50,
+      leading: Image(
+        image: AssetImage('assets/userImage.png'),
+        fit: BoxFit.fill,
+        width: 50.0,
+        height: 50.0,
       ),
       title: Text(_participants[index],
           style: const TextStyle(

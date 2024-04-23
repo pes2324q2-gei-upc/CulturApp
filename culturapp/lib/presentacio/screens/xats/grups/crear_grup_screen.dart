@@ -182,8 +182,8 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
           children: [
             Container(
               alignment: Alignment.topCenter,
-              child: Image.network(
-                'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+              child: Image(
+                image: AssetImage('assets/userImage.png'),
                 fit: BoxFit.fill,
                 width: 55.0,
                 height: 55.0,
@@ -220,11 +220,11 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
       //una vegada tingui mes info del model
       //dels perfils lo seu seria canviar-ho
       contentPadding: const EdgeInsets.all(8.0),
-      leading: Image.network(
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
-        fit: BoxFit.cover,
-        width: 50,
-        height: 50,
+      leading: Image(
+        image: AssetImage('assets/userImage.png'),
+        fit: BoxFit.fill,
+        width: 50.0,
+        height: 50.0,
       ),
       title: Text(displayList[index],
           style: const TextStyle(

@@ -16,43 +16,37 @@ class Grup {
 const List<Grup> allGroups = [
   Grup(
     titleGroup: 'Group1',
-    imageGroup:
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+    imageGroup: 'assets/userImage.png',
     lastMessage: 'Hello everyone :D',
     timeLastMessage: '13:57',
   ),
   Grup(
     titleGroup: 'Group2',
-    imageGroup:
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+    imageGroup: 'assets/userImage.png',
     lastMessage: 'Does anybody knows?',
     timeLastMessage: '11:13',
   ),
   Grup(
     titleGroup: 'Group3',
-    imageGroup:
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+    imageGroup: 'assets/userImage.png',
     lastMessage: 'Thank you!',
     timeLastMessage: '01:13',
   ),
   Grup(
     titleGroup: 'Group4',
-    imageGroup:
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+    imageGroup: 'assets/userImage.png',
     lastMessage: 'Hbu?',
     timeLastMessage: '06:30',
   ),
   Grup(
     titleGroup: 'Group5',
-    imageGroup:
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+    imageGroup: 'assets/userImage.png',
     lastMessage: 'No',
     timeLastMessage: '16:30',
   ),
   Grup(
     titleGroup: 'Avemaria',
-    imageGroup:
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+    imageGroup: 'assets/userImage.png',
     lastMessage: 'Si',
     timeLastMessage: '16:30',
   ),

@@ -15,43 +15,37 @@ class Usuari {
 const List<Usuari> allAmics = [
   Usuari(
     nom: 'Jaume',
-    image:
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+    image: 'assets/userImage.png',
     lastMessage: 'Hello :D',
     timeLastMessage: '13:57',
   ),
   Usuari(
     nom: 'Oriol',
-    image:
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+    image: 'assets/userImage.png',
     lastMessage: 'Hello :D',
     timeLastMessage: '13:57',
   ),
   Usuari(
     nom: 'Maira',
-    image:
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+    image: 'assets/userImage.png',
     lastMessage: 'Hello :D',
     timeLastMessage: '13:57',
   ),
   Usuari(
     nom: 'Laia',
-    image:
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+    image: 'assets/userImage.png',
     lastMessage: 'Hello :D',
     timeLastMessage: '13:57',
   ),
   Usuari(
     nom: 'Felip',
-    image:
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+    image: 'assets/userImage.png',
     lastMessage: 'Hello :D',
     timeLastMessage: '13:57',
   ),
   Usuari(
     nom: 'Marc',
-    image:
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+    image: 'assets/userImage.png',
     lastMessage: 'Hello :D',
     timeLastMessage: '13:57',
   ),
