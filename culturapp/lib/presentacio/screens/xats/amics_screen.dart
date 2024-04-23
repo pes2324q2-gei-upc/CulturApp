@@ -5,7 +5,8 @@ import "package:flutter/material.dart";
 class AmicsScreen extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
 
-  const AmicsScreen({super.key, required this.controladorPresentacion});
+  const AmicsScreen({Key? key, required this.controladorPresentacion})
+      : super(key: key);
 
   @override
   State<AmicsScreen> createState() =>

@@ -1,3 +1,4 @@
+import "package:culturapp/domain/models/message.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/chat_bubble.dart";
 import "package:flutter/material.dart";
@@ -152,11 +153,4 @@ class _XatGrupScreen extends State<XatGrupScreen> {
       ),
     );
   }
-}
-
-class Message {
-  final String text;
-  final String sender;
-
-  Message({required this.text, required this.sender});
 }

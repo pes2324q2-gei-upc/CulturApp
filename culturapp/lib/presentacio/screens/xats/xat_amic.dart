@@ -1,3 +1,4 @@
+import "package:culturapp/domain/models/message.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/chat_bubble.dart";
 import "package:flutter/material.dart";
@@ -22,12 +23,60 @@ class _XatAmicScreen extends State<XatAmicScreen> {
     _controladorPresentacion = controladorPresentacion;
   }
 
+  final TextEditingController _controller = TextEditingController();
+
+  void _handleSubmitted(String text) {
+    _controller.clear();
+    setState(() {
+      missatges.insert(0, Message(text: text, sender: 'Me'));
+    });
+  }
+
+  List<Message> missatges = [
+    Message(text: 'text', sender: 'Rosa'),
+    Message(text: 'text llarggggggggggggggggggg', sender: 'Rosa'),
+    Message(text: 'text', sender: 'Me'),
+    Message(text: 'text', sender: 'Rosa'),
+    Message(text: 'text', sender: 'Me'),
+    Message(text: 'text', sender: 'Rosa'),
+    Message(text: 'text', sender: 'Me'),
+    Message(text: 'text', sender: 'Rosa'),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: _buildAppBar(),
-      body: Text('hey'),
+      body: Column(
+        children: [
+          Expanded(
+            child: Container(
+              color: grisFluix,
+              alignment: Alignment.topCenter,
+              child: ListView.builder(
+                reverse: true,
+                shrinkWrap: true,
+                itemCount: missatges.length,
+                itemBuilder: (context, index) {
+                  return ChatBubble(
+                    userName: missatges[index].sender,
+                    message: missatges[index].text,
+                    time: "10:00 AM",
+                    //s'ha de tocar de tal manera que si soc jo l'usuari, es fiqui
+                    //a la dreta, mentre que si es qualsevol altre persona es fica a l'esquerra
+                  );
+                },
+              ),
+            ),
+          ),
+          const Divider(height: 1.0),
+          Container(
+            decoration: BoxDecoration(color: Theme.of(context).cardColor),
+            child: _BottomInputField(),
+          ),
+        ],
+      ),
     );
   }
 
@@ -51,15 +100,8 @@ class _XatAmicScreen extends State<XatAmicScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Nom del grup',
+                'Nom de amic',
                 style: TextStyle(color: Colors.white),
-              ),
-              Text(
-                'Participants',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14.0,
-                ),
               ),
             ],
           ),
@@ -76,6 +118,31 @@ class _XatAmicScreen extends State<XatAmicScreen> {
           },
         ),
       ],
+    );
+  }
+
+  Widget _BottomInputField() {
+    return IconTheme(
+      data: IconThemeData(color: Colors.orange),
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 8.0),
+        child: Row(
+          children: <Widget>[
+            Flexible(
+              child: TextField(
+                controller: _controller,
+                onSubmitted: _handleSubmitted,
+                decoration:
+                    InputDecoration.collapsed(hintText: 'Send a message'),
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.send),
+              onPressed: () => _handleSubmitted(_controller.text),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
