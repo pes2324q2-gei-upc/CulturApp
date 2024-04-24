@@ -22,11 +22,13 @@ class _XatAmicScreen extends State<XatAmicScreen> {
   late Usuari _usuari;
   Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
+  List<Message> missatges = [];
 
   _XatAmicScreen(
       ControladorPresentacion controladorPresentacion, Usuari usuari) {
     _controladorPresentacion = controladorPresentacion;
     _usuari = usuari;
+    missatges = missatgesAmic;
   }
 
   final TextEditingController _controller = TextEditingController();
@@ -34,20 +36,12 @@ class _XatAmicScreen extends State<XatAmicScreen> {
   void _handleSubmitted(String text) {
     _controller.clear();
     setState(() {
-      missatges.insert(0, Message(text: text, sender: 'Me'));
+      missatges.insert(
+        0,
+        Message(text: text, sender: 'Me', timeSended: '10:00'),
+      );
     });
   }
-
-  List<Message> missatges = [
-    Message(text: 'text', sender: 'Amic'),
-    Message(text: 'text llarggggggggggggggggggg', sender: 'Amic'),
-    Message(text: 'text', sender: 'Me'),
-    Message(text: 'text', sender: 'Amic'),
-    Message(text: 'text', sender: 'Me'),
-    Message(text: 'text', sender: 'Amic'),
-    Message(text: 'text', sender: 'Me'),
-    Message(text: 'text', sender: 'Amic'),
-  ];
 
   @override
   Widget build(BuildContext context) {

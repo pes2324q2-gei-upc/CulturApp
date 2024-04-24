@@ -15,20 +15,19 @@ class GrupsScreen extends StatefulWidget {
 
 class _GrupsScreenState extends State<GrupsScreen> {
   late ControladorPresentacion _controladorPresentacion;
+  late List<Grup> llista_grups;
+  late List<Grup> display_list;
+  String value = '';
 
   _GrupsScreenState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
+    llista_grups =
+        allGroups; //fer crida al backend per agafar tots els grups que l'usuari forma part
+    display_list = llista_grups; //comencem amb tots els grups
   }
 
-  static List<Grup> llista_grups =
-      allGroups; //eventualment substituir-ho per crida a backend o el q sigui
-
-  List<Grup> display_list = allGroups; //llista_grups
-
-  String value = '';
-
   void updateList(String value) {
-    //funcio on es filtrarà la nostra llista
+    //funcio on es filtrarà els grups per nom (cercador)
     setState(
       () {
         display_list = llista_grups
@@ -113,10 +112,9 @@ class _GrupsScreenState extends State<GrupsScreen> {
       onTap: () {
         //anar cap a la pantalla de un xat
         _controladorPresentacion.mostrarXatGrup(context, display_list[index]);
+        //si al final es necessari, crida per agafar tots els missatges del grup
       },
       child: ListTile(
-        //una vegada tingui mes info del model
-        //dels perfils lo seu seria canviar-ho
         contentPadding: const EdgeInsets.all(8.0),
         leading: Image(
           image: AssetImage(display_list[index].imageGroup),

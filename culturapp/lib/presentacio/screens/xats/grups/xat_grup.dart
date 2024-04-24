@@ -22,6 +22,8 @@ class _XatGrupScreen extends State<XatGrupScreen> {
   late ControladorPresentacion _controladorPresentacion;
   late Grup _grup;
   late List<String> nomParticipants;
+  late List<Message> missatges;
+
   Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
 
@@ -29,6 +31,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
     _controladorPresentacion = controladorPresentacion;
     _grup = grup;
     nomParticipants = agafarNomsParticipants(_grup.participants);
+    missatges = _grup.missatgesGrup;
   }
 
   List<String> agafarNomsParticipants(List<Usuari> participants) {
@@ -45,28 +48,20 @@ class _XatGrupScreen extends State<XatGrupScreen> {
     if (noms.length <= maxLength) {
       return noms; // Return the original string if it's not longer than maxLength
     } else {
-      return noms.substring(0, maxLength - 3) + '...'; // Truncate and add '...'
+      return '${noms.substring(0, maxLength - 3)}...'; // Truncate and add '...'
     }
   }
-
-  List<Message> missatges = [
-    Message(text: 'text', sender: 'Rosa'),
-    Message(text: 'text llarggggggggggggggggggg', sender: 'Rosa'),
-    Message(text: 'text', sender: 'Me'),
-    Message(text: 'text', sender: 'Rosa'),
-    Message(text: 'text', sender: 'Me'),
-    Message(text: 'text', sender: 'Rosa'),
-    Message(text: 'text', sender: 'Me'),
-    Message(text: 'text', sender: 'Rosa'),
-    Message(text: 'text', sender: 'Andreu'),
-  ];
 
   final TextEditingController _controller = TextEditingController();
 
   void _handleSubmitted(String text) {
     _controller.clear();
     setState(() {
-      missatges.insert(0, Message(text: text, sender: 'Me'));
+      missatges.insert(
+        0,
+        Message(text: text, sender: 'Me', timeSended: "10:00"),
+      );
+      //crida al backend per penjar missatge al grup
     });
   }
 
@@ -128,7 +123,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
             children: [
               Text(
                 _grup.titleGroup,
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
               Text(
                 truncarString(nomParticipants.join(', '), 35),
@@ -157,9 +152,9 @@ class _XatGrupScreen extends State<XatGrupScreen> {
 
   Widget _BottomInputField() {
     return IconTheme(
-      data: IconThemeData(color: Colors.orange),
+      data: const IconThemeData(color: Colors.orange),
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 8.0),
+        margin: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
           children: <Widget>[
             Flexible(
@@ -167,11 +162,11 @@ class _XatGrupScreen extends State<XatGrupScreen> {
                 controller: _controller,
                 onSubmitted: _handleSubmitted,
                 decoration:
-                    InputDecoration.collapsed(hintText: 'Send a message'),
+                    const InputDecoration.collapsed(hintText: 'Send a message'),
               ),
             ),
             IconButton(
-              icon: Icon(Icons.send),
+              icon: const Icon(Icons.send),
               onPressed: () => _handleSubmitted(_controller.text),
             ),
           ],

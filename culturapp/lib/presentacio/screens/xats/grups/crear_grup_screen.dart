@@ -1,3 +1,4 @@
+import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:flutter/material.dart";
 
@@ -14,48 +15,29 @@ class CrearGrupScreen extends StatefulWidget {
 
 class _CrearGrupScreen extends State<CrearGrupScreen> {
   late ControladorPresentacion _controladorPresentacion;
-  Color taronja_fluix = const Color.fromRGBO(240, 186, 132, 1);
   late List<bool> participantAfegit;
+  late List<Usuari> displayList;
+  late List<Usuari> amics;
+  //o millor fer-ho dels noms només?? -> millor en usuaris pq després els haurem de passar per fer un grup
+
+  Color taronja_fluix = const Color.fromRGBO(240, 186, 132, 1);
 
   _CrearGrupScreen(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
-    participantAfegit = List.filled(displayList.length, false);
+    amics = allAmics;
     displayList = amics;
+    participantAfegit = List.filled(displayList.length, false);
   }
 
-  static List<String> amics = [
-    'user1',
-    'user2',
-    'user3',
-    'user4',
-    'user5',
-    'user6',
-    'user7',
-    'user8',
-    'user9',
-    'user10',
-    'user11',
-  ];
-
-  /*
-  si es fes un model per els participants dels grups hauria de tindre els atributs següents:
-  -nom
-  -foto
-  (aquests dos es podrien agafar dels usuaris)
-  - bool de si han sigut afegits
-  */
-
-  List<String> participants = [];
-
-  List<String> displayList = amics;
+  List<Usuari> participants = [];
 
   void updateList(String value) {
-    //funcio on es filtrarà la nostra llista
+    //funcio on es filtrarà la nostra llista (cercador)
     setState(
       () {
         displayList = amics
             .where((element) =>
-                element.toLowerCase().contains(value.toLowerCase()))
+                element.nom.toLowerCase().contains(value.toLowerCase()))
             .toList();
       },
     );
@@ -183,7 +165,7 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
             Container(
               alignment: Alignment.topCenter,
               child: Image(
-                image: AssetImage('assets/userImage.png'),
+                image: AssetImage(participants[index].image),
                 fit: BoxFit.fill,
                 width: 55.0,
                 height: 55.0,
@@ -200,7 +182,7 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
                   padding:
                       const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                   child: Text(
-                    participants[index],
+                    participants[index].nom,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 10,
@@ -217,16 +199,14 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
 
   Widget _buildParticipant(context, index) {
     return ListTile(
-      //una vegada tingui mes info del model
-      //dels perfils lo seu seria canviar-ho
       contentPadding: const EdgeInsets.all(8.0),
       leading: Image(
-        image: AssetImage('assets/userImage.png'),
+        image: AssetImage(displayList[index].image),
         fit: BoxFit.fill,
         width: 50.0,
         height: 50.0,
       ),
-      title: Text(displayList[index],
+      title: Text(displayList[index].nom,
           style: const TextStyle(
             color: Colors.orange,
             fontWeight: FontWeight.bold,

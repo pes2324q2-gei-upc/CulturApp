@@ -1,3 +1,4 @@
+import 'package:culturapp/domain/models/message.dart';
 import 'package:culturapp/domain/models/usuari.dart';
 
 class Grup {
@@ -6,6 +7,7 @@ class Grup {
   final String lastMessage;
   final String timeLastMessage;
   final List<Usuari> participants;
+  final List<Message> missatgesGrup;
 
   const Grup({
     required this.titleGroup,
@@ -13,16 +15,18 @@ class Grup {
     required this.lastMessage,
     required this.timeLastMessage,
     required this.participants,
+    required this.missatgesGrup,
   });
 }
 
-const List<Grup> allGroups = [
+List<Grup> allGroups = [
   Grup(
     titleGroup: 'Group1',
     imageGroup: 'assets/userImage.png',
     lastMessage: 'Hello everyone :D',
     timeLastMessage: '13:57',
     participants: allAmics,
+    missatgesGrup: allMessage,
   ),
   Grup(
     titleGroup: 'Group2',
@@ -30,6 +34,7 @@ const List<Grup> allGroups = [
     lastMessage: 'Does anybody knows?',
     timeLastMessage: '11:13',
     participants: allAmics,
+    missatgesGrup: allMessage,
   ),
   Grup(
     titleGroup: 'Group3',
@@ -37,6 +42,7 @@ const List<Grup> allGroups = [
     lastMessage: 'Thank you!',
     timeLastMessage: '01:13',
     participants: allAmics,
+    missatgesGrup: allMessage,
   ),
   Grup(
     titleGroup: 'Group4',
@@ -44,6 +50,7 @@ const List<Grup> allGroups = [
     lastMessage: 'Hbu?',
     timeLastMessage: '06:30',
     participants: allAmics,
+    missatgesGrup: allMessage,
   ),
   Grup(
     titleGroup: 'Group5',
@@ -51,6 +58,7 @@ const List<Grup> allGroups = [
     lastMessage: 'No',
     timeLastMessage: '16:30',
     participants: allAmics,
+    missatgesGrup: allMessage,
   ),
   Grup(
     titleGroup: 'Avemaria',
@@ -58,5 +66,6 @@ const List<Grup> allGroups = [
     lastMessage: 'Si',
     timeLastMessage: '16:30',
     participants: allAmics,
+    missatgesGrup: allMessageDuo,
   ),
 ];
