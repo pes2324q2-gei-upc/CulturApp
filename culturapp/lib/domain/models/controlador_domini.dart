@@ -249,7 +249,7 @@ class ControladorDomini {
 
   Future<String> getUsername(String uid) async {
     final respuesta = await http.get(Uri.parse(
-        'http://${ip}:8080/users/username?uid=${uid}'));
+        'https://culturapp-back.onrender.com/users/username?uid=${uid}'));
 
     if (respuesta.statusCode == 200) {
       return respuesta.body;

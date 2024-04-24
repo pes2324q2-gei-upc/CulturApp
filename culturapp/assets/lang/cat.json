@@ -1,5 +1,8 @@
 {
     "assisted_events": "Esdeveniments assistits",
-    "profile_error_msg": "No s'ha pogut obtenir la informació del perfil"
+    "profile_error_msg": "No s'ha pogut obtenir la informació del perfil",
+    "followers": "Seguidors",
+    "following": "Seguits",
+    "badges": "Insígnies"
 }
  

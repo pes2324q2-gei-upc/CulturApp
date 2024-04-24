@@ -1,4 +1,7 @@
 {
     "assisted_events": "Assisted events",
-    "profile_error_msg": "No se ha podido obtener la información del perfil"
+    "profile_error_msg": "No se ha podido obtener la información del perfil",
+    "followers": "Followers",
+    "following": "Following",
+    "badges": "Badges"
 }
