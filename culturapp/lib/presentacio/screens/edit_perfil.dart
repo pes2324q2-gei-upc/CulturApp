@@ -1,4 +1,5 @@
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:culturapp/translations/AppLocalizations';
 import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:flutter/material.dart';
 import "package:cloud_firestore/cloud_firestore.dart";
@@ -81,7 +82,7 @@ class _EditPerfil extends State<EditPerfil> {
             child: CircularProgressIndicator(color: Colors.orange),
           );
         } else if (snapshot.hasError) {
-          return Text('Error al obtener el nombre de usuario');
+          return Text("profile_error_msg".tr(context));
         } else {
           // Muestra el nombre de usuario obtenido
           final username = snapshot.data ?? '';

@@ -2,9 +2,11 @@ import 'package:culturapp/data/firebase_options.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
+import 'package:culturapp/translations/AppLocalizations';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,7 +61,26 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.orange,
-      ),
+      ),  
+      supportedLocales: const [
+        Locale('en'),
+        Locale('cat'),
+        Locale('es'),
+      ],
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      localeResolutionCallback: (deviceLocale, supportedLocales) {
+        for (var locale in supportedLocales) {
+          if (deviceLocale != null && deviceLocale.languageCode == locale.languageCode) {
+            return deviceLocale;
+          }
+        }
+        return supportedLocales.first;
+      },
       home: Scaffold(
         body: _isLoggedIn
             ? MapPage(controladorPresentacion: _controladorPresentacion)

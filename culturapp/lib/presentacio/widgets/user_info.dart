@@ -1,5 +1,6 @@
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
+import 'package:culturapp/translations/AppLocalizations';
 import 'package:flutter/material.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 
@@ -15,7 +16,7 @@ class UserInfoWidget extends StatefulWidget {
 }
 
 class _UserInfoWidgetState extends State<UserInfoWidget> {
-  String _selectedText = 'Historico actividades';
+  String _selectedText = "'Historico actividades'";
   int _selectedIndex = 0;
   late ControladorPresentacion _controladorPresentacion;
   late String _uid;
@@ -133,9 +134,9 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildInfoColumn('Esdeveniments assistits', '1'),
-              _buildInfoColumn('Seguidors', '12'),
-              _buildInfoColumn('Seguits', '40'),
+              _buildInfoColumn("assisted_events".tr(context), '1'),
+              _buildInfoColumn('followers'.tr(context), '12'),
+              _buildInfoColumn('following'.tr(context), '40'),
             ]
           ),
         ),
@@ -146,8 +147,8 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
               children: [
                 TabBar(
                   tabs: [
-                    Tab(text: 'Esdeveniments assistits'),
-                    Tab(text: 'Insígnies'),
+                    Tab(text: "assisted_events".tr(context)),
+                    Tab(text: "badges".tr(context)),
                   ],
                   indicatorColor: Colors.orange,
                   labelColor: Colors.orange,

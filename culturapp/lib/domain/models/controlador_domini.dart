@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 
 class ControladorDomini {
   //ip default: 10.0.2.2
-  final String ip = "10.0.2.2";
+  final String ip = "192.168.1.38";
 
   Future<List<Actividad>> getActivitiesAgenda() async {
     final respuesta =
@@ -249,7 +249,7 @@ class ControladorDomini {
 
   Future<String> getUsername(String uid) async {
     final respuesta = await http.get(Uri.parse(
-        'http://${ip}:8080/users/username?uid=${uid}'));
+        'https://culturapp-back.onrender.com/users/username?uid=${uid}'));
 
     if (respuesta.statusCode == 200) {
       return respuesta.body;
