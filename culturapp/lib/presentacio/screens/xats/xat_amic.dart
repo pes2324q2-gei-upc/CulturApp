@@ -28,7 +28,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
       ControladorPresentacion controladorPresentacion, Usuari usuari) {
     _controladorPresentacion = controladorPresentacion;
     _usuari = usuari;
-    missatges = missatgesAmic;
+    missatges = usuari.xat.missatges;
   }
 
   final TextEditingController _controller = TextEditingController();
@@ -36,6 +36,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
   void _handleSubmitted(String text) {
     _controller.clear();
     setState(() {
+      //crida al back per enviar un missatge
       missatges.insert(
         0,
         Message(text: text, sender: 'Me', timeSended: '10:00'),
@@ -62,9 +63,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
                   return ChatBubble(
                     userName: missatges[index].sender,
                     message: missatges[index].text,
-                    time: "10:00 AM",
-                    //s'ha de tocar de tal manera que si soc jo l'usuari, es fiqui
-                    //a la dreta, mentre que si es qualsevol altre persona es fica a l'esquerra
+                    time: missatges[index].timeSended,
                   );
                 },
               ),

@@ -15,19 +15,20 @@ class AmicsScreen extends StatefulWidget {
 
 class _AmicsScreenState extends State<AmicsScreen> {
   late ControladorPresentacion _controladorPresentacion;
+  late List<Usuari> llista_amics;
+  late List<Usuari> display_list;
 
   _AmicsScreenState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
+    llista_amics = allAmics;
+    //crida a backend per agafar tots els amics de l'usuari
+    display_list = List.from(llista_amics);
   }
-
-  static List<Usuari> llista_amics = allAmics;
-
-  List<Usuari> display_list = List.from(llista_amics);
 
   String value = '';
 
   void updateList(String value) {
-    //funcio on es filtrarà la nostra llista
+    //funcio on es filtrarà la nostra llista(cercador)
     setState(
       () {
         display_list = llista_amics
@@ -87,11 +88,10 @@ class _AmicsScreenState extends State<AmicsScreen> {
     return GestureDetector(
       onTap: () {
         //anar cap a la pantalla de un xat amb l'usuari
+        //crida al backend per agafar el xat del amic en concret
         _controladorPresentacion.mostrarXatAmic(context, display_list[index]);
       },
       child: ListTile(
-        //una vegada tingui mes info del model
-        //dels perfils lo seu seria canviar-ho
         contentPadding: const EdgeInsets.all(8.0),
         leading: Image(
           image: AssetImage(display_list[index].image),
