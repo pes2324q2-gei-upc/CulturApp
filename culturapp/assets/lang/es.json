@@ -1,3 +1,4 @@
 {
-    "assisted_events": "Eventos asistidos"
+    "assisted_events": "Eventos asistidos",
+    "profile_error_msg": "Error receiving profile information"
 }

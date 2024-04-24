@@ -1,4 +1,5 @@
 {
-    "assisted_events": "Esdeveniments assistits"
+    "assisted_events": "Esdeveniments assistits",
+    "profile_error_msg": "No s'ha pogut obtenir la informació del perfil"
 }
  

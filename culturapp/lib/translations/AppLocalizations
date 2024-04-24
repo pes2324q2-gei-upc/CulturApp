@@ -23,17 +23,19 @@ class AppLocalizations {
 
  // Method to load localized strings from JSON files
  Future loadJsonLanguage() async {
-   String jsonString =
-       await rootBundle.loadString("assets/lang/${locale!.languageCode}.json");
+  String jsonString =
+      await rootBundle.loadString("assets/lang/${locale!.languageCode}.json");
 
-   // Parse the JSON string into a map
-   Map<String, dynamic> jsonMap = json.decode(jsonString);
+  print("JSON Content: $jsonString");
 
-   // Convert the map values to strings and store them in the _localizedStrings map
-   _localizedStrings = jsonMap.map((key, value) {
-     return MapEntry(key, value.toString());
-   });
- }
+  // Parse the JSON string into a map
+  Map<String, dynamic> jsonMap = json.decode(jsonString);
+
+  // Convert the map values to strings and store them in the _localizedStrings map
+  _localizedStrings = jsonMap.map((key, value) {
+    return MapEntry(key, value.toString());
+  });
+}
 
  // Method to translate a key into a localized string
  String translate(String key) => _localizedStrings[key] ?? "";
@@ -58,7 +60,7 @@ class _AppLocalizationsDelegate
  @override
  bool isSupported(Locale locale) {
    // Define the supported locales (e.g., 'en' for English, 'ar' for Arabic)
-   return ['en', 'ar'].contains(locale.languageCode);
+   return ['en', 'es', 'cat'].contains(locale.languageCode);
  }
 
  @override

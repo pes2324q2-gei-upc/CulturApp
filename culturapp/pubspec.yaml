@@ -40,6 +40,9 @@ dev_dependencies:
 
 flutter:
   assets:
+  - assets/lang/es.json
+  - assets/lang/cat.json
+  - assets/lang/en.json
   - assets/pinarte.png
   - assets/pinconfe.png
   - assets/pincarnaval.png
