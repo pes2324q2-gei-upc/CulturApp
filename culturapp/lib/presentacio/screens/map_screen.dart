@@ -7,6 +7,7 @@ import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/lista_actividades.dart';
 import 'package:culturapp/presentacio/widgets/carousel.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
+import 'package:culturapp/translations/AppLocalizations';
 import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -688,7 +689,7 @@ class _MapPageState extends State<MapPage> {
                 child: TextField(
                     //en aquest cas, només "onPressed pq només pot haver-hi una"
                     decoration: InputDecoration(
-                        hintText: 'Buscar...',
+                        hintText: 'search'.tr(context),
                         border: InputBorder.none,
                         suffixIcon: IconButton(
                             onPressed: () {
@@ -737,7 +738,7 @@ class _MapPageState extends State<MapPage> {
                         ),
                       ),
                       Text(
-                        "${_actividades.length} Actividades disponibles",
+                        "available_activities".trWithArg(context, {"number": _actividades.length}),
                         style: const TextStyle(
                           color: Colors.orange,
                         ),

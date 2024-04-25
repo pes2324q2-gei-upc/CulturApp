@@ -10,5 +10,10 @@
     "cancel": "Cancel",
     "ok": "Ok",
     "welcome_txt": "Welcome to CulturApp",
-    "google_access": "Access with Google"
+    "google_access": "Access with Google",
+    "create_account": "Create account",
+    "add_info": "Add your information",
+    "username": "Username",
+    "available_activities": "{number} available activities",
+    "search": "Search..."
 }
