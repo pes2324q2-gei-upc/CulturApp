@@ -15,5 +15,6 @@
     "add_info": "Añade tu información",
     "username": "Nombre de usuario",
     "available_activities": "{number} actividades disponibles",
-    "search": "Buscar..."
+    "search": "Buscar...",
+    "profile": "Perfil"
 }

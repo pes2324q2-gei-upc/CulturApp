@@ -53,7 +53,7 @@ class ControladorPresentacion {
         Xats(
           controladorPresentacion: this,
         ),
-        PerfilPage(controladorPresentacion: this, uid: _user!.uid),
+        PerfilPage(controladorPresentacion: this, uid: _user!.uid, owner: true,),
       ]);
     }
   }
@@ -107,7 +107,7 @@ class ControladorPresentacion {
       context,
       MaterialPageRoute(
         builder: (context) =>
-            PerfilPage(controladorPresentacion: this, uid: _user!.uid),
+            PerfilPage(controladorPresentacion: this, uid: _user!.uid, owner: true),
       ),
     );
   }
