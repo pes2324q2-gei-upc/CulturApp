@@ -22,7 +22,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 class ControladorPresentacion {
   final controladorDomini = ControladorDomini();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  late User? _user;
+  late User? _user = null;
   late List<Actividad> activitats;
   late List<Actividad> activitatsUser;
   late List<String> recomms;
@@ -30,7 +30,9 @@ class ControladorPresentacion {
   late final List<Widget> _pages = [];
 
   Future<void> initialice() async {
-    activitats = await controladorDomini.getActivitiesAgenda();
+    if (userLogged()) {
+      activitats = await controladorDomini.getActivitiesAgenda();
+    }
   }
 
   Future<void> initialice2() async {
@@ -42,18 +44,18 @@ class ControladorPresentacion {
     if (userLogged()) {
       categsFav = await controladorDomini.obteCatsFavs(_user);
       activitatsUser = await controladorDomini.getUserActivities(_user!.uid);
-    }
 
-    _pages.addAll([
-      MapPage(controladorPresentacion: this),
-      ListaMisActividades(
-        controladorPresentacion: this,
-      ),
-      Xats(
-        controladorPresentacion: this,
-      ),
-      PerfilPage(controladorPresentacion: this, uid: _user!.uid),
-    ]);
+      _pages.addAll([
+        MapPage(controladorPresentacion: this),
+        ListaMisActividades(
+          controladorPresentacion: this,
+        ),
+        Xats(
+          controladorPresentacion: this,
+        ),
+        PerfilPage(controladorPresentacion: this, uid: _user!.uid),
+      ]);
+    }
   }
 
   bool userLogged() {
@@ -199,7 +201,6 @@ class ControladorPresentacion {
 
   Future<void> handleGoogleSignIn(BuildContext context) async {
     try {
-      print("HAndleando signin");
       GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
       final UserCredential userCredential =
           await _auth.signInWithProvider(_googleAuthProvider);
@@ -212,6 +213,8 @@ class ControladorPresentacion {
       }
       //Altrament redirigir a la pantalla principal de l'app
       else {
+        await initialice();
+        await initialice2();
         mostrarMapa(context);
       }
     } catch (error) {

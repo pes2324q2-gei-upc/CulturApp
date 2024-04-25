@@ -3,5 +3,12 @@
     "profile_error_msg": "No se ha podido obtener la información del perfil",
     "followers": "Followers",
     "following": "Following",
-    "badges": "Badges"
+    "badges": "Badges",
+    "favourite_categories": "Favourite categories",
+    "save": "Save",
+    "select": "Select",
+    "cancel": "Cancel",
+    "ok": "Ok",
+    "welcome_txt": "Welcome to CulturApp",
+    "google_access": "Access with Google"
 }
