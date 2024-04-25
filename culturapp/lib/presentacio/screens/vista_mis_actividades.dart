@@ -1,24 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
-import 'package:culturapp/presentacio/widgets/widgetsUtils/image_category.dart';
-import 'package:culturapp/presentacio/widgets/widgetsUtils/text_with_link.dart';
 import 'package:culturapp/widgetsUtils/bnav_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ListaMisActividades extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
-
+  final User? user;
   ListaMisActividades({
     Key? key,
-    required this.controladorPresentacion,
+    required this.controladorPresentacion, required this.user,
   }) : super(key: key);
 
   @override
   State<ListaMisActividades> createState() => _ListaMisActividadesState(
-        controladorPresentacion,
-      );
+        controladorPresentacion, user);
 }
 
 class _ListaMisActividadesState extends State<ListaMisActividades> {
@@ -29,6 +28,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   late String squery;
   late String? _selectedCategory;
   late String selectedData;
+  late User? usuario;
   int _selectedIndex = 1;
   TextEditingController _dateController = TextEditingController();
   TextEditingController _searchController = TextEditingController();
@@ -50,9 +50,10 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     'exposicions'
   ];
 
-  _ListaMisActividadesState(ControladorPresentacion controladorPresentacion) {
+  _ListaMisActividadesState(ControladorPresentacion controladorPresentacion, User? user) {
     _controladorPresentacion = controladorPresentacion;
     squery = '';
+    usuario = user;
     _selectedCategory = 'activitats-virtuals';
     selectedData = '';
   }
@@ -164,6 +165,10 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
       default:
         break;
     }
+  }
+
+  void addActivityToCalendar(Actividad act){
+
   }
 
   @override
@@ -363,7 +368,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                         child: Padding(
                           padding: const EdgeInsets.only(
                             top: 16.0,
-                            bottom: 32.0,
+                            bottom: 24.0,
                             right: 16.0,
                             left: 16.0,
                           ),
@@ -395,6 +400,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                     child: Column(
                                       children: [
                                         SizedBox(
+                                          height: 150,
                                           child: Image.network(
                                             activitat.imageUrl,
                                             fit: BoxFit.cover,
@@ -455,33 +461,52 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                               ),
                                             ],
                                           ),
-                                          Row(
-                                            children: [
-                                              const Icon(Icons.local_atm),
-                                              TextWithLink(
-                                                text: "  Compra aqui",
-                                                url: activitat.urlEntrades
-                                                    .toString(),
+                                      Row(
+                                        children: [
+                                          const Icon(Icons.local_atm),
+                                          const Padding(
+                                              padding: EdgeInsets.only(right: 7.5)),
+                                          Expanded(
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                launchUrl(activitat
+                                                    .urlEntrades); // abrir la url de la actividad para ir a su pagina
+                                              },
+                                              child: const Text(
+                                                'Compra Entrades',
+                                                style: TextStyle(
+                                                  decoration: TextDecoration
+                                                      .none,
+                                                      color: Colors.blueAccent // Subrayar para que se entienda que es un enlace
+                                                ),
                                               ),
-                                            ],
+                                            ),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.only(left: 5),
-                                          width: 50,
-                                          child: ImageCategory(
-                                            categoria: getCategoria(activitat),
+                                      const Padding(padding: EdgeInsets.only(top: 8)),
+                                      Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 180,
+                                            child: TextButton(
+                                              onPressed: () {
+                                               addActivityToCalendar(activitat);
+                                              },
+                                              child: Row(
+                                                children: [
+                                                  const Text('Añadir a Calendar', style: TextStyle(color: Color.fromARGB(255, 255, 196, 0)),),
+                                                  const Padding(padding: EdgeInsets.only(right: 5)),
+                                                  Image.asset('assets/calendar.png', height: 30,),
+                                                ],
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
+
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],

@@ -18,6 +18,22 @@ Widget build(BuildContext context) {
     ),
     child: Row(
       children: [
+        if (recomm)
+          Column( // Envuelve el bloque if con un widget Column
+            children: [
+              Container(
+                padding: const EdgeInsets.only(top: 10.0),
+                width: 40,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                ),
+                child: Image.asset(
+                  'assets/categoriarecom.png',
+                  fit: BoxFit.fill,
+                ), //Imagen para recomendador */
+              ),
+            ],
+          ),
         Container(
           width: 50,
           height: 50,
@@ -39,22 +55,22 @@ Widget build(BuildContext context) {
             ),
           ),
         ),
-        if (recomm)
-          Column( // Envuelve el bloque if con un widget Column
-            children: [
-              Container(
-                padding: const EdgeInsets.only(top: 10.0),
-                width: 40,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                ),
-                child: Image.asset(
-                  'assets/categoriarecom.png',
-                  fit: BoxFit.fill,
-                ), //Imagen para recomendador */
-              ),
-            ],
-          ),
+SizedBox(
+  width: 100,
+  child: TextButton(
+    onPressed: () {
+    },
+    style: ButtonStyle(
+      backgroundColor: MaterialStateProperty.all<Color>(Color.fromARGB(255, 99, 96, 96)), 
+    ),
+    child: const Row(
+      children: [
+        Text('Veure Perfil', style: TextStyle(color: Color.fromARGB(255, 255, 255, 255))),
+      ],
+    ),
+  ),
+),
+
       ],
     ),
   );
