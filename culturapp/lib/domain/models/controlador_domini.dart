@@ -267,7 +267,7 @@ class ControladorDomini {
       };
 
       final respuesta = await http.post(
-        Uri.parse('http://${ip}:8080/users/edit'),
+        Uri.parse('https://culturapp-back.onrender.com/users/edit'),
         body: jsonEncode(userdata),
         headers: {'Content-Type': 'application/json'},
       );
