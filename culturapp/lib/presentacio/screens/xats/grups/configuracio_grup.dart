@@ -45,7 +45,7 @@ class _ConfigGrup extends State<ConfigGrup> {
 
   void crearGrup() {
     Grup nouGrup = Grup(
-      titleGroup: nomGrup,
+      nomGroup: nomGrup,
       imageGroup: imatgeGrup,
       lastMessage: 'Sigues el primer dir hola!',
       timeLastMessage: DateTime.now().toString(),

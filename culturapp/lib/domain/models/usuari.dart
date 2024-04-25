@@ -1,72 +1,86 @@
-import 'package:culturapp/domain/xat_amic.dart';
-
 class Usuari {
-  //id seria lo seu??
+  final String id; //-> token
   final String nom;
+  final String email;
   final String image;
-  final String lastMessage;
-  final String timeLastMessage;
-  final xatAmic xat;
-  //o també podrien anar a xatAmic, suposo que tindri amés sentit???
+  final List<String> activitats;
+  final List<String> favCategories;
+  final List<Usuari> followers; //aka amigos
 
   const Usuari({
+    required this.id,
     required this.nom,
+    required this.email,
     required this.image,
-    required this.lastMessage,
-    required this.timeLastMessage,
-    required this.xat,
+    required this.activitats,
+    required this.favCategories,
+    required this.followers,
   });
 }
 
-Usuari usuariMock = Usuari(
+const Usuari usuariMock = Usuari(
+  id: '1',
   nom: 'usuariMock',
+  email: 'usuari@gmail.com',
   image: 'assets/userImage.png',
-  lastMessage: 'hey',
-  timeLastMessage: '10:00',
-  xat: xatMock,
+  activitats: ["a", "b"],
+  favCategories: ["a", "b"],
+  followers: [],
 );
 
-List<Usuari> allAmics = [
+const List<Usuari> allAmics = [
   Usuari(
+    id: '1',
     nom: 'Jaume',
+    email: 'usuari@gmail.com',
     image: 'assets/userImage.png',
-    lastMessage: 'Hello :D',
-    timeLastMessage: '13:57',
-    xat: xatMock,
+    activitats: ["a", "b"],
+    favCategories: ["a", "b"],
+    followers: [],
   ),
   Usuari(
+    id: '2',
     nom: 'Oriol',
+    email: 'usuari@gmail.com',
     image: 'assets/userImage.png',
-    lastMessage: 'Hello :D',
-    timeLastMessage: '13:57',
-    xat: xatMock,
+    activitats: ["a", "b"],
+    favCategories: ["a", "b"],
+    followers: [],
   ),
   Usuari(
+    id: '3',
     nom: 'Maira',
+    email: 'usuari@gmail.com',
     image: 'assets/userImage.png',
-    lastMessage: 'Hello :D',
-    timeLastMessage: '13:57',
-    xat: xatMock,
+    activitats: ["a", "b"],
+    favCategories: ["a", "b"],
+    followers: [],
   ),
   Usuari(
+    id: '4',
     nom: 'Laia',
+    email: 'usuari@gmail.com',
     image: 'assets/userImage.png',
-    lastMessage: 'Hello :D',
-    timeLastMessage: '13:57',
-    xat: xatMock,
+    activitats: ["a", "b"],
+    favCategories: ["a", "b"],
+    followers: [],
   ),
   Usuari(
+    id: '5',
     nom: 'Felip',
+    email: 'usuari@gmail.com',
     image: 'assets/userImage.png',
-    lastMessage: 'Hello :D',
-    timeLastMessage: '13:57',
-    xat: xatMock,
+    activitats: ["a", "b"],
+    favCategories: ["a", "b"],
+    followers: [],
   ),
   Usuari(
+    id: '6',
     nom: 'Marc',
+    email: 'usuari@gmail.com',
     image: 'assets/userImage.png',
-    lastMessage: 'Hello :D',
-    timeLastMessage: '13:57',
-    xat: xatMock,
+    activitats: ["a", "b"],
+    favCategories: ["a", "b"],
+    followers: [],
   ),
 ];

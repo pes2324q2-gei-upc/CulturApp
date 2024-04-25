@@ -32,7 +32,7 @@ class _GrupsScreenState extends State<GrupsScreen> {
       () {
         display_list = llista_grups
             .where((element) =>
-                element.titleGroup.toLowerCase().contains(value.toLowerCase()))
+                element.nomGroup.toLowerCase().contains(value.toLowerCase()))
             .toList();
       },
     );
@@ -122,7 +122,7 @@ class _GrupsScreenState extends State<GrupsScreen> {
           width: 50,
           height: 50,
         ),
-        title: Text(display_list[index].titleGroup,
+        title: Text(display_list[index].nomGroup,
             style: const TextStyle(
               color: Colors.orange,
               fontWeight: FontWeight.bold,

@@ -122,7 +122,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                _grup.titleGroup,
+                _grup.nomGroup,
                 style: const TextStyle(color: Colors.white),
               ),
               Text(
