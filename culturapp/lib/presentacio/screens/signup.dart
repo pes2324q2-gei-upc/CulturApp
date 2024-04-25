@@ -1,4 +1,5 @@
 import "package:cloud_firestore/cloud_firestore.dart";
+import 'package:culturapp/translations/AppLocalizations';
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:hive/hive.dart";
@@ -72,8 +73,8 @@ class _SignupState extends State<Signup> {
               Column(
                 children: <Widget>[
                   const SizedBox(height: 60.0),
-                  const Text(
-                    "Crear compte",
+                  Text(
+                    "create_account".tr(context),
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
@@ -83,7 +84,7 @@ class _SignupState extends State<Signup> {
                     height: 20,
                   ),
                   Text(
-                    "Afegeix la teva informació",
+                    "add_info".tr(context),
                     style: TextStyle(fontSize: 15, color: Colors.grey[700]),
                   )
                 ],
@@ -94,7 +95,7 @@ class _SignupState extends State<Signup> {
                     style: TextStyle(fontSize: 16, color: Colors.grey[700]),
                     controller: usernameController,
                     decoration: InputDecoration(
-                      hintText: "Nom d'usuari",
+                      hintText: "username".tr(context),
                       contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 25),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(18),
@@ -130,7 +131,7 @@ class _SignupState extends State<Signup> {
                       ),
                       onPressed: _showMultiSelect,
                       icon: Icon(Icons.arrow_drop_down, color: Colors.grey[800],),
-                      label: Text("Categories preferides", style: TextStyle(fontSize: 16, color: Colors.grey[700]),),
+                      label: Text("favourite_categories".tr(context), style: TextStyle(fontSize: 16, color: Colors.grey[700]),),
                     ),
                   )
 
@@ -145,8 +146,8 @@ class _SignupState extends State<Signup> {
                     onPressed: () {
                       createUser();
                     },
-                    child: const Text(
-                      "Crear compte",
+                    child: Text(
+                      "create_account".tr(context),
                       style: TextStyle(fontSize: 20, color: Colors.white),
                     ),
                     style: ElevatedButton.styleFrom(

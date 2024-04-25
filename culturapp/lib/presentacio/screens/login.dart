@@ -1,5 +1,6 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import "package:culturapp/translations/AppLocalizations";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
@@ -60,7 +61,7 @@ class _Login extends State<Login> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("Benvingut a CulturApp",
+        Text("welcome_txt".tr(context),
         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
         SizedBox(height: 70),
         Container(
@@ -88,7 +89,7 @@ class _Login extends State<Login> {
         onPressed: () {
           _handleGoogleSignIn();
         },
-        text: "Accedeix amb Google",
+        text: "google_access".tr(context),
         padding: EdgeInsets.all(10.0),
       )
     ));
