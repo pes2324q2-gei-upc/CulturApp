@@ -4,6 +4,7 @@ import 'package:culturapp/domain/models/grup.dart';
 import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/screens/edit_perfil.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/configuracio_grup.dart';
+import 'package:culturapp/presentacio/screens/xats/grups/info_grup.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/xat_grup.dart';
 import 'package:culturapp/presentacio/screens/lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
@@ -271,6 +272,16 @@ class ControladorPresentacion {
       MaterialPageRoute(
         builder: (context) =>
             XatGrupScreen(controladorPresentacion: this, grup: grup),
+      ),
+    );
+  }
+
+  void mostrarInfoGrup(BuildContext context, Grup grup) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            InfoGrupScreen(controladorPresentacion: this, grup: grup),
       ),
     );
   }

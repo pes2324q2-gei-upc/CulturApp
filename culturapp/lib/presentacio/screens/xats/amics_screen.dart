@@ -39,6 +39,16 @@ class _AmicsScreenState extends State<AmicsScreen> {
     );
   }
 
+  String agafarLastMessage(Usuari amic) {
+    return 'de moment res';
+    //crida a back i guess?
+  }
+
+  String agafarTimeLastMessage(Usuari amic) {
+    return '00:00';
+    //crida a back i guess?
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(children: [
@@ -104,9 +114,9 @@ class _AmicsScreenState extends State<AmicsScreen> {
               color: Colors.orange,
               fontWeight: FontWeight.bold,
             )),
-        subtitle: Text(display_list[index].lastMessage),
+        subtitle: Text(agafarLastMessage(display_list[index])),
         trailing: Text(
-          display_list[index].timeLastMessage,
+          agafarTimeLastMessage(display_list[index]),
         ),
       ),
     );

@@ -95,7 +95,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
           const Divider(height: 1.0),
           Container(
             decoration: BoxDecoration(color: Theme.of(context).cardColor),
-            child: _BottomInputField(),
+            child: _bottomInputField(),
           ),
         ],
       ),
@@ -143,14 +143,14 @@ class _XatGrupScreen extends State<XatGrupScreen> {
             color: Colors.white,
           ),
           onPressed: () {
-            //de moment res
+            _controladorPresentacion.mostrarInfoGrup(context, _grup);
           },
         ),
       ],
     );
   }
 
-  Widget _BottomInputField() {
+  Widget _bottomInputField() {
     return IconTheme(
       data: const IconThemeData(color: Colors.orange),
       child: Container(

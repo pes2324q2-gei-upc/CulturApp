@@ -1,5 +1,6 @@
 import "package:culturapp/domain/models/message.dart";
 import "package:culturapp/domain/models/usuari.dart";
+import "package:culturapp/domain/models/xat_amic.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/chat_bubble.dart";
 import "package:flutter/material.dart";
@@ -20,6 +21,7 @@ class XatAmicScreen extends StatefulWidget {
 class _XatAmicScreen extends State<XatAmicScreen> {
   late ControladorPresentacion _controladorPresentacion;
   late Usuari _usuari;
+  late xatAmic xat;
   Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
   List<Message> missatges = [];
@@ -28,7 +30,9 @@ class _XatAmicScreen extends State<XatAmicScreen> {
       ControladorPresentacion controladorPresentacion, Usuari usuari) {
     _controladorPresentacion = controladorPresentacion;
     _usuari = usuari;
-    missatges = usuari.xat.missatges;
+    xat = xatMock;
+    //crida al back per agafar el xat amb el receiver(usuari i jo)
+    missatges = xat.missatges;
   }
 
   final TextEditingController _controller = TextEditingController();
