@@ -47,6 +47,8 @@ class _ConfigGrup extends State<ConfigGrup> {
     Grup nouGrup = Grup(
       nomGroup: nomGrup,
       imageGroup: imatgeGrup,
+      descripcio:
+          'this is a grup for cool people :), the coolest around the sickest and the slayest',
       lastMessage: 'Sigues el primer dir hola!',
       timeLastMessage: DateTime.now().toString(),
       participants: _participants,
