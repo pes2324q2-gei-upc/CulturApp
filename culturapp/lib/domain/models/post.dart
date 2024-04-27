@@ -1,7 +1,7 @@
 class Post {
   late String username; 
   late String mensaje;
-  late String fecha; //cambiar por un timeStamp
+  late String fecha; 
   late int numeroLikes;
 
   Post({

@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-//se puede reutilizar para el chat si añado un parametro que al llamarlo especifique si es el foro o el chat, para pasar unos atributos u otros
 class ReplyWidget extends StatefulWidget {
   final String foroId;
   final String? postId; 
@@ -55,7 +54,7 @@ class _ReplyWidgetState extends State<ReplyWidget> {
               child: TextFormField(
                 controller: _controller,
                 decoration: const InputDecoration(
-                  hintText: 'Publica un resposta',
+                  hintText: 'Resposta',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {

@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-//se puede reutilizar para el chat si añado un parametro que al llamarlo especifique si es el foro o el chat, para pasar unos atributos u otros
 class PostWidget extends StatefulWidget {
   final String foroId;
 
@@ -69,8 +68,7 @@ class _PostWidgetState extends State<PostWidget> {
                 if (_formKey.currentState!.validate()) {
                   final String foro = widget.foroId; 
                   String data = Timestamp.now().toDate().toIso8601String();
-                    // Add a post if postId is null
-                    await widget.addPost!(
+                    await widget.addPost(
                       foro,
                       _username,
                       _controller.text,

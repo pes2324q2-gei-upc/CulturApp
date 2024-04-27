@@ -42,9 +42,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   Future<List<Post>>? replies;
   String idForo = "";
   String idPost = "";
+  String? postIden = '';
   bool reply = false;
   bool mostraReplies = false;
-  String? postIden = '';
   
   final List<String> catsAMB = ["Residus",
   "territori.espai_public_platges",
@@ -122,7 +122,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                 addReply: (foroId, postIden, username, mensaje, fecha, numeroLikes) async {
                   await controladorDominio.addReplyPost(foroId, postIden, username, mensaje, fecha, numeroLikes);
 
-                  // Actualitza el llistat de posts
+                  // Actualitza el llistat de replies
                   setState(() {
                     replies = controladorDominio.getReplyPosts(idForo, postIden);
                     reply = false;
@@ -385,17 +385,6 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     }
   }
 
-  //conseguir posts del foro
-  Future<List<Post>> getPosts() async {
-    String? foroId = await controladorPresentacion.getForoId(infoActividad[1]);
-    if (foroId != null) {
-      idForo = foroId;
-      List<Post> fetchedPosts = await controladorDominio.getPostsForo(foroId);
-      return fetchedPosts;
-    }
-    return[];
-  }
-
   void _showDeleteOption(BuildContext context, Post post, bool reply) {
     showDialog(
       context: context,
@@ -417,9 +406,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                   _deletePost(post, postId);
                 }
                 else {
-                  print(post.fecha);
                   String? replyId = await controladorPresentacion.getReplyId(idForo, postIden, post.fecha);
-                  print(replyId);
                   _deleteReply(post, postIden, replyId);
                 }
                 Navigator.of(context).pop(); // Cierra el dialog
@@ -436,8 +423,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   void _deletePost(Post post, String? postId) async {
 
     await controladorDominio.deletePost(idForo, postId);
-    
-    //actualitza el llistat de posts
+
     setState(() {
       posts = controladorDominio.getPostsForo(idForo);
     });
@@ -452,12 +438,21 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     });
   }
 
+  //conseguir posts del foro
+  Future<List<Post>> getPosts() async {
+    String? foroId = await controladorPresentacion.getForoId(infoActividad[1]);
+    if (foroId != null) {
+      idForo = foroId;
+      List<Post> fetchedPosts = await controladorDominio.getPostsForo(foroId);
+      return fetchedPosts;
+    }
+    return[];
+  }
+
   //conseguir replies del foro
   Future<List<Post>> getReplies(String data) async {
-    //print("entra a getReplies");
     String? postId = await controladorPresentacion.getPostId(idForo, data);
     if (postId != null) {
-      //print("id del post: $postId");
       idPost = postId;
       List<Post> fetchedReply = await controladorDominio.getReplyPosts(idForo, postId);
       return fetchedReply;
@@ -543,8 +538,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             children: [
                             IconButton(
                               icon: Icon(
-                                post.numeroLikes > 0 ? Icons.favorite : Icons.favorite_border, // Cambia el icono según si hay likes o no
-                                color: post.numeroLikes > 0 ? Colors.red : null, // Cambia el color si hay likes
+                                post.numeroLikes > 0 ? Icons.favorite : Icons.favorite_border, 
+                                color: post.numeroLikes > 0 ? Colors.red : null, 
                               ),
                               onPressed: () {
                                 setState(() {
@@ -556,11 +551,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                 });
                               },
                             ),
-                              //si queremos que salga un contador de me gustas
-                              //Text(post.likes.toString()),
                               const Text('Me gusta'),
                               const SizedBox(width: 20),
-                              //hacer que te permita escribir un nuevo mensaje
+                              //respuesta
                               IconButton(
                                 icon: const Icon(Icons.reply), // Icono de responder
                                 onPressed: () async {
@@ -658,21 +651,19 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             children: [
                               IconButton(
                                 icon: Icon(
-                                  rep.numeroLikes > 0 ? Icons.favorite : Icons.favorite_border, // Cambia el icono según si hay likes o no
-                                  color: rep.numeroLikes > 0 ? Colors.red : null, // Cambia el color si hay likes
+                                  rep.numeroLikes > 0 ? Icons.favorite : Icons.favorite_border, 
+                                  color: rep.numeroLikes > 0 ? Colors.red : null, 
                                 ),
                                 onPressed: () {
                                   setState(() {
                                     if (rep.numeroLikes > 0) {
-                                      rep.numeroLikes = 0; // Si ya hay likes, los elimina
+                                      rep.numeroLikes = 0; 
                                     } else {
-                                      rep.numeroLikes = 1; // Si no hay likes, añade uno
+                                      rep.numeroLikes = 1; 
                                     }
                                   });
                                 },
                               ),
-                              //si queremos que salga un contador de me gustas
-                              //Text(post.likes.toString()),
                               const Text('Me gusta')
                             ]
                           )
