@@ -277,16 +277,12 @@ class ControladorPresentacion {
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
-        // Si hay al menos un documento con el código de actividad dado
-        return querySnapshot.docs.first.id; // Devuelve el ID del primer documento
+        return querySnapshot.docs.first.id; // Devuelve el ID del primer documento con el código de actividad dado
       } else {
-        // Si no se encontró ningún documento con el código de actividad dado
-        return null;
+        return null; // Si no se encontró ningún documento con el código de actividad dado
       }
     } catch (error) {
-      // Si ocurre algún error al obtener el ID del foro
-      //print('Error al obtener el ID del foro: $error');
-      return null;
+      return null; // Si ocurre algún error al obtener el ID del foro
     }
   }
 
@@ -302,16 +298,52 @@ class ControladorPresentacion {
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
-        //Si se encuentra un doc con la misma fecha
-        return querySnapshot.docs.first.id; 
+        return querySnapshot.docs.first.id; //Si se encuentra un doc con la misma fecha
       } else {
-        //Si no se encuentra ningún doc con la misma fecha
-        return null;
+        return null; //Si no se encuentra ningún doc con la misma fecha
       }
     } catch (error) {
-      // Si ocurre algún error al obtener el ID del foro
-      //print('Error al obtener el ID del foro: $error');
       return null;
+    }
+  }
+
+    Future<String?> getReplyId(String foroId, String? postId, String data) async{
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('foros')
+          .doc(foroId)
+          .collection('posts')
+          .doc(postId)
+          .collection('reply')
+          .where('fecha', isEqualTo: data)
+          .limit(1)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs.first.id; //Si se encuentra un doc con la misma fecha
+      } else {
+        return null; //Si no se encuentra ningún doc con la misma fecha
+      }
+    } catch (error) {
+      return null;
+    }
+  }
+
+  deletePost(String idForo, String? postId) async {
+    try {
+
+      // Fetch all reply posts
+      List<Post> replyPosts = await controladorDomini.getReplyPosts(idForo, postId);
+
+      // Delete each reply post
+      for (Post reply in replyPosts) {
+        //await controladorDomini.deleteReply(idForo, postId, reply.id);
+      }
+
+      await controladorDomini.deletePost(idForo, postId);
+
+    } catch (error) {
+      // Handle errors
     }
   }
 

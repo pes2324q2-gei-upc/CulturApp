@@ -2,6 +2,7 @@ import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/post.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/widgets/post_widget.dart';
+import 'package:culturapp/presentacio/widgets/reply_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -38,8 +39,12 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   final User? _user = FirebaseAuth.instance.currentUser;
 
   Future<List<Post>>? posts;
+  Future<List<Post>>? replies;
   String idForo = "";
   String idPost = "";
+  bool reply = false;
+  bool mostraReplies = false;
+  String? postIden = '';
   
   final List<String> catsAMB = ["Residus",
   "territori.espai_public_platges",
@@ -70,9 +75,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
   @override
   Widget build(BuildContext context) {
-    //verificar que tenga un foro
-    controladorPresentacion.getForo(infoActividad[1]);
-    //checkApuntado(_user!.uid, infoActividad); esto es lo que hacia que hubiera muchas lecturas
+    controladorPresentacion.getForo(infoActividad[1]); //verificar que tenga un foro
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
@@ -103,18 +106,31 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             //barra para añadir mensajes
-            child: PostWidget(
-              addPost: (foroId, username, mensaje, fecha, numeroLikes) async {
-                await controladorDominio.addPost(foroId, username, mensaje, fecha, numeroLikes);
+            child: reply == false
+              ? PostWidget(
+                addPost: (foroId, username, mensaje, fecha, numeroLikes) async {
+                  await controladorDominio.addPost(foroId, username, mensaje, fecha, numeroLikes);
 
-                // Update the UI to include the new post
-                setState(() {
-                  // Fetch the updated list of posts and assign it to the posts variable
-                  posts = controladorDominio.getPostsForo(idForo);
-                });
-              },
-              foroId: idForo,
-            ),
+                  // Actualitza el llistat de posts
+                  setState(() {
+                    posts = controladorDominio.getPostsForo(idForo);
+                  });
+                },
+                foroId: idForo,
+              )
+              : ReplyWidget(
+                addReply: (foroId, postIden, username, mensaje, fecha, numeroLikes) async {
+                  await controladorDominio.addReplyPost(foroId, postIden, username, mensaje, fecha, numeroLikes);
+
+                  // Actualitza el llistat de posts
+                  setState(() {
+                    replies = controladorDominio.getReplyPosts(idForo, postIden);
+                    reply = false;
+                  });
+                },
+                foroId: idForo,
+                postId: postIden,
+              )
           ),
         ],  
       ),
@@ -380,7 +396,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     return[];
   }
 
-  void _showDeleteOption(BuildContext context, Post post) {
+  void _showDeleteOption(BuildContext context, Post post, bool reply) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -390,14 +406,23 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop(); // Cierra el dialog
               },
               child: const Text('Cancelar'),
             ),
             TextButton(
-              onPressed: () {
-                _deletePost(post);
-                Navigator.of(context).pop(); // Close the dialog
+              onPressed: () async {
+                if(!reply) {
+                  String? postId = await controladorPresentacion.getPostId(idForo, post.fecha);
+                  _deletePost(post, postId);
+                }
+                else {
+                  print(post.fecha);
+                  String? replyId = await controladorPresentacion.getReplyId(idForo, postIden, post.fecha);
+                  print(replyId);
+                  _deleteReply(post, postIden, replyId);
+                }
+                Navigator.of(context).pop(); // Cierra el dialog
               },
               child: const Text('Eliminar'),
             ),
@@ -408,23 +433,33 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   }
 
   //fer que nomes el pugui eliminar el que l'ha creat
-  void _deletePost(Post post) async {
-    String? postId = await controladorPresentacion.getPostId(idForo, post.fecha);
+  void _deletePost(Post post, String? postId) async {
+
     await controladorDominio.deletePost(idForo, postId);
+    
+    //actualitza el llistat de posts
     setState(() {
-      // Fetch the updated list of posts and assign it to the posts variable
       posts = controladorDominio.getPostsForo(idForo);
     });
   }
 
-  //conseguir posts del foro
+  void _deleteReply(Post reply, String? postId, String? replyId) async {
+
+    await controladorDominio.deleteReply(idForo, postId, replyId);
+
+    setState(() {
+      replies = controladorDominio.getReplyPosts(idForo, postId);
+    });
+  }
+
+  //conseguir replies del foro
   Future<List<Post>> getReplies(String data) async {
-    print("entra a getReplies");
+    //print("entra a getReplies");
     String? postId = await controladorPresentacion.getPostId(idForo, data);
     if (postId != null) {
-      print("id del post: $postId");
+      //print("id del post: $postId");
       idPost = postId;
-      List<Post> fetchedReply = await controladorDominio.getReplyForo(idForo, postId);
+      List<Post> fetchedReply = await controladorDominio.getReplyPosts(idForo, postId);
       return fetchedReply;
     }
     return [];
@@ -436,23 +471,26 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       future: getPosts(), 
       builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // Mentres no acaba el future
-          return const CircularProgressIndicator();
+          return const CircularProgressIndicator(); // Mentres no acaba el future
         } else if (snapshot.hasError) {
-          // Si hi ha hagut algun error
-          return Text('Error: ${snapshot.error}');
+          return Text('Error: ${snapshot.error}'); // Si hi ha hagut algun error
         } else {
           List<Post> posts = snapshot.data!;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-                child: Text(
-                  //quereis que añada tambien el numero de replies?
-                  '${posts.length} comentarios',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                    child: Text(
+                      //quereis que añada tambien el numero de replies?
+                      '${posts.length} comentarios',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  mostrarReplies(),
+                ]
               ),
               ListView.builder(
                 shrinkWrap: true,
@@ -460,7 +498,6 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                 itemCount: posts.length,
                 itemBuilder: (context, index) {
                   final post = posts[index];
-                  Future<List<Post>> replies = getReplies(post.fecha);
                   DateTime dateTime = DateTime.parse(post.fecha);
                   String formattedDate = DateFormat('yyyy/MM/dd HH:mm').format(dateTime);
                   return ListTile(
@@ -486,8 +523,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             const Spacer(),
                             //fer que nomes el que l'ha creat ho pugui veure
                             GestureDetector(
-                              onTap: () {
-                                _showDeleteOption(context, post);
+                              onTap: () async {
+                                _showDeleteOption(context, post, false);
                               },
                               child: const Icon(Icons.more_vert, size: 20),
                             ),
@@ -506,15 +543,15 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             children: [
                             IconButton(
                               icon: Icon(
-                                post.numero_likes > 0 ? Icons.favorite : Icons.favorite_border, // Cambia el icono según si hay likes o no
-                                color: post.numero_likes > 0 ? Colors.red : null, // Cambia el color si hay likes
+                                post.numeroLikes > 0 ? Icons.favorite : Icons.favorite_border, // Cambia el icono según si hay likes o no
+                                color: post.numeroLikes > 0 ? Colors.red : null, // Cambia el color si hay likes
                               ),
                               onPressed: () {
                                 setState(() {
-                                  if (post.numero_likes > 0) {
-                                    post.numero_likes = 0; // Si ya hay likes, los elimina
+                                  if (post.numeroLikes > 0) {
+                                    post.numeroLikes = 0; // Si ya hay likes, los elimina
                                   } else {
-                                    post.numero_likes = 1; // Si no hay likes, añade uno
+                                    post.numeroLikes = 1; // Si no hay likes, añade uno
                                   }
                                 });
                               },
@@ -526,13 +563,11 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                               //hacer que te permita escribir un nuevo mensaje
                               IconButton(
                                 icon: const Icon(Icons.reply), // Icono de responder
-                                onPressed: () {
-                                  PostWidget(
-                                    addReply: (foroId, postId, username, mensaje, fecha, numeroLikes) async {
-                                      await controladorDominio.addReplyPost(foroId, postId, username, mensaje, fecha, numeroLikes);
-                                    },
-                                    foroId: idForo,
-                                  );
+                                onPressed: () async {
+                                  postIden = await controladorPresentacion.getPostId(idForo, post.fecha);
+                                  setState(() {
+                                     reply = true;
+                                  });
                                 },
                               ), 
                               const SizedBox(width: 5),
@@ -541,7 +576,12 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             ],
                           ),
                         ),
-                      ],
+                        if (mostraReplies) 
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20),
+                            child: infoReply(post.fecha)
+                          )
+                      ], 
                     ),
                   );
                 },
@@ -553,6 +593,118 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     );
   }
 
+  Widget infoReply(date) {
+    return FutureBuilder<List<Post>>(
+      future: getReplies(date), 
+      builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(); // Mentres no acaba el future
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}'); // Si hi ha hagut algun error
+        } else {
+          List<Post> reps = snapshot.data!;
+          return Column( 
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: reps.length,
+                itemBuilder: (context, index) {
+                  final rep = reps[index];
+                  DateTime dateTime = DateTime.parse(rep.fecha);
+                  String formattedDate = DateFormat('yyyy/MM/dd HH:mm').format(dateTime);
+                  return ListTile(
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            //se tendra que modificar por la imagen del usuario
+                            const Icon(Icons.account_circle, size: 45), // Icono de usuario
+                            const SizedBox(width: 5),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(rep.username), // Nombre de usuario
+                                const SizedBox(width: 5),
+                                Text(
+                                  formattedDate,
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
+                            //fer que nomes el que l'ha creat ho pugui veure
+                            GestureDetector(
+                              onTap: () async {
+                                postIden = await controladorPresentacion.getPostId(idForo, date);
+                                _showDeleteOption(context, rep, true);
+                              },
+                              child: const Icon(Icons.more_vert, size: 20),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 50),
+                          child: Text(
+                            rep.mensaje, // Mensaje del post
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 30),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(
+                                  rep.numeroLikes > 0 ? Icons.favorite : Icons.favorite_border, // Cambia el icono según si hay likes o no
+                                  color: rep.numeroLikes > 0 ? Colors.red : null, // Cambia el color si hay likes
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    if (rep.numeroLikes > 0) {
+                                      rep.numeroLikes = 0; // Si ya hay likes, los elimina
+                                    } else {
+                                      rep.numeroLikes = 1; // Si no hay likes, añade uno
+                                    }
+                                  });
+                                },
+                              ),
+                              //si queremos que salga un contador de me gustas
+                              //Text(post.likes.toString()),
+                              const Text('Me gusta')
+                            ]
+                          )
+                        )
+                      ]
+                    )
+                  );
+                }
+              )
+            ]
+          );
+        }
+      }
+    );
+  }
+
+  Widget mostrarReplies(){
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          mostraReplies = !mostraReplies;
+        });
+      },
+      child: Padding(        
+        padding: const EdgeInsets.only(left: 180),
+        child: Text(
+          mostraReplies ? "Esconder replies" : "Ver replies",
+          style: const TextStyle(color: Colors.grey,),
+        ),
+      ),
+    );
+  }
 
   void manageSignupButton(List<String> infoactividad) {
     if (mounted) {

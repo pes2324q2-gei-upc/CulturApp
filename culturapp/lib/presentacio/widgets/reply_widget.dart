@@ -4,21 +4,23 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 //se puede reutilizar para el chat si añado un parametro que al llamarlo especifique si es el foro o el chat, para pasar unos atributos u otros
-class PostWidget extends StatefulWidget {
+class ReplyWidget extends StatefulWidget {
   final String foroId;
+  final String? postId; 
 
-  const PostWidget({
+  const ReplyWidget({
     required this.foroId,
-    required this.addPost,
+    required this.postId, 
+    required this.addReply,
     super.key});
 
-  final FutureOr<void> Function(String foroId, String username, String mensaje, String fecha, int numeroLikes) addPost;
+  final FutureOr<void> Function(String foroId, String postId, String username, String mensaje, String fecha, int numeroLikes) addReply;
 
   @override
-  State<PostWidget> createState() => _PostWidgetState();
+  State<ReplyWidget> createState() => _ReplyWidgetState();
 }
 
-class _PostWidgetState extends State<PostWidget> {
+class _ReplyWidgetState extends State<ReplyWidget> {
   final _formKey = GlobalKey<FormState>(debugLabel: '_PostState');
   final _controller = TextEditingController();
   late String _username;
@@ -53,11 +55,11 @@ class _PostWidgetState extends State<PostWidget> {
               child: TextFormField(
                 controller: _controller,
                 decoration: const InputDecoration(
-                  hintText: 'Publica un missatge',
+                  hintText: 'Publica un resposta',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Introdueix un missatge per continuar';
+                    return 'Introdueix una resposta per continuar';
                   }
                   return null;
                 },
@@ -69,16 +71,16 @@ class _PostWidgetState extends State<PostWidget> {
                 if (_formKey.currentState!.validate()) {
                   final String foro = widget.foroId; 
                   String data = Timestamp.now().toDate().toIso8601String();
-                    // Add a post if postId is null
-                    await widget.addPost!(
-                      foro,
-                      _username,
-                      _controller.text,
-                      data,
-                      0, // número de likes en 0
-                    );
-                  }
+                  await widget.addReply(
+                    foro,
+                    widget.postId!, 
+                    _username,
+                    _controller.text,
+                    data,
+                    0, // número de likes en 0
+                  );
                   _controller.clear();
+                }
               },
               child: const Row(
                 children: [

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/foro_model.dart';
 import 'package:culturapp/domain/models/post.dart';
@@ -235,31 +234,27 @@ class ControladorDomini {
     }
   }
 
-
   //foro existe? si no es asi crealo
   Future<Foro?> foroExists(String code) async {
     try {
-      final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/foros/exists?activitat_code=${code}'));
+      final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/foros/exists?activitat_code=$code'));
 
       if (respuesta.statusCode == 200) {
         final data = json.decode(respuesta.body);
         if (data['exists']) {
-          // El foro existe, devuelve sus detalles
+          //El foro existe, devuelve sus detalles
           return Foro(
-            activitat_code: data['data']['activitat_code'],
+            activitatCode: data['data']['activitat_code'],
             posts: data['data']['posts'] != null ? List<Post>.from(data['data']['posts'].map((post) => Post.fromJson(post))) : null,
           );
         } else {
-          // El foro no existe
-          return null;
+          return null; //El foro no existe
         }
       } else {
-        // Si hay un error en la solicitud HTTP
-        throw Exception('Fallo la obtención de datos: ${respuesta.statusCode}');
+        throw Exception('Fallo la obtención de datos: ${respuesta.statusCode}'); //Error en la solicitud HTTP
       }
     } catch (error) {
-      // Si hay un error de red u otro tipo de error
-      throw Exception('Fallo la obtención de datos: $error');
+      throw Exception('Fallo la obtención de datos: $error'); //Error de red u otro tipo de error
     }
   }
 
@@ -290,7 +285,6 @@ class ControladorDomini {
 
   //getPosts
   Future<List<Post>> getPostsForo(String foroId) async {
-    //print("este es el foro : $foroId");
     try {
       final response = await http.get(Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts'));
       
@@ -301,8 +295,7 @@ class ControladorDomini {
         posts.sort((a, b) => a.fecha.compareTo(b.fecha));
         return posts;
       } else if (response.statusCode == 404) {
-        // Devolver una lista vacía si no hay posts para este foro
-        return [];
+        return []; // Devolver una lista vacía si no hay posts para este foro
       } else {
         throw Exception('Error al obtener los posts del foro: ${response.statusCode}');
       }
@@ -346,10 +339,28 @@ class ControladorDomini {
         headers: {'Content-Type': 'application/json'},
       );
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         print('Post eliminado exitosamente al foro');
       } else {
         print('Error al eliminar post del foro: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error al realizar la solicitud HTTP: $error');
+    }
+  }
+    //eliminar post
+  Future<void> deleteReply(String foroId, String? postId, String? replyId) async {
+    try {
+      final url = Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts/$postId/reply/$replyId');
+      final response = await http.delete(
+        url,
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        print('Reply eliminado exitosamente al foro');
+      } else {
+        print('Error al eliminar reply del foro: ${response.statusCode}');
       }
     } catch (error) {
       print('Error al realizar la solicitud HTTP: $error');
@@ -382,19 +393,17 @@ class ControladorDomini {
   }
 
   //getReplies
-  Future<List<Post>> getReplyForo(String foroId, String postId) async {
-    //print("este es el foro : $foroId");
+  Future<List<Post>> getReplyPosts(String foroId, String? postId) async {
     try {
       final response = await http.get(Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts/$postId/reply'));
       
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
-        // Mapear los datos de las replies a una lista de objetos Post
+        //Mapear los datos de las replies a una lista de objetos Post
         List<Post> reply = data.map((json) => Post.fromJson(json)).toList();
         return reply;
       } else if (response.statusCode == 404) {
-        // Devolver una lista vacía si no hay replies para este post
-        return [];
+        return [];  //Devolver una lista vacía si no hay replies para este post
       } else {
         throw Exception('Error al obtener los replies del post: ${response.statusCode}');
       }
