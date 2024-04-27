@@ -110,7 +110,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
           Icons.arrow_back,
           color: Colors.white,
         ),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: () => _controladorPresentacion.mostrarXats(context),
       ),
       title: Row(
         children: [

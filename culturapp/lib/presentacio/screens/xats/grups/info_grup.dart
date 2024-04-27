@@ -1,5 +1,4 @@
 import "package:culturapp/domain/models/grup.dart";
-import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:flutter/material.dart";
 
@@ -19,9 +18,6 @@ class InfoGrupScreen extends StatefulWidget {
 class _InfoGrupScreen extends State<InfoGrupScreen> {
   late ControladorPresentacion _controladorPresentacion;
   late Grup _grup;
-  late String nomGrup;
-  late String descripcioGrup;
-  late String imatgeGrup;
   //de moment els participants no els modifiquem
 
   double llargadaPantalla = 440;
@@ -34,9 +30,6 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
   _InfoGrupScreen(ControladorPresentacion controladorPresentacion, Grup grup) {
     _controladorPresentacion = controladorPresentacion;
     _grup = grup;
-    nomGrup = _grup.nomGroup;
-    descripcioGrup = _grup.descripcio;
-    imatgeGrup = _grup.imageGroup;
   }
 
   void canviarEstat() {
@@ -45,10 +38,6 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
       //si passa de editar a no editar es cridaria la funció de update grup per modificar-lo
 
       if (estaEditant) {
-        _grup.nomGroup = nomGrup;
-        _grup.descripcio = descripcioGrup;
-        _grup.imageGroup = imatgeGrup;
-
         //crida a funcio del back per fer un update de _grup amb els nous parametres
       }
     });
@@ -102,6 +91,12 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
         estaEditant ? 'Editant Grup' : 'Informació Grup',
         style: const TextStyle(color: Colors.white),
       ),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () {
+          _controladorPresentacion.mostrarXatGrup(context, _grup);
+        },
+      ),
       iconTheme: const IconThemeData(
         color: Colors.white,
       ),
@@ -139,7 +134,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
   Widget _imatgeEditant() {
     //ns com es faria pero s'ha de poder canviar l'imatge amb una foto del movil
     return Image(
-      image: AssetImage(imatgeGrup),
+      image: AssetImage(_grup.imageGroup),
       fit: BoxFit.fill,
       width: 70.0,
       height: 70.0,
@@ -181,6 +176,9 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
         color: Colors.white,
         fontWeight: FontWeight.normal,
       ),
+      onChanged: (value) {
+        _grup.nomGroup = value;
+      },
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.blueGrey,
@@ -188,7 +186,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
           borderRadius: BorderRadius.circular(8.0),
           borderSide: BorderSide.none,
         ),
-        hintText: nomGrup,
+        hintText: _grup.nomGroup,
         hintStyle: const TextStyle(
           color: Colors.white,
         ),
@@ -224,7 +222,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
         ),
         Container(
           width: llargadaPantalla,
-          height: 155,
+          height: 150,
           alignment: Alignment.topLeft,
           padding: const EdgeInsets.only(top: 5),
           child: estaEditant
@@ -242,7 +240,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
       cursorHeight: 20,
       onChanged: (value) {
         setState(() {
-          descripcioGrup = value;
+          _grup.descripcio = value;
         });
       },
       style: const TextStyle(
@@ -256,7 +254,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
           borderRadius: BorderRadius.circular(8.0),
           borderSide: BorderSide.none,
         ),
-        hintText: descripcioGrup,
+        hintText: _grup.descripcio,
         hintStyle: const TextStyle(
           color: Colors.white,
         ),
@@ -278,17 +276,39 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+          padding: const EdgeInsets.only(top: 10.0, bottom: 20.0),
           width: llargadaPantallaTitols,
           alignment: Alignment.centerLeft,
-          child: const Text(
-            'Participants:',
-            selectionColor: Colors.blue,
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: Colors.blueGrey,
-            ),
+          child: Row(
+            children: [
+              const Text(
+                'Participants:',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueGrey,
+                ),
+              ),
+              Container(
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.only(left: 191.0),
+                height: 22,
+                child: estaEditant
+                    ? ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: taronjaFluix,
+                          foregroundColor: Colors.white,
+                        ),
+                        onPressed: () {
+                          //go to the pagina of modificar participants
+                          _controladorPresentacion.mostrarModificarParticipants(
+                              context, _grup);
+                        },
+                        child: const Icon(Icons.format_paint_rounded),
+                      )
+                    : null,
+              ),
+            ],
           ),
         ),
         SizedBox(

@@ -5,6 +5,7 @@ import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/screens/edit_perfil.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/configuracio_grup.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/info_grup.dart';
+import 'package:culturapp/presentacio/screens/xats/grups/modificar_participants.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/xat_grup.dart';
 import 'package:culturapp/presentacio/screens/lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
@@ -282,6 +283,16 @@ class ControladorPresentacion {
       MaterialPageRoute(
         builder: (context) =>
             InfoGrupScreen(controladorPresentacion: this, grup: grup),
+      ),
+    );
+  }
+
+  void mostrarModificarParticipants(BuildContext context, Grup grup) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ModificarParticipantsScreen(
+            controladorPresentacion: this, grup: grup),
       ),
     );
   }
