@@ -27,22 +27,6 @@ List<Usuario> calculaUsuariosRecomendados(List<Usuario>users, String idActual, L
       }
     }
   }
-/*
-  for (int i = 0; i < recomms.length; ++i){
-    print("------------------------------------------------");
-    for (int j = 0; j < 3; ++ j){
-      print(recomms[i].favCats[j]);
-    }
-    print (recomms[i].identificador);
-    print("------------------------------------------------");
-  }
-
-  print("--dslkdkladlkdlkslñadlñadlñaslñdkaslñd----------------------------------------------");
-    for (int j = 0; j < 3; ++ j){
-      print(categoriasFavoritas[j]);
-    }
-    print("---------dslkdlñakdlñakdlñaksldsaldñlasdlñkadlñ---------------------------------------");
-*/
   return recomms;
 }
 

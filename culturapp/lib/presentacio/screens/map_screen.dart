@@ -133,8 +133,10 @@ class _MapPageState extends State<MapPage> {
     else {
       print("tengo permiso");
       //Obtener ubicacion y asignar
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      LatLng currentLatLng = LatLng(position.latitude, position.longitude);
+      /*Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      LatLng currentLatLng = LatLng(position.latitude, position.longitude);*/
+
+      LatLng currentLatLng = const LatLng(41.6543172, 2.2233522);
           // Actualizar ubicacion
       setState(() {
         myLatLng = currentLatLng;

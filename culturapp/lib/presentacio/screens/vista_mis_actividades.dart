@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
@@ -6,10 +8,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:googleapis_auth/auth_io.dart' as auth;
+import 'package:googleapis/calendar/v3.dart' as calendar;
+import 'package:http/http.dart' as http;
+
 
 class ListaMisActividades extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
   final User? user;
+  
   ListaMisActividades({
     Key? key,
     required this.controladorPresentacion, required this.user,
@@ -32,6 +39,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   int _selectedIndex = 1;
   TextEditingController _dateController = TextEditingController();
   TextEditingController _searchController = TextEditingController();
+  calendar.CalendarApi? _calendarApi;
 
   static const List<String> llistaCategories = <String>[
     'concerts',
@@ -70,6 +78,52 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
       print("Error fetching activities: $error");
     });
   }
+
+
+Future<void> agregarEventoGoogleCalendar() async {
+  final FirebaseAuth authFirebase = FirebaseAuth.instance;
+  final User? user = authFirebase.currentUser;
+  final idTokenResult = await user!.getIdTokenResult();
+  final idToken = idTokenResult.token;
+
+  final GoogleSignIn googleSignIn = GoogleSignIn(
+    scopes: [
+      'email',
+      'https://www.googleapis.com/auth/calendar',
+    ],
+  );
+  final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+  final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+
+  if (googleAuth.accessToken != null) {
+    final authClient = auth.authenticatedClient(
+      http.Client(),
+      auth.AccessCredentials(
+        auth.AccessToken(
+          'Bearer',
+          googleAuth.accessToken!,
+          DateTime.now().toUtc().add(const Duration(hours: 1)),
+        ),
+        idToken,
+        [calendar.CalendarApi.calendarScope],
+      ),
+    );
+      
+    final calendarApi = calendar.CalendarApi(authClient);
+
+    var event = calendar.Event()
+      ..summary = 'CulturApp evento'
+      ..start = (calendar.EventDateTime()..dateTime = DateTime(2024, 5, 21, 10, 0, 0)..timeZone = "Europe/Madrid")
+      ..end = (calendar.EventDateTime()..dateTime = DateTime(2024, 5, 21, 11, 0, 0)..timeZone = "Europe/Madrid");
+
+    var request = calendarApi.events.insert(event, 'primary');
+    var addedEvent = await request;
+
+    print('Evento añadido: ${addedEvent.id}');
+  } else {
+    print('No se pudo obtener el token de acceso');
+  }
+}
 
   Future<List<Actividad>> fetchActivities() async {
     var actividadesaux = <Actividad>[];
@@ -491,7 +545,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                             width: 180,
                                             child: TextButton(
                                               onPressed: () {
-                                               addActivityToCalendar(activitat);
+                                               agregarEventoGoogleCalendar();
                                               },
                                               child: Row(
                                                 children: [
@@ -529,15 +583,15 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   }
 
   Future<void> _selectDate() async {
-    DateTime? _picked = await showDatePicker(
+    DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
 
-    if (_picked != null) {
-      String formattedDate = DateFormat('yyyy-MM-dd').format(_picked);
+    if (picked != null) {
+      String formattedDate = DateFormat('yyyy-MM-dd').format(picked);
       setState(() {
         _dateController.text = formattedDate;
         canviFiltreData(formattedDate);
