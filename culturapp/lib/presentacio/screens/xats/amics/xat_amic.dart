@@ -91,7 +91,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
           Icons.arrow_back,
           color: Colors.white,
         ),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: () => _controladorPresentacion.mostrarXats(context),
       ),
       title: Row(
         children: [
@@ -117,7 +117,8 @@ class _XatAmicScreen extends State<XatAmicScreen> {
             color: Colors.white,
           ),
           onPressed: () {
-            //de moment res
+            //ns si més endevant estaria per poder reportar?
+            _controladorPresentacion.mostrarInfoAmic(context, _usuari);
           },
         ),
       ],

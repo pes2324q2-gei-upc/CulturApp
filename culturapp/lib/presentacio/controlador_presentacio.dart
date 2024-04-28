@@ -3,6 +3,7 @@ import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/grup.dart';
 import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/screens/edit_perfil.dart';
+import 'package:culturapp/presentacio/screens/xats/amics/info_amic.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/configuracio_grup.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/info_grup.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/modificar_participants.dart';
@@ -19,7 +20,7 @@ import 'package:culturapp/presentacio/screens/signup.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_mis_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_ver_actividad.dart';
-import 'package:culturapp/presentacio/screens/xats/xat_amic.dart';
+import 'package:culturapp/presentacio/screens/xats/amics/xat_amic.dart';
 import 'package:culturapp/presentacio/screens/xats/xats.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -273,6 +274,16 @@ class ControladorPresentacion {
       MaterialPageRoute(
         builder: (context) =>
             XatGrupScreen(controladorPresentacion: this, grup: grup),
+      ),
+    );
+  }
+
+  void mostrarInfoAmic(BuildContext context, Usuari usuari) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            InfoAmicScreen(controladorPresentacion: this, usuari: usuari),
       ),
     );
   }
