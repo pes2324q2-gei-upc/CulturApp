@@ -8,13 +8,15 @@ import 'package:http/http.dart' as http;
 
 class ControladorDomini {
   //ip default: 10.0.2.2
-  final String ip = "192.168.1.38";
+  final String ip = "10.0.2.2";
 
   Future<List<Actividad>> getActivitiesAgenda() async {
+    print('GETTING ACTIVITIES');
     final respuesta =
         await http.get(Uri.parse('https://culturapp-back.onrender.com/activitats/read/all'));
 
     if (respuesta.statusCode == 200) {
+      print('HE RESPONDIDO');
       return _convert_database_to_list(respuesta);
     } else {
       throw Exception('Fallo la obtención de datos');
@@ -157,6 +159,7 @@ class ControladorDomini {
   }
 
   Future<bool> accountExists(User? user) async {
+    print('AQUI ESTOY');
     final respuesta = await http
         .get(Uri.parse('https://culturapp-back.onrender.com/users/exists?uid=${user?.uid}'));
 
@@ -180,22 +183,24 @@ class ControladorDomini {
     return categorias;
   }
 
-  void createUser(
-      User? _user, String username, List<String> selectedCategories) async {
+  Future<bool>  createUser  (User? _user, String username, List<String> selectedCategories) async {
     try {
+      print(_user);
+      print(username);
       final Map<String, dynamic> userdata = {
         'uid': _user?.uid,
         'username': username,
         'email': _user?.email,
-        'favcategories': jsonEncode(selectedCategories),
-        'activities': [],
+        'favcategories': ["Carnaval","Art","Commemoració"]
       };
 
       final respuesta = await http.post(
-        Uri.parse('https://culturapp-back.onrender.com/users/create'),
+        Uri.parse('http://${ip}:8080/users/create'),
         body: jsonEncode(userdata),
         headers: {'Content-Type': 'application/json'},
       );
+
+      print('MANDO DATOS subidos');
 
       if (respuesta.statusCode == 200) {
         print('Datos enviados exitosamente');
@@ -205,6 +210,8 @@ class ControladorDomini {
     } catch (error) {
       print('Error de red: $error');
     }
+
+    return true;
   }
 
   void signoutFromActivity(String? uid, String code) async {

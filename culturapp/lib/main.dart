@@ -17,8 +17,13 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   final controladorPresentacion = ControladorPresentacion();
-  await controladorPresentacion.initialice();
-  await controladorPresentacion.initialice2();
+
+  User? currentUser = FirebaseAuth.instance.currentUser;
+
+  if (currentUser != null) {
+    await controladorPresentacion.initialice();
+    await controladorPresentacion.initialice2();
+  }
   
   runApp(MyApp(controladorPresentacion: controladorPresentacion));
 }
@@ -33,7 +38,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late ControladorPresentacion _controladorPresentacion; 
+  late ControladorPresentacion _controladorPresentacion;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   int _selectedIndex = 0;
   bool _isLoggedIn = false;
@@ -62,7 +67,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.orange,
-      ),  
+      ),
       supportedLocales: const [
         Locale('en'),
         Locale('cat'),

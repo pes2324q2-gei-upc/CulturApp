@@ -34,9 +34,15 @@ class ControladorPresentacion {
   late List<Usuario> usersRecom;
   late List<Usuario> usersBD;
 
+  void func_logout(){
+    _auth.signOut();
+  }
+
   Future<void> initialice() async {
     activitats = await controladorDomini.getActivitiesAgenda();
     usersBD = await controladorDomini.getUsers();
+    print('---------------UsersBD-------------------- ');
+    print(usersBD);
   }
 
   Future<void> initialice2() async {
@@ -49,6 +55,8 @@ class ControladorPresentacion {
       categsFav = await controladorDomini.obteCatsFavs(_user);
       activitatsUser = await controladorDomini.getUserActivities(_user!.uid);
       usersRecom = calculaUsuariosRecomendados(usersBD, _user!.uid, categsFav);
+      print('-------------------------------------------------');
+      print (usersRecom);
       usersBD.removeWhere((usuario) => usuario.identificador == _user!.uid);
     }
   }
@@ -141,7 +149,7 @@ class ControladorPresentacion {
       context,
       MaterialPageRoute(
         builder: (context) => ListaMisActividades(
-          controladorPresentacion: this, user: _user,), 
+          controladorPresentacion: this, user: _user,),
       ),
     );
   }
@@ -194,16 +202,17 @@ class ControladorPresentacion {
 
       final GoogleSignIn googleSignIn = GoogleSignIn();
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-      final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
-      final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+      if (googleUser != null) {
+        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+      );
+      
 
     UserCredential userCredential = await _auth.signInWithCredential(credential);
-    
-      bool userExists =
-          await controladorDomini.accountExists(userCredential.user);
+
+      bool userExists = await controladorDomini.accountExists(userCredential.user);
       _user = userCredential.user;
       //Si no hi ha un usuari associat al compte de google, redirigir a la pantalla de registre
       if (!userExists) {
@@ -215,9 +224,11 @@ class ControladorPresentacion {
         await initialice2();
         mostrarMapa(context);
       }
+      }
     } catch (error) {
       print(error);
     }
+    
   }
 
   void mostrarSignup(BuildContext context) {
@@ -238,10 +249,10 @@ class ControladorPresentacion {
     );
   }
 
-  void createUser(String username, List<String> selectedCategories,
-      BuildContext context) async {
-    controladorDomini.createUser(_user, username, selectedCategories);
-    mostrarPerfil(context);
+  Future<bool> createUser(String username, List<String> selectedCategories, BuildContext context) async {
+  
+    await controladorDomini.createUser(_user, username, selectedCategories);
+    return true;
   }
 
   void mostrarCrearNouGrup(BuildContext context) {

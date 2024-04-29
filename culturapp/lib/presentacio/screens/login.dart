@@ -82,14 +82,14 @@ class _Login extends State<Login> {
       child: SignInButton(
         Buttons.google,
         onPressed: () {
-          _handleGoogleSignIn();
+          _controladorPresentacion.handleGoogleSignIn(context);
         },
         text: "google_access".tr(context),
         padding: const EdgeInsets.all(10.0),
       )
     ));
   }
- 
+
   //Inici de sessio
   Future<UserCredential> _handleGoogleSignIn() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();

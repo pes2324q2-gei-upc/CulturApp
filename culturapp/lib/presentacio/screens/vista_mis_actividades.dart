@@ -93,8 +93,18 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
         'https://www.googleapis.com/auth/calendar',
       ],
     );
-    final GoogleSignInAccount? googleUser = await googleSignIn.signInSilently();
-    final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+    GoogleSignInAccount? googleUser = await googleSignIn.signInSilently();
+    final GoogleSignInAuthentication googleAuth;
+    if (googleUser == null) {
+        googleUser = await googleSignIn.signIn();
+        googleAuth = (await googleUser?.authentication)!;
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+      );
+    }else{
+      googleAuth = await googleUser!.authentication;
+    }
 
     if (googleAuth.accessToken != null) {
       final authClient = auth.authenticatedClient(

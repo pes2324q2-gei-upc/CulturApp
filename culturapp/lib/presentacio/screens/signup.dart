@@ -75,7 +75,7 @@ class _SignupState extends State<Signup> {
                   const SizedBox(height: 60.0),
                   Text(
                     "create_account".tr(context),
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
                     ),
@@ -96,12 +96,12 @@ class _SignupState extends State<Signup> {
                     controller: usernameController,
                     decoration: InputDecoration(
                       hintText: "username".tr(context),
-                      contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 25),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 25),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(18),
                         borderSide: BorderSide.none,
                       ),
-                      fillColor: Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
+                      fillColor: const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
                       filled: true,
                       prefixIcon: const Icon(Icons.person),
                     ),
@@ -113,7 +113,7 @@ class _SignupState extends State<Signup> {
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.resolveWith<Color?>(
                           (Set<MaterialState> states) {
-                            return Color.fromARGB(244, 255, 145, 0).withOpacity(0.1);
+                            return const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1);
                           },
                         ),
                         shadowColor: MaterialStateProperty.resolveWith<Color?>(
@@ -126,7 +126,7 @@ class _SignupState extends State<Signup> {
                             borderRadius: BorderRadius.circular(18.0), // Ajusta el radio de los bordes aquí
                           ),
                         ),
-                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.symmetric(vertical: 20, horizontal: 15)),
+                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.symmetric(vertical: 20, horizontal: 15)),
                         alignment: Alignment.centerLeft
                       ),
                       onPressed: _showMultiSelect,
@@ -137,7 +137,7 @@ class _SignupState extends State<Signup> {
 
                   ,
                   
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
               ),
               Container(
@@ -146,14 +146,14 @@ class _SignupState extends State<Signup> {
                     onPressed: () {
                       createUser();
                     },
-                    child: Text(
-                      "create_account".tr(context),
-                      style: TextStyle(fontSize: 20, color: Colors.white),
-                    ),
                     style: ElevatedButton.styleFrom(
                       shape: const StadiumBorder(),
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: Color.fromARGB(244, 255, 145, 0),
+                      backgroundColor: const Color.fromARGB(244, 255, 145, 0),
+                    ),
+                    child: Text(
+                      "create_account".tr(context),
+                      style: const TextStyle(fontSize: 20, color: Colors.white),
                     ),
                   )),
             ],
@@ -165,12 +165,19 @@ class _SignupState extends State<Signup> {
 
   Future<void> createUser() async {
     if (await _controladorPresentacion.usernameUnique(usernameController.text)) {
-      _controladorPresentacion.createUser(usernameController.text, selectedCategories, context);
+      print('creo user');
+      await _controladorPresentacion.createUser(usernameController.text, selectedCategories, context);
+      print('HE VUELTO');
+      _controladorPresentacion.initialice();
+      print('HE VUELTO 2');
+      _controladorPresentacion.initialice2();
+      print('HE VUELTO 3');
+      _controladorPresentacion.mostrarMapa(context);
     }
     else {
       final scaffoldMessenger = ScaffoldMessenger.of(context);
       scaffoldMessenger.showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Ja hi ha un usuari amb aquest username'),
           backgroundColor: Colors.red,
         ),
@@ -189,10 +196,10 @@ class _SignupState extends State<Signup> {
           listType: MultiSelectListType.CHIP,
           initialValue: selectedCategories,
           onConfirm: (values) {
-             selectedCategories = values.take(3).toList();
+            selectedCategories = values.take(3).toList();
           },
-          selectedColor: Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
-          checkColor: Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
+          selectedColor: const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
+          checkColor: const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
           unselectedColor: Colors.white,
         );
       },

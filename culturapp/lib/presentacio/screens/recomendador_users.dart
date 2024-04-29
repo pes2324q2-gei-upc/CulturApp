@@ -18,11 +18,19 @@ int calculaCoincidencias(List<String>categFav, List<String>categsUserActual){
 List<Usuario> calculaUsuariosRecomendados(List<Usuario>users, String idActual, List<String>categoriasFavoritas){
   List<Usuario>recomms = [];
 
-  for (int i = 0; i < users.length; ++i){
+  for (int i = 0; i < users.length || recomms.length == 3; ++i){
     if (users[i].identificador != idActual){
       List<String> favcats = [];
       favcats = users[i].favCats.cast<String>();
       if (calculaCoincidencias(favcats, categoriasFavoritas) > 0) {
+        recomms.add(users[i]);
+      }
+    }
+  }
+
+  if (recomms.isEmpty){
+    for (int i = 0; i < users.length || recomms.length == 3; ++i){
+      if (users[i].identificador != idActual){
         recomms.add(users[i]);
       }
     }
