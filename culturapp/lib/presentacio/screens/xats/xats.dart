@@ -1,5 +1,4 @@
 //import "package:culturapp/presentacio/routes/routes.dart";
-import "package:culturapp/domain/models/user.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/screens/afegir_amics.dart";
 import "package:culturapp/presentacio/screens/amics.dart";
@@ -9,25 +8,19 @@ import "package:google_nav_bar/google_nav_bar.dart";
 
 class Xats extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
-  final List<Usuario>recomms;
-  final List<Usuario>usersBD;
-  const Xats({super.key, required this.controladorPresentacion, required this.recomms, required this.usersBD});
+  const Xats({super.key, required this.controladorPresentacion});
   @override
-  State<Xats> createState() => _Xats(controladorPresentacion, recomms, usersBD);
+  State<Xats> createState() => _Xats(controladorPresentacion);
 }
 
 class _Xats extends State<Xats> {
   late ControladorPresentacion _controladorPresentacion;
   int _selectedIndex = 2; 
-  late List<Usuario>usersRecom;
-  late List<Usuario>usersBD;
   //List<Actividad> activitats = null; quan tinguem de base de dades fer-ho bé
   Widget currentContent = Amics();
   
-  _Xats(ControladorPresentacion controladorPresentacion, List<Usuario>recomms, List<Usuario>usBD) {
+  _Xats(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
-    usersRecom = recomms;
-    usersBD = usBD;
   }
 
   void changeContent(Widget newContent) {
@@ -149,19 +142,19 @@ class _Xats extends State<Xats> {
                           ),
                           onPressed: () {
                             _changeButtonColor(3);
-                            changeContent(AfegirAmics(recomms: usersRecom, usersBD: usersBD,));
+                            changeContent(AfegirAmics());
                           },
                           child: Text('Afegir Amics'),
                         )),
                   ],
                 ),
-                const SizedBox(
+                SizedBox(
                   height: 20.0,
                 ),
                 Container(
-                  child: Column(
-                    children: [currentContent],
-                  ),
+                  padding: EdgeInsets.all(20),
+                  color: Colors.grey[200],
+                  child: currentContent,
                 ),
               ]),
         ),

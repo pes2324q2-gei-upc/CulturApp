@@ -7,7 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
 class ControladorDomini {
-  final String ip = "10.0.2.2";
+  //ip default: 10.0.2.2
+  final String ip = "192.168.1.38";
 
   Future<List<Actividad>> getActivitiesAgenda() async {
     final respuesta =
@@ -275,4 +276,40 @@ class ControladorDomini {
       throw Exception('Fallo la obtención de datos');
     }
   }
+
+  Future<String> getUsername(String uid) async {
+    final respuesta = await http.get(Uri.parse(
+        'https://culturapp-back.onrender.com/users/username?uid=${uid}'));
+
+    if (respuesta.statusCode == 200) {
+      return respuesta.body;
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
+
+  void editUser(User? _user, String username, List<String> selectedCategories) async {
+    try {
+      final Map<String, dynamic> userdata = {
+        'uid': _user?.uid,
+        'username': username,
+        'favcategories': jsonEncode(selectedCategories),
+      };
+
+      final respuesta = await http.post(
+        Uri.parse('https://culturapp-back.onrender.com/users/edit'),
+        body: jsonEncode(userdata),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (respuesta.statusCode == 200) {
+        print('Datos enviados exitosamente');
+      } else {
+        print('Error al enviar los datos: ${respuesta.statusCode}');
+      }
+    } catch (error) {
+      print('Error de red: $error');
+    }
+  }
+
 }

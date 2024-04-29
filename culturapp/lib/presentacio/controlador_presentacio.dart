@@ -2,10 +2,14 @@
 
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
+import 'package:culturapp/presentacio/screens/edit_perfil.dart';
+import 'package:culturapp/presentacio/screens/grups/configuracio_grup.dart';
+import 'package:culturapp/presentacio/screens/grups/xat_grup.dart';
 import 'package:culturapp/domain/models/user.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/logout.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
+import 'package:culturapp/presentacio/screens/grups/crear_grup_screen.dart';
 import 'package:culturapp/presentacio/screens/perfil_screen.dart';
 import 'package:culturapp/presentacio/screens/recomendador_actividades.dart';
 import 'package:culturapp/presentacio/screens/recomendador_users.dart';
@@ -14,7 +18,7 @@ import 'package:culturapp/presentacio/screens/signup.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_mis_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_ver_actividad.dart';
-import 'package:culturapp/presentacio/screens/xats.dart';
+import 'package:culturapp/presentacio/screens/xats/xats.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -22,7 +26,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 class ControladorPresentacion {
   final controladorDomini = ControladorDomini();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  late User? _user;
+  late User? _user = null;
   late List<Actividad> activitats;
   late List<Actividad> activitatsUser;
   late List<String> recomms;
@@ -64,8 +68,11 @@ class ControladorPresentacion {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            VistaVerActividad(info_actividad: info_act, uri_actividad: uri_act, controladorPresentacion: this,),
+        builder: (context) => VistaVerActividad(
+          info_actividad: info_act,
+          uri_actividad: uri_act,
+          controladorPresentacion: this,
+        ),
       ),
     );
   }
@@ -74,11 +81,11 @@ class ControladorPresentacion {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            MapPage(controladorPresentacion: this),
+        builder: (context) => MapPage(controladorPresentacion: this),
       ),
     );
   }
+
   void mostrarXats(BuildContext context) {
     Navigator.push(
       context,
@@ -89,12 +96,12 @@ class ControladorPresentacion {
     );
   }
 
-    void mostrarPerfil(BuildContext context) {
+  void mostrarPerfil(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) =>
-            PerfilPage(controladorPresentacion: this),
+            PerfilPage(controladorPresentacion: this, uid: _user!.uid, owner: true),
       ),
     );
   }
@@ -112,11 +119,10 @@ class ControladorPresentacion {
         });
   }
 
-    Future<List<Actividad>> getMisActivitats() async {
+  Future<List<Actividad>> getMisActivitats() async {
     activitatsUser = await controladorDomini.getUserActivities(_user!.uid);
     return activitatsUser;
   }
-
 
   void mostrarActividades(BuildContext context) async {
     Navigator.push(
@@ -205,6 +211,8 @@ class ControladorPresentacion {
       }
       //Altrament redirigir a la pantalla principal de l'app
       else {
+        await initialice();
+        await initialice2();
         mostrarMapa(context);
       }
     } catch (error) {
@@ -236,6 +244,33 @@ class ControladorPresentacion {
     mostrarPerfil(context);
   }
 
+  void mostrarCrearNouGrup(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CrearGrupScreen(controladorPresentacion: this),
+      ),
+    );
+  }
+
+  void mostrarConfigGrup(BuildContext context, List<String> participants) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ConfigGrup(
+            controladorPresentacion: this, participants: participants),
+      ),
+    );
+  }
+
+  void mostrarXatGrup(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => XatGrupScreen(controladorPresentacion: this),
+      ),
+    );
+  }
 
   void mostrarSettings(BuildContext context) {
     Navigator.push(
@@ -248,10 +283,37 @@ class ControladorPresentacion {
 
   void logout(BuildContext context) {
     _auth.signOut();
-    mostrarLogin(context);
+    Future.delayed(Duration(seconds: 2), () {
+      mostrarLogin(context);
+    });
   }
 
   Future<bool> usernameUnique(String username) {
     return controladorDomini.usernameUnique(username);
+  }
+
+  Future<String> getUsername(String uid) {
+    return controladorDomini.getUsername(uid);
+  }
+
+  void mostrarEditPerfil(BuildContext context, String uid) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            EditPerfil(controladorPresentacion: this, uid: uid),
+      ),
+    );
+  }
+
+  List<String> getCategsFav() {
+    return categsFav;
+  }
+
+  void editUser(String username, List<String> selectedCategories,
+      BuildContext context) async {
+    controladorDomini.editUser(_user, username, selectedCategories);
+    categsFav = selectedCategories;
+    mostrarPerfil(context);
   }
 }

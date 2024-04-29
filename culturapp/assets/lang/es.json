@@ -1,0 +1,20 @@
+{
+    "assisted_events": "Eventos asistidos",
+    "profile_error_msg": "Error receiving profile information",
+    "followers": "Seguidores",
+    "following": "Seguidos",
+    "badges": "Insignias",
+    "favourite_categories": "Categorías favoritas",
+    "save": "Guardar",
+    "select": "Selecciona",
+    "cancel": "Cancelar",
+    "ok": "Ok",
+    "welcome_txt": "Bienvenido a CulturApp",
+    "google_access": "Accede con Google",
+    "create_account": "Crear cuenta",
+    "add_info": "Añade tu información",
+    "username": "Nombre de usuario",
+    "available_activities": "{number} actividades disponibles",
+    "search": "Buscar...",
+    "profile": "Perfil"
+}

@@ -43,6 +43,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   calendar.CalendarApi? _calendarApi;
 
   static const List<String> llistaCategories = <String>[
+    '-totes-',
     'concerts',
     'infantil',
     'teatre',
@@ -62,8 +63,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   _ListaMisActividadesState(ControladorPresentacion controladorPresentacion, User? user) {
     _controladorPresentacion = controladorPresentacion;
     squery = '';
-    usuario = user;
-    _selectedCategory = 'activitats-virtuals';
+    _selectedCategory = '-totes-';
     selectedData = '';
   }
 
@@ -172,7 +172,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
       display_list = activitats.where((activity) {
         if (activity.dataInici != 'No disponible') {
           DateTime activityDate = DateTime.parse(activity.dataInici);
-          if (_selectedCategory != '') {
+          if (_selectedCategory != '-totes-') {
             return (activityDate.isAfter(selectedDate) ||
                     activityDate.isAtSameMomentAs(selectedDate)) &&
                 activity.categoria.contains(_selectedCategory);
@@ -189,19 +189,33 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
 
   void filterActivitiesByCategory(String category) async {
     clearSearchBar();
+
     setState(() {
-      if (selectedData != '') {
-        display_list = activitats.where((activity) {
-          DateTime activityDate = DateTime.parse(activity.dataInici);
-          DateTime selectedDate = DateTime.parse(selectedData);
-          return (activity.categoria.contains(category)) &&
-              (activityDate.isAfter(selectedDate) ||
-                  activityDate.isAtSameMomentAs(selectedDate));
-        }).toList();
+      if (category == '-totes-') {
+        if (selectedData != '') {
+          display_list = activitats.where((activity) {
+            DateTime activityDate = DateTime.parse(activity.dataInici);
+            DateTime selectedDate = DateTime.parse(selectedData);
+
+            return (activityDate.isAfter(selectedDate) ||
+                activityDate.isAtSameMomentAs(selectedDate));
+          }).toList();
+        }
       } else {
-        display_list = activitats
-            .where((activity) => activity.categoria.contains(category))
-            .toList();
+        if (selectedData != '') {
+          display_list = activitats.where((activity) {
+            DateTime activityDate = DateTime.parse(activity.dataInici);
+            DateTime selectedDate = DateTime.parse(selectedData);
+
+            return (activity.categoria.contains(category)) &&
+                (activityDate.isAfter(selectedDate) ||
+                    activityDate.isAtSameMomentAs(selectedDate));
+          }).toList();
+        } else {
+          display_list = activitats
+              .where((activity) => activity.categoria.contains(category))
+              .toList();
+        }
       }
     });
   }
@@ -250,141 +264,17 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                SizedBox(
-                  height: 40.0,
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: (text) => changeSquery(text),
-                    cursorColor: Colors.orange,
-                    style: const TextStyle(
-                      color: Colors.orange,
-                    ),
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: const Color.fromRGBO(255, 229, 204, 0.815),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: const BorderSide(
-                          color: Colors.orange,
-                        ),
-                      ),
-                      hintText: "Search...",
-                      hintStyle: const TextStyle(
-                        color: Colors.orange,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          searchMyActivities(squery);
-                        },
-                        icon: Icon(Icons.search),
-                      ),
-                      suffixIconColor: Colors.orange,
-                    ),
-                  ),
-                ),
+                _buildCercador(),
                 const SizedBox(
                   height: 10.0,
                 ),
                 Row(
                   children: [
-                    SizedBox(
-                      height: 30.0,
-                      width: 200.0,
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                          width: 200,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            color: Color.fromRGBO(255, 229, 204, 0.815),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Center(
-                            child: DropdownButton<String>(
-                              value: _selectedCategory,
-                              items: llistaCategories.map((String item) {
-                                return DropdownMenuItem(
-                                  value: item,
-                                  child: Text(item),
-                                );
-                              }).toList(),
-                              onChanged: (String? newValue) async {
-                                setState(() {
-                                  _selectedCategory = newValue;
-                                  filterActivitiesByCategory(newValue!);
-                                });
-                              },
-                              borderRadius: BorderRadius.circular(10),
-                              dropdownColor:
-                                  Color.fromRGBO(255, 229, 204, 0.815),
-                              icon: const Icon(
-                                Icons.arrow_drop_down,
-                                color: Colors.orange,
-                              ),
-                              iconSize: 20,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.orange,
-                              ),
-                              underline: Container(),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    _buildFiltreCategoria(),
                     const SizedBox(
                       width: 10.0,
                     ),
-                    SizedBox(
-                      height: 30.0,
-                      width: 150.0,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          width: 500.0,
-                          child: TextField(
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.orange,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            controller: _dateController,
-                            decoration: const InputDecoration(
-                              labelText: 'Data',
-                              labelStyle: TextStyle(
-                                color: Colors.orange,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              filled: true,
-                              fillColor: Color.fromRGBO(255, 229, 204, 0.815),
-                              prefixIcon: Icon(
-                                Icons.calendar_today,
-                                size: 18,
-                                color: Colors.orange,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.orange,
-                                ),
-                              ),
-                            ),
-                            readOnly: true,
-                            onTap: () {
-                              _selectDate();
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
+                    _buildFiltreData(),
                   ],
                 ),
               ],
@@ -411,16 +301,21 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                       ];
                       _controladorPresentacion.mostrarVerActividad(
                           context, act, activitat.urlEntrades);
-                      DocumentReference docRef =
-                          _firestore.collection('actividades').doc(activitat.code);
+                      DocumentReference docRef = _firestore
+                          .collection('actividades')
+                          .doc(activitat.code);
                       await _firestore.runTransaction((transaction) async {
-                        DocumentSnapshot snapshot = await transaction.get(docRef);
+                        DocumentSnapshot snapshot =
+                            await transaction.get(docRef);
                         int currentValue = 0;
                         if (snapshot.data() is Map<String, dynamic>) {
-                          currentValue = (snapshot.data() as Map<String, dynamic>)['visualitzacions'] ?? 5;
+                          currentValue = (snapshot.data()
+                                  as Map<String, dynamic>)['visualitzacions'] ??
+                              5;
                         }
                         int newValue = currentValue + 1;
-                        transaction.update(docRef, {'visualitzacions': newValue});
+                        transaction
+                            .update(docRef, {'visualitzacions': newValue});
                       });
                     },
                     child: Container(
@@ -440,7 +335,8 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                 children: [
                                   Expanded(
                                     child: Padding(
-                                      padding: const EdgeInsets.only(bottom: 20),
+                                      padding:
+                                          const EdgeInsets.only(bottom: 20),
                                       child: Text(
                                         activitat.name,
                                         maxLines: 2,
@@ -490,7 +386,8 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                                 child: Text(
                                                   "  ${activitat.ubicacio}",
                                                   maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                               ),
                                             ],
@@ -501,7 +398,11 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                               Text(
                                                 "  Inicio: ${() {
                                                   try {
-                                                    return DateFormat('yyyy-MM-dd').format(DateTime.parse(activitat.dataInici));
+                                                    return DateFormat(
+                                                            'yyyy-MM-dd')
+                                                        .format(DateTime.parse(
+                                                            activitat
+                                                                .dataInici));
                                                   } catch (e) {
                                                     return 'Unknown';
                                                   }
@@ -515,7 +416,10 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                               Text(
                                                 "  Fin: ${() {
                                                   try {
-                                                    return DateFormat('yyyy-MM-dd').format(DateTime.parse(activitat.dataFi));
+                                                    return DateFormat(
+                                                            'yyyy-MM-dd')
+                                                        .format(DateTime.parse(
+                                                            activitat.dataFi));
                                                   } catch (e) {
                                                     return 'Unknown';
                                                   }
@@ -586,6 +490,141 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCercador() {
+    return SizedBox(
+      height: 40.0,
+      child: TextField(
+        controller: _searchController,
+        onChanged: (text) => changeSquery(text),
+        cursorColor: Colors.orange,
+        style: const TextStyle(
+          color: Colors.orange,
+        ),
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: const Color.fromRGBO(255, 229, 204, 0.815),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: const BorderSide(
+              color: Colors.orange,
+            ),
+          ),
+          hintText: "Search...",
+          hintStyle: const TextStyle(
+            color: Colors.orange,
+            fontWeight: FontWeight.bold,
+          ),
+          suffixIcon: IconButton(
+            onPressed: () {
+              searchMyActivities(squery);
+            },
+            icon: Icon(Icons.search),
+          ),
+          suffixIconColor: Colors.orange,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFiltreCategoria() {
+    return SizedBox(
+      height: 30.0,
+      width: 200.0,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Container(
+          width: 200,
+          height: 30,
+          decoration: BoxDecoration(
+            color: Color.fromRGBO(255, 229, 204, 0.815),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Center(
+            child: DropdownButton<String>(
+              value: _selectedCategory,
+              items: llistaCategories.map((String item) {
+                return DropdownMenuItem(
+                  value: item,
+                  child: Text(item),
+                );
+              }).toList(),
+              onChanged: (String? newValue) async {
+                setState(() {
+                  _selectedCategory = newValue;
+                  filterActivitiesByCategory(newValue!);
+                });
+              },
+              borderRadius: BorderRadius.circular(10),
+              dropdownColor: Color.fromRGBO(255, 229, 204, 0.815),
+              icon: const Icon(
+                Icons.arrow_drop_down,
+                color: Colors.orange,
+              ),
+              iconSize: 20,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.orange,
+              ),
+              underline: Container(),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFiltreData() {
+    return SizedBox(
+      height: 30.0,
+      width: 150.0,
+      child: Align(
+        alignment: Alignment.center,
+        child: Container(
+          width: 500.0,
+          child: TextField(
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.orange,
+              fontWeight: FontWeight.bold,
+            ),
+            controller: _dateController,
+            decoration: const InputDecoration(
+              labelText: 'Data',
+              labelStyle: TextStyle(
+                color: Colors.orange,
+                fontWeight: FontWeight.bold,
+              ),
+              filled: true,
+              fillColor: Color.fromRGBO(255, 229, 204, 0.815),
+              prefixIcon: Icon(
+                Icons.calendar_today,
+                size: 18,
+                color: Colors.orange,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.orange,
+                ),
+              ),
+            ),
+            readOnly: true,
+            onTap: () {
+              _selectDate();
+            },
+          ),
+        ),
       ),
     );
   }
