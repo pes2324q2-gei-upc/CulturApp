@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/grup.dart';
@@ -24,6 +25,7 @@ import 'package:culturapp/presentacio/screens/xats/amics/xat_amic.dart';
 import 'package:culturapp/presentacio/screens/xats/xats.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../domain/models/xat_amic.dart';
 
 class ControladorPresentacion {
   final controladorDomini = ControladorDomini();
@@ -364,4 +366,39 @@ class ControladorPresentacion {
     categsFav = selectedCategories;
     mostrarPerfil(context);
   }
+
+  Future<void> getXat(String receiverId) async {
+    try {
+      String senderId = _user!.uid;
+      xatAmic? xat = await controladorDomini.xatExists(receiverId, senderId);
+
+      if (xat != null) {
+        // El foro existe, imprimir sus detalles
+        print('Xat existente: $xat');
+      } else {
+        print('entra al else, perque el xat no existeix');
+        // El foro no existe, crear uno nuevo
+        bool creadoExitosamente = await controladorDomini.createXat(senderId, receiverId);
+        if (creadoExitosamente) {
+          print('Nuevo xat creado');
+        } else {
+          print('Error al crear el xat');
+        }
+      }
+    } catch (error) {
+      print('Error al obtener o crear el xat: $error');
+    }
+  }
+
+  Future<void> addMessage(String receiverId, String time, String text) async {
+    try {
+      String senderId = _user!.uid;
+      String? xatId = await controladorDomini.getXatId(receiverId, senderId);
+      controladorDomini.addMessage(xatId, time, text, senderId);
+
+    } catch (error) {
+      print('Error al añadir mensaje al xat: $error');
+    }
+  }
+
 }

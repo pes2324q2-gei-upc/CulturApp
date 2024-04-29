@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/message.dart';
+import 'package:culturapp/domain/models/xat_amic.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
@@ -281,5 +283,104 @@ class ControladorDomini {
       print('Error de red: $error');
     }
   }
+
+  //xat existe? si no es asi crealo
+  Future<xatAmic?> xatExists(String receiverId, String senderId) async {
+    try {
+      final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/xats/exists?receiverId=$receiverId&senderId=$senderId'));
+
+      if (respuesta.statusCode == 200) {
+        final data = json.decode(respuesta.body);
+        if (data['exists']) {
+          //El foro existe, devuelve sus detalles
+          return xatAmic(
+            lastMessage: data['data']['last_msg'],
+            timeLastMessage: data['data']['last_time'],
+            recieverId: data['data']['receiverId'],
+            senderId: data['data']['senderId']
+          );
+        } else {
+          return null; //El xat no existe
+        }
+      } else {
+        throw Exception('Fallo la obtención de datos: ${respuesta.statusCode}'); //Error en la solicitud HTTP
+      }
+    } catch (error) {
+      throw Exception('Fallo la obtención de datos: $error'); //Error de red u otro tipo de error
+    }
+  }
+
+  Future<bool> createXat(String senderId, String receiverId) async {
+    try {
+
+      final Map<String, dynamic> xatdata = {
+        'senderId': senderId,
+        'receiverId': receiverId,
+      };
+
+      final respuesta = await http.post(
+        Uri.parse('https://culturapp-back.onrender.com/xats/create'),
+        body: jsonEncode(xatdata),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (respuesta.statusCode == 201) {
+        print('Xat creado exitosamente');
+        return true;
+      } else {
+        print('Error al crear xat: ${respuesta.statusCode}');
+        return false;
+      }
+    } catch (error) {
+      print('Error de red: $error');
+      return false;
+    }
+  }
+
+  Future<String?> getXatId(String receiverId, String senderId) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('xats')
+          .where('receiverId', isEqualTo: receiverId)
+          .where('senderId', isEqualTo: senderId)
+          .limit(1)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs.first.id; // Devuelve el ID del primer documento 
+      } else {
+        return null; // Si no se encontró ningún documento 
+      }
+    } catch (error) {
+      return null; // Si ocurre algún error al obtener el ID del xat
+    }
+  }
+
+  void addMessage(String? xatId, String time, String text, String senderId) async {
+    try {
+      final url = Uri.parse('http://10.0.2.2:8080/xats/$xatId/mensajes');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'senderId': senderId,
+          'mensaje': text,
+          'fecha': time
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        print('Mensaje agregado exitosamente al xat');
+      } else {
+        print('Error al agregar mensaje al xat: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error al realizar la solicitud HTTP: $error');
+    }
+  }
+
+  void getMessages() async {
+
+  } 
 
 }

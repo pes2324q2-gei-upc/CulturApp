@@ -1,3 +1,4 @@
+import "package:cloud_firestore/cloud_firestore.dart";
 import "package:culturapp/domain/models/message.dart";
 import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/domain/models/xat_amic.dart";
@@ -27,24 +28,27 @@ class _XatAmicScreen extends State<XatAmicScreen> {
   List<Message> missatges = [];
 
   _XatAmicScreen(
-      ControladorPresentacion controladorPresentacion, Usuari usuari) {
+    ControladorPresentacion controladorPresentacion, Usuari usuari) {
     _controladorPresentacion = controladorPresentacion;
     _usuari = usuari;
     xat = xatMock;
     //crida al back per agafar el xat amb el receiver(usuari i jo)
-    missatges = xat.missatges;
+    missatges = xat.missatges!;
   }
 
   final TextEditingController _controller = TextEditingController();
 
   void _handleSubmitted(String text) {
     _controller.clear();
+
     setState(() {
       //crida al back per enviar un missatge
-      missatges.insert(
+      String time = Timestamp.now().toDate().toIso8601String();
+      _controladorPresentacion.addMessage(_usuari.id, time, text);
+      /*missatges.insert(
         0,
         Message(text: text, sender: 'Me', timeSended: '10:00'),
-      );
+      );*/
     });
   }
 

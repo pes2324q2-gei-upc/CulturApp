@@ -4,6 +4,14 @@ class Message {
   final String timeSended;
 
   Message({required this.text, required this.sender, required this.timeSended});
+
+  factory Message.fromJson(Map<String, dynamic> json) {
+    return Message(
+      text: json['mensaje'],
+      sender: json['sanderId'],
+      timeSended: json['fecha']
+    );
+  }
 }
 
 List<Message> allMessage = [
