@@ -379,8 +379,24 @@ class ControladorDomini {
     }
   }
 
-  void getMessages() async {
-
+  Future<List<Message>> getMessages(String? xatId) async {
+    try{
+      final response = await http.get(Uri.parse('http://10.0.2.2:8080/xats/$xatId/mensajes'));
+      
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        // Mapear los datos de los mensajes a una lista de objetos Message
+        List<Message> mensajes = data.map((json) => Message.fromJson(json)).toList();
+        mensajes.sort((b, a) => a.timeSended.compareTo(b.timeSended));
+        return mensajes;
+      } else if (response.statusCode == 404) {
+        return []; // Devolver una lista vacía si no hay posts para este foro
+      } else {
+        throw Exception('Error al obtener los posts del foro: ${response.statusCode}');
+      }
+    } catch (error) {
+      throw Exception('Error de red: $error');
+    }
   } 
 
 }

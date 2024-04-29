@@ -4,6 +4,7 @@ import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/domain/models/xat_amic.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/chat_bubble.dart";
+import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 
 class XatAmicScreen extends StatefulWidget {
@@ -25,7 +26,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
   late xatAmic xat;
   Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
-  List<Message> missatges = [];
+  //late Future<List<Message>> missatges;
 
   _XatAmicScreen(
     ControladorPresentacion controladorPresentacion, Usuari usuari) {
@@ -33,7 +34,8 @@ class _XatAmicScreen extends State<XatAmicScreen> {
     _usuari = usuari;
     xat = xatMock;
     //crida al back per agafar el xat amb el receiver(usuari i jo)
-    missatges = xat.missatges!;
+    //missatges = xat.missatges!;
+    //missatges = _controladorPresentacion.getMessages(_usuari.id);
   }
 
   final TextEditingController _controller = TextEditingController();
@@ -52,38 +54,59 @@ class _XatAmicScreen extends State<XatAmicScreen> {
     });
   }
 
+  Future<String> assignaUsernames(String id) async {
+    return await _controladorPresentacion.getUsername(id);
+  }
+
+  Future<List<Message>> getMessage() async {
+    List<Message> msg = await  _controladorPresentacion.getMessages(_usuari.id);
+    return msg;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: _buildAppBar(),
-      body: Column(
-        children: [
-          Expanded(
-            child: Container(
-              color: grisFluix,
-              alignment: Alignment.topCenter,
-              child: ListView.builder(
-                reverse: true,
-                shrinkWrap: true,
-                itemCount: missatges.length,
-                itemBuilder: (context, index) {
-                  return ChatBubble(
-                    userName: missatges[index].sender,
-                    message: missatges[index].text,
-                    time: missatges[index].timeSended,
-                  );
-                },
-              ),
+    return FutureBuilder<List<Message>>(
+      future: getMessage(),
+      builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(); // Mentres no acaba el future
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}'); // Si hi ha hagut algun error
+        } else {
+          List<Message> missatges = snapshot.data!;
+          return Scaffold(
+            resizeToAvoidBottomInset: true,
+            appBar: _buildAppBar(),
+            body: Column(
+              children: [
+                Expanded(
+                  child: Container(
+                    color: grisFluix,
+                    alignment: Alignment.topCenter,
+                    child: ListView.builder(
+                      reverse: true,
+                      shrinkWrap: true,
+                      itemCount: missatges.length,
+                      itemBuilder: (context, index) {
+                        return ChatBubble(
+                          userName: missatges[index].sender,
+                          message: missatges[index].text,
+                          time: missatges[index].timeSended,
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                const Divider(height: 1.0),
+                Container(
+                  decoration: BoxDecoration(color: Theme.of(context).cardColor),
+                  child: _bottomInputField(),
+                ),
+              ],
             ),
-          ),
-          const Divider(height: 1.0),
-          Container(
-            decoration: BoxDecoration(color: Theme.of(context).cardColor),
-            child: _bottomInputField(),
-          ),
-        ],
-      ),
+          );
+        }
+      }
     );
   }
 

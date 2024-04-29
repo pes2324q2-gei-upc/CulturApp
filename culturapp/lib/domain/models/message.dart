@@ -8,7 +8,7 @@ class Message {
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(
       text: json['mensaje'],
-      sender: json['sanderId'],
+      sender: json['senderId'],
       timeSended: json['fecha']
     );
   }

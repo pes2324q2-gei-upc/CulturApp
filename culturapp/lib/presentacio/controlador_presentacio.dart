@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/grup.dart';
+import 'package:culturapp/domain/models/message.dart';
 import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/screens/edit_perfil.dart';
 import 'package:culturapp/presentacio/screens/xats/amics/info_amic.dart';
@@ -398,6 +399,18 @@ class ControladorPresentacion {
 
     } catch (error) {
       print('Error al añadir mensaje al xat: $error');
+    }
+  }
+
+  Future<List<Message>> getMessages(String receiverId) async {
+    try {
+      String senderId = _user!.uid;
+      String? xatId = await controladorDomini.getXatId(receiverId, senderId);
+      List<Message> missatges = await controladorDomini.getMessages(xatId);
+      return missatges;
+    } catch (error) {
+      print('Error al cojer mensajes del xat: $error');
+      return [];
     }
   }
 
