@@ -29,7 +29,7 @@ List<Usuario> calculaUsuariosRecomendados(List<Usuario>users, String idActual, L
   }
 
   if (recomms.isEmpty){
-    for (int i = 0; i < users.length || recomms.length == 3; ++i){
+    for (int i = 0; i < users.length && recomms.length < 3; ++i){
       if (users[i].identificador != idActual){
         recomms.add(users[i]);
       }

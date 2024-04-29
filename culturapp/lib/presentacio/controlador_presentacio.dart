@@ -41,8 +41,6 @@ class ControladorPresentacion {
   Future<void> initialice() async {
     activitats = await controladorDomini.getActivitiesAgenda();
     usersBD = await controladorDomini.getUsers();
-    print('---------------UsersBD-------------------- ');
-    print(usersBD);
   }
 
   Future<void> initialice2() async {
@@ -55,8 +53,6 @@ class ControladorPresentacion {
       categsFav = await controladorDomini.obteCatsFavs(_user);
       activitatsUser = await controladorDomini.getUserActivities(_user!.uid);
       usersRecom = calculaUsuariosRecomendados(usersBD, _user!.uid, categsFav);
-      print('-------------------------------------------------');
-      print (usersRecom);
       usersBD.removeWhere((usuario) => usuario.identificador == _user!.uid);
     }
   }

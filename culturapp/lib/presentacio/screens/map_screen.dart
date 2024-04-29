@@ -31,6 +31,7 @@ class _MapPageState extends State<MapPage> {
   late List<String> recomms;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late List<String> categoriesFiltres = [];
+  List<String> categoriasFavoritas = [];
 
   void clickCarouselCat(String cat) {
     setState(() {
@@ -44,6 +45,7 @@ class _MapPageState extends State<MapPage> {
 
   _MapPageState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
+    categoriasFavoritas = _controladorPresentacion.getCategsFav();
     activitats = _controladorPresentacion.getActivitats();
     recomms = _controladorPresentacion.getActivitatsRecomm();
   }
@@ -86,7 +88,6 @@ class _MapPageState extends State<MapPage> {
 
   List<Actividad> _actividades = [];
   GoogleMapController? _mapController;
-  List<String> categoriasFavoritas = ['circ', 'festes', 'activitats-virtuals'];
 
   double radians(double degrees) {
     return degrees * (math.pi / 180.0);
