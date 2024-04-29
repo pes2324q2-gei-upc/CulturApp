@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
@@ -15,6 +16,17 @@ class ControladorDomini {
 
     if (respuesta.statusCode == 200) {
       return _convert_database_to_list(respuesta);
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
+
+    Future<List<Usuario>> getUsers() async {
+    final respuesta =
+        await http.get(Uri.parse('https://culturapp-back.onrender.com/users/read/users'));
+
+    if (respuesta.statusCode == 200) {
+      return _convert_database_to_list_user(respuesta);
     } else {
       throw Exception('Fallo la obtención de datos');
     }
@@ -111,6 +123,25 @@ class ControladorDomini {
     return actividades;
   }
 
+  List<Usuario> _convert_database_to_list_user(response) {
+    List<Usuario> usuarios = <Usuario>[];
+    var usr = json.decode(response.body);
+
+    if (usr is List) {
+      usr.forEach((userJson) {
+        Usuario usuario = Usuario();
+
+        usuario.username = userJson['username'];
+        usuario.favCats = userJson['favcategories'] ?? '';
+        usuario.identificador = userJson['id'];
+        
+        usuarios.add(usuario);
+      });
+    }
+
+    return usuarios;
+  }
+
   List<Actividad> _convert_json_to_list(response) {
     var actividades = <Actividad>[];
 
@@ -119,7 +150,6 @@ class ControladorDomini {
       for (var actividadJson in actividadesJson) {
         var actividad = Actividad.fromJson(actividadJson);
         actividades.add(actividad);
-        print(actividad.visualitzacions);
       }
     }
 

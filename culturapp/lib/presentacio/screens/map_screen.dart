@@ -1,19 +1,16 @@
-import 'dart:convert';
 import 'dart:math' as math;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:culturapp/data/firebase_service.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
-import 'package:culturapp/presentacio/screens/lista_actividades.dart';
 import 'package:culturapp/presentacio/widgets/carousel.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
 import 'package:culturapp/translations/AppLocalizations';
 import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:http/http.dart' as http;
+import 'package:geolocator/geolocator.dart';
+
 
 class MapPage extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
@@ -66,8 +63,9 @@ class _MapPageState extends State<MapPage> {
   BitmapDescriptor iconoVirtual = BitmapDescriptor.defaultMarker;
   BitmapDescriptor iconoAMB = BitmapDescriptor.defaultMarker;
   IconData iconoCategoria = Icons.category;
-  LatLng myLatLng = const LatLng(41.6543172, 2.2233522);
+  late LatLng myLatLng;
   String address = 'FIB';
+  bool ubicacionCargada = false;
 
   final List<String> catsAMB = [
     "Residus",
@@ -112,6 +110,54 @@ class _MapPageState extends State<MapPage> {
     return earthRadius * c;
   }
 
+  void _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    //Ver si hay permiso
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Abrir configuración del dispositivo
+      serviceEnabled = await Geolocator.openLocationSettings();
+      if (!serviceEnabled) {
+        return;
+      }
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      // Pedir permiso de ubicación
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Si no da perniso mostrar mensaje (opcional)
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      print("no tengo permiso");
+      // Si el usuario ha negado el permiso permanentemente, poner por defecto 
+      setState(() {
+        myLatLng = const LatLng(41.6543172, 2.2233522);
+        ubicacionCargada = true;
+      });
+      return;
+    }
+    else {
+      print("tengo permiso");
+      //Obtener ubicacion y asignar
+      /*Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      LatLng currentLatLng = LatLng(position.latitude, position.longitude);*/
+
+      LatLng currentLatLng = const LatLng(41.5165601, 2.1273099);
+          // Actualizar ubicacion
+      setState(() {
+        myLatLng = currentLatLng;
+        ubicacionCargada = true;
+      });
+    }
+  }
+
   // Obtener actividades del JSON para mostrarlas por pantalla
   Future<List<Actividad>> fetchActivities(LatLng center, double zoom) async {
     double radius = 500 * (16 / zoom);
@@ -134,6 +180,7 @@ class _MapPageState extends State<MapPage> {
 
   @override
   void initState() {
+    _getCurrentLocation();
     getIcons();
     super.initState();
   }
@@ -668,12 +715,19 @@ class _MapPageState extends State<MapPage> {
       body: Stack(
         fit: StackFit.expand, // Ajusta esta línea
         children: [
-          GoogleMap(
-            initialCameraPosition: CameraPosition(target: myLatLng, zoom: 16),
-            markers: _createMarkers(),
-            onCameraMove: _onCameraMove,
-            onMapCreated: _onMapCreated,
-          ),
+          // Muestra un indicador de carga si la ubicación aún no se ha cargado
+          if (!ubicacionCargada)
+            const Center(
+              child: CircularProgressIndicator(color: Colors.orange,),
+            ),
+          // Muestra el mapa una vez que la ubicación esté cargada
+          if (ubicacionCargada)
+            GoogleMap(
+              initialCameraPosition: CameraPosition(target: myLatLng, zoom: 16),
+              markers: _createMarkers(),
+              onCameraMove: _onCameraMove,
+              onMapCreated: _onMapCreated,
+            ),
           Positioned(
             top: 50.0,
             left: 25.0,

@@ -1,3 +1,5 @@
+// ignore_for_file: no_logic_in_create_state, library_private_types_in_public_api
+
 import 'package:culturapp/data/firebase_options.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
@@ -24,7 +26,7 @@ void main() async {
 class MyApp extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
 
-  MyApp({Key? key, required this.controladorPresentacion}) : super(key: key);
+  const MyApp({Key? key, required this.controladorPresentacion}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState(controladorPresentacion);
@@ -43,7 +45,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    // Llamar a userLogged al inicio
     userLogged();
   }
 
@@ -90,5 +91,4 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
-  
 }

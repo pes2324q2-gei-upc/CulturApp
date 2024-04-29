@@ -1,9 +1,10 @@
+//import "package:culturapp/presentacio/routes/routes.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/screens/afegir_amics.dart";
 import "package:culturapp/presentacio/screens/amics.dart";
-import "package:culturapp/presentacio/screens/grups/grups_screen.dart";
 import "package:culturapp/widgetsUtils/bnav_bar.dart";
 import "package:flutter/material.dart";
+import "package:google_nav_bar/google_nav_bar.dart";
 
 class Xats extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
@@ -14,10 +15,10 @@ class Xats extends StatefulWidget {
 
 class _Xats extends State<Xats> {
   late ControladorPresentacion _controladorPresentacion;
-  int _selectedIndex = 2;
+  int _selectedIndex = 2; 
   //List<Actividad> activitats = null; quan tinguem de base de dades fer-ho bé
   Widget currentContent = Amics();
-
+  
   _Xats(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
   }
@@ -28,23 +29,23 @@ class _Xats extends State<Xats> {
     });
   }
 
-  void _onTabChange(int index) {
+    void _onTabChange(int index) {
     setState(() {
       _selectedIndex = index;
     });
-
+    
     switch (index) {
       case 0:
         _controladorPresentacion.mostrarMapa(context);
         break;
       case 1:
-        _controladorPresentacion.mostrarActividadesUser(context);
+          _controladorPresentacion.mostrarActividadesUser(context);
         break;
       case 2:
-        _controladorPresentacion.mostrarXats(context);
+         _controladorPresentacion.mostrarXats(context);
         break;
       case 3:
-        _controladorPresentacion.mostrarPerfil(context);
+          _controladorPresentacion.mostrarPerfil(context);
         break;
       default:
         break;
@@ -125,9 +126,7 @@ class _Xats extends State<Xats> {
                           ),
                           onPressed: () {
                             _changeButtonColor(2);
-                            changeContent(GrupsScreen(
-                              controladorPresentacion: _controladorPresentacion,
-                            ));
+                            changeContent(Grups());
                           },
                           child: Text('Grups'),
                         )),
@@ -161,5 +160,12 @@ class _Xats extends State<Xats> {
         ),
       ),
     );
+  }
+}
+
+class Grups extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Text('This is Grups');
   }
 }

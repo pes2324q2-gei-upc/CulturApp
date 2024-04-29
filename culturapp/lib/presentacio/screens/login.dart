@@ -4,6 +4,7 @@ import "package:culturapp/translations/AppLocalizations";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
+import "package:google_sign_in/google_sign_in.dart";
 import "package:hive/hive.dart";
 import "package:sign_in_button/sign_in_button.dart";
 //import 'package:culturapp/presentacio/routes/routes.dart';
@@ -26,7 +27,7 @@ class _Login extends State<Login> {
   
   late ControladorPresentacion _controladorPresentacion;
 
-  late FirebaseAuth _auth = FirebaseAuth.instance;
+  late final FirebaseAuth _auth = FirebaseAuth.instance;
 
   _Login(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
@@ -35,16 +36,10 @@ class _Login extends State<Login> {
   @override
   void initState() {
     super.initState();
-    /*
-    _auth.authStateChanges().listen((event) {
-      setState(() {
-        _controladorPresentacion.setUser(event);
-      });
-      _controladorPresentacion.checkLoggetInUser(context);
-    });*/
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       //Comprovar si ja hi ha una sessio iniciada
       _controladorPresentacion.checkLoggedInUser(context);
+      _controladorPresentacion.handleGoogleSignIn(context);
     });
   }
 
@@ -61,20 +56,20 @@ class _Login extends State<Login> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("welcome_txt".tr(context),
+        const Text("Benvingut a CulturApp",
         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
-        SizedBox(height: 70),
+        const SizedBox(height: 70),
         Container(
           width: double.infinity,
           height: MediaQuery.of(context).size.height * 0.3,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage('assets/loginpicture.png'),
               fit: BoxFit.cover,
             )
           ),
         ),
-        SizedBox(height: 70),
+        const SizedBox(height: 70),
         _googleSignInButton(),
       ],
     );
@@ -90,14 +85,31 @@ class _Login extends State<Login> {
           _handleGoogleSignIn();
         },
         text: "google_access".tr(context),
-        padding: EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10.0),
       )
     ));
   }
  
   //Inici de sessio
-  Future<void> _handleGoogleSignIn() async {
-    await _controladorPresentacion.handleGoogleSignIn(context);
+  Future<UserCredential> _handleGoogleSignIn() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+    final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    UserCredential userCredential = await _auth.signInWithCredential(credential);
+
+    if (userCredential.user != null) {
+      _controladorPresentacion.initialice();
+      _controladorPresentacion.initialice2();
+      _controladorPresentacion.mostrarMapa(context);
+    }
+
+    return userCredential;
   }
 }
 
