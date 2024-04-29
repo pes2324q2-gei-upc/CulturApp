@@ -4,6 +4,7 @@ import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/user.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
+import 'package:culturapp/presentacio/screens/logout.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
 import 'package:culturapp/presentacio/screens/perfil_screen.dart';
 import 'package:culturapp/presentacio/screens/recomendador_actividades.dart';
@@ -16,6 +17,7 @@ import 'package:culturapp/presentacio/screens/vista_ver_actividad.dart';
 import 'package:culturapp/presentacio/screens/xats.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class ControladorPresentacion {
   final controladorDomini = ControladorDomini();
@@ -183,9 +185,17 @@ class ControladorPresentacion {
 
   Future<void> handleGoogleSignIn(BuildContext context) async {
     try {
-      GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
-      final UserCredential userCredential =
-          await _auth.signInWithProvider(_googleAuthProvider);
+
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+      final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    UserCredential userCredential = await _auth.signInWithCredential(credential);
+    
       bool userExists =
           await controladorDomini.accountExists(userCredential.user);
       _user = userCredential.user;

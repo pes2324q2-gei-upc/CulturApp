@@ -136,7 +136,7 @@ class _MapPageState extends State<MapPage> {
       /*Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       LatLng currentLatLng = LatLng(position.latitude, position.longitude);*/
 
-      LatLng currentLatLng = const LatLng(41.6543172, 2.2233522);
+      LatLng currentLatLng = const LatLng(41.5165601, 2.1273099);
           // Actualizar ubicacion
       setState(() {
         myLatLng = currentLatLng;

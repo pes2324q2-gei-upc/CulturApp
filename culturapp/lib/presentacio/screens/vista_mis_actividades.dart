@@ -6,6 +6,7 @@ import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:googleapis/photoslibrary/v1.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:googleapis_auth/auth_io.dart' as auth;
@@ -80,50 +81,57 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   }
 
 
-Future<void> agregarEventoGoogleCalendar() async {
-  final FirebaseAuth authFirebase = FirebaseAuth.instance;
-  final User? user = authFirebase.currentUser;
-  final idTokenResult = await user!.getIdTokenResult();
-  final idToken = idTokenResult.token;
+  Future<void> agregarEventoGoogleCalendar(String nameAct, String date) async {
+    final FirebaseAuth authFirebase = FirebaseAuth.instance;
+    final User? user = authFirebase.currentUser;
+    final idTokenResult = await user!.getIdTokenResult();
+    final idToken = idTokenResult.token;
 
-  final GoogleSignIn googleSignIn = GoogleSignIn(
-    scopes: [
-      'email',
-      'https://www.googleapis.com/auth/calendar',
-    ],
-  );
-  final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-  final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
-
-  if (googleAuth.accessToken != null) {
-    final authClient = auth.authenticatedClient(
-      http.Client(),
-      auth.AccessCredentials(
-        auth.AccessToken(
-          'Bearer',
-          googleAuth.accessToken!,
-          DateTime.now().toUtc().add(const Duration(hours: 1)),
-        ),
-        idToken,
-        [calendar.CalendarApi.calendarScope],
-      ),
+    final GoogleSignIn googleSignIn = GoogleSignIn(
+      scopes: [
+        'email',
+        'https://www.googleapis.com/auth/calendar',
+      ],
     );
-      
-    final calendarApi = calendar.CalendarApi(authClient);
+    final GoogleSignInAccount? googleUser = await googleSignIn.signInSilently();
+    final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
 
-    var event = calendar.Event()
-      ..summary = 'CulturApp evento'
-      ..start = (calendar.EventDateTime()..dateTime = DateTime(2024, 5, 21, 10, 0, 0)..timeZone = "Europe/Madrid")
-      ..end = (calendar.EventDateTime()..dateTime = DateTime(2024, 5, 21, 11, 0, 0)..timeZone = "Europe/Madrid");
+    if (googleAuth.accessToken != null) {
+      final authClient = auth.authenticatedClient(
+        http.Client(),
+        auth.AccessCredentials(
+          auth.AccessToken(
+            'Bearer',
+            googleAuth.accessToken!,
+            DateTime.now().toUtc().add(const Duration(hours: 1)),
+          ),
+          idToken,
+          [calendar.CalendarApi.calendarScope],
+        ),
+      );
+        
+      final calendarApi = calendar.CalendarApi(authClient);
 
-    var request = calendarApi.events.insert(event, 'primary');
-    var addedEvent = await request;
+      DateFormat formatter = DateFormat("yyyy-MM-dd");
+      DateTime data = formatter.parse(date);
 
-    print('Evento añadido: ${addedEvent.id}');
-  } else {
-    print('No se pudo obtener el token de acceso');
+      int year = data.year;
+      int month = data.month;
+      int day = data.day;
+
+      var event = calendar.Event()
+        ..summary = nameAct
+        ..start = (calendar.EventDateTime()..date = DateTime(year, month, day))
+        ..end = (calendar.EventDateTime()..date = DateTime(year, month, day));
+
+      var request = calendarApi.events.insert(event, 'primary');
+      var addedEvent = await request;
+
+      print('Evento añadido: ${addedEvent.id}');
+    } else {
+      print('No se pudo obtener el token de acceso');
+    }
   }
-}
 
   Future<List<Actividad>> fetchActivities() async {
     var actividadesaux = <Actividad>[];
@@ -545,7 +553,7 @@ Future<void> agregarEventoGoogleCalendar() async {
                                             width: 180,
                                             child: TextButton(
                                               onPressed: () {
-                                               agregarEventoGoogleCalendar();
+                                               agregarEventoGoogleCalendar(activitat.name, activitat.dataInici);
                                               },
                                               child: Row(
                                                 children: [

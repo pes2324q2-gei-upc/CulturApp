@@ -137,17 +137,6 @@ class ControladorDomini {
         usuarios.add(usuario);
       });
     }
-    print(".................................................");
-    
-    for (int i = 0; i < usuarios.length; ++i){
-      print(usuarios[i].username);
-      print(usuarios[i].identificador);
-      print("\n");
-      for (int k = 0; k < 3; ++ k){
-        print(usuarios[i].favCats[k]);
-      }
-    }
-    print(".................................................");
 
     return usuarios;
   }
@@ -160,7 +149,6 @@ class ControladorDomini {
       for (var actividadJson in actividadesJson) {
         var actividad = Actividad.fromJson(actividadJson);
         actividades.add(actividad);
-        print(actividad.visualitzacions);
       }
     }
 
