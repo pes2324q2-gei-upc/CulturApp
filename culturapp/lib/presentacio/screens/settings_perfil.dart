@@ -25,16 +25,16 @@ class _SettingsPerfil extends State<SettingsPerfil> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
-        title: const Text(
-          'Settings',
+        title: Text(
+          'settings'.tr(context),
           style: TextStyle(color: Colors.white),
         ),
       ),
       body: Column(
         children: [
           SwitchListTile(
-            title: const Text("Privacy"),
-            subtitle: const Text("Explanation of what having a private account implies"),
+            title: Text("privacy".tr(context)),
+            subtitle: Text("privacy_explanation".tr(context)),
             value: privat,
             onChanged: (bool value) {
               setState(() {
@@ -55,17 +55,7 @@ class _SettingsPerfil extends State<SettingsPerfil> {
           ),
           const Divider(height: 0),
           ListTile(
-            title: const Text('Change Password'),
-            subtitle: const Text("Change your current password"),
-            leading: const Icon(Icons.vpn_key),
-            trailing: const Icon(Icons.arrow_forward),
-            onTap: () {
-              // Navigate to change password screen
-            },
-          ),
-          const Divider(height: 0),
-          ListTile(
-            title: const Text('Sign Out'),
+            title: Text('logout'.tr(context)),
             leading: const Icon(Icons.exit_to_app),
             onTap: () {
               _signOut(context);
@@ -73,8 +63,8 @@ class _SettingsPerfil extends State<SettingsPerfil> {
           ),
           const Divider(height: 0),
           ListTile(
-            title: const Text('Delete Account'),
-            subtitle: const Text("Delete account permanently"),
+            title: Text('delete_account'.tr(context)),
+            subtitle: Text("delete_account_permanently".tr(context)),
             leading: const Icon(Icons.delete),
             onTap: () {
               // Delete account logic
@@ -95,7 +85,7 @@ class _SettingsPerfil extends State<SettingsPerfil> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Select Language'),
+          title: Text('select'.tr(context)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -118,18 +108,22 @@ class _SettingsPerfil extends State<SettingsPerfil> {
     return ListTile(
       title: Text(languageName),
       onTap: () {
-        _controladorPresentacion.changeLanguage(locale);
-        print('Cambiando idioma a ' + locale.toString());
-        Navigator.of(context).pop();
-        final scaffoldMessenger = ScaffoldMessenger.of(context);
-        scaffoldMessenger.showSnackBar(
-          const SnackBar(
-            content: Text(('Reinicia!')),
-            backgroundColor: Colors.green,
-          ),
-        );
+        changeLanguage(locale);
       },
     );
   }
+  
+  void changeLanguage(Locale locale) {
+    _controladorPresentacion.changeLanguage(locale);
+    Navigator.of(context).pop();
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    scaffoldMessenger.showSnackBar(
+      SnackBar(
+        content: Text('restart_for_changes'.tr(context)),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+
 
 }

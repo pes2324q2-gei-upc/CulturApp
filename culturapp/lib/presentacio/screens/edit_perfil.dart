@@ -98,8 +98,8 @@ class _EditPerfil extends State<EditPerfil> {
       //Header
       appBar: AppBar(
         backgroundColor: Colors.orange,
-        title: const Text(
-          'Edit',
+        title: Text(
+          'edit'.tr(context),
           style: TextStyle(color: Colors.white),
         ),
       ),      
