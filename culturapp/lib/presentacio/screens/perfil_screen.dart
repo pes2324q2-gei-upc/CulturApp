@@ -68,7 +68,7 @@ class _PerfilPageState extends State<PerfilPage> {
     //header
     appBar: AppBar(
       automaticallyImplyLeading: false,
-      backgroundColor: Colors.orange,
+      backgroundColor: const Color(0xFFF4692A),
       title: Text(
         'profile'.tr(context),
         style: TextStyle(color: Colors.white),

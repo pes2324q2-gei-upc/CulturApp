@@ -88,7 +88,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFFF4692A),
         title: const Text("Actividad"),
         centerTitle: true, // Centrar el título
         toolbarHeight: 50.0,
@@ -143,7 +143,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           Expanded(
             child: Text(
               tituloActividad,
-              style: const TextStyle(color: Colors.orange, fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: const Color(0xFFF4692A), fontSize: 18, fontWeight: FontWeight.bold),
             ),
             
           ),
@@ -156,7 +156,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             },
             style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all<Color>(
-            estaApuntado ? Colors.black : Colors.orange,),
+            estaApuntado ? Colors.black : const Color(0xFFF4692A),),
             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),),
             child: Text(estaApuntado ? 'Desapuntarse' : 'Apuntarse'),
           ),

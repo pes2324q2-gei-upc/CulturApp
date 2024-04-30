@@ -79,7 +79,7 @@ class _EditPerfil extends State<EditPerfil> {
             // Asigna un tamaño específico al contenedor
             width: 50, // Por ejemplo, puedes ajustar el ancho según tus necesidades
             height: 50, // También puedes ajustar la altura según tus necesidades
-            child: CircularProgressIndicator(color: Colors.orange),
+            child: CircularProgressIndicator(color: const Color(0xFFF4692A)),
           );
         } else if (snapshot.hasError) {
           return Text("profile_error_msg".tr(context));
@@ -97,7 +97,7 @@ class _EditPerfil extends State<EditPerfil> {
     return Scaffold(
       //Header
       appBar: AppBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFFF4692A),
         title: const Text(
           'Edit',
           style: TextStyle(color: Colors.white),

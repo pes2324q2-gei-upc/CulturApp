@@ -35,7 +35,7 @@ class _FiltreState extends State<FiltreData> {
                         enabledBorder:
                             OutlineInputBorder(borderSide: BorderSide.none),
                         focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.orange))),
+                            borderSide: BorderSide(color: const Color(0xFFF4692A)))),
                     readOnly: true,
                     onTap: () {
                       _selectDate();

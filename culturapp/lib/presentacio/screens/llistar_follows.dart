@@ -24,7 +24,7 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
 
   Future<List<String>> getUsers(String token, String endpoint) async {
     final respuesta = await http.get(
-      Uri.parse('http://10.0.2.2:8080/amics/Pepe/$endpoint'),
+      Uri.parse('http://192.168.244.159:8080/amics/Pepe/$endpoint'),
       headers: {
       'Authorization': 'Bearer $token',
       },
@@ -110,19 +110,19 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
           SizedBox(height: 16.0),
           TabBar(
             controller: _tabController,
-            tabs: [
+            tabs: const [
               Tab(text: "Followers"),
               Tab(text: "Followings"),
             ],
-            indicatorColor: Colors.orange,
-            labelColor: Colors.orange,
+            indicatorColor: const Color(0xFFF4692A),
+            labelColor: const Color(0xFFF4692A),
           ),
           Expanded(
             child: TabBarView(
               controller: _tabController,
               children: [
-                _buildFollowersView(),
-                _buildFollowingsView(),
+                _buildFollowView(),
+                _buildFollowView(),
               ],
             ),
           ),
@@ -131,34 +131,57 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
     );
   }
 
-  Widget _buildFollowersView() {
-    return ListView.builder(
-      itemCount: users.length,
-      itemBuilder: (context, index) {
-        return Column(
-          children: [
-            userBox(text: users[index], recomm: false),
-            const SizedBox(height: 5.0),
-          ],
-        );
-      },
+  Widget _buildFollowView() {
+    return Column(
+      children: [
+        const SizedBox(height: 10.0),
+        SizedBox(
+          height: 45.0,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 20.0, left: 20.0),
+            child: TextField(
+              onChanged: (value) {
+                updateList(value);
+              },
+              cursorColor: Colors.white,
+              cursorHeight: 20,
+              style: const TextStyle(
+                color: Colors.white,
+              ),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: const Color(0xFFFFAA80),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  borderSide: BorderSide.none,
+                ),
+                hintText: "Search...",
+                hintStyle: const TextStyle(
+                  color: Colors.white,
+                ),
+                suffixIcon: const Icon(Icons.search),
+                suffixIconColor: Colors.white,
+                contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: users.length,
+            itemBuilder: (context, index) {
+              return Column(
+                children: [
+                  const SizedBox(height: 10.0),
+                  userBox(text: users[index], recomm: false, type: "deleteFollow"),
+                ],
+              );
+            },
+          ),
+        ),
+      ],
     );
-  }
-
-  Widget _buildFollowingsView() {
-    return ListView.builder(
-      itemCount: users.length,
-      itemBuilder: (context, index) {
-        return Column(
-          children: [
-            userBox(text: users[index], recomm: false),
-            const SizedBox(height: 5.0),
-          ],
-        );
-      },
-    );
-  }
-}
+  }}
 
 void main() {
   runApp(MyApp());

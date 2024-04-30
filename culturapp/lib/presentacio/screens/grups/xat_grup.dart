@@ -82,7 +82,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.orange,
+      backgroundColor: const Color(0xFFF4692A),
       leading: IconButton(
         icon: const Icon(
           Icons.arrow_back,
@@ -130,7 +130,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
 
   Widget _BottomInputField() {
     return IconTheme(
-      data: IconThemeData(color: Colors.orange),
+      data: IconThemeData(color: const Color(0xFFF4692A)),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(

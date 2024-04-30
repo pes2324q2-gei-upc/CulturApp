@@ -78,7 +78,7 @@ Widget build(BuildContext context) {
               child: Text(
                 "Recomendaciones:",
                 style: TextStyle(
-                  color: Colors.orange,
+                  color: const Color(0xFFF4692A),
                   fontSize: 18.0,
                   fontWeight: FontWeight.bold,
                 ),
@@ -88,7 +88,7 @@ Widget build(BuildContext context) {
                 for (var user in usersRecom)
                   Padding(
                     padding: const EdgeInsets.only(top: 5.0),
-                    child: userBox(text: user.username, recomm: true),
+                    child: userBox(text: user.username, recomm: true, type: "null"),
                   ),
               ]
             else 
@@ -96,7 +96,7 @@ Widget build(BuildContext context) {
               for (var user in usersBD)
               Padding(
                 padding: const EdgeInsets.only(top: 5.0),
-                child: userBox(text: user.username, recomm: false),
+                child: userBox(text: user.username, recomm: false,  type: "null"),
               ),
               ]
             ],

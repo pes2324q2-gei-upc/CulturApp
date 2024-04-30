@@ -23,7 +23,7 @@ class _LlistarPendentsState extends State<LlistarPendents> {
 
   Future<List<String>> getUsers(String token, String endpoint) async {
     final respuesta = await http.get(
-      Uri.parse('http://10.0.2.2:8080/amics/Pepe/$endpoint'),
+      Uri.parse('http://192.168.244.159:8080/amics/Pepe/$endpoint'),
       headers: {
       'Authorization': 'Bearer $token',
       },
@@ -129,7 +129,7 @@ class _LlistarPendentsState extends State<LlistarPendents> {
               itemBuilder: (context, index) {
                 return Column(
                   children: [
-                    userBox(text: users[index], recomm: false),
+                    userBox(text: users[index], recomm: false, type: "pendent",),
                     const SizedBox(height: 5.0), // Add padding top of 5.0
                   ],
                 );

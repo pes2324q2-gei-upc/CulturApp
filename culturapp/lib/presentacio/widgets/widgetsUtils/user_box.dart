@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class userBox extends StatelessWidget {
   final String text;
   final bool recomm;
-  const userBox({super.key, required this.text, required this.recomm,});
+  final String type;
+  const userBox({super.key, required this.text, required this.recomm, required this.type});
 
 @override
 Widget build(BuildContext context) {
@@ -57,32 +58,62 @@ Widget build(BuildContext context) {
         ),
 Row(
   children: [
-    SizedBox(
-      width: 50,
-      child: TextButton(
-        onPressed: () {
-          // Add your onPressed logic here
-        },
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFFFAA80)),
+    if(type == "pendent") ...[
+      SizedBox(
+        width: 50,
+        child: TextButton(
+          onPressed: () {
+            // Add your onPressed logic here
+          },
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFFFAA80)),
+          ),
+          child: const Text('X', style: TextStyle(fontSize: 24, color: Color.fromARGB(255, 255, 255, 255))),
         ),
-        child: const Text('X', style: TextStyle(fontSize: 24, color: Color.fromARGB(255, 255, 255, 255))),
       ),
-    ),
-    const SizedBox(width: 8.0),
-    SizedBox(
-      width: 50,
-      child: TextButton(
-        onPressed: () {
-          // Add your onPressed logic here
-        },
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFF4692A)),
+      const SizedBox(width: 8.0),
+      SizedBox(
+        width: 50,
+        child: TextButton(
+          onPressed: () {
+            // Add your onPressed logic here
+          },
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFF4692A)),
+          ),
+          child: const Text('✓', style: TextStyle(fontSize: 24, color: Color.fromARGB(255, 255, 255, 255))),
         ),
-        child: const Text('✓', style: TextStyle(fontSize: 24, color: Color.fromARGB(255, 255, 255, 255))),
       ),
-    ),
-  ],
+    ] else if (type == "addSomeone") ...[
+      const SizedBox(width: 8.0),
+      SizedBox(
+        width: 50,
+        child: TextButton(
+          onPressed: () {
+            // Add your onPressed logic here
+          },
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFF4692A)),
+          ),
+          child: const Text('+', style: TextStyle(fontSize: 24, color: Color.fromARGB(255, 255, 255, 255))),
+        ),
+      ),
+    ] else if(type == "deleteFollow") ...[
+      const SizedBox(width: 8.0),
+      SizedBox(
+        width: 50,
+        child: TextButton(
+          onPressed: () {
+            // Add your onPressed logic here
+          },
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFFFAA80)),
+          ),
+          child: const Text('-', style: TextStyle(fontSize: 24, color: Color.fromARGB(255, 255, 255, 255))),
+        ),
+      ),
+    ]
+    ],
 ),
 
       ],

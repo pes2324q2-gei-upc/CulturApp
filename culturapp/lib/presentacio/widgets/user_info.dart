@@ -70,7 +70,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
             // Asigna un tamaño específico al contenedor
             width: 50, // Por ejemplo, puedes ajustar el ancho según tus necesidades
             height: 50, // También puedes ajustar la altura según tus necesidades
-            child: CircularProgressIndicator(color: Colors.orange),
+            child: CircularProgressIndicator(color: const Color(0xFFF4692A)),
           );
         } else if (snapshot.hasError) {
           // Muestra un mensaje de error si falla la obtención del nombre de usuario
@@ -150,8 +150,8 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                     Tab(text: "assisted_events".tr(context)),
                     Tab(text: "badges".tr(context)),
                   ],
-                  indicatorColor: Colors.orange,
-                  labelColor: Colors.orange,
+                  indicatorColor: const Color(0xFFF4692A),
+                  labelColor: const Color(0xFFF4692A),
 
                 ),
                 Expanded(
@@ -195,12 +195,12 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
         ),
         child: Row(
           children: [
-            Icon(icon, color: isSelected ? Colors.orange : Colors.white),
+            Icon(icon, color: isSelected ? const Color(0xFFF4692A) : Colors.white),
             const SizedBox(width: 6),
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? Colors.orange : Colors.white,
+                color: isSelected ? const Color(0xFFF4692A) : Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),

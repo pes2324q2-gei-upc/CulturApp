@@ -74,7 +74,7 @@ class _AmicsState extends State<Amics> {
               contentPadding: EdgeInsets.all(8.0),
               title: Text(display_list[index],
                   style: const TextStyle(
-                    color: Colors.orange,
+                    color: const Color(0xFFF4692A),
                     fontWeight: FontWeight.bold,
                   ))),
         ),
