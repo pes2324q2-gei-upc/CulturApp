@@ -145,7 +145,12 @@ class _Xats extends State<Xats> {
                           ),
                           onPressed: () {
                             _changeButtonColor(2);
-                            changeContent(Grups());
+                            changeContent(
+                              GrupsScreen(
+                                controladorPresentacion:
+                                    _controladorPresentacion,
+                              ),
+                            );
                           },
                           child: const Text('Grups'),
                         )),

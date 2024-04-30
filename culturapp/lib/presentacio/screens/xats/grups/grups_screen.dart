@@ -55,7 +55,8 @@ class _GrupsScreenState extends State<GrupsScreen> {
           height: 20.0,
         ),
         SizedBox(
-          height: 420.0,
+          //height: 420.0,
+          height: 500.0,
           child: ListView.builder(
             itemCount: display_list.length,
             itemBuilder: (context, index) => _buildGrupItem(context, index),
