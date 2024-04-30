@@ -1,0 +1,21 @@
+{
+    "assisted_events": "Esdeveniments assistits",
+    "profile_error_msg": "No s'ha pogut obtenir la informació del perfil",
+    "followers": "Seguidors",
+    "following": "Seguits",
+    "badges": "Insígnies",
+    "favourite_categories": "Categories preferides",
+    "save": "Desar",
+    "select": "Selecciona",
+    "cancel": "Cancelar",
+    "ok": "Ok",
+    "welcome_txt": "Bengingut a CulturApp",
+    "google_access": "Accedeix amb Google",
+    "create_account": "Crear compte",
+    "add_info": "Afegeix la teva informació",
+    "username": "Nom d'usuari",
+    "available_activities": "{number} activitats disponibles",
+    "search": "Buscar...",
+    "profile": "Perfil"
+}
+ 

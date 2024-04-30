@@ -396,8 +396,8 @@ class _MapPageState extends State<MapPage> {
                                       launchUrl(actividad
                                           .urlEntrades); // abrir la url de la actividad para ir a su pagina
                                     },
-                                    child: Text(
-                                      'tickets_info'.tr(context),
+                                    child: const Text(
+                                      'Informació Entrades',
                                       style: TextStyle(
                                         decoration: TextDecoration
                                             .underline, // Subrayar para que se entienda que es un enlace
@@ -463,8 +463,8 @@ class _MapPageState extends State<MapPage> {
                             backgroundColor:
                                 MaterialStateProperty.all(Colors.orange),
                           ),
-                          child: Text(
-                            "see_more".tr(context),
+                          child: const Text(
+                            "Ver más información",
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
