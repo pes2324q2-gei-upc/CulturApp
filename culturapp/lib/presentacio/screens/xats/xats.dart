@@ -1,6 +1,6 @@
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/screens/afegir_amics.dart";
-import "package:culturapp/presentacio/screens/xats/amics_screen.dart";
+import "package:culturapp/presentacio/screens/xats/amics/amics_screen.dart";
 import "package:culturapp/presentacio/screens/xats/grups/grups_screen.dart";
 import "package:culturapp/widgetsUtils/bnav_bar.dart";
 import "package:flutter/material.dart";
