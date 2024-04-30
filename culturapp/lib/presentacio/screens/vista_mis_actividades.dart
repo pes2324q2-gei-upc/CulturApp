@@ -81,7 +81,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   }
 
 
-  Future<void> agregarEventoGoogleCalendar(String nameAct, String date) async {
+ Future<void> agregarEventoGoogleCalendar(String nameAct, String date) async {
     final FirebaseAuth authFirebase = FirebaseAuth.instance;
     final User? user = authFirebase.currentUser;
     final idTokenResult = await user!.getIdTokenResult();
@@ -96,14 +96,23 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     GoogleSignInAccount? googleUser = await googleSignIn.signInSilently();
     final GoogleSignInAuthentication googleAuth;
     if (googleUser == null) {
-        googleUser = await googleSignIn.signIn();
-        googleAuth = (await googleUser?.authentication)!;
+      try {
+        googleUser = await googleSignIn.signIn();  
+      } catch (e) {
+        print('Error al iniciar sesión: $e');
+        return; 
+      }
+      if (googleUser != null) {
+        googleAuth = (await googleUser.authentication)!;
         final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
-      );
-    }else{
-      googleAuth = await googleUser!.authentication;
+        );
+      } else {
+        return; 
+      }
+    } else {
+      googleAuth = await googleUser.authentication;
     }
 
     if (googleAuth.accessToken != null) {

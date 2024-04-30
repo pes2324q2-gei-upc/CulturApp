@@ -41,8 +41,10 @@ class ControladorPresentacion {
   late List<Usuario> usersBD;
   late List<String> friends;
 
-  void func_logout() {
+  void func_logout() async {
     _auth.signOut();
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    await googleSignIn.signOut(); 
   }
 
   Future<void> initialice() async {
@@ -349,8 +351,10 @@ class ControladorPresentacion {
     );
   }
 
-  void logout(BuildContext context) {
+  void logout(BuildContext context) async {
     _auth.signOut();
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    await googleSignIn.signOut(); 
     Future.delayed(Duration(seconds: 2), () {
       mostrarLogin(context);
     });
