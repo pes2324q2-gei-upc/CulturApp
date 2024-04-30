@@ -90,105 +90,136 @@ void updateUsers() async {
         ),
       ),
       body: Column(
-        children: [
-              SizedBox(height: 16.0), // Add spacing of 8.0
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    SizedBox(height: 16.0), // Add spacing of 8.0
+    Expanded(
+      child: DefaultTabController(
+        length: 2,
+        child: Column(
+          children: [
+            const TabBar(
+              tabs: [
+                Tab(text: "Follows"),
+                Tab(text: "Followings"),
+              ],
+              indicatorColor: Colors.orange,
+              labelColor: Colors.orange,
+            ),
+            Expanded(
+              child: TabBarView(
                 children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
-                          if (!isFollows) {
-                            return Colors.grey; // Set background color to grey if isFollows is true
-                          } else {
-                            return const Color(0xFFF4692A); // Set background color to orange if isFollows is false
-                          }
-                        }),
-                        minimumSize: MaterialStateProperty.all<Size>(Size(double.infinity, 50)), // Set minimum size for button
+                  Column(
+                    children: [
+                      const SizedBox(height: 10.0),
+                      SizedBox(
+                        height: 45.0,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 20.0, left: 20.0),
+                          child: TextField(
+                            onChanged: (value) {
+                              updateList(value);
+                            },
+                            cursorColor: Colors.white,
+                            cursorHeight: 20,
+                            style: const TextStyle(
+                              color: Colors.white,
+                            ),
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: const Color(0xFFFFAA80),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                                borderSide: BorderSide.none,
+                              ),
+                              hintText: "Search...",
+                              hintStyle: const TextStyle(
+                                color: Colors.white,
+                              ),
+                              suffixIcon: const Icon(Icons.search),
+                              suffixIconColor: Colors.white,
+                              contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
+                            ),
+                          ),
+                        ),
                       ),
-                      onPressed: () {
-                        setState(() {
-                          isFollows = true;
-                          updateUsers();
-                        });
-                      },
-                      child: const Text('Follows', style: TextStyle(color: Colors.white, fontSize: 18)), // Increase font size
-                    ),
+                      const SizedBox(height: 5.0), // Add padding top of 5.0
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: users.length,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              children: [
+                                userBox(text: users[index], recomm: false),
+                                const SizedBox(height: 5.0), // Add padding top of 5.0
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
-                          if (isFollows) {
-                            return Colors.grey; // Set background color to grey if isFollows is false
-                          } else {
-                            return const Color(0xFFF4692A); // Set background color to orange if isFollows is true
-                          }
-                        }),
-                        minimumSize: MaterialStateProperty.all<Size>(Size(double.infinity, 50)), // Set minimum size for button
+                  // Repeat the same structure for the second tab
+                  Column(
+                    children: [
+                      const SizedBox(height: 10.0),
+                      SizedBox(
+                        height: 45.0,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 20.0, left: 20.0),
+                          child: TextField(
+                            onChanged: (value) {
+                              updateList(value);
+                            },
+                            cursorColor: Colors.white,
+                            cursorHeight: 20,
+                            style: const TextStyle(
+                              color: Colors.white,
+                            ),
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: const Color(0xFFFFAA80),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                                borderSide: BorderSide.none,
+                              ),
+                              hintText: "Search...",
+                              hintStyle: const TextStyle(
+                                color: Colors.white,
+                              ),
+                              suffixIcon: const Icon(Icons.search),
+                              suffixIconColor: Colors.white,
+                              contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
+                            ),
+                          ),
+                        ),
                       ),
-                      onPressed: () {
-                        setState(() {
-                          isFollows = false;
-                          updateUsers();
-                        });
-                      },
-                      child: const Text('Followings', style: TextStyle(color: Colors.white, fontSize: 18)), // Increase font size
-                    ),
+                      const SizedBox(height: 5.0), // Add padding top of 5.0
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: users.length,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              children: [
+                                userBox(text: users[index], recomm: false),
+                                const SizedBox(height: 5.0), // Add padding top of 5.0
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              const SizedBox(height: 10.0), 
-              SizedBox(
-            height: 45.0,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 20.0, left: 20.0),
-              child: TextField(
-                onChanged: (value) {
-                  updateList(value);
-                },
-                cursorColor: Colors.white,
-                cursorHeight: 20,
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: const Color(0xFFFFAA80),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide.none,
-                  ),
-                  hintText: "Search...",
-                  hintStyle: const TextStyle(
-                    color: Colors.white,
-                  ),
-                  suffixIcon: const Icon(Icons.search),
-                  suffixIconColor: Colors.white,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
-                ),
-              ),
             ),
-          ),
-          const SizedBox(height: 5.0), // Add padding top of 5.0
-          Expanded(
-            child: ListView.builder(
-              itemCount: users.length,
-              itemBuilder: (context, index) {
-          return Column(
-            children: [
-              userBox(text: users[index], recomm: false),
-              const SizedBox(height: 5.0), // Add padding top of 5.0
-            ],
-          );
-              },
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
-    );
-  }
+    ),
+  ],
+),
+
+ }
 }
 
 void main() {
