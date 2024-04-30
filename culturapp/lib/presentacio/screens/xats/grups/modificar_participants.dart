@@ -34,9 +34,9 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
     displayList = amics;
     participantAfegit = List.generate(
       displayList.length,
-      (index) => _grup.participants.contains(displayList[index]),
+      (index) => _grup.participants!.contains(displayList[index]),
     );
-    participants = List.from(_grup.participants);
+    participants = List.from(_grup.participants as Iterable);
   }
 
   void updateList(String value) {

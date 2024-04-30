@@ -4,7 +4,6 @@ import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/domain/models/xat_amic.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/chat_bubble.dart";
-import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 
 class XatAmicScreen extends StatefulWidget {

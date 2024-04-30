@@ -31,13 +31,13 @@ class _XatGrupScreen extends State<XatGrupScreen> {
     _controladorPresentacion = controladorPresentacion;
     _grup = grup;
     nomParticipants = agafarNomsParticipants(_grup.participants);
-    missatges = _grup.missatgesGrup;
+    //missatges = _grup.missatgesGrup;
   }
 
-  List<String> agafarNomsParticipants(List<Usuari> participants) {
+  List<String> agafarNomsParticipants(List<Usuari>? participants) {
     List<String> nomParticipants = [];
 
-    for (int i = 0; i < participants.length; ++i) {
+    for (int i = 0; i < participants!.length; ++i) {
       nomParticipants.add(participants[i].nom);
     }
 

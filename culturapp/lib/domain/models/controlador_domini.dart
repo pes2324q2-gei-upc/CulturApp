@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/grup.dart';
 import 'package:culturapp/domain/models/message.dart';
 import 'package:culturapp/domain/models/xat_amic.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -398,5 +399,24 @@ class ControladorDomini {
       throw Exception('Error de red: $error');
     }
   } 
+
+  //get dels grups en els que es troba un usuari
+  Future<List<Grup>> getUserGrups(String userId) async {
+    try {
+      final response = await http.get(Uri.parse('http://10.0.2.2:8080/grups/users/$userId'));
+      
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        List<Grup> reply = data.map((json) => Grup.fromJson(json)).toList();
+        return reply;
+      } else if (response.statusCode == 404) {
+        return [];  //Devolver una lista vacía si no hay replies para este post
+      } else {
+        throw Exception('Error al obtener los replies del post: ${response.statusCode}');
+      }
+    } catch (error) {
+      throw Exception('Error de red: $error');
+    }
+  }
 
 }

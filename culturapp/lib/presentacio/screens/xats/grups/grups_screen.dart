@@ -15,16 +15,30 @@ class GrupsScreen extends StatefulWidget {
 
 class _GrupsScreenState extends State<GrupsScreen> {
   late ControladorPresentacion _controladorPresentacion;
-  late List<Grup> llista_grups;
-  late List<Grup> display_list;
+  late List<Grup>  llista_grups;
+  late List<Grup>  display_list = [];
   String value = '';
 
   _GrupsScreenState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
-    llista_grups =
-        allGroups; //fer crida al backend per agafar tots els grups que l'usuari forma part
+    _initialize();
+    /*
+    getGrups();
+    print(grups);
+    llista_grups = grups;
+        //allGroups; //fer crida al backend per agafar tots els grups que l'usuari forma part
     display_list = llista_grups; //comencem amb tots els grups
+    */
   }
+
+  void _initialize() async {
+  List<Grup> grups = await _controladorPresentacion.getUserGrups();
+  setState(() {
+    llista_grups = grups;
+    display_list = llista_grups; 
+  });
+}
+
 
   void updateList(String value) {
     //funcio on es filtrarà els grups per nom (cercador)
@@ -116,8 +130,9 @@ class _GrupsScreenState extends State<GrupsScreen> {
       },
       child: ListTile(
         contentPadding: const EdgeInsets.all(8.0),
-        leading: Image(
-          image: AssetImage(display_list[index].imageGroup),
+        leading: const Image(
+          //image: AssetImage(display_list[index].imageGroup),
+          image: AssetImage('assets/userImage.png'),
           fit: BoxFit.cover,
           width: 50,
           height: 50,

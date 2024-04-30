@@ -315,7 +315,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
           height: 300,
           width: llargadaPantalla,
           child: ListView.builder(
-            itemCount: _grup.participants.length,
+            itemCount: _grup.participants!.length,
             itemBuilder: (context, index) => _buildParticipant(context, index),
           ),
         ),
@@ -327,12 +327,12 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
     return ListTile(
       contentPadding: const EdgeInsets.all(8.0),
       leading: Image(
-        image: AssetImage(_grup.participants[index].image),
+        image: AssetImage(_grup.participants![index].image),
         fit: BoxFit.fill,
         width: 50.0,
         height: 50.0,
       ),
-      title: Text(_grup.participants[index].nom,
+      title: Text(_grup.participants![index].nom,
           style: const TextStyle(
             color: Colors.orange,
             fontWeight: FontWeight.bold,

@@ -377,17 +377,16 @@ class ControladorPresentacion {
         // El foro existe, imprimir sus detalles
         print('Xat existente: $xat');
       } else {
-        print('entra al else, perque el xat no existeix');
         // El foro no existe, crear uno nuevo
         bool creadoExitosamente = await controladorDomini.createXat(senderId, receiverId);
         if (creadoExitosamente) {
           print('Nuevo xat creado');
         } else {
-          print('Error al crear el xat');
+          throw Exception('Error al crear el xat');
         }
       }
     } catch (error) {
-      print('Error al obtener o crear el xat: $error');
+      throw Exception('Error al obtener o crear el xat: $error');
     }
   }
 
@@ -396,9 +395,8 @@ class ControladorPresentacion {
       String senderId = _user!.uid;
       String? xatId = await controladorDomini.getXatId(receiverId, senderId);
       controladorDomini.addMessage(xatId, time, text, senderId);
-
     } catch (error) {
-      print('Error al añadir mensaje al xat: $error');
+      throw Exception('Error al añadir mensaje al xat: $error');
     }
   }
 
@@ -409,9 +407,14 @@ class ControladorPresentacion {
       List<Message> missatges = await controladorDomini.getMessages(xatId);
       return missatges;
     } catch (error) {
-      print('Error al cojer mensajes del xat: $error');
-      return [];
+      throw Exception('Error al cojer mensajes del xat: $error');
     }
+  }
+
+  Future<List<Grup>> getUserGrups() async {
+    String userId = _user!.uid;
+    List<Grup> grups = await controladorDomini.getUserGrups(userId);
+    return grups;
   }
 
 }

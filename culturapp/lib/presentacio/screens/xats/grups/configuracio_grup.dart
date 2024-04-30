@@ -25,9 +25,11 @@ class _ConfigGrup extends State<ConfigGrup> {
   double llargadaPantallaTitols = 438;
   bool afegit = false;
 
+  String id = '';
   String nomGrup = '';
   String descripcioGrup = '';
   String imatgeGrup = '';
+  List<String> membres = [];
   List<Usuari> _participants = [];
 
   Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
@@ -45,6 +47,7 @@ class _ConfigGrup extends State<ConfigGrup> {
 
   void crearGrup() {
     Grup nouGrup = Grup(
+      id: id,
       nomGroup: nomGrup,
       imageGroup: imatgeGrup,
       descripcio:
@@ -52,6 +55,7 @@ class _ConfigGrup extends State<ConfigGrup> {
       lastMessage: 'Sigues el primer dir hola!',
       timeLastMessage: DateTime.now().toString(),
       participants: _participants,
+      membres: membres,
       missatgesGrup: [],
     );
 
