@@ -26,7 +26,7 @@ class ChatBubble extends StatelessWidget {
             mainAxisAlignment:
                 isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
             children: [
-              if (!isMe) // If message is not from "Me"
+              if (!isMe && userName != 'Amic') // If message is not from "Me"
                 Text(
                   userName,
                   style: const TextStyle(fontWeight: FontWeight.bold),

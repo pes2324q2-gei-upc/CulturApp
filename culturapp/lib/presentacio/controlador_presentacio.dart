@@ -2,14 +2,19 @@
 
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
+import 'package:culturapp/domain/models/grup.dart';
+import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/screens/edit_perfil.dart';
-import 'package:culturapp/presentacio/screens/grups/configuracio_grup.dart';
-import 'package:culturapp/presentacio/screens/grups/xat_grup.dart';
+import 'package:culturapp/presentacio/screens/xats/amics/info_amic.dart';
+import 'package:culturapp/presentacio/screens/xats/grups/configuracio_grup.dart';
+import 'package:culturapp/presentacio/screens/xats/grups/info_grup.dart';
+import 'package:culturapp/presentacio/screens/xats/grups/modificar_participants.dart';
+import 'package:culturapp/presentacio/screens/xats/grups/xat_grup.dart';
 import 'package:culturapp/domain/models/user.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/logout.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
-import 'package:culturapp/presentacio/screens/grups/crear_grup_screen.dart';
+import 'package:culturapp/presentacio/screens/xats/grups/crear_grup_screen.dart';
 import 'package:culturapp/presentacio/screens/perfil_screen.dart';
 import 'package:culturapp/presentacio/screens/recomendador_actividades.dart';
 import 'package:culturapp/presentacio/screens/recomendador_users.dart';
@@ -18,6 +23,7 @@ import 'package:culturapp/presentacio/screens/signup.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_mis_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_ver_actividad.dart';
+import 'package:culturapp/presentacio/screens/xats/amics/xat_amic.dart';
 import 'package:culturapp/presentacio/screens/xats/xats.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,7 +41,7 @@ class ControladorPresentacion {
   late List<Usuario> usersBD;
   late List<String> friends;
 
-  void func_logout(){
+  void func_logout() {
     _auth.signOut();
   }
 
@@ -53,7 +59,7 @@ class ControladorPresentacion {
     if (userLogged()) {
       categsFav = await controladorDomini.obteCatsFavs(_user);
       activitatsUser = await controladorDomini.getUserActivities(_user!.uid);
-      //friends = 
+      //friends =
       Future<String> usname = getUsername(_user!.uid);
       String username = await usname;
       friends = await controladorDomini.obteFollows(username);
@@ -100,8 +106,11 @@ class ControladorPresentacion {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            Xats(controladorPresentacion: this, recomms: usersRecom,usersBD: usersBD,),
+        builder: (context) => Xats(
+          controladorPresentacion: this,
+          recomms: usersRecom,
+          usersBD: usersBD,
+        ),
       ),
     );
   }
@@ -110,8 +119,8 @@ class ControladorPresentacion {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            PerfilPage(controladorPresentacion: this, uid: _user!.uid, owner: true),
+        builder: (context) => PerfilPage(
+            controladorPresentacion: this, uid: _user!.uid, owner: true),
       ),
     );
   }
@@ -122,7 +131,8 @@ class ControladorPresentacion {
             context,
             MaterialPageRoute(
               builder: (context) => ListaMisActividades(
-                controladorPresentacion: this, user: _user,
+                controladorPresentacion: this,
+                user: _user,
               ),
             ),
           )
@@ -151,7 +161,9 @@ class ControladorPresentacion {
       context,
       MaterialPageRoute(
         builder: (context) => ListaMisActividades(
-          controladorPresentacion: this, user: _user,),
+          controladorPresentacion: this,
+          user: _user,
+        ),
       ),
     );
   }
@@ -201,36 +213,36 @@ class ControladorPresentacion {
 
   Future<void> handleGoogleSignIn(BuildContext context) async {
     try {
-
       final GoogleSignIn googleSignIn = GoogleSignIn();
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       if (googleUser != null) {
-        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
         final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
-      );
-      
+        );
 
-    UserCredential userCredential = await _auth.signInWithCredential(credential);
+        UserCredential userCredential =
+            await _auth.signInWithCredential(credential);
 
-      bool userExists = await controladorDomini.accountExists(userCredential.user);
-      _user = userCredential.user;
-      //Si no hi ha un usuari associat al compte de google, redirigir a la pantalla de registre
-      if (!userExists) {
-        mostrarSignup(context);
-      }
-      //Altrament redirigir a la pantalla principal de l'app
-      else {
-        await initialice();
-        await initialice2();
-        mostrarMapa(context);
-      }
+        bool userExists =
+            await controladorDomini.accountExists(userCredential.user);
+        _user = userCredential.user;
+        //Si no hi ha un usuari associat al compte de google, redirigir a la pantalla de registre
+        if (!userExists) {
+          mostrarSignup(context);
+        }
+        //Altrament redirigir a la pantalla principal de l'app
+        else {
+          await initialice();
+          await initialice2();
+          mostrarMapa(context);
+        }
       }
     } catch (error) {
       print(error);
     }
-    
   }
 
   void mostrarSignup(BuildContext context) {
@@ -251,8 +263,8 @@ class ControladorPresentacion {
     );
   }
 
-  Future<bool> createUser(String username, List<String> selectedCategories, BuildContext context) async {
-  
+  Future<bool> createUser(String username, List<String> selectedCategories,
+      BuildContext context) async {
     await controladorDomini.createUser(_user, username, selectedCategories);
     return true;
   }
@@ -266,7 +278,7 @@ class ControladorPresentacion {
     );
   }
 
-  void mostrarConfigGrup(BuildContext context, List<String> participants) {
+  void mostrarConfigGrup(BuildContext context, List<Usuari> participants) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -276,11 +288,54 @@ class ControladorPresentacion {
     );
   }
 
-  void mostrarXatGrup(BuildContext context) {
+  void mostrarXatGrup(BuildContext context, Grup grup) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => XatGrupScreen(controladorPresentacion: this),
+        builder: (context) =>
+            XatGrupScreen(controladorPresentacion: this, grup: grup),
+      ),
+    );
+  }
+
+  void mostrarInfoAmic(BuildContext context, Usuari usuari) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            InfoAmicScreen(controladorPresentacion: this, usuari: usuari),
+      ),
+    );
+  }
+
+  void mostrarInfoGrup(BuildContext context, Grup grup) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            InfoGrupScreen(controladorPresentacion: this, grup: grup),
+      ),
+    );
+  }
+
+  void mostrarModificarParticipants(BuildContext context, Grup grup) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ModificarParticipantsScreen(
+            controladorPresentacion: this, grup: grup),
+      ),
+    );
+  }
+
+  void mostrarXatAmic(BuildContext context, Usuari usuari) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => XatAmicScreen(
+          controladorPresentacion: this,
+          usuari: usuari,
+        ),
       ),
     );
   }
