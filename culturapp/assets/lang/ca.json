@@ -1,15 +1,15 @@
 {
     "assisted_events": "Esdeveniments assistits",
-    "profile_error_msg": "No s'ha pogut obtenir la informació del perfil",
+    "profile_error_msg": "Error rebent la informació del perfil",
     "followers": "Seguidors",
     "following": "Seguits",
     "badges": "Insígnies",
-    "favourite_categories": "Categories preferides",
+    "favourite_categories": "Categoríes preferides",
     "save": "Desar",
     "select": "Selecciona",
     "cancel": "Cancelar",
     "ok": "Ok",
-    "welcome_txt": "Bengingut a CulturApp",
+    "welcome_txt": "Benvingut a CulturApp",
     "google_access": "Accedeix amb Google",
     "create_account": "Crear compte",
     "add_info": "Afegeix la teva informació",
@@ -18,4 +18,3 @@
     "search": "Buscar...",
     "profile": "Perfil"
 }
- 

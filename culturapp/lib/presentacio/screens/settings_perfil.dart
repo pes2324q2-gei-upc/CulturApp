@@ -1,12 +1,9 @@
-import 'package:culturapp/presentacio/controlador_presentacio.dart';
-import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:flutter/material.dart';
-import "package:cloud_firestore/cloud_firestore.dart";
-import "package:firebase_auth/firebase_auth.dart";
-import 'package:culturapp/presentacio/screens/login.dart';
+import 'package:culturapp/presentacio/controlador_presentacio.dart';
+
+import '../../translations/AppLocalizations'; // Importa tu clase de localización
 
 class SettingsPerfil extends StatefulWidget {
-
   final ControladorPresentacion controladorPresentacion;
 
   const SettingsPerfil({Key? key, required this.controladorPresentacion}) : super(key: key);
@@ -16,17 +13,9 @@ class SettingsPerfil extends StatefulWidget {
 }
 
 class _SettingsPerfil extends State<SettingsPerfil> {
-  //Usuari de Firebase
-  User? _user;
-  int _selectedIndex = 3;
-
-  //Instancia de autentificacio de Firebase
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
   late ControladorPresentacion _controladorPresentacion;
-
   bool privat = false;
-  
+
   _SettingsPerfil(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
   }
@@ -34,22 +23,19 @@ class _SettingsPerfil extends State<SettingsPerfil> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //Header
       appBar: AppBar(
         backgroundColor: Colors.orange,
         title: const Text(
-          'Seetings',
+          'Settings',
           style: TextStyle(color: Colors.white),
         ),
-      ),      
-      //opcions de configuracio
-      body: Column (
+      ),
+      body: Column(
         children: [
-          //privacidad
           SwitchListTile(
-            title: const Text("Privacidad"),
-            subtitle: const Text("Explicacion de lo que implicaria tener la cuenta privada"),
-            value: privat, 
+            title: const Text("Privacy"),
+            subtitle: const Text("Explanation of what having a private account implies"),
+            value: privat,
             onChanged: (bool value) {
               setState(() {
                 privat = value;
@@ -58,54 +44,92 @@ class _SettingsPerfil extends State<SettingsPerfil> {
             secondary: const Icon(Icons.lock),
           ),
           const Divider(height: 0),
-          //idioma
           ListTile(
-            title: const Text('Idioma'),
-            subtitle: const Text("Cambiar el idioma"),
+            title: const Text('Language'),
+            subtitle: Text(_controladorPresentacion.language!.languageCode),
             leading: const Icon(Icons.language),
             trailing: const Icon(Icons.arrow_forward),
             onTap: () {
-              // pantalla de selección de idioma
+              _showLanguageSelector(context);
             },
           ),
           const Divider(height: 0),
-          //contraseña
           ListTile(
-            title: const Text('Cambiar Contraseña'),
-            subtitle: const Text("Modificar la contraseña actual"),
+            title: const Text('Change Password'),
+            subtitle: const Text("Change your current password"),
             leading: const Icon(Icons.vpn_key),
             trailing: const Icon(Icons.arrow_forward),
             onTap: () {
-              //pantalla de cambio de contraseña
+              // Navigate to change password screen
             },
           ),
           const Divider(height: 0),
-          //cerrar sessión
           ListTile(
-            title: const Text('Cerrar Sesión'),
+            title: const Text('Sign Out'),
             leading: const Icon(Icons.exit_to_app),
             onTap: () {
-              signout(context);
+              _signOut(context);
             },
           ),
           const Divider(height: 0),
-          //eliminar cuenta
           ListTile(
-            title: const Text('Eliminar cuenta'),
-            subtitle: const Text("Borrar cuenta permanentemente"),
+            title: const Text('Delete Account'),
+            subtitle: const Text("Delete account permanently"),
             leading: const Icon(Icons.delete),
             onTap: () {
-              //eliminar ceunta
+              // Delete account logic
             },
           ),
           const Divider(height: 0),
-          //si queremos, añadir tema de notificaciones
         ],
-      )
+      ),
     );
   }
 
-  void signout(context) {
+  void _signOut(BuildContext context) {
     _controladorPresentacion.logout(context);
   }
+
+  void _showLanguageSelector(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Language'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildLanguageOption(context, Locale('en')),
+              _buildLanguageOption(context, Locale('ca')),
+              _buildLanguageOption(context, Locale('es')),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLanguageOption(BuildContext context, Locale locale) {
+    final languageCode = locale.languageCode;
+    String languageName;
+    if (languageCode == 'en') languageName = 'English';
+    else if (languageCode == 'ca') languageName = 'Catalan';
+    else languageName = 'Spanish';
+    return ListTile(
+      title: Text(languageName),
+      onTap: () {
+        _controladorPresentacion.changeLanguage(locale);
+        print('Cambiando idioma a ' + locale.toString());
+        Navigator.of(context).pop();
+        final scaffoldMessenger = ScaffoldMessenger.of(context);
+        scaffoldMessenger.showSnackBar(
+          const SnackBar(
+            content: Text(('Reinicia!')),
+            backgroundColor: Colors.green,
+          ),
+        );
+      },
+    );
+  }
+
 }
