@@ -55,25 +55,38 @@ Widget build(BuildContext context) {
             ),
           ),
         ),
-SizedBox(
-  width: 100,
-  child: TextButton(
-    onPressed: () {
-    },
-    style: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all<Color>(Color.fromARGB(255, 99, 96, 96)), 
+Row(
+  children: [
+    SizedBox(
+      width: 50,
+      child: TextButton(
+        onPressed: () {
+          // Add your onPressed logic here
+        },
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFFFAA80)),
+        ),
+        child: const Text('X', style: TextStyle(fontSize: 24, color: Color.fromARGB(255, 255, 255, 255))),
+      ),
     ),
-    child: const Row(
-      children: [
-        Text('Veure Perfil', style: TextStyle(color: Color.fromARGB(255, 255, 255, 255))),
-      ],
+    const SizedBox(width: 8.0),
+    SizedBox(
+      width: 50,
+      child: TextButton(
+        onPressed: () {
+          // Add your onPressed logic here
+        },
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFF4692A)),
+        ),
+        child: const Text('✓', style: TextStyle(fontSize: 24, color: Color.fromARGB(255, 255, 255, 255))),
+      ),
     ),
-  ),
+  ],
 ),
 
       ],
     ),
   );
 }
-
 }
