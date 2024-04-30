@@ -165,8 +165,8 @@ class _SignupState extends State<Signup> {
 
   Future<void> createUser() async {
     if (await _controladorPresentacion.usernameUnique(usernameController.text)) {
+      
       await _controladorPresentacion.createUser(usernameController.text, selectedCategories, context);
-
       await _controladorPresentacion.initialice();
       await _controladorPresentacion.initialice2();
 

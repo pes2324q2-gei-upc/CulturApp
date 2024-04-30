@@ -33,6 +33,7 @@ class ControladorPresentacion {
   late List<String> categsFav = [];
   late List<Usuario> usersRecom;
   late List<Usuario> usersBD;
+  late List<String> friends;
 
   void func_logout(){
     _auth.signOut();
@@ -52,8 +53,13 @@ class ControladorPresentacion {
     if (userLogged()) {
       categsFav = await controladorDomini.obteCatsFavs(_user);
       activitatsUser = await controladorDomini.getUserActivities(_user!.uid);
-      usersRecom = calculaUsuariosRecomendados(usersBD, _user!.uid, categsFav);
+      //friends = 
+      Future<String> usname = getUsername(_user!.uid);
+      String username = await usname;
+      friends = await controladorDomini.obteFollows(username);
       usersBD.removeWhere((usuario) => usuario.identificador == _user!.uid);
+      usersBD.removeWhere((usuario) => friends.contains(usuario.username));
+      usersRecom = calculaUsuariosRecomendados(usersBD, _user!.uid, categsFav);
     }
   }
 
