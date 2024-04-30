@@ -74,7 +74,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           _controladorPresentacion.mostrarActividadesUser(context);
         break;
       case 2:
-         _controladorPresentacion.mostrarXats(context);
+        _controladorPresentacion.mostrarXats(context);
         break;
       case 3:
           _controladorPresentacion.mostrarPerfil(context);

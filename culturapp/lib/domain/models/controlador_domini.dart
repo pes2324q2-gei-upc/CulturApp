@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
@@ -10,11 +11,24 @@ class ControladorDomini {
   final String ip = "10.0.2.2";
 
   Future<List<Actividad>> getActivitiesAgenda() async {
+    print('GETTING ACTIVITIES');
     final respuesta =
         await http.get(Uri.parse('https://culturapp-back.onrender.com/activitats/read/all'));
 
     if (respuesta.statusCode == 200) {
+      print('HE RESPONDIDO');
       return _convert_database_to_list(respuesta);
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
+
+    Future<List<Usuario>> getUsers() async {
+    final respuesta =
+        await http.get(Uri.parse('https://culturapp-back.onrender.com/users/read/users'));
+
+    if (respuesta.statusCode == 200) {
+      return _convert_database_to_list_user(respuesta);
     } else {
       throw Exception('Fallo la obtención de datos');
     }
@@ -111,6 +125,25 @@ class ControladorDomini {
     return actividades;
   }
 
+  List<Usuario> _convert_database_to_list_user(response) {
+    List<Usuario> usuarios = <Usuario>[];
+    var usr = json.decode(response.body);
+
+    if (usr is List) {
+      usr.forEach((userJson) {
+        Usuario usuario = Usuario();
+
+        usuario.username = userJson['username'];
+        usuario.favCats = userJson['favcategories'] ?? '';
+        usuario.identificador = userJson['id'];
+        
+        usuarios.add(usuario);
+      });
+    }
+
+    return usuarios;
+  }
+
   List<Actividad> _convert_json_to_list(response) {
     var actividades = <Actividad>[];
 
@@ -119,7 +152,6 @@ class ControladorDomini {
       for (var actividadJson in actividadesJson) {
         var actividad = Actividad.fromJson(actividadJson);
         actividades.add(actividad);
-        print(actividad.visualitzacions);
       }
     }
 
@@ -127,6 +159,7 @@ class ControladorDomini {
   }
 
   Future<bool> accountExists(User? user) async {
+    print('AQUI ESTOY');
     final respuesta = await http
         .get(Uri.parse('https://culturapp-back.onrender.com/users/exists?uid=${user?.uid}'));
 
@@ -149,16 +182,37 @@ class ControladorDomini {
     }
     return categorias;
   }
+    static const token = "976f2f7b53c188d8a77b9b71887621d1e1d207faec5663bf79de9572ac887ea7";
+    Future<List<String>> obteFollows(String username) async {
+      print(username);
+      print('VOY POR FOLLOWS');
+      final respuesta = await http.get(
+      Uri.parse('http://10.0.2.2:8080/amics/Pepe/following'),
+      headers: {
+      'Authorization': 'Bearer $token',
+      },
+    );
+    if (respuesta.statusCode == 200) {
+      print(respuesta.body);
+      print('NULLOOOSAJDKLAÑSDKLDLSADASD');
+      final body = respuesta.body;
+      final List<dynamic> data = json.decode(body);
+      final List<String> users = data.map((user) => user.toString()).toList();
+      return users;
+    } 
+    else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
 
-  void createUser(
-      User? _user, String username, List<String> selectedCategories) async {
+  Future<bool>  createUser  (User? _user, String username, List<String> selectedCategories) async {
     try {
+
       final Map<String, dynamic> userdata = {
         'uid': _user?.uid,
         'username': username,
         'email': _user?.email,
-        'favcategories': jsonEncode(selectedCategories),
-        'activities': [],
+        'favcategories': selectedCategories
       };
 
       final respuesta = await http.post(
@@ -166,6 +220,8 @@ class ControladorDomini {
         body: jsonEncode(userdata),
         headers: {'Content-Type': 'application/json'},
       );
+
+      print('MANDO DATOS subidos');
 
       if (respuesta.statusCode == 200) {
         print('Datos enviados exitosamente');
@@ -175,6 +231,8 @@ class ControladorDomini {
     } catch (error) {
       print('Error de red: $error');
     }
+
+    return true;
   }
 
   void signoutFromActivity(String? uid, String code) async {
@@ -249,7 +307,7 @@ class ControladorDomini {
 
   Future<String> getUsername(String uid) async {
     final respuesta = await http.get(Uri.parse(
-        'http://${ip}:8080/users/username?uid=${uid}'));
+        'https://culturapp-back.onrender.com/users/username?uid=${uid}'));
 
     if (respuesta.statusCode == 200) {
       return respuesta.body;
@@ -267,7 +325,7 @@ class ControladorDomini {
       };
 
       final respuesta = await http.post(
-        Uri.parse('http://${ip}:8080/users/edit'),
+        Uri.parse('https://culturapp-back.onrender.com/users/edit'),
         body: jsonEncode(userdata),
         headers: {'Content-Type': 'application/json'},
       );

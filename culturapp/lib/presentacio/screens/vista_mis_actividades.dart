@@ -1,24 +1,31 @@
+import 'dart:io';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
-import 'package:culturapp/presentacio/widgets/widgetsUtils/image_category.dart';
-import 'package:culturapp/presentacio/widgets/widgetsUtils/text_with_link.dart';
 import 'package:culturapp/widgetsUtils/bnav_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:googleapis/photoslibrary/v1.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:googleapis_auth/auth_io.dart' as auth;
+import 'package:googleapis/calendar/v3.dart' as calendar;
+import 'package:http/http.dart' as http;
+
 
 class ListaMisActividades extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
-
+  final User? user;
+  
   ListaMisActividades({
     Key? key,
-    required this.controladorPresentacion,
+    required this.controladorPresentacion, required this.user,
   }) : super(key: key);
 
   @override
   State<ListaMisActividades> createState() => _ListaMisActividadesState(
-        controladorPresentacion,
-      );
+        controladorPresentacion, user);
 }
 
 class _ListaMisActividadesState extends State<ListaMisActividades> {
@@ -29,9 +36,11 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   late String squery;
   late String? _selectedCategory;
   late String selectedData;
+  late User? usuario;
   int _selectedIndex = 1;
   TextEditingController _dateController = TextEditingController();
   TextEditingController _searchController = TextEditingController();
+  calendar.CalendarApi? _calendarApi;
 
   static const List<String> llistaCategories = <String>[
     '-totes-',
@@ -51,7 +60,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     'exposicions'
   ];
 
-  _ListaMisActividadesState(ControladorPresentacion controladorPresentacion) {
+  _ListaMisActividadesState(ControladorPresentacion controladorPresentacion, User? user) {
     _controladorPresentacion = controladorPresentacion;
     squery = '';
     _selectedCategory = '-totes-';
@@ -69,6 +78,69 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     }).catchError((error) {
       print("Error fetching activities: $error");
     });
+  }
+
+
+  Future<void> agregarEventoGoogleCalendar(String nameAct, String date) async {
+    final FirebaseAuth authFirebase = FirebaseAuth.instance;
+    final User? user = authFirebase.currentUser;
+    final idTokenResult = await user!.getIdTokenResult();
+    final idToken = idTokenResult.token;
+
+    final GoogleSignIn googleSignIn = GoogleSignIn(
+      scopes: [
+        'email',
+        'https://www.googleapis.com/auth/calendar',
+      ],
+    );
+    GoogleSignInAccount? googleUser = await googleSignIn.signInSilently();
+    final GoogleSignInAuthentication googleAuth;
+    if (googleUser == null) {
+        googleUser = await googleSignIn.signIn();
+        googleAuth = (await googleUser?.authentication)!;
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+      );
+    }else{
+      googleAuth = await googleUser!.authentication;
+    }
+
+    if (googleAuth.accessToken != null) {
+      final authClient = auth.authenticatedClient(
+        http.Client(),
+        auth.AccessCredentials(
+          auth.AccessToken(
+            'Bearer',
+            googleAuth.accessToken!,
+            DateTime.now().toUtc().add(const Duration(hours: 1)),
+          ),
+          idToken,
+          [calendar.CalendarApi.calendarScope],
+        ),
+      );
+        
+      final calendarApi = calendar.CalendarApi(authClient);
+
+      DateFormat formatter = DateFormat("yyyy-MM-dd");
+      DateTime data = formatter.parse(date);
+
+      int year = data.year;
+      int month = data.month;
+      int day = data.day;
+
+      var event = calendar.Event()
+        ..summary = nameAct
+        ..start = (calendar.EventDateTime()..date = DateTime(year, month, day))
+        ..end = (calendar.EventDateTime()..date = DateTime(year, month, day));
+
+      var request = calendarApi.events.insert(event, 'primary');
+      var addedEvent = await request;
+
+      print('Evento añadido: ${addedEvent.id}');
+    } else {
+      print('No se pudo obtener el token de acceso');
+    }
   }
 
   Future<List<Actividad>> fetchActivities() async {
@@ -181,6 +253,10 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     }
   }
 
+  void addActivityToCalendar(Actividad act){
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -259,7 +335,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                         child: Padding(
                           padding: const EdgeInsets.only(
                             top: 16.0,
-                            bottom: 32.0,
+                            bottom: 24.0,
                             right: 16.0,
                             left: 16.0,
                           ),
@@ -292,6 +368,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                     child: Column(
                                       children: [
                                         SizedBox(
+                                          height: 150,
                                           child: Image.network(
                                             activitat.imageUrl,
                                             fit: BoxFit.cover,
@@ -360,35 +437,52 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                               ),
                                             ],
                                           ),
-                                          Row(
-                                            children: [
-                                              const Icon(Icons.local_atm),
-                                              TextWithLink(
-                                                text: "  Compra aqui",
-                                                url: activitat.urlEntrades
-                                                    .toString(),
+                                      Row(
+                                        children: [
+                                          const Icon(Icons.local_atm),
+                                          const Padding(
+                                              padding: EdgeInsets.only(right: 7.5)),
+                                          Expanded(
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                launchUrl(activitat
+                                                    .urlEntrades); // abrir la url de la actividad para ir a su pagina
+                                              },
+                                              child: const Text(
+                                                'Compra Entrades',
+                                                style: TextStyle(
+                                                  decoration: TextDecoration
+                                                      .none,
+                                                      color: Colors.blueAccent // Subrayar para que se entienda que es un enlace
+                                                ),
                                               ),
-                                            ],
+                                            ),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Container(
-                                          padding:
-                                              const EdgeInsets.only(left: 5),
-                                          width: 50,
-                                          child: ImageCategory(
-                                            categoria: getCategoria(activitat),
+                                      const Padding(padding: EdgeInsets.only(top: 8)),
+                                      Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 180,
+                                            child: TextButton(
+                                              onPressed: () {
+                                               agregarEventoGoogleCalendar(activitat.name, activitat.dataInici);
+                                              },
+                                              child: Row(
+                                                children: [
+                                                  const Text('Añadir a Calendar', style: TextStyle(color: Color.fromARGB(255, 255, 196, 0)),),
+                                                  const Padding(padding: EdgeInsets.only(right: 5)),
+                                                  Image.asset('assets/calendar.png', height: 30,),
+                                                ],
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
+
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -546,15 +640,15 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   }
 
   Future<void> _selectDate() async {
-    DateTime? _picked = await showDatePicker(
+    DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
 
-    if (_picked != null) {
-      String formattedDate = DateFormat('yyyy-MM-dd').format(_picked);
+    if (picked != null) {
+      String formattedDate = DateFormat('yyyy-MM-dd').format(picked);
       setState(() {
         _dateController.text = formattedDate;
         canviFiltreData(formattedDate);

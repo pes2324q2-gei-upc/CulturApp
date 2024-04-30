@@ -1,4 +1,5 @@
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:culturapp/translations/AppLocalizations';
 import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:flutter/material.dart';
 import "package:cloud_firestore/cloud_firestore.dart";
@@ -81,7 +82,7 @@ class _EditPerfil extends State<EditPerfil> {
             child: CircularProgressIndicator(color: Colors.orange),
           );
         } else if (snapshot.hasError) {
-          return Text('Error al obtener el nombre de usuario');
+          return Text("profile_error_msg".tr(context));
         } else {
           // Muestra el nombre de usuario obtenido
           final username = snapshot.data ?? '';
@@ -154,7 +155,7 @@ class _EditPerfil extends State<EditPerfil> {
                       ),
                       onPressed: _showMultiSelect,
                       icon: Icon(Icons.arrow_drop_down, color: Colors.grey[800],),
-                      label: Text("Categories preferides", style: TextStyle(fontSize: 16, color: Colors.grey[700]),),
+                      label: Text("favourite_categories".tr(context), style: TextStyle(fontSize: 16, color: Colors.grey[700]),),
                     ),
                   ),
                 ],
@@ -206,6 +207,9 @@ class _EditPerfil extends State<EditPerfil> {
       builder: (contex) {
         List<String> valoresSeleccionados = _categories.where((categoria) => selectedCategories.contains(categoria)).toList();
         return  MultiSelectDialog(
+          title: Text("select".tr(context)),
+          confirmText: Text("ok".tr(context)),
+          cancelText: Text("cancel".tr(context)),
           items: _categories
                 .map((categoria) => MultiSelectItem<String>(categoria.toLowerCase(), categoria.toLowerCase()))
                 .toList(),
