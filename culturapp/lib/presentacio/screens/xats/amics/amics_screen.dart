@@ -18,6 +18,8 @@ class _AmicsScreenState extends State<AmicsScreen> {
   late List<Usuari> llista_amics;
   late List<Usuari> display_list;
 
+  Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
+
   _AmicsScreenState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
     llista_amics = allAmics;
@@ -59,8 +61,9 @@ class _AmicsScreenState extends State<AmicsScreen> {
       const SizedBox(
         height: 20.0,
       ),
-      SizedBox(
-        height: 420.0,
+      Container(
+        color: grisFluix,
+        height: 470.0,
         child: ListView.builder(
           itemCount: display_list.length,
           itemBuilder: (context, index) => _buildAmic(context, index),

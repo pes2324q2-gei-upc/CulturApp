@@ -110,89 +110,82 @@ class _Xats extends State<Xats> {
         padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
           child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    SizedBox(
-                        height: 50.0,
-                        width: 120.0,
-                        child: TextButton(
-                          style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all<Color>(_buttonAmics),
-                            foregroundColor:
-                                MaterialStateProperty.all<Color>(Colors.white),
-                          ),
-                          onPressed: () {
-                            _changeButtonColor(1);
-                            changeContent(AmicsScreen(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  SizedBox(
+                      height: 50.0,
+                      width: 120.0,
+                      child: TextButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(_buttonAmics),
+                          foregroundColor:
+                              MaterialStateProperty.all<Color>(Colors.white),
+                        ),
+                        onPressed: () {
+                          _changeButtonColor(1);
+                          changeContent(AmicsScreen(
+                            controladorPresentacion: _controladorPresentacion,
+                          ));
+                        },
+                        child: const Text('Amics'),
+                      )),
+                  SizedBox(
+                      height: 50.0,
+                      width: 120.0,
+                      child: TextButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(_buttonGrups),
+                          foregroundColor:
+                              MaterialStateProperty.all<Color>(Colors.white),
+                        ),
+                        onPressed: () {
+                          _changeButtonColor(2);
+                          changeContent(
+                            GrupsScreen(
                               controladorPresentacion: _controladorPresentacion,
-                            ));
-                          },
-                          child: const Text('Amics'),
-                        )),
-                    SizedBox(
-                        height: 50.0,
-                        width: 120.0,
-                        child: TextButton(
-                          style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all<Color>(_buttonGrups),
-                            foregroundColor:
-                                MaterialStateProperty.all<Color>(Colors.white),
-                          ),
-                          onPressed: () {
-                            _changeButtonColor(2);
-                            changeContent(
-                              GrupsScreen(
-                                controladorPresentacion:
-                                    _controladorPresentacion,
-                              ),
-                            );
-                          },
-                          child: const Text('Grups'),
-                        )),
-                    SizedBox(
-                        height: 50.0,
-                        width: 120.0,
-                        child: TextButton(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                _buttonAfegirAmics),
-                            foregroundColor:
-                                MaterialStateProperty.all<Color>(Colors.white),
-                          ),
-                          onPressed: () {
-                            _changeButtonColor(3);
-                            changeContent(AfegirAmics(
-                              recomms: usersRecom,
-                              usersBD: usersBD,
-                            ));
-                          },
-                          child: const Text('Afegir Amics'),
-                        )),
-                  ],
+                            ),
+                          );
+                        },
+                        child: const Text('Grups'),
+                      )),
+                  SizedBox(
+                      height: 50.0,
+                      width: 120.0,
+                      child: TextButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              _buttonAfegirAmics),
+                          foregroundColor:
+                              MaterialStateProperty.all<Color>(Colors.white),
+                        ),
+                        onPressed: () {
+                          _changeButtonColor(3);
+                          changeContent(AfegirAmics(
+                            recomms: usersRecom,
+                            usersBD: usersBD,
+                          ));
+                        },
+                        child: const Text('Afegir Amics'),
+                      )),
+                ],
+              ),
+              const SizedBox(
+                height: 20.0,
+              ),
+              SizedBox(
+                child: Column(
+                  children: [currentContent],
                 ),
-                const SizedBox(
-                  height: 20.0,
-                ),
-                Container(
-                  child: Column(
-                    children: [currentContent],
-                  ),
-                ),
-              ]),
+              ),
+            ],
+          ),
         ),
       ),
     );
-  }
-}
-
-class Grups extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Text('This is Grups');
   }
 }
