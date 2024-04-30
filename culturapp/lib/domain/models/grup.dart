@@ -1,59 +1,86 @@
-class Grup {
-  final String titleGroup;
-  final String imageGroup;
-  //de moment url pero després maybe cambiar??
-  final String lastMessage;
-  final String timeLastMessage;
+import 'package:culturapp/domain/models/message.dart';
+import 'package:culturapp/domain/models/usuari.dart';
 
-  const Grup({
-    required this.titleGroup,
+class Grup {
+  //id grup
+  String nomGroup;
+  String imageGroup;
+  String descripcio;
+  String lastMessage;
+  String timeLastMessage;
+  List<Usuari> participants;
+  List<Message> missatgesGrup;
+
+  Grup({
+    required this.nomGroup,
     required this.imageGroup,
+    required this.descripcio,
     required this.lastMessage,
     required this.timeLastMessage,
+    required this.participants,
+    required this.missatgesGrup,
   });
 }
 
-const List<Grup> allGroups = [
+List<Grup> allGroups = [
   Grup(
-    titleGroup: 'Group1',
-    imageGroup:
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+    nomGroup: 'Group1',
+    imageGroup: 'assets/userImage.png',
+    descripcio:
+        'this is a grup for cool people :), the coolest around the sickest and the slayest',
     lastMessage: 'Hello everyone :D',
     timeLastMessage: '13:57',
+    participants: allAmics,
+    missatgesGrup: allMessage,
   ),
   Grup(
-    titleGroup: 'Group2',
-    imageGroup:
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+    nomGroup: 'Group2',
+    imageGroup: 'assets/userImage.png',
+    descripcio:
+        'this is a grup for cool people :), the coolest around the sickest and the slayest',
     lastMessage: 'Does anybody knows?',
     timeLastMessage: '11:13',
+    participants: allAmics,
+    missatgesGrup: allMessage,
   ),
   Grup(
-    titleGroup: 'Group3',
-    imageGroup:
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+    nomGroup: 'Group3',
+    imageGroup: 'assets/userImage.png',
+    descripcio:
+        'this is a grup for cool people :), the coolest around the sickest and the slayest',
     lastMessage: 'Thank you!',
     timeLastMessage: '01:13',
+    participants: allAmics,
+    missatgesGrup: allMessage,
   ),
   Grup(
-    titleGroup: 'Group4',
-    imageGroup:
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+    nomGroup: 'Group4',
+    imageGroup: 'assets/userImage.png',
+    descripcio:
+        'this is a grup for cool people :), the coolest around the sickest and the slayest',
     lastMessage: 'Hbu?',
     timeLastMessage: '06:30',
+    participants: allAmics,
+    missatgesGrup: allMessage,
   ),
   Grup(
-    titleGroup: 'Group5',
-    imageGroup:
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+    nomGroup: 'Group5',
+    imageGroup: 'assets/userImage.png',
+    descripcio:
+        'this is a grup for cool people :), the coolest around the sickest and the slayest',
     lastMessage: 'No',
     timeLastMessage: '16:30',
+    participants: allAmics,
+    missatgesGrup: allMessage,
   ),
   Grup(
-    titleGroup: 'Avemaria',
-    imageGroup:
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
+    nomGroup: 'Avemaria',
+    imageGroup: 'assets/userImage.png',
+    descripcio:
+        'this is a grup for cool people :), the coolest around the sickest and the slayest',
     lastMessage: 'Si',
     timeLastMessage: '16:30',
+    participants: allAmics,
+    missatgesGrup: allMessageDuo,
   ),
 ];
