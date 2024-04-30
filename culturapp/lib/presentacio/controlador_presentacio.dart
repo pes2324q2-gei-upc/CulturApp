@@ -59,12 +59,12 @@ class ControladorPresentacion {
     if (userLogged()) {
       categsFav = await controladorDomini.obteCatsFavs(_user);
       activitatsUser = await controladorDomini.getUserActivities(_user!.uid);
-      //friends =
+      /*
       Future<String> usname = getUsername(_user!.uid);
       String username = await usname;
-      friends = await controladorDomini.obteFollows(username);
+      friends = await controladorDomini.obteFollows(username);*/
       usersBD.removeWhere((usuario) => usuario.identificador == _user!.uid);
-      usersBD.removeWhere((usuario) => friends.contains(usuario.username));
+      //usersBD.removeWhere((usuario) => friends.contains(usuario.username));
       usersRecom = calculaUsuariosRecomendados(usersBD, _user!.uid, categsFav);
     }
   }
