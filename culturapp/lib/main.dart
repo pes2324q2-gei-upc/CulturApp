@@ -70,7 +70,7 @@ class _MyAppState extends State<MyApp> {
       ),
       supportedLocales: const [
         Locale('en'),
-        Locale('ca'),
+        Locale('cat'),
         Locale('es'),
       ],
       localizationsDelegates: const [
@@ -80,9 +80,6 @@ class _MyAppState extends State<MyApp> {
         GlobalCupertinoLocalizations.delegate,
       ],
       localeResolutionCallback: (deviceLocale, supportedLocales) {
-        if (_controladorPresentacion.language != null) {
-          return _controladorPresentacion.language;
-        }
         for (var locale in supportedLocales) {
           if (deviceLocale != null && deviceLocale.languageCode == locale.languageCode) {
             return deviceLocale;

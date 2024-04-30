@@ -1,6 +1,5 @@
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
-import 'package:culturapp/translations/AppLocalizations';
 import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -90,7 +89,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
-        title: Text("Activity".tr(context)),
+        title: const Text("Actividad"),
         centerTitle: true, // Centrar el título
         toolbarHeight: 50.0,
         titleTextStyle: const TextStyle(
@@ -159,7 +158,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             backgroundColor: MaterialStateProperty.all<Color>(
             estaApuntado ? Colors.black : Colors.orange,),
             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),),
-            child: Text(estaApuntado ? 'signout'.tr(context) : 'signin'.tr(context)),
+            child: Text(estaApuntado ? 'Desapuntarse' : 'Apuntarse'),
           ),
         ],
       )
@@ -190,7 +189,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         alignment: Alignment.center,
         margin: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Text(
-          mostrarDescripcionCompleta ? 'see_less'.tr(context) : 'see_more'.tr(context),
+          mostrarDescripcionCompleta ? "Ver menos" : "Ver más",
           style: const TextStyle(color: Colors.grey,),
         ),
       ),
@@ -216,8 +215,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                   onTap: () {
                     launchUrl(urlEntrades); // Abrir la url de la actividad para ir a su pagina
                   },
-                  child: Text(
-                    'tickets_info'.tr(context),
+                  child: const Text(
+                    'Informació Entrades',
                     style: TextStyle(
                       decoration: TextDecoration.underline, // Subrayar 
                       fontWeight: FontWeight.bold,

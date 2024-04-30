@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:culturapp/translations/AppLocalizations';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
@@ -263,7 +262,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
-        title: Text("my_activities".tr(context)),
+        title: const Text("Mis actividades"),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -449,8 +448,8 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                                 launchUrl(activitat
                                                     .urlEntrades); // abrir la url de la actividad para ir a su pagina
                                               },
-                                              child: Text(
-                                                'buy_here'.tr(context),
+                                              child: const Text(
+                                                'Compra Entrades',
                                                 style: TextStyle(
                                                   decoration: TextDecoration
                                                       .none,
@@ -472,7 +471,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                               },
                                               child: Row(
                                                 children: [
-                                                  Text('add_calendar'.tr(context), style: TextStyle(color: Color.fromARGB(255, 255, 196, 0)),),
+                                                  const Text('Añadir a Calendar', style: TextStyle(color: Color.fromARGB(255, 255, 196, 0)),),
                                                   const Padding(padding: EdgeInsets.only(right: 5)),
                                                   Image.asset('assets/calendar.png', height: 30,),
                                                 ],
@@ -528,7 +527,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
               color: Colors.orange,
             ),
           ),
-          hintText: "search".tr(context),
+          hintText: "Search...",
           hintStyle: const TextStyle(
             color: Colors.orange,
             fontWeight: FontWeight.bold,
@@ -608,8 +607,8 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
               fontWeight: FontWeight.bold,
             ),
             controller: _dateController,
-            decoration: InputDecoration(
-              labelText: 'date'.tr(context),
+            decoration: const InputDecoration(
+              labelText: 'Data',
               labelStyle: TextStyle(
                 color: Colors.orange,
                 fontWeight: FontWeight.bold,

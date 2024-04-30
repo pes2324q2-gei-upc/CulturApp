@@ -1,7 +1,6 @@
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/widgets/widgetsUtils/image_category.dart';
 import 'package:culturapp/presentacio/widgets/widgetsUtils/text_with_link.dart';
-import 'package:culturapp/translations/AppLocalizations';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -132,7 +131,7 @@ class _ListaActividadesState extends State<ListaActividades> {
                                 Row(
                                   children: [
                                     const Icon(Icons.local_atm),
-                                    TextWithLink(text: "buy_here".tr(context), url: widget.actividades[index].urlEntrades.toString()),
+                                    TextWithLink(text: "  Compra aqui", url: widget.actividades[index].urlEntrades.toString()),
                                   ],
                                 )
                               ],
