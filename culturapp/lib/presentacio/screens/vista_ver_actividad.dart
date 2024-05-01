@@ -136,8 +136,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             //barra para añadir mensajes
             child: reply == false
               ? PostWidget(
-                addPost: (foroId, username, mensaje, fecha, numeroLikes) async {
-                  await _controladorPresentacion.addPost(foroId, username, mensaje, fecha, numeroLikes);
+                addPost: (foroId, mensaje, fecha, numeroLikes) async {
+                  await _controladorPresentacion.addPost(foroId, mensaje, fecha, numeroLikes);
 
                   // Actualitza el llistat de posts
                   setState(() {
@@ -147,8 +147,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                 foroId: idForo,
               )
               : ReplyWidget(
-                addReply: (foroId, postIden, username, mensaje, fecha, numeroLikes) async {
-                  await _controladorPresentacion.addReplyPost(foroId, postIden, username, mensaje, fecha, numeroLikes);
+                addReply: (foroId, postIden, mensaje, fecha, numeroLikes) async {
+                  await _controladorPresentacion.addReplyPost(foroId, postIden, mensaje, fecha, numeroLikes);
 
                   // Actualitza el llistat de replies
                   setState(() {

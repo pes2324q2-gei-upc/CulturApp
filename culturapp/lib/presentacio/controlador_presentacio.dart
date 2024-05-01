@@ -401,13 +401,13 @@ class ControladorPresentacion {
   }
 
   //afegir post a la bd
-  Future<void> addPost(String foroId, String username, String mensaje, String fecha, int numeroLikes){
-    return controladorDomini.addPost(foroId, username, mensaje, fecha, numeroLikes);
+  Future<void> addPost(String foroId, String mensaje, String fecha, int numeroLikes){
+    return controladorDomini.addPost(foroId, mensaje, fecha, numeroLikes);
   }
 
   //afegir reply a la bd
-  Future<void> addReplyPost(String foroId, String postId, String username, String mensaje, String fecha, int numeroLikes) async {
-    return controladorDomini.addReplyPost(foroId, postId, username, mensaje, fecha, numeroLikes);
+  Future<void> addReplyPost(String foroId, String postId, String mensaje, String fecha, int numeroLikes) async {
+    return controladorDomini.addReplyPost(foroId, postId, mensaje, fecha, numeroLikes);
   }
 
   //get posts de un foro

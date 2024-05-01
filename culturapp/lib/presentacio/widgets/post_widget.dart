@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class PostWidget extends StatefulWidget {
@@ -11,7 +10,7 @@ class PostWidget extends StatefulWidget {
     required this.addPost,
     super.key});
 
-  final FutureOr<void> Function(String foroId, String username, String mensaje, String fecha, int numeroLikes) addPost;
+  final FutureOr<void> Function(String foroId, String mensaje, String fecha, int numeroLikes) addPost;
 
   @override
   State<PostWidget> createState() => _PostWidgetState();
@@ -20,24 +19,10 @@ class PostWidget extends StatefulWidget {
 class _PostWidgetState extends State<PostWidget> {
   final _formKey = GlobalKey<FormState>(debugLabel: '_PostState');
   final _controller = TextEditingController();
-  late String _username;
 
   @override
   void initState() {
     super.initState();
-    _loadUsername();
-  }
-
-  Future<void> _loadUsername() async {
-    final User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-      if (snapshot.exists) {
-        setState(() {
-          _username = snapshot.data()?['username'] ?? '';
-        });
-      }
-    }
   }
 
   @override
@@ -70,7 +55,6 @@ class _PostWidgetState extends State<PostWidget> {
                   String data = Timestamp.now().toDate().toIso8601String();
                     await widget.addPost(
                       foro,
-                      _username,
                       _controller.text,
                       data,
                       0, // número de likes en 0

@@ -377,16 +377,17 @@ class ControladorDomini {
     }
   }
  
-
   //crear post
-  Future<void> addPost(String foroId, String username, String mensaje, String fecha, int numeroLikes) async {
+  Future<void> addPost(String foroId, String mensaje, String fecha, int numeroLikes) async {
     try {
       final url = Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts');
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
         body: jsonEncode({
-          'username': username,
           'mensaje': mensaje,
           'fecha': fecha,
           'numero_likes': numeroLikes,
@@ -409,7 +410,10 @@ class ControladorDomini {
       final url = Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts/$postId');
       final response = await http.delete(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
       );
 
       if (response.statusCode == 200) {
@@ -422,13 +426,16 @@ class ControladorDomini {
     }
   }
 
-  //eliminar post
+  //eliminar reply
   Future<void> deleteReply(String foroId, String? postId, String? replyId) async {
     try {
       final url = Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts/$postId/reply/$replyId');
       final response = await http.delete(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
       );
 
       if (response.statusCode == 200) {
@@ -442,14 +449,16 @@ class ControladorDomini {
   }
 
   //crear reply
-  Future<void> addReplyPost(String foroId, String postId, String username, String mensaje, String fecha, int numeroLikes) async {
+  Future<void> addReplyPost(String foroId, String postId, String mensaje, String fecha, int numeroLikes) async {
     try {
       final url = Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts/$postId/reply');
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
         body: jsonEncode({
-          'username': username,
           'mensaje': mensaje,
           'fecha': fecha,
           'numero_likes': numeroLikes,
