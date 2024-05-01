@@ -5,6 +5,7 @@ import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/domain/models/xat_amic.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/chat_bubble.dart";
+import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 
 class XatAmicScreen extends StatefulWidget {
@@ -22,7 +23,7 @@ class XatAmicScreen extends StatefulWidget {
 
 class _XatAmicScreen extends State<XatAmicScreen> {
   late ControladorPresentacion _controladorPresentacion;
-  late Usuari _usuari; //usuari utilitzant l'aplicació
+  late Usuari _usuari; //usuari amb qui estic parlant
   late xatAmic xat;
   late List<Message> messages;
   late ScrollController _scrollController;
@@ -70,6 +71,14 @@ class _XatAmicScreen extends State<XatAmicScreen> {
 
   Message convertIntoRigthVersion(Message message) {
     //una funcio que converteix el temps en apropiat i el id del ususari en el nom de l'usuari
+
+    User me =
+        _controladorPresentacion.getUser()!; //cambiar més endevant per username
+
+    if (message.sender == me.uid) {
+      //es un missatge meu
+      message.sender = 'Me';
+    }
 
     message.timeSended = convertTimeFormat(message.timeSended);
     return message;
