@@ -368,17 +368,18 @@ class ControladorPresentacion {
     mostrarPerfil(context);
   }
 
+  //a partir de aqui modificar las que necesiten token o no  
+
   Future<void> getXat(String receiverId) async {
     try {
-      String senderId = _user!.uid;
-      xatAmic? xat = await controladorDomini.xatExists(receiverId, senderId);
+      xatAmic? xat = await controladorDomini.xatExists(receiverId);
 
       if (xat != null) {
         // El foro existe, imprimir sus detalles
         print('Xat existente: $xat');
       } else {
         // El foro no existe, crear uno nuevo
-        bool creadoExitosamente = await controladorDomini.createXat(senderId, receiverId);
+        bool creadoExitosamente = await controladorDomini.createXat(receiverId);
         if (creadoExitosamente) {
           print('Nuevo xat creado');
         } else {
@@ -391,41 +392,34 @@ class ControladorPresentacion {
   }
 
   Future<String> lastMsg(String receiverId) async {
-    String senderId = _user!.uid;
-    xatAmic? xat = await controladorDomini.xatExists(receiverId, senderId);
+    xatAmic? xat = await controladorDomini.xatExists(receiverId);
     return xat!.lastMessage;
   }
 
   Future<String> lasTime(String receiverId) async{
-    String senderId = _user!.uid;
-    xatAmic? xat = await controladorDomini.xatExists(receiverId, senderId);
+    xatAmic? xat = await controladorDomini.xatExists(receiverId);
     return xat!.timeLastMessage;
   }
 
   Future<void> addXatMessage(String receiverId, String time, String text) async {
     String senderId = _user!.uid;
     String? xatId = await controladorDomini.getXatId(receiverId, senderId);
-    controladorDomini.addMessage(xatId, time, text, senderId);
+    controladorDomini.addMessage(xatId, time, text);
   }
 
-  Future<List<Message>> getXatMessages(String receiverId) async {
-    String senderId = _user!.uid;
-    String? xatId = await controladorDomini.getXatId(receiverId, senderId);
+  Future<List<Message>> getXatMessages(String receiver) async {
+    String sender = _user!.uid;
+    String? xatId = await controladorDomini.getXatId(receiver, sender);
     List<Message> missatges = await controladorDomini.getMessages(xatId);
     return missatges;
   }
 
   Future<List<Grup>> getUserGrups() async {
-    String userId = _user!.uid;
-    List<Grup> grups = await controladorDomini.getUserGrups(userId);
+    List<Grup> grups = await controladorDomini.getUserGrups();
     return grups;
   }
 
   void createGrup(String name, String description, String image, List<String> members) {
-    //members es un llistat de ids d'amics
-    String userId = _user!.uid;
-    //afegir la meva id al llistat
-    members.add(userId);
     controladorDomini.createGrup(name, description, image, members);
   }
 
@@ -442,8 +436,7 @@ class ControladorPresentacion {
   //el grupId esta afegit com a parametre dels grups
   void addGrupMessage(String grupId, String time, String text) async {
     try {
-      String senderId = _user!.uid;
-      controladorDomini.addGrupMessage(grupId, time, text, senderId);
+      controladorDomini.addGrupMessage(grupId, time, text);
     } catch (error) {
       throw Exception('Error al añadir mensaje al xat: $error');
     }

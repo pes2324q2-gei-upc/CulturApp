@@ -285,10 +285,14 @@ class ControladorDomini {
     }
   }
 
+  //a partir de aqui verificar si hace falta el token i adaptar el codigo
+  //este token se debera cambiar por el del current user 
+  static const token = "976f2f7b53c188d8a77b9b71887621d1e1d207faec5663bf79de9572ac887ea7";
+
   //xat existe? si no es asi crealo
-  Future<xatAmic?> xatExists(String receiverId, String senderId) async {
+  Future<xatAmic?> xatExists(String receiverId) async {
     try {
-      final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/xats/exists?receiverId=$receiverId&senderId=$senderId'));
+      final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/xats/exists?receiverId=$receiverId'));
 
       if (respuesta.statusCode == 200) {
         final data = json.decode(respuesta.body);
@@ -311,18 +315,20 @@ class ControladorDomini {
     }
   }
 
-  Future<bool> createXat(String senderId, String receiverId) async {
+  Future<bool> createXat(String receiverId) async {
     try {
 
       final Map<String, dynamic> xatdata = {
-        'senderId': senderId,
-        'receiverId': receiverId,
+        'receiverId': receiverId
       };
 
       final respuesta = await http.post(
         Uri.parse('https://culturapp-back.onrender.com/xats/create'),
         body: jsonEncode(xatdata),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
       );
 
       if (respuesta.statusCode == 201) {
@@ -338,12 +344,12 @@ class ControladorDomini {
     }
   }
 
-  Future<String?> getXatId(String receiverId, String senderId) async {
+  Future<String?> getXatId(String receiver, String sender) async {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('xats')
-          .where('receiverId', isEqualTo: receiverId)
-          .where('senderId', isEqualTo: senderId)
+          .where('receiverId', isEqualTo: receiver)
+          .where('senderId', isEqualTo: sender)
           .limit(1)
           .get();
 
@@ -357,14 +363,16 @@ class ControladorDomini {
     }
   }
 
-  void addMessage(String? xatId, String time, String text, String senderId) async {
+  void addMessage(String? xatId, String time, String text) async {
     try {
       final url = Uri.parse('http://10.0.2.2:8080/xats/$xatId/mensajes');
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+          },
         body: jsonEncode({
-          'senderId': senderId,
           'mensaje': text,
           'fecha': time
         }),
@@ -401,9 +409,9 @@ class ControladorDomini {
   } 
 
   //get dels grups en els que es troba un usuari
-  Future<List<Grup>> getUserGrups(String userId) async {
+  Future<List<Grup>> getUserGrups() async {
     try {
-      final response = await http.get(Uri.parse('http://10.0.2.2:8080/grups/users/$userId'));
+      final response = await http.get(Uri.parse('http://10.0.2.2:8080/grups/users/all'));
       
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -453,7 +461,10 @@ class ControladorDomini {
       final respuesta = await http.post(
         Uri.parse('https://culturapp-back.onrender.com/grups/create'),
         body: jsonEncode(grupata),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+          },
       );
 
       if (respuesta.statusCode == 201) {
@@ -494,14 +505,16 @@ class ControladorDomini {
   }
 
   //afegir missatge al grup
-  void addGrupMessage(String grupId, String time, String text, String senderId) async {
+  void addGrupMessage(String grupId, String time, String text) async {
     try {
       final url = Uri.parse('http://10.0.2.2:8080/grups/$grupId/mensajes');
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+          },
         body: jsonEncode({
-          'senderId': senderId,
           'mensaje': text,
           'fecha': time
         }),
