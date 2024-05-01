@@ -465,8 +465,17 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     return FutureBuilder<List<Post>>(
       future: getPosts(), 
       builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator(); // Mentres no acaba el future
+       if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(), // Or you can remove this line if you don't want the circular indicator
+                SizedBox(height: 10), // Add some space between the text and the circular indicator
+                Text('Loading...'),
+              ],
+            ),
+          );
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}'); // Si hi ha hagut algun error
         } else {
@@ -519,6 +528,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             //fer que nomes el que l'ha creat ho pugui veure
                             GestureDetector(
                               onTap: () async {
+                                //if(post.username == _user.id) _showDeleteOption(context, post, false);
                                 _showDeleteOption(context, post, false);
                               },
                               child: const Icon(Icons.more_vert, size: 20),
