@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:culturapp/domain/converters/convert_date_format.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/grup.dart';
@@ -378,7 +379,8 @@ class ControladorPresentacion {
         print('Xat existente: $xat');
       } else {
         // El foro no existe, crear uno nuevo
-        bool creadoExitosamente = await controladorDomini.createXat(senderId, receiverId);
+        bool creadoExitosamente =
+            await controladorDomini.createXat(senderId, receiverId);
         if (creadoExitosamente) {
           print('Nuevo xat creado');
         } else {
@@ -396,13 +398,14 @@ class ControladorPresentacion {
     return xat!.lastMessage;
   }
 
-  Future<String> lasTime(String receiverId) async{
+  Future<String> lasTime(String receiverId) async {
     String senderId = _user!.uid;
     xatAmic? xat = await controladorDomini.xatExists(receiverId, senderId);
-    return xat!.timeLastMessage;
+    return convertTimeFormat(xat!.timeLastMessage);
   }
 
-  Future<void> addXatMessage(String receiverId, String time, String text) async {
+  Future<void> addXatMessage(
+      String receiverId, String time, String text) async {
     String senderId = _user!.uid;
     String? xatId = await controladorDomini.getXatId(receiverId, senderId);
     controladorDomini.addMessage(xatId, time, text, senderId);
@@ -421,7 +424,8 @@ class ControladorPresentacion {
     return grups;
   }
 
-  void createGrup(String name, String description, String image, List<String> members) {
+  void createGrup(
+      String name, String description, String image, List<String> members) {
     //members es un llistat de ids d'amics
     String userId = _user!.uid;
     //afegir la meva id al llistat
@@ -434,7 +438,8 @@ class ControladorPresentacion {
     return info;
   }
 
-  void updateGrup(String grupId, String name, String description, String image, List<String> members) {
+  void updateGrup(String grupId, String name, String description, String image,
+      List<String> members) {
     //es necesari afegir el meu user al llistat de membres?
     controladorDomini.updateGrup(grupId, name, description, image, members);
   }
@@ -457,5 +462,4 @@ class ControladorPresentacion {
       throw Exception('Error al cojer mensajes del xat: $error');
     }
   }
-
 }

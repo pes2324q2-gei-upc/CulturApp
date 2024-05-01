@@ -35,7 +35,8 @@ class _XatGrupScreen extends State<XatGrupScreen> {
     //missatges = _grup.missatgesGrup;
   }
 
-  Future<List<String>> agafarNomsParticipants(List<dynamic> participants) async{
+  Future<List<String>> agafarNomsParticipants(
+      List<dynamic> participants) async {
     List<String> nomParticipants = [];
 
     for (int i = 0; i < participants.length; ++i) {
@@ -85,13 +86,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
                 shrinkWrap: true,
                 itemCount: missatges.length,
                 itemBuilder: (context, index) {
-                  return ChatBubble(
-                    userName: missatges[index].sender,
-                    message: missatges[index].text,
-                    time: "10:00 AM",
-                    //s'ha de tocar de tal manera que si soc jo l'usuari, es fiqui
-                    //a la dreta, mentre que si es qualsevol altre persona es fica a l'esquerra
-                  );
+                  return _buildChatBubble(missatges[index]);
                 },
               ),
             ),
@@ -155,6 +150,14 @@ class _XatGrupScreen extends State<XatGrupScreen> {
           },
         ),
       ],
+    );
+  }
+
+  Widget _buildChatBubble(message) {
+    return ChatBubble(
+      userName: message.sender,
+      message: message.text,
+      time: message.timeSended,
     );
   }
 

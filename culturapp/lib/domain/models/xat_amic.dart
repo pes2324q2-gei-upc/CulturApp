@@ -3,8 +3,7 @@ import 'package:culturapp/domain/models/message.dart';
 class xatAmic {
   final String lastMessage;
   final String timeLastMessage;
-  final String
-      recieverId; //maybe this podria ser una llista, dona igual qui es el reciever i el sender
+  final String recieverId;
   final String senderId;
   final List<Message>? missatges;
 
@@ -18,12 +17,13 @@ class xatAmic {
 
   factory xatAmic.fromJson(Map<String, dynamic> json) {
     return xatAmic(
-      lastMessage: json['last_msg'],
-      timeLastMessage: json['last_time'],
-      recieverId: json['receiverId'],
-      senderId: json['senderId'],
-      missatges: json['mensaje'] //!= null ? List<Message>.from(json['mensaje'].map((message) => Message.fromJson(message))) : null
-    );
+        lastMessage: json['last_msg'],
+        timeLastMessage: json['last_time'],
+        recieverId: json['receiverId'],
+        senderId: json['senderId'],
+        missatges: json[
+            'mensaje'] //!= null ? List<Message>.from(json['mensaje'].map((message) => Message.fromJson(message))) : null
+        );
   }
 }
 
