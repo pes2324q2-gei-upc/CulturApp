@@ -461,7 +461,7 @@ class ControladorDomini {
       };
 
       final respuesta = await http.post(
-        Uri.parse('https://culturapp-back.onrender.com/grups/create'),
+        Uri.parse('https://10.0.2.2:8080/grups/create'),
         body: jsonEncode(grupata),
         headers: {'Content-Type': 'application/json'},
       );
@@ -488,7 +488,7 @@ class ControladorDomini {
       };
 
       final respuesta = await http.put(
-        Uri.parse('https://culturapp-back.onrender.com/grups/$grupId/update'),
+        Uri.parse('https://10.0.2.2:8080/grups/$grupId/update'),
         body: jsonEncode(grupata),
         headers: {'Content-Type': 'application/json'},
       );
