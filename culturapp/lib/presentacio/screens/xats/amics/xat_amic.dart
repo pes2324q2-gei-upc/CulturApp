@@ -83,7 +83,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
     List<Message> loadedMessages =
         await _controladorPresentacion.getXatMessages(_usuari.id);
     setState(() {
-      messages = convertData(loadedMessages);
+      messages = convertData(loadedMessages).reversed.toList();
     });
   }
 
