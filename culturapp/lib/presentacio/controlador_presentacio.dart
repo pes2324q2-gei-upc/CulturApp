@@ -439,7 +439,7 @@ class ControladorPresentacion {
   }
 
   void updateGrup(String grupId, String name, String description, String image,
-      List<String> members) {
+      List<dynamic> members) {
     //es necesari afegir el meu user al llistat de membres?
     controladorDomini.updateGrup(grupId, name, description, image, members);
   }

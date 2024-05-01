@@ -54,7 +54,6 @@ class _ConfigGrup extends State<ConfigGrup> {
           'this is a grup for cool people :), the coolest around the sickest and the slayest',
       lastMessage: 'Sigues el primer dir hola!',
       timeLastMessage: DateTime.now().toString(),
-      participants: _participants,
       membres: membres,
       missatgesGrup: [],
     );

@@ -8,7 +8,6 @@ class Grup {
   String descripcio;
   String lastMessage;
   String timeLastMessage;
-  List<Usuari>? participants;
   List<dynamic> membres;
   List<Message>? missatgesGrup;
 
@@ -20,7 +19,6 @@ class Grup {
     required this.lastMessage,
     required this.timeLastMessage,
     required this.membres,
-    this.participants,
     this.missatgesGrup,
   });
 

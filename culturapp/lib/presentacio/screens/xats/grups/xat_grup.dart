@@ -24,7 +24,7 @@ class XatGrupScreen extends StatefulWidget {
 class _XatGrupScreen extends State<XatGrupScreen> {
   late ControladorPresentacion _controladorPresentacion;
   late Grup _grup;
-  late Future<List<String>> nomParticipants;
+  late List<String> nomParticipants;
   late List<Message> missatges;
   late ScrollController _scrollController;
 
@@ -34,7 +34,8 @@ class _XatGrupScreen extends State<XatGrupScreen> {
   _XatGrupScreen(ControladorPresentacion controladorPresentacion, Grup grup) {
     _controladorPresentacion = controladorPresentacion;
     _grup = grup;
-    nomParticipants = agafarNomsParticipants(_grup.membres);
+    nomParticipants = [];
+    agafarNomsParticipants(_grup.membres);
     missatges = [];
     _scrollController = ScrollController();
     _loadMessages();
@@ -67,18 +68,11 @@ class _XatGrupScreen extends State<XatGrupScreen> {
     });
   }
 
-  Future<List<String>> agafarNomsParticipants(
-      List<dynamic> participants) async {
-    List<String> nomParticipants = [];
-
+  void agafarNomsParticipants(List<dynamic> participants) async {
     for (int i = 0; i < participants.length; ++i) {
-      //print(participants[i]);
       //s'haurien de conseguir el noms del users
-      //String name = await _controladorPresentacion.getUsername(participants[i]);
-      //nomParticipants.add(name);
+      nomParticipants.add(_grup.membres[i]);
     }
-
-    return nomParticipants;
   }
 
   String truncarString(String noms, int maxLength) {
@@ -178,8 +172,6 @@ class _XatGrupScreen extends State<XatGrupScreen> {
                 _grup.nomGroup,
                 style: const TextStyle(color: Colors.white),
               ),
-              //el join no le gusta
-              /*
               Text(
                 truncarString(nomParticipants.join(', '), 35),
                 style: const TextStyle(
@@ -187,7 +179,6 @@ class _XatGrupScreen extends State<XatGrupScreen> {
                   fontSize: 14.0,
                 ),
               ),
-              */
             ],
           ),
         ],

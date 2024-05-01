@@ -34,9 +34,9 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
     displayList = amics;
     participantAfegit = List.generate(
       displayList.length,
-      (index) => _grup.participants!.contains(displayList[index]),
+      (index) => _grup.membres.contains(displayList[index]),
     );
-    participants = List.from(_grup.participants as Iterable);
+    participants = List.from(_grup.membres as Iterable);
   }
 
   void updateList(String value) {
@@ -256,7 +256,8 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
       ),
       child: const Icon(Icons.check),
       onPressed: () {
-        _grup.participants = participants;
+        //_grup.membres =
+        participants; ////////////////////////////////////////////////////////////////////////
         //crida al backend per passar el grup updated
         _controladorPresentacion.mostrarInfoGrup(context, _grup);
       },

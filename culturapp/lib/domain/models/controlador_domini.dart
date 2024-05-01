@@ -478,7 +478,7 @@ class ControladorDomini {
 
   //actualitzar info grup
   void updateGrup(String grupId, String name, String description, String image,
-      List<String> members) async {
+      List<dynamic> members) async {
     try {
       final Map<String, dynamic> grupata = {
         'nom': name,
