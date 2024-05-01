@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/foro_model.dart';
 import 'package:culturapp/domain/models/post.dart';
@@ -234,6 +235,18 @@ class ControladorDomini {
     }
   }
 
+  Future<bool> usernameUnique(String username) async {
+    final respuesta = await http.get(Uri.parse(
+        'http://${ip}:8080/users/uniqueUsername?username=${username}'));
+
+    if (respuesta.statusCode == 200) {
+      print(respuesta);
+      return (respuesta.body == "unique");
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
+
   //foro existe? si no es asi crealo
   Future<Foro?> foroExists(String code) async {
     try {
@@ -348,7 +361,8 @@ class ControladorDomini {
       print('Error al realizar la solicitud HTTP: $error');
     }
   }
-    //eliminar post
+
+  //eliminar post
   Future<void> deleteReply(String foroId, String? postId, String? replyId) async {
     try {
       final url = Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts/$postId/reply/$replyId');
@@ -401,6 +415,7 @@ class ControladorDomini {
         final List<dynamic> data = json.decode(response.body);
         //Mapear los datos de las replies a una lista de objetos Post
         List<Post> reply = data.map((json) => Post.fromJson(json)).toList();
+        reply.sort((a, b) => a.fecha.compareTo(b.fecha));
         return reply;
       } else if (response.statusCode == 404) {
         return [];  //Devolver una lista vacía si no hay replies para este post
@@ -410,17 +425,56 @@ class ControladorDomini {
     } catch (error) {
       throw Exception('Error de red: $error');
     }
+  } 
+
+  //get de foroId
+  Future<String?> getForoId(String activitatCode) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('foros')
+        .where('activitat_code', isEqualTo: activitatCode)
+        .limit(1)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first.id; // Devuelve el ID del primer documento con el código de actividad dado
+    } else {
+      return null; // Si no se encontró ningún documento con el código de actividad dado
+    }
   }
 
-  Future<bool> usernameUnique(String username) async {
-    final respuesta = await http.get(Uri.parse(
-        'http://${ip}:8080/users/uniqueUsername?username=${username}'));
+  //modificar el como se encuentra el post, maybe añadir param que sea id = username + fecha
+  Future<String?> getPostId(String foroId, String data) async{
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('foros')
+        .doc(foroId)
+        .collection('posts')
+        .where('fecha', isEqualTo: data)
+        .limit(1)
+        .get();
 
-    if (respuesta.statusCode == 200) {
-      print(respuesta);
-      return (respuesta.body == "unique");
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first.id; //Si se encuentra un doc con la misma fecha
     } else {
-      throw Exception('Fallo la obtención de datos');
+      return null; //Si no se encuentra ningún doc con la misma fecha
+    }
+  }
+
+  //get reply Id
+  Future<String?> getReplyId(String foroId, String? postId, String data) async{
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('foros')
+        .doc(foroId)
+        .collection('posts')
+        .doc(postId)
+        .collection('reply')
+        .where('fecha', isEqualTo: data)
+        .limit(1)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first.id; //Si se encuentra un doc con la misma fecha
+    } else {
+      return null; //Si no se encuentra ningún doc con la misma fecha
     }
   }
 }

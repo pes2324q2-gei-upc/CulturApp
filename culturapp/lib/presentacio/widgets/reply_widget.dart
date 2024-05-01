@@ -30,6 +30,7 @@ class _ReplyWidgetState extends State<ReplyWidget> {
     _loadUsername();
   }
 
+  //esta funcionalidad cambiara segun el token que se añada mas adelante
   Future<void> _loadUsername() async {
     final User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {

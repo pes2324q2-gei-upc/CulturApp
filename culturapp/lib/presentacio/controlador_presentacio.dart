@@ -247,104 +247,65 @@ class ControladorPresentacion {
     return controladorDomini.usernameUnique(username);
   }
 
-  //funcions del forum
+  //veure si existeix el foro i si no el crea
   Future<void> getForo(String code) async {
-    try {
-      Foro? foro = await controladorDomini.foroExists(code);
-      if (foro != null) {
-        // El foro existe, imprimir sus detalles
-        print('Foro existente: $foro');
-      } else {
-        // El foro no existe, crear uno nuevo
-        bool creadoExitosamente = await controladorDomini.createForo(code);
-        if (creadoExitosamente) {
+    Foro? foro = await controladorDomini.foroExists(code);
+    if (foro != null) {
+      // El foro existe, imprimir sus detalles
+      print('Foro existente: $foro');
+    } else {
+      // El foro no existe, crear uno nuevo
+      bool creadoExitosamente = await controladorDomini.createForo(code);
+      if (creadoExitosamente) {
           print('Nuevo foro creado');
-        } else {
-          print('Error al crear el foro');
-        }
+      } else {
+        print('Error al crear el foro');
       }
-    } catch (error) {
-      print('Error al obtener o crear el foro: $error');
     }
   }
 
+  //agafar id del foro
   Future<String?> getForoId(String activitatCode) async {
-    try {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('foros')
-          .where('activitat_code', isEqualTo: activitatCode)
-          .limit(1)
-          .get();
-
-      if (querySnapshot.docs.isNotEmpty) {
-        return querySnapshot.docs.first.id; // Devuelve el ID del primer documento con el código de actividad dado
-      } else {
-        return null; // Si no se encontró ningún documento con el código de actividad dado
-      }
-    } catch (error) {
-      return null; // Si ocurre algún error al obtener el ID del foro
-    }
+    return controladorDomini.getForoId(activitatCode);
   }
 
   //modificar el como se encuentra el post, maybe añadir param que sea id = username + fecha
   Future<String?> getPostId(String foroId, String data) async{
-    try {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('foros')
-          .doc(foroId)
-          .collection('posts')
-          .where('fecha', isEqualTo: data)
-          .limit(1)
-          .get();
-
-      if (querySnapshot.docs.isNotEmpty) {
-        return querySnapshot.docs.first.id; //Si se encuentra un doc con la misma fecha
-      } else {
-        return null; //Si no se encuentra ningún doc con la misma fecha
-      }
-    } catch (error) {
-      return null;
-    }
+    return controladorDomini.getPostId(foroId, data);
   }
 
-    Future<String?> getReplyId(String foroId, String? postId, String data) async{
-    try {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('foros')
-          .doc(foroId)
-          .collection('posts')
-          .doc(postId)
-          .collection('reply')
-          .where('fecha', isEqualTo: data)
-          .limit(1)
-          .get();
-
-      if (querySnapshot.docs.isNotEmpty) {
-        return querySnapshot.docs.first.id; //Si se encuentra un doc con la misma fecha
-      } else {
-        return null; //Si no se encuentra ningún doc con la misma fecha
-      }
-    } catch (error) {
-      return null;
-    }
+  //agafa id fe la reply
+  Future<String?> getReplyId(String foroId, String? postId, String data) async{
+    return controladorDomini.getReplyId(foroId, postId, data);
   }
 
-  deletePost(String idForo, String? postId) async {
-    try {
+  //afegir post a la bd
+  Future<void> addPost(String foroId, String username, String mensaje, String fecha, int numeroLikes){
+    return controladorDomini.addPost(foroId, username, mensaje, fecha, numeroLikes);
+  }
 
-      // Fetch all reply posts
-      List<Post> replyPosts = await controladorDomini.getReplyPosts(idForo, postId);
+  //afegir reply a la bd
+  Future<void> addReplyPost(String foroId, String postId, String username, String mensaje, String fecha, int numeroLikes) async {
+    return controladorDomini.addReplyPost(foroId, postId, username, mensaje, fecha, numeroLikes);
+  }
 
-      // Delete each reply post
-      for (Post reply in replyPosts) {
-        //await controladorDomini.deleteReply(idForo, postId, reply.id);
-      }
+  //get posts de un foro
+  Future<List<Post>> getPostsForo(String foroId) async {
+    return controladorDomini.getPostsForo(foroId);
+  }
 
-      await controladorDomini.deletePost(idForo, postId);
+  //get replies de los posts
+  Future<List<Post>> getReplyPosts(String foroId, String? postId) async {
+    return controladorDomini.getReplyPosts(foroId, postId);
+  }
 
-    } catch (error) {
-      // Handle errors
-    }
+
+  Future<void> deletePost(String foroId, String? postId) async {
+    return controladorDomini.deletePost(foroId, postId);
+  }
+
+  Future<void> deleteReply(String foroId, String? postId, String? replyId) async {
+    return controladorDomini.deleteReply(foroId, postId, replyId);
   }
 
 }

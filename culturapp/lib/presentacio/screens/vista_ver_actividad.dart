@@ -109,22 +109,22 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             child: reply == false
               ? PostWidget(
                 addPost: (foroId, username, mensaje, fecha, numeroLikes) async {
-                  await controladorDominio.addPost(foroId, username, mensaje, fecha, numeroLikes);
+                  await controladorPresentacion.addPost(foroId, username, mensaje, fecha, numeroLikes);
 
                   // Actualitza el llistat de posts
                   setState(() {
-                    posts = controladorDominio.getPostsForo(idForo);
+                    posts = controladorPresentacion.getPostsForo(idForo);
                   });
                 },
                 foroId: idForo,
               )
               : ReplyWidget(
                 addReply: (foroId, postIden, username, mensaje, fecha, numeroLikes) async {
-                  await controladorDominio.addReplyPost(foroId, postIden, username, mensaje, fecha, numeroLikes);
+                  await controladorPresentacion.addReplyPost(foroId, postIden, username, mensaje, fecha, numeroLikes);
 
                   // Actualitza el llistat de replies
                   setState(() {
-                    replies = controladorDominio.getReplyPosts(idForo, postIden);
+                    replies = controladorPresentacion.getReplyPosts(idForo, postIden);
                     reply = false;
                   });
                 },
@@ -420,21 +420,21 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   }
 
   //fer que nomes el pugui eliminar el que l'ha creat
-  void _deletePost(Post post, String? postId) async {
+  void _deletePost(Post post, String? postId) {
 
-    await controladorDominio.deletePost(idForo, postId);
+    controladorPresentacion.deletePost(idForo, postId);
 
     setState(() {
-      posts = controladorDominio.getPostsForo(idForo);
+      posts = controladorPresentacion.getPostsForo(idForo);
     });
   }
 
-  void _deleteReply(Post reply, String? postId, String? replyId) async {
+  void _deleteReply(Post reply, String? postId, String? replyId) {
 
-    await controladorDominio.deleteReply(idForo, postId, replyId);
+    controladorPresentacion.deleteReply(idForo, postId, replyId);
 
     setState(() {
-      replies = controladorDominio.getReplyPosts(idForo, postId);
+      replies = controladorPresentacion.getReplyPosts(idForo, postId);
     });
   }
 
@@ -443,7 +443,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     String? foroId = await controladorPresentacion.getForoId(infoActividad[1]);
     if (foroId != null) {
       idForo = foroId;
-      List<Post> fetchedPosts = await controladorDominio.getPostsForo(foroId);
+      List<Post> fetchedPosts = await controladorPresentacion.getPostsForo(foroId);
       return fetchedPosts;
     }
     return[];
@@ -454,7 +454,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     String? postId = await controladorPresentacion.getPostId(idForo, data);
     if (postId != null) {
       idPost = postId;
-      List<Post> fetchedReply = await controladorDominio.getReplyPosts(idForo, postId);
+      List<Post> fetchedReply = await controladorPresentacion.getReplyPosts(idForo, postId);
       return fetchedReply;
     }
     return [];
@@ -723,8 +723,6 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       });
     }
   }
-  
- 
 
   void checkApuntado(String uid, List<String> infoactividad) async {
     bool apuntado = await controladorDominio.isUserInActivity(uid, infoactividad[1]);
