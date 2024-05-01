@@ -21,7 +21,7 @@ class XatGrupScreen extends StatefulWidget {
 class _XatGrupScreen extends State<XatGrupScreen> {
   late ControladorPresentacion _controladorPresentacion;
   late Grup _grup;
-  late List<String> nomParticipants;
+  late Future<List<String>> nomParticipants;
   late List<Message> missatges;
 
   Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
@@ -30,15 +30,19 @@ class _XatGrupScreen extends State<XatGrupScreen> {
   _XatGrupScreen(ControladorPresentacion controladorPresentacion, Grup grup) {
     _controladorPresentacion = controladorPresentacion;
     _grup = grup;
-    nomParticipants = agafarNomsParticipants(_grup.participants);
+    nomParticipants = agafarNomsParticipants(_grup.membres);
+    missatges = [];
     //missatges = _grup.missatgesGrup;
   }
 
-  List<String> agafarNomsParticipants(List<Usuari>? participants) {
+  Future<List<String>> agafarNomsParticipants(List<dynamic> participants) async{
     List<String> nomParticipants = [];
 
-    for (int i = 0; i < participants!.length; ++i) {
-      nomParticipants.add(participants[i].nom);
+    for (int i = 0; i < participants.length; ++i) {
+      //print(participants[i]);
+      //s'haurien de conseguir el noms del users
+      //String name = await _controladorPresentacion.getUsername(participants[i]);
+      //nomParticipants.add(name);
     }
 
     return nomParticipants;
@@ -114,8 +118,9 @@ class _XatGrupScreen extends State<XatGrupScreen> {
       ),
       title: Row(
         children: [
-          CircleAvatar(
-            backgroundImage: AssetImage(_grup.imageGroup),
+          const CircleAvatar(
+            backgroundImage: AssetImage('assets/userImage.png'),
+            //AssetImage(_grup.imageGroup),
           ),
           const SizedBox(width: 10),
           Column(
@@ -125,6 +130,8 @@ class _XatGrupScreen extends State<XatGrupScreen> {
                 _grup.nomGroup,
                 style: const TextStyle(color: Colors.white),
               ),
+              //el join no le gusta
+              /*
               Text(
                 truncarString(nomParticipants.join(', '), 35),
                 style: const TextStyle(
@@ -132,6 +139,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
                   fontSize: 14.0,
                 ),
               ),
+              */
             ],
           ),
         ],

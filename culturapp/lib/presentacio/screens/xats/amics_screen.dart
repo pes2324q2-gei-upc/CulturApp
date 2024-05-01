@@ -39,13 +39,17 @@ class _AmicsScreenState extends State<AmicsScreen> {
     );
   }
 
-  String agafarLastMessage(Usuari amic) {
-    return 'de moment res';
+  Future<String> agafarLastMessage(Usuari amic) async {
+    String msg = await _controladorPresentacion.lastMsg(amic.id);
+    return msg;
+    //return 'de moment res';
     //crida a back i guess?
   }
 
-  String agafarTimeLastMessage(Usuari amic) {
-    return '00:00';
+  Future<String> agafarTimeLastMessage(Usuari amic) async{
+    String time = await _controladorPresentacion.lasTime(amic.id);
+    return time;
+    //return '00:00';
     //crida a back i guess?
   }
 
@@ -115,10 +119,32 @@ class _AmicsScreenState extends State<AmicsScreen> {
               color: Colors.orange,
               fontWeight: FontWeight.bold,
             )),
-        subtitle: Text(agafarLastMessage(display_list[index])),
-        trailing: Text(
-          agafarTimeLastMessage(display_list[index]),
+        subtitle: FutureBuilder<String>(
+          future: agafarLastMessage(display_list[index]),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Text('Loading...');
+            } else if (snapshot.hasError) {
+              return Text('');
+            } else {
+              return Text(snapshot.data ?? '');
+            }
+          },
         ),
+        //Text(agafarLastMessage(display_list[index])),
+        trailing: FutureBuilder<String>(
+          future: agafarTimeLastMessage(display_list[index]),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Text('Loading...');
+            } else if (snapshot.hasError) {
+              return Text('');
+            } else {
+              return Text(snapshot.data ?? '');
+            }
+          },
+        ),
+        //Text(agafarTimeLastMessage(display_list[index]),),
       ),
     );
   }

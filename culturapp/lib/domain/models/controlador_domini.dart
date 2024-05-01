@@ -391,7 +391,7 @@ class ControladorDomini {
         mensajes.sort((b, a) => a.timeSended.compareTo(b.timeSended));
         return mensajes;
       } else if (response.statusCode == 404) {
-        return []; // Devolver una lista vacía si no hay posts para este foro
+        return []; // Devolver una lista vacía si no hay posts para este xat
       } else {
         throw Exception('Error al obtener los posts del foro: ${response.statusCode}');
       }
@@ -410,7 +410,7 @@ class ControladorDomini {
         List<Grup> reply = data.map((json) => Grup.fromJson(json)).toList();
         return reply;
       } else if (response.statusCode == 404) {
-        return [];  //Devolver una lista vacía si no hay replies para este post
+        return [];  
       } else {
         throw Exception('Error al obtener los replies del post: ${response.statusCode}');
       }
@@ -418,5 +418,124 @@ class ControladorDomini {
       throw Exception('Error de red: $error');
     }
   }
+
+  //get info d'un grup
+  Future<Grup> getInfoGrup(String grupId) async {
+    try {
+      final response = await http.get(Uri.parse('http://10.0.2.2:8080/grups/$grupId'));
+      
+      if (response.statusCode == 200) {
+        final dynamic data = json.decode(response.body);
+        Grup reply = data.map((json) => Grup.fromJson(json)).toList();
+        return reply;
+      } else if (response.statusCode == 404) {
+        throw Exception('grup no existeix'); 
+      } else {
+        throw Exception('Error al obtener los replies del post: ${response.statusCode}');
+      }
+    } catch (error) {
+      throw Exception('Error de red: $error');
+    }
+  }
+
+  //crear grup
+  void createGrup(String name, String description, String image, List<String> members) async {
+    try {
+
+      final Map<String, dynamic> grupata = {
+        'nom': name,
+        'descr': description,
+        'imatge': image,
+        'members': members
+      };
+
+      final respuesta = await http.post(
+        Uri.parse('https://culturapp-back.onrender.com/grups/create'),
+        body: jsonEncode(grupata),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (respuesta.statusCode == 201) {
+        print('Grup creado exitosamente');
+      } else {
+        print('Error al crear grup: ${respuesta.statusCode}');
+      }
+    } catch (error) {
+      print('Error de red: $error');
+    }
+  }
+
+  //actualitzar info grup
+  void updateGrup(String grupId, String name, String description, String image, List<String> members) async {
+    try {
+
+      final Map<String, dynamic> grupata = {
+        'nom': name,
+        'descr': description,
+        'imatge': image,
+        'members': members
+      };
+
+      final respuesta = await http.put(
+        Uri.parse('https://culturapp-back.onrender.com/grups/$grupId/update'),
+        body: jsonEncode(grupata),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (respuesta.statusCode == 201) {
+        print('Grup actualizado exitosamente');
+      } else {
+        print('Error al actualizar grup: ${respuesta.statusCode}');
+      }
+    } catch (error) {
+      print('Error de red: $error');
+    }
+  }
+
+  //afegir missatge al grup
+  void addGrupMessage(String grupId, String time, String text, String senderId) async {
+    try {
+      final url = Uri.parse('http://10.0.2.2:8080/grups/$grupId/mensajes');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'senderId': senderId,
+          'mensaje': text,
+          'fecha': time
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        print('Mensaje agregado exitosamente al xat');
+      } else {
+        print('Error al agregar mensaje al xat: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error al realizar la solicitud HTTP: $error');
+    }
+  }
+
+  //agafar missatges del grup
+  Future<List<Message>> getGrupMessages(String grupId) async {
+    try{
+      final response = await http.get(Uri.parse('http://10.0.2.2:8080/grups/$grupId/mensajes'));
+      
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        // Mapear los datos de los mensajes a una lista de objetos Message
+        List<Message> mensajes = data.map((json) => Message.fromJson(json)).toList();
+        mensajes.sort((b, a) => a.timeSended.compareTo(b.timeSended));
+        return mensajes;
+      } else if (response.statusCode == 404) {
+        return []; // Devolver una lista vacía si no hay posts para este grupo
+      } else {
+        throw Exception('Error al obtener los posts del foro: ${response.statusCode}');
+      }
+    } catch (error) {
+      throw Exception('Error de red: $error');
+    }
+  }
+
 
 }

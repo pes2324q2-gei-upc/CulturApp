@@ -45,7 +45,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
     setState(() {
       //crida al back per enviar un missatge
       String time = Timestamp.now().toDate().toIso8601String();
-      _controladorPresentacion.addMessage(_usuari.id, time, text);
+      _controladorPresentacion.addXatMessage(_usuari.id, time, text);
       /*missatges.insert(
         0,
         Message(text: text, sender: 'Me', timeSended: '10:00'),
@@ -58,7 +58,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
   }
 
   Future<List<Message>> getMessage() async {
-    List<Message> msg = await  _controladorPresentacion.getMessages(_usuari.id);
+    List<Message> msg = await  _controladorPresentacion.getXatMessages(_usuari.id);
     return msg;
   }
 
@@ -68,7 +68,15 @@ class _XatAmicScreen extends State<XatAmicScreen> {
       future: getMessage(),
       builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator(); // Mentres no acaba el future
+          return const SizedBox(
+            width: 5, 
+            height: 5, 
+            child: CircularProgressIndicator(
+              strokeWidth: 1, 
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+            ),
+          );
+          //return const CircularProgressIndicator(); // Mentres no acaba el future
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}'); // Si hi ha hagut algun error
         } else {

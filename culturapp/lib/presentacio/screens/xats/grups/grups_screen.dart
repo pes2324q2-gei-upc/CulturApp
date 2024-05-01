@@ -23,8 +23,6 @@ class _GrupsScreenState extends State<GrupsScreen> {
     _controladorPresentacion = controladorPresentacion;
     _initialize();
     /*
-    getGrups();
-    print(grups);
     llista_grups = grups;
         //allGroups; //fer crida al backend per agafar tots els grups que l'usuari forma part
     display_list = llista_grups; //comencem amb tots els grups
@@ -36,6 +34,7 @@ class _GrupsScreenState extends State<GrupsScreen> {
   setState(() {
     llista_grups = grups;
     display_list = llista_grups; 
+    //display_list = allGroups;
   });
 }
 
