@@ -1,8 +1,9 @@
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/post.dart';
-import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/widgets/post_widget.dart';
 import 'package:culturapp/presentacio/widgets/reply_widget.dart';
+import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -15,19 +16,19 @@ import 'package:url_launcher/url_launcher.dart';
 class VistaVerActividad extends StatefulWidget{
 
   final List<String> info_actividad;
-
+  final ControladorPresentacion controladorPresentacion;
   final Uri uri_actividad;
 
-  const VistaVerActividad({super.key, required this.info_actividad, required this.uri_actividad});
+  const VistaVerActividad({super.key, required this.info_actividad, required this.uri_actividad, required this.controladorPresentacion});
 
   @override
-  State<VistaVerActividad> createState() => _VistaVerActividadState(info_actividad, uri_actividad);
+  State<VistaVerActividad> createState() => _VistaVerActividadState(controladorPresentacion ,info_actividad, uri_actividad);
 }
 
 class _VistaVerActividadState extends State<VistaVerActividad> {
-
-  final ControladorDomini controladorDominio = ControladorDomini();
-  final ControladorPresentacion controladorPresentacion = ControladorPresentacion();
+  late ControladorPresentacion _controladorPresentacion; 
+  final ControladorDomini controladorDominio = new ControladorDomini();
+  int _selectedIndex = 0;
 
   late List<String> infoActividad;
   late Uri uriActividad;
@@ -61,10 +62,10 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   "territori.espai_public_rius",
   "Espai públic - Platges"];
   
-
-  _VistaVerActividadState(List<String> info_actividad, Uri uri_actividad) {
+  _VistaVerActividadState(ControladorPresentacion controladorPresentacion ,List<String> info_actividad, Uri uri_actividad) {
     infoActividad = info_actividad;
     uriActividad = uri_actividad;
+    _controladorPresentacion = controladorPresentacion;
   }
 
   @override
@@ -72,6 +73,29 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     super.initState();
     checkApuntado(_user!.uid, infoActividad);
   } 
+
+    void _onTabChange(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  
+    switch (index) {
+      case 0:
+        _controladorPresentacion.mostrarMapa(context);
+        break;
+      case 1:
+          _controladorPresentacion.mostrarActividadesUser(context);
+        break;
+      case 2:
+        _controladorPresentacion.mostrarXats(context);
+        break;
+      case 3:
+          _controladorPresentacion.mostrarPerfil(context);
+        break;
+      default:
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -136,6 +160,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       ),
     );
   }
+
 
   Widget _imagenActividad(String imagenUrl){
     return Container(
@@ -711,12 +736,10 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     if (mounted) {
       setState(() {
         if (estaApuntado) {
-          //print("entrado en el true");
           controladorDominio.signoutFromActivity(_user?.uid, infoActividad[1]);
           estaApuntado = false;
         }
         else {
-          //print("entrado en el false");
           controladorDominio.signupInActivity(_user?.uid, infoActividad[1]);
           estaApuntado = true;
         }

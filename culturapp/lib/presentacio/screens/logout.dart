@@ -8,9 +8,11 @@ class Logout extends StatelessWidget {
   
   User? _user;
 
+  ControladorPresentacion _controladorPresentacion;
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Logout(this._user);
+  Logout(this._user, ControladorPresentacion this._controladorPresentacion);
 
   @override
   Widget build(BuildContext context) {
@@ -45,12 +47,7 @@ class Logout extends StatelessWidget {
   }
 
   void signout(context) {
-    _auth.signOut();
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => Login(controladorPresentacion: ControladorPresentacion(),)),
-    ); // Cierra la llamada a MaterialPageRoute
+    _controladorPresentacion.logout(context);
   }
 }
 
