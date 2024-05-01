@@ -22,6 +22,25 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
     isFollows = true;
   }
 
+  Future<List<String>> getRequestsUser(String token) async {
+
+    final respuesta = await http.get(
+      Uri.parse('http://10.0.2.2:8080/amics/followingRequests'), 
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+    if(respuesta.statusCode == 200) {
+      final body = respuesta.body;
+      final List<dynamic> data = json.decode(body);
+      final List<String> users = data.map((user) => user['friend'].toString()).toList(); // Change 'user' to 'friend'
+      return users;
+    }
+    else {
+      throw Exception('Fallo la obtención de datos' /*"data_error_msg".tr(context)*/);
+    }
+  }
+
   Future<List<String>> getUsers(String token, String endpoint) async {
     final respuesta = await http.get(
       Uri.parse('http://10.0.2.2:8080/amics/Pepe/$endpoint'),
@@ -33,7 +52,7 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
     if (respuesta.statusCode == 200) {
       final body = respuesta.body;
       final List<dynamic> data = json.decode(body);
-      final List<String> users = data.map((user) => user.toString()).toList();
+      final List<String> users = data.map((user) => user['user'].toString()).toList();
       return users;
     } else {
       throw Exception('Fallo la obtención de datos' /*"data_error_msg".tr(context)*/);
@@ -51,15 +70,19 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
   void updateUsers() async {
       late List<String> followers;
       late List<String> followings;
+      late List<String> requests;
 
       followers = await getFollowersUser(widget.token);
       followings = await getFollowingsUser(widget.token);
+      requests = await getRequestsUser(widget.token);
 
       Set<String> followersSet = Set.from(followers);
       Set<String> followingsSet = Set.from(followings);
+      Set<String> requestsSet = Set.from(requests);
 
-      difference = followersSet.difference(followingsSet).toList();
-    
+      followersSet = followersSet.difference(followingsSet);
+      difference = followersSet.difference(requestsSet).toList();
+
       setState(() {
         users = isFollows ? followers : followings;
       });
