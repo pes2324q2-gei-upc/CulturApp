@@ -408,6 +408,7 @@ class ControladorDomini {
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         List<Grup> reply = data.map((json) => Grup.fromJson(json)).toList();
+        reply.sort((b, a) => a.timeLastMessage.compareTo(b.timeLastMessage));
         return reply;
       } else if (response.statusCode == 404) {
         return [];  
@@ -530,7 +531,7 @@ class ControladorDomini {
       } else if (response.statusCode == 404) {
         return []; // Devolver una lista vacía si no hay posts para este grupo
       } else {
-        throw Exception('Error al obtener los posts del foro: ${response.statusCode}');
+        throw Exception('Error al obtener los mensajes del grupo: ${response.statusCode}');
       }
     } catch (error) {
       throw Exception('Error de red: $error');
