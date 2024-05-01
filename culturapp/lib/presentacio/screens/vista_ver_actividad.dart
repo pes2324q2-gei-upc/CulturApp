@@ -99,7 +99,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
   @override
   Widget build(BuildContext context) {
-    controladorPresentacion.getForo(infoActividad[1]); //verificar que tenga un foro
+    _controladorPresentacion.getForo(infoActividad[1]); //verificar que tenga un foro
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
@@ -111,6 +111,10 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           fontSize: 20.0,
           fontWeight: FontWeight.bold
         ),
+      ),
+       bottomNavigationBar: CustomBottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTabChange: _onTabChange,
       ),
       body: Column(
         children:[ 
@@ -133,22 +137,22 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             child: reply == false
               ? PostWidget(
                 addPost: (foroId, username, mensaje, fecha, numeroLikes) async {
-                  await controladorPresentacion.addPost(foroId, username, mensaje, fecha, numeroLikes);
+                  await _controladorPresentacion.addPost(foroId, username, mensaje, fecha, numeroLikes);
 
                   // Actualitza el llistat de posts
                   setState(() {
-                    posts = controladorPresentacion.getPostsForo(idForo);
+                    posts = _controladorPresentacion.getPostsForo(idForo);
                   });
                 },
                 foroId: idForo,
               )
               : ReplyWidget(
                 addReply: (foroId, postIden, username, mensaje, fecha, numeroLikes) async {
-                  await controladorPresentacion.addReplyPost(foroId, postIden, username, mensaje, fecha, numeroLikes);
+                  await _controladorPresentacion.addReplyPost(foroId, postIden, username, mensaje, fecha, numeroLikes);
 
                   // Actualitza el llistat de replies
                   setState(() {
-                    replies = controladorPresentacion.getReplyPosts(idForo, postIden);
+                    replies = _controladorPresentacion.getReplyPosts(idForo, postIden);
                     reply = false;
                   });
                 },
@@ -427,11 +431,11 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             TextButton(
               onPressed: () async {
                 if(!reply) {
-                  String? postId = await controladorPresentacion.getPostId(idForo, post.fecha);
+                  String? postId = await _controladorPresentacion.getPostId(idForo, post.fecha);
                   _deletePost(post, postId);
                 }
                 else {
-                  String? replyId = await controladorPresentacion.getReplyId(idForo, postIden, post.fecha);
+                  String? replyId = await _controladorPresentacion.getReplyId(idForo, postIden, post.fecha);
                   _deleteReply(post, postIden, replyId);
                 }
                 Navigator.of(context).pop(); // Cierra el dialog
@@ -447,28 +451,28 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   //fer que nomes el pugui eliminar el que l'ha creat
   void _deletePost(Post post, String? postId) {
 
-    controladorPresentacion.deletePost(idForo, postId);
+    _controladorPresentacion.deletePost(idForo, postId);
 
     setState(() {
-      posts = controladorPresentacion.getPostsForo(idForo);
+      posts = _controladorPresentacion.getPostsForo(idForo);
     });
   }
 
   void _deleteReply(Post reply, String? postId, String? replyId) {
 
-    controladorPresentacion.deleteReply(idForo, postId, replyId);
+    _controladorPresentacion.deleteReply(idForo, postId, replyId);
 
     setState(() {
-      replies = controladorPresentacion.getReplyPosts(idForo, postId);
+      replies = _controladorPresentacion.getReplyPosts(idForo, postId);
     });
   }
 
   //conseguir posts del foro
   Future<List<Post>> getPosts() async {
-    String? foroId = await controladorPresentacion.getForoId(infoActividad[1]);
+    String? foroId = await _controladorPresentacion.getForoId(infoActividad[1]);
     if (foroId != null) {
       idForo = foroId;
-      List<Post> fetchedPosts = await controladorPresentacion.getPostsForo(foroId);
+      List<Post> fetchedPosts = await _controladorPresentacion.getPostsForo(foroId);
       return fetchedPosts;
     }
     return[];
@@ -476,10 +480,10 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
   //conseguir replies del foro
   Future<List<Post>> getReplies(String data) async {
-    String? postId = await controladorPresentacion.getPostId(idForo, data);
+    String? postId = await _controladorPresentacion.getPostId(idForo, data);
     if (postId != null) {
       idPost = postId;
-      List<Post> fetchedReply = await controladorPresentacion.getReplyPosts(idForo, postId);
+      List<Post> fetchedReply = await _controladorPresentacion.getReplyPosts(idForo, postId);
       return fetchedReply;
     }
     return [];
@@ -592,7 +596,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                               IconButton(
                                 icon: const Icon(Icons.reply), // Icono de responder
                                 onPressed: () async {
-                                  postIden = await controladorPresentacion.getPostId(idForo, post.fecha);
+                                  postIden = await _controladorPresentacion.getPostId(idForo, post.fecha);
                                   setState(() {
                                      reply = true;
                                   });
@@ -666,7 +670,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             //fer que nomes el que l'ha creat ho pugui veure
                             GestureDetector(
                               onTap: () async {
-                                postIden = await controladorPresentacion.getPostId(idForo, date);
+                                postIden = await _controladorPresentacion.getPostId(idForo, date);
                                 _showDeleteOption(context, rep, true);
                               },
                               child: const Icon(Icons.more_vert, size: 20),

@@ -1,11 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:culturapp/domain/models/actividad.dart';
-import 'package:culturapp/domain/models/controlador_domini.dart';
-import 'package:culturapp/domain/models/foro_model.dart';
-import 'package:culturapp/domain/models/post.dart';
-import 'package:culturapp/presentacio/screens/lista_actividades.dart';
 // ignore_for_file: non_constant_identifier_names, no_leading_underscores_for_local_identifiers, use_build_context_synchronously, avoid_print
-
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/grup.dart';
@@ -35,6 +28,8 @@ import 'package:culturapp/presentacio/screens/xats/xats.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:culturapp/domain/models/foro_model.dart';
+import 'package:culturapp/domain/models/post.dart';
 
 class ControladorPresentacion {
   final controladorDomini = ControladorDomini();
@@ -53,7 +48,6 @@ class ControladorPresentacion {
     final GoogleSignIn googleSignIn = GoogleSignIn();
     await googleSignIn.signOut(); 
   }
-
 
   Future<void> initialice() async {
     activitats = await controladorDomini.getActivitiesAgenda();

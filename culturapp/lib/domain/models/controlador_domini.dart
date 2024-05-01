@@ -24,6 +24,17 @@ class ControladorDomini {
       throw Exception('Fallo la obtención de datos');
     }
   }
+  
+  Future<List<Usuario>> getUsers() async {
+    final respuesta =
+        await http.get(Uri.parse('https://culturapp-back.onrender.com/users/read/users'));
+
+    if (respuesta.statusCode == 200) {
+      return _convert_database_to_list_user(respuesta);
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
 
   Future<List<Actividad>> getUserActivities(String userID) async {
     final respuesta = await http.get(
