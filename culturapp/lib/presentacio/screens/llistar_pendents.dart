@@ -32,7 +32,7 @@ class _LlistarPendentsState extends State<LlistarPendents> {
     if (respuesta.statusCode == 200) {
       final body = respuesta.body;
       final List<dynamic> data = json.decode(body);
-      final List<String> users = data.map((user) => user.toString()).toList();
+      final List<String> users = data.map((user) => user['user'].toString()).toList();
       return users;
     } else {
       throw Exception('Fallo la obtención de datos' /*"data_error_msg".tr(context)*/); 
@@ -40,7 +40,7 @@ class _LlistarPendentsState extends State<LlistarPendents> {
   }
 
   Future<List<String>> getPendentsUser() async {
-    return getUsers(widget.token, 'pendents');
+    return await getUsers(widget.token, 'pendents');
   }
 
   List<String> originalUsers = [];
@@ -51,12 +51,6 @@ class _LlistarPendentsState extends State<LlistarPendents> {
         originalUsers = List.from(users);
       }
       users = originalUsers.where((element) => element.toLowerCase().contains(value.toLowerCase())).toList();
-    });
-  }
-
-  void reloadPendents() {
-    setState(() {
-      updateUsers();
     });
   }
 
@@ -128,7 +122,7 @@ class _LlistarPendentsState extends State<LlistarPendents> {
               itemBuilder: (context, index) {
                 return Column(
                   children: [
-                    userBox(text: users[index], recomm: false, type: "pending",),
+                    userBox(text: users[index], recomm: false, type: "pending", token: widget.token),
                     const SizedBox(height: 5.0), 
                   ],
                 );

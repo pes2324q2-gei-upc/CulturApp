@@ -13,6 +13,7 @@ class LlistarFollows extends StatefulWidget {
 
 class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProviderStateMixin {
   late List<String> users;
+  late List<String> difference;
   late bool isFollows;
   late TabController _tabController;
 
@@ -48,15 +49,20 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
   }
 
   void updateUsers() async {
-    List<String> updatedUsers;
-    if (isFollows) {
-      updatedUsers = await getFollowersUser(widget.token);
-    } else {
-      updatedUsers = await getFollowingsUser(widget.token);
-    }
-    setState(() {
-      users = updatedUsers;
-    });
+      late List<String> followers;
+      late List<String> followings;
+
+      followers = await getFollowersUser(widget.token);
+      followings = await getFollowingsUser(widget.token);
+
+      Set<String> followersSet = Set.from(followers);
+      Set<String> followingsSet = Set.from(followings);
+
+      difference = followersSet.difference(followingsSet).toList();
+    
+      setState(() {
+        users = isFollows ? followers : followings;
+      });
   }
 
   List<String> originalUsers = [];
@@ -172,7 +178,14 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
               return Column(
                 children: [
                   const SizedBox(height: 10.0),
-                  userBox(text: users[index], recomm: false, type: "deleteFollow"),
+                  userBox(
+                    text: users[index], 
+                    recomm: false, 
+                    type: isFollows 
+                      ? (difference.contains(users[index]) ? "addSomeone" : "null") 
+                      : "null", 
+                    token: widget.token
+                  ),
                 ],
               );
             },
