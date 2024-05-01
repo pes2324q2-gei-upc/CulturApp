@@ -4,7 +4,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class LlistarFollows extends StatefulWidget {
-  const LlistarFollows({Key? key}) : super(key: key);
+  final String token;
+  const LlistarFollows({Key? key, required this.token}) : super(key: key);
 
   @override
   _LlistarFollowsState createState() => _LlistarFollowsState();
@@ -20,11 +21,9 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
     isFollows = true;
   }
 
-  static const token = "976f2f7b53c188d8a77b9b71887621d1e1d207faec5663bf79de9572ac887ea7";
-
   Future<List<String>> getUsers(String token, String endpoint) async {
     final respuesta = await http.get(
-      Uri.parse('http://192.168.244.159:8080/amics/Pepe/$endpoint'),
+      Uri.parse('http://10.0.2.2:8080/amics/Pepe/$endpoint'),
       headers: {
       'Authorization': 'Bearer $token',
       },
@@ -36,24 +35,24 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
       final List<String> users = data.map((user) => user.toString()).toList();
       return users;
     } else {
-      throw Exception('Fallo la obtención de datos');
+      throw Exception('Fallo la obtención de datos' /*"data_error_msg".tr(context)*/);
     }
   }
 
   Future<List<String>> getFollowersUser(String token) async {
-    return getUsers(token, 'followers');
+    return getUsers(widget.token, 'followers');
   }
 
   Future<List<String>> getFollowingsUser(String token) async {
-    return getUsers(token, 'following');
+    return getUsers(widget.token, 'following');
   }
 
   void updateUsers() async {
     List<String> updatedUsers;
     if (isFollows) {
-      updatedUsers = await getFollowersUser(token);
+      updatedUsers = await getFollowersUser(widget.token);
     } else {
-      updatedUsers = await getFollowingsUser(token);
+      updatedUsers = await getFollowingsUser(widget.token);
     }
     setState(() {
       users = updatedUsers;
@@ -96,7 +95,7 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
-        title: const Text("Amics"),
+        title: const Text("Amics" /*"friends_title".tr(context)*/),
         centerTitle: true,
         toolbarHeight: 50.0,
         titleTextStyle: const TextStyle(
@@ -111,8 +110,8 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
           TabBar(
             controller: _tabController,
             tabs: const [
-              Tab(text: "Followers"),
-              Tab(text: "Followings"),
+              Tab(text: "Followers" /*"followers".tr(context)*/),
+              Tab(text: "Followings" /*"followings".tr(context)*/),
             ],
             indicatorColor: const Color(0xFFF4692A),
             labelColor: const Color(0xFFF4692A),
@@ -155,7 +154,7 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
                   borderRadius: BorderRadius.circular(8.0),
                   borderSide: BorderSide.none,
                 ),
-                hintText: "Search...",
+                hintText: "Search..." /*"search".tr(context)*/,
                 hintStyle: const TextStyle(
                   color: Colors.white,
                 ),
@@ -197,7 +196,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const LlistarFollows(),
+      home: const LlistarFollows(token: "976f2f7b53c188d8a77b9b71887621d1e1d207faec5663bf79de9572ac887ea7"),
     );
   }
 }

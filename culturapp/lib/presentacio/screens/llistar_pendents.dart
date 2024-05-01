@@ -4,7 +4,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class LlistarPendents extends StatefulWidget {
-  const LlistarPendents({Key? key}) : super(key: key);
+  final String token;
+
+  const LlistarPendents({Key? key, required this.token}) : super(key: key);
 
   @override
   _LlistarPendentsState createState() => _LlistarPendentsState();
@@ -19,11 +21,9 @@ class _LlistarPendentsState extends State<LlistarPendents> {
     isFollows = true;
   }
 
-  static const token = "976f2f7b53c188d8a77b9b71887621d1e1d207faec5663bf79de9572ac887ea7";
-
   Future<List<String>> getUsers(String token, String endpoint) async {
     final respuesta = await http.get(
-      Uri.parse('http://192.168.244.159:8080/amics/Pepe/$endpoint'),
+      Uri.parse('http://10.0.2.2:8080/amics/Pepe/$endpoint'),
       headers: {
       'Authorization': 'Bearer $token',
       },
@@ -35,12 +35,12 @@ class _LlistarPendentsState extends State<LlistarPendents> {
       final List<String> users = data.map((user) => user.toString()).toList();
       return users;
     } else {
-      throw Exception('Fallo la obtención de datos');
+      throw Exception('Fallo la obtención de datos' /*"data_error_msg".tr(context)*/); 
     }
   }
 
-  Future<List<String>> getPendentsUser(String token) async {
-    return getUsers(token, 'pendents');
+  Future<List<String>> getPendentsUser() async {
+    return getUsers(widget.token, 'pendents');
   }
 
   List<String> originalUsers = [];
@@ -61,7 +61,7 @@ class _LlistarPendentsState extends State<LlistarPendents> {
   }
 
   void updateUsers() async {
-    final pendents = await getPendentsUser(token);
+    final pendents = await getPendentsUser();
     setState(() {
       users = pendents;
     });
@@ -78,7 +78,7 @@ class _LlistarPendentsState extends State<LlistarPendents> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
-        title: const Text("Sol·licituds"),
+        title: const Text("Sol·licituds d'amistat" /*"friendship_requests_title".tr(context)*/),
         centerTitle: true, // Centrar el título
         toolbarHeight: 50.0,
         titleTextStyle: const TextStyle(
@@ -89,8 +89,7 @@ class _LlistarPendentsState extends State<LlistarPendents> {
       ),
       body: Column(
         children: [
-          SizedBox(height: 16.0), // Add spacing of 8.0
-          const SizedBox(height: 10.0), 
+          const SizedBox(height: 26.0), 
           SizedBox(
             height: 45.0,
             child: Padding(
@@ -111,7 +110,7 @@ class _LlistarPendentsState extends State<LlistarPendents> {
                     borderRadius: BorderRadius.circular(8.0),
                     borderSide: BorderSide.none,
                   ),
-                  hintText: "Search...",
+                  hintText: "Search..." /*"search".tr(context)*/,
                   hintStyle: const TextStyle(
                     color: Colors.white,
                   ),
@@ -122,15 +121,15 @@ class _LlistarPendentsState extends State<LlistarPendents> {
               ),
             ),
           ),
-          const SizedBox(height: 5.0), // Add padding top of 5.0
+          const SizedBox(height: 5.0), 
           Expanded(
             child: ListView.builder(
               itemCount: users.length,
               itemBuilder: (context, index) {
                 return Column(
                   children: [
-                    userBox(text: users[index], recomm: false, type: "pendent",),
-                    const SizedBox(height: 5.0), // Add padding top of 5.0
+                    userBox(text: users[index], recomm: false, type: "pending",),
+                    const SizedBox(height: 5.0), 
                   ],
                 );
               },
@@ -156,7 +155,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const LlistarPendents(),
+      home: const LlistarPendents(token: "976f2f7b53c188d8a77b9b71887621d1e1d207faec5663bf79de9572ac887ea7"),
     );
   }
 }

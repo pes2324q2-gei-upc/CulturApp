@@ -1,10 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class userBox extends StatelessWidget {
   final String text;
   final bool recomm;
   final String type;
-  const userBox({super.key, required this.text, required this.recomm, required this.type});
+  final String token;
+  const userBox({super.key, required this.text, required this.recomm, required this.type, required this.token});
+
+  Future<void> actionUser(String token, String action, String person) async {
+
+    final respuesta = await http.get(
+      Uri.parse('http://10.0.2.2:8080/amics/$action/$person'),
+      headers: {
+      'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (respuesta.statusCode != 200) throw Exception('Error al aceptar al usuario');
+  }
+
+
+  Future<void> acceptUser(String token, String action, String person) async {
+    return actionUser(token, action, person);
+  }
 
 @override
 Widget build(BuildContext context) {
@@ -58,7 +77,7 @@ Widget build(BuildContext context) {
         ),
 Row(
   children: [
-    if(type == "pendent") ...[
+    if(type == "pending") ...[
       SizedBox(
         width: 50,
         child: TextButton(
