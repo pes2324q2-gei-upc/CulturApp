@@ -1,3 +1,4 @@
+import "package:culturapp/domain/converters/convert_date_format.dart";
 import "package:culturapp/domain/models/grup.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:flutter/material.dart";
@@ -15,29 +16,22 @@ class GrupsScreen extends StatefulWidget {
 
 class _GrupsScreenState extends State<GrupsScreen> {
   late ControladorPresentacion _controladorPresentacion;
-  late List<Grup>  llista_grups;
-  late List<Grup>  display_list = [];
+  late List<Grup> llista_grups;
+  late List<Grup> display_list = [];
   String value = '';
 
   _GrupsScreenState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
     _initialize();
-    /*
-    llista_grups = grups;
-        //allGroups; //fer crida al backend per agafar tots els grups que l'usuari forma part
-    display_list = llista_grups; //comencem amb tots els grups
-    */
   }
 
   void _initialize() async {
-  List<Grup> grups = await _controladorPresentacion.getUserGrups();
-  setState(() {
-    llista_grups = grups;
-    display_list = llista_grups; 
-    //display_list = allGroups;
-  });
-}
-
+    List<Grup> grups = await _controladorPresentacion.getUserGrups();
+    setState(() {
+      llista_grups = grups;
+      display_list = llista_grups;
+    });
+  }
 
   void updateList(String value) {
     //funcio on es filtrarà els grups per nom (cercador)
@@ -142,9 +136,7 @@ class _GrupsScreenState extends State<GrupsScreen> {
               fontWeight: FontWeight.bold,
             )),
         subtitle: Text(display_list[index].lastMessage),
-        trailing: Text(
-          display_list[index].timeLastMessage,
-        ),
+        trailing: Text(convertTimeFormat(display_list[index].timeLastMessage)),
       ),
     );
   }

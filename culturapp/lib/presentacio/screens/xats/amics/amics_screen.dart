@@ -42,15 +42,11 @@ class _AmicsScreenState extends State<AmicsScreen> {
   Future<String> agafarLastMessage(Usuari amic) async {
     String msg = await _controladorPresentacion.lastMsg(amic.id);
     return msg;
-    //return 'de moment res';
-    //crida a back i guess?
   }
 
-  Future<String> agafarTimeLastMessage(Usuari amic) async{
+  Future<String> agafarTimeLastMessage(Usuari amic) async {
     String time = await _controladorPresentacion.lasTime(amic.id);
     return time;
-    //return '00:00';
-    //crida a back i guess?
   }
 
   @override
@@ -123,9 +119,9 @@ class _AmicsScreenState extends State<AmicsScreen> {
           future: agafarLastMessage(display_list[index]),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text('Loading...');
+              return const Text('Loading...');
             } else if (snapshot.hasError) {
-              return Text('');
+              return const Text('');
             } else {
               return Text(snapshot.data ?? '');
             }
@@ -136,9 +132,9 @@ class _AmicsScreenState extends State<AmicsScreen> {
           future: agafarTimeLastMessage(display_list[index]),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text('Loading...');
+              return const Text('Loading...');
             } else if (snapshot.hasError) {
-              return Text('');
+              return const Text('');
             } else {
               return Text(snapshot.data ?? '');
             }

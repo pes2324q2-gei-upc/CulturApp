@@ -419,7 +419,7 @@ class ControladorPresentacion {
   }
 
   Future<List<Grup>> getUserGrups() async {
-    String userId = _user!.uid;
+    String userId = "susssss"; //_user!.uid;  //fins que s'acabi d'implementar??
     List<Grup> grups = await controladorDomini.getUserGrups(userId);
     return grups;
   }

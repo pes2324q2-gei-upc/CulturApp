@@ -42,7 +42,7 @@ class _ConfigGrup extends State<ConfigGrup> {
 
   void assignarImatge(String value) {
     //de moment no funcional
-    imatgeGrup = value;
+    //imatgeGrup = value;
   }
 
   void crearGrup() {
