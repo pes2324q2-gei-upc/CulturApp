@@ -1,26 +1,35 @@
+import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:flutter/material.dart';
 
 class UpdatePerfil extends StatefulWidget {
-  const UpdatePerfil({super.key});
+  final ControladorPresentacion controladorPresentacion;
+
+  const UpdatePerfil({super.key, required this.controladorPresentacion});
 
   @override
-  State<UpdatePerfil> createState() => _UpdatePerfil();
+  State<UpdatePerfil> createState() => _UpdatePerfil(this.controladorPresentacion);
 }
 
 class _UpdatePerfil extends State<UpdatePerfil> {
+  late ControladorPresentacion _controladorPresentacion;
+
+  _UpdatePerfil(ControladorPresentacion controladorPresentacion) {
+    _controladorPresentacion = controladorPresentacion;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
         title: const Text(
-          'Actualitza Perfil',
+          'Actualiza Perfil',
           style: TextStyle(color: Colors.white),
         ),
       ),
       body: const Stack(
         children: [
-          Text("Aqui anira el form per actualitzar perfil")
+          Text("Aqui ira el form para actualizar el perfil")
         ],
       ),
     );

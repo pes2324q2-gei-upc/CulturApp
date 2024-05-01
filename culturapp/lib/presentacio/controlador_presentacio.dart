@@ -1,3 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/controlador_domini.dart';
+import 'package:culturapp/domain/models/foro_model.dart';
+import 'package:culturapp/domain/models/post.dart';
+import 'package:culturapp/presentacio/screens/lista_actividades.dart';
 // ignore_for_file: non_constant_identifier_names, no_leading_underscores_for_local_identifiers, use_build_context_synchronously, avoid_print
 
 import 'package:culturapp/domain/models/actividad.dart';
@@ -20,6 +26,7 @@ import 'package:culturapp/presentacio/screens/recomendador_actividades.dart';
 import 'package:culturapp/presentacio/screens/recomendador_users.dart';
 import 'package:culturapp/presentacio/screens/settings_perfil.dart';
 import 'package:culturapp/presentacio/screens/signup.dart';
+import 'package:culturapp/presentacio/screens/update_perfil.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_mis_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_ver_actividad.dart';
@@ -46,6 +53,7 @@ class ControladorPresentacion {
     final GoogleSignIn googleSignIn = GoogleSignIn();
     await googleSignIn.signOut(); 
   }
+
 
   Future<void> initialice() async {
     activitats = await controladorDomini.getActivitiesAgenda();
@@ -201,6 +209,7 @@ class ControladorPresentacion {
   Future<List<Actividad>> searchMyActivitats(String name) {
     return controladorDomini.searchMyActivities(_user!.uid, name);
   }
+
 
   void checkLoggedInUser(BuildContext context) {
     //Obte l'usuari autentificat en el moment si existeix
@@ -364,6 +373,68 @@ class ControladorPresentacion {
     return controladorDomini.usernameUnique(username);
   }
 
+
+  //veure si existeix el foro i si no el crea
+  Future<void> getForo(String code) async {
+    Foro? foro = await controladorDomini.foroExists(code);
+    if (foro != null) {
+      // El foro existe, imprimir sus detalles
+      print('Foro existente: $foro');
+    } else {
+      // El foro no existe, crear uno nuevo
+      bool creadoExitosamente = await controladorDomini.createForo(code);
+      if (creadoExitosamente) {
+          print('Nuevo foro creado');
+      } else {
+        print('Error al crear el foro');
+      }
+    }
+  }
+
+  //agafar id del foro
+  Future<String?> getForoId(String activitatCode) async {
+    return controladorDomini.getForoId(activitatCode);
+  }
+
+  //modificar el como se encuentra el post, maybe añadir param que sea id = username + fecha
+  Future<String?> getPostId(String foroId, String data) async{
+    return controladorDomini.getPostId(foroId, data);
+  }
+
+  //agafa id fe la reply
+  Future<String?> getReplyId(String foroId, String? postId, String data) async{
+    return controladorDomini.getReplyId(foroId, postId, data);
+  }
+
+  //afegir post a la bd
+  Future<void> addPost(String foroId, String username, String mensaje, String fecha, int numeroLikes){
+    return controladorDomini.addPost(foroId, username, mensaje, fecha, numeroLikes);
+  }
+
+  //afegir reply a la bd
+  Future<void> addReplyPost(String foroId, String postId, String username, String mensaje, String fecha, int numeroLikes) async {
+    return controladorDomini.addReplyPost(foroId, postId, username, mensaje, fecha, numeroLikes);
+  }
+
+  //get posts de un foro
+  Future<List<Post>> getPostsForo(String foroId) async {
+    return controladorDomini.getPostsForo(foroId);
+  }
+
+  //get replies de los posts
+  Future<List<Post>> getReplyPosts(String foroId, String? postId) async {
+    return controladorDomini.getReplyPosts(foroId, postId);
+  }
+
+
+  Future<void> deletePost(String foroId, String? postId) async {
+    return controladorDomini.deletePost(foroId, postId);
+  }
+
+  Future<void> deleteReply(String foroId, String? postId, String? replyId) async {
+    return controladorDomini.deleteReply(foroId, postId, replyId);
+  }
+
   Future<String> getUsername(String uid) {
     return controladorDomini.getUsername(uid);
   }
@@ -388,4 +459,5 @@ class ControladorPresentacion {
     categsFav = selectedCategories;
     mostrarPerfil(context);
   }
+
 }

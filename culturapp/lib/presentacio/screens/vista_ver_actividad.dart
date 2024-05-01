@@ -1,9 +1,12 @@
 import 'package:culturapp/domain/models/controlador_domini.dart';
+import 'package:culturapp/domain/models/post.dart';
+import 'package:culturapp/presentacio/widgets/post_widget.dart';
+import 'package:culturapp/presentacio/widgets/reply_widget.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 //name, code, categoria, imageUrl, description, dataInici, dataFi, ubicacio
@@ -26,14 +29,24 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   late ControladorPresentacion _controladorPresentacion; 
   final ControladorDomini controladorDominio = new ControladorDomini();
   int _selectedIndex = 0;
+
   late List<String> infoActividad;
   late Uri uriActividad;
 
   bool mostrarDescripcionCompleta = false;
+  
   bool estaApuntado = false;
-
+  
   final User? _user = FirebaseAuth.instance.currentUser;
 
+  Future<List<Post>>? posts;
+  Future<List<Post>>? replies;
+  String idForo = "";
+  String idPost = "";
+  String? postIden = '';
+  bool reply = false;
+  bool mostraReplies = false;
+  
   final List<String> catsAMB = ["Residus",
   "territori.espai_public_platges",
   "Sostenibilitat",
@@ -86,6 +99,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
   @override
   Widget build(BuildContext context) {
+    controladorPresentacion.getForo(infoActividad[1]); //verificar que tenga un foro
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
@@ -98,19 +112,51 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           fontWeight: FontWeight.bold
         ),
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTabChange: _onTabChange,
-      ),
-      body: ListView(
-        children: [
-          _imagenActividad(infoActividad[3]), //Accedemos imagenUrl
-          _tituloBoton(infoActividad[0], infoActividad[2]), //Accedemos al nombre de la actividad y su categoria
-          const SizedBox(height: 10),
-          _descripcioActividad(infoActividad[4]), //Accedemos su descripcion
-          _expansionDescripcion(),
-          _infoActividad(infoActividad[7], infoActividad[5], infoActividad[6], uriActividad),
-        ],  //Accedemos ubicación, dataIni, DataFi, uri actividad
+      body: Column(
+        children:[ 
+          Expanded(
+            child: ListView(
+              children: [
+                _imagenActividad(infoActividad[3]), //Accedemos imagenUrl
+                _tituloBoton(infoActividad[0], infoActividad[2]), //Accedemos al nombre de la actividad y su categoria
+                const SizedBox(height: 10),
+                _descripcioActividad(infoActividad[4]), //Accedemos su descripcion
+                _expansionDescripcion(),
+                _infoActividad(infoActividad[7], infoActividad[5], infoActividad[6], uriActividad),
+                _foro(),
+              ], //Accedemos ubicación, dataIni, DataFi, uri actividad
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            //barra para añadir mensajes
+            child: reply == false
+              ? PostWidget(
+                addPost: (foroId, username, mensaje, fecha, numeroLikes) async {
+                  await controladorPresentacion.addPost(foroId, username, mensaje, fecha, numeroLikes);
+
+                  // Actualitza el llistat de posts
+                  setState(() {
+                    posts = controladorPresentacion.getPostsForo(idForo);
+                  });
+                },
+                foroId: idForo,
+              )
+              : ReplyWidget(
+                addReply: (foroId, postIden, username, mensaje, fecha, numeroLikes) async {
+                  await controladorPresentacion.addReplyPost(foroId, postIden, username, mensaje, fecha, numeroLikes);
+
+                  // Actualitza el llistat de replies
+                  setState(() {
+                    replies = controladorPresentacion.getReplyPosts(idForo, postIden);
+                    reply = false;
+                  });
+                },
+                foroId: idForo,
+                postId: postIden,
+              )
+          ),
+        ],  
       ),
     );
   }
@@ -232,7 +278,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     );
   } 
 
-  Widget _getIconPlusTexto(String categoria, String texto){
+ Widget _getIconPlusTexto(String categoria, String texto){
 
     late Icon icono; //late para indicar que se inicializará en el futuro y que cuando se acceda a su valor no sea nulo
 
@@ -363,8 +409,329 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       }
     }
   }
-  
-  
+
+  void _showDeleteOption(BuildContext context, Post post, bool reply) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Eliminar Post'),
+          content: const Text('Estas segur de que vols eliminar aquest post?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Cierra el dialog
+              },
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () async {
+                if(!reply) {
+                  String? postId = await controladorPresentacion.getPostId(idForo, post.fecha);
+                  _deletePost(post, postId);
+                }
+                else {
+                  String? replyId = await controladorPresentacion.getReplyId(idForo, postIden, post.fecha);
+                  _deleteReply(post, postIden, replyId);
+                }
+                Navigator.of(context).pop(); // Cierra el dialog
+              },
+              child: const Text('Eliminar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  //fer que nomes el pugui eliminar el que l'ha creat
+  void _deletePost(Post post, String? postId) {
+
+    controladorPresentacion.deletePost(idForo, postId);
+
+    setState(() {
+      posts = controladorPresentacion.getPostsForo(idForo);
+    });
+  }
+
+  void _deleteReply(Post reply, String? postId, String? replyId) {
+
+    controladorPresentacion.deleteReply(idForo, postId, replyId);
+
+    setState(() {
+      replies = controladorPresentacion.getReplyPosts(idForo, postId);
+    });
+  }
+
+  //conseguir posts del foro
+  Future<List<Post>> getPosts() async {
+    String? foroId = await controladorPresentacion.getForoId(infoActividad[1]);
+    if (foroId != null) {
+      idForo = foroId;
+      List<Post> fetchedPosts = await controladorPresentacion.getPostsForo(foroId);
+      return fetchedPosts;
+    }
+    return[];
+  }
+
+  //conseguir replies del foro
+  Future<List<Post>> getReplies(String data) async {
+    String? postId = await controladorPresentacion.getPostId(idForo, data);
+    if (postId != null) {
+      idPost = postId;
+      List<Post> fetchedReply = await controladorPresentacion.getReplyPosts(idForo, postId);
+      return fetchedReply;
+    }
+    return [];
+  }
+
+  //funcion que lista todos los posts del foro de la actividad
+  Widget _foro() {
+    return FutureBuilder<List<Post>>(
+      future: getPosts(), 
+      builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
+       if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(), // Or you can remove this line if you don't want the circular indicator
+                SizedBox(height: 10), // Add some space between the text and the circular indicator
+                Text('Loading...'),
+              ],
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}'); // Si hi ha hagut algun error
+        } else {
+          List<Post> posts = snapshot.data!;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                    child: Text(
+                      //quereis que añada tambien el numero de replies?
+                      '${posts.length} comentarios',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  mostrarReplies(),
+                ]
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: posts.length,
+                itemBuilder: (context, index) {
+                  final post = posts[index];
+                  DateTime dateTime = DateTime.parse(post.fecha);
+                  String formattedDate = DateFormat('yyyy/MM/dd HH:mm').format(dateTime);
+                  return ListTile(
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            //se tendra que modificar por la imagen del usuario
+                            const Icon(Icons.account_circle, size: 45), // Icono de usuario
+                            const SizedBox(width: 5),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(post.username), // Nombre de usuario
+                                const SizedBox(width: 5),
+                                Text(
+                                  formattedDate,
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
+                            //fer que nomes el que l'ha creat ho pugui veure
+                            GestureDetector(
+                              onTap: () async {
+                                //if(post.username == _user.id) _showDeleteOption(context, post, false);
+                                _showDeleteOption(context, post, false);
+                              },
+                              child: const Icon(Icons.more_vert, size: 20),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 50),
+                          child: Text(
+                            post.mensaje, // Mensaje del post
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 30),
+                          child: Row(
+                            children: [
+                            IconButton(
+                              icon: Icon(
+                                post.numeroLikes > 0 ? Icons.favorite : Icons.favorite_border, 
+                                color: post.numeroLikes > 0 ? Colors.red : null, 
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  if (post.numeroLikes > 0) {
+                                    post.numeroLikes = 0; // Si ya hay likes, los elimina
+                                  } else {
+                                    post.numeroLikes = 1; // Si no hay likes, añade uno
+                                  }
+                                });
+                              },
+                            ),
+                              const Text('Me gusta'),
+                              const SizedBox(width: 20),
+                              //respuesta
+                              IconButton(
+                                icon: const Icon(Icons.reply), // Icono de responder
+                                onPressed: () async {
+                                  postIden = await controladorPresentacion.getPostId(idForo, post.fecha);
+                                  setState(() {
+                                     reply = true;
+                                  });
+                                },
+                              ), 
+                              const SizedBox(width: 5),
+                              const Text('Responder'),
+                              const SizedBox(width: 20),
+                            ],
+                          ),
+                        ),
+                        if (mostraReplies) 
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20),
+                            child: infoReply(post.fecha)
+                          )
+                      ], 
+                    ),
+                  );
+                },
+              ),
+            ],
+          );
+        }
+      },
+    );
+  }
+
+  Widget infoReply(date) {
+    return FutureBuilder<List<Post>>(
+      future: getReplies(date), 
+      builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(); // Mentres no acaba el future
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}'); // Si hi ha hagut algun error
+        } else {
+          List<Post> reps = snapshot.data!;
+          return Column( 
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: reps.length,
+                itemBuilder: (context, index) {
+                  final rep = reps[index];
+                  DateTime dateTime = DateTime.parse(rep.fecha);
+                  String formattedDate = DateFormat('yyyy/MM/dd HH:mm').format(dateTime);
+                  return ListTile(
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            //se tendra que modificar por la imagen del usuario
+                            const Icon(Icons.account_circle, size: 45), // Icono de usuario
+                            const SizedBox(width: 5),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(rep.username), // Nombre de usuario
+                                const SizedBox(width: 5),
+                                Text(
+                                  formattedDate,
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
+                            //fer que nomes el que l'ha creat ho pugui veure
+                            GestureDetector(
+                              onTap: () async {
+                                postIden = await controladorPresentacion.getPostId(idForo, date);
+                                _showDeleteOption(context, rep, true);
+                              },
+                              child: const Icon(Icons.more_vert, size: 20),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 50),
+                          child: Text(
+                            rep.mensaje, // Mensaje del post
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 30),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(
+                                  rep.numeroLikes > 0 ? Icons.favorite : Icons.favorite_border, 
+                                  color: rep.numeroLikes > 0 ? Colors.red : null, 
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    if (rep.numeroLikes > 0) {
+                                      rep.numeroLikes = 0; 
+                                    } else {
+                                      rep.numeroLikes = 1; 
+                                    }
+                                  });
+                                },
+                              ),
+                              const Text('Me gusta')
+                            ]
+                          )
+                        )
+                      ]
+                    )
+                  );
+                }
+              )
+            ]
+          );
+        }
+      }
+    );
+  }
+
+  Widget mostrarReplies(){
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          mostraReplies = !mostraReplies;
+        });
+      },
+      child: Padding(        
+        padding: const EdgeInsets.only(left: 180),
+        child: Text(
+          mostraReplies ? "Esconder replies" : "Ver replies",
+          style: const TextStyle(color: Colors.grey,),
+        ),
+      ),
+    );
+  }
+
   void manageSignupButton(List<String> infoactividad) {
     if (mounted) {
       setState(() {
@@ -379,7 +746,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       });
     }
   }
-  
+
   void checkApuntado(String uid, List<String> infoactividad) async {
     bool apuntado = await controladorDominio.isUserInActivity(uid, infoactividad[1]);
     if (mounted) {
@@ -388,5 +755,6 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       });
     }
   }
+  
 }
 
