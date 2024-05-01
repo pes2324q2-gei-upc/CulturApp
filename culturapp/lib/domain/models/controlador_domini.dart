@@ -13,8 +13,8 @@ class ControladorDomini {
   final String ip = "10.0.2.2";
 
   Future<List<Actividad>> getActivitiesAgenda() async {
-    final respuesta =
-        await http.get(Uri.parse('https://culturapp-back.onrender.com/activitats/read/all'));
+    final respuesta = await http.get(
+        Uri.parse('https://culturapp-back.onrender.com/activitats/read/all'));
 
     if (respuesta.statusCode == 200) {
       return _convert_database_to_list(respuesta);
@@ -37,7 +37,8 @@ class ControladorDomini {
 
   Future<List<Actividad>> searchMyActivities(String userID, String name) async {
     final respuesta = await http.get(
-      Uri.parse('https://culturapp-back.onrender.com/users/activitats/$userID/search/$name'),
+      Uri.parse(
+          'https://culturapp-back.onrender.com/users/activitats/$userID/search/$name'),
     );
 
     if (respuesta.statusCode == 200) {
@@ -50,8 +51,8 @@ class ControladorDomini {
   }
 
   Future<List<Actividad>> searchActivitat(String squery) async {
-    final respuesta =
-        await http.get(Uri.parse('https://culturapp-back.onrender.com/activitats/name/$squery'));
+    final respuesta = await http.get(Uri.parse(
+        'https://culturapp-back.onrender.com/activitats/name/$squery'));
 
     if (respuesta.statusCode == 200) {
       //final List<dynamic> responseData = jsonDecode(respuesta.body);
@@ -130,8 +131,8 @@ class ControladorDomini {
   }
 
   Future<bool> accountExists(User? user) async {
-    final respuesta = await http
-        .get(Uri.parse('https://culturapp-back.onrender.com/users/exists?uid=${user?.uid}'));
+    final respuesta = await http.get(Uri.parse(
+        'https://culturapp-back.onrender.com/users/exists?uid=${user?.uid}'));
 
     if (respuesta.statusCode == 200) {
       print(respuesta);
@@ -142,8 +143,8 @@ class ControladorDomini {
   }
 
   Future<List<String>> obteCatsFavs(User? user) async {
-    final respuesta = await http
-        .get(Uri.parse('https://culturapp-back.onrender.com/users/${user?.uid}/favcategories'));
+    final respuesta = await http.get(Uri.parse(
+        'https://culturapp-back.onrender.com/users/${user?.uid}/favcategories'));
     List<String> categorias = [];
 
     if (respuesta.statusCode == 200) {
@@ -188,7 +189,8 @@ class ControladorDomini {
       };
 
       final respuesta = await http.post(
-        Uri.parse('https://culturapp-back.onrender.com/users/activitats/signout'),
+        Uri.parse(
+            'https://culturapp-back.onrender.com/users/activitats/signout'),
         body: jsonEncode(requestData),
         headers: {'Content-Type': 'application/json'},
       );
@@ -201,7 +203,6 @@ class ControladorDomini {
     } catch (error) {
       print('Error de red: $error');
     }
-
   }
 
   Future<bool> isUserInActivity(String? uid, String code) async {
@@ -223,7 +224,8 @@ class ControladorDomini {
       };
 
       final respuesta = await http.post(
-        Uri.parse('https://culturapp-back.onrender.com/users/activitats/signup'),
+        Uri.parse(
+            'https://culturapp-back.onrender.com/users/activitats/signup'),
         body: jsonEncode(requestData),
         headers: {'Content-Type': 'application/json'},
       );
@@ -251,8 +253,8 @@ class ControladorDomini {
   }
 
   Future<String> getUsername(String uid) async {
-    final respuesta = await http.get(Uri.parse(
-        'http://${ip}:8080/users/username?uid=${uid}'));
+    final respuesta = await http
+        .get(Uri.parse('http://${ip}:8080/users/username?uid=${uid}'));
 
     if (respuesta.statusCode == 200) {
       return respuesta.body;
@@ -261,7 +263,8 @@ class ControladorDomini {
     }
   }
 
-  void editUser(User? _user, String username, List<String> selectedCategories) async {
+  void editUser(
+      User? _user, String username, List<String> selectedCategories) async {
     try {
       final Map<String, dynamic> userdata = {
         'uid': _user?.uid,
@@ -288,32 +291,33 @@ class ControladorDomini {
   //xat existe? si no es asi crealo
   Future<xatAmic?> xatExists(String receiverId, String senderId) async {
     try {
-      final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/xats/exists?receiverId=$receiverId&senderId=$senderId'));
+      final respuesta = await http.get(Uri.parse(
+          'http://10.0.2.2:8080/xats/exists?receiverId=$receiverId&senderId=$senderId'));
 
       if (respuesta.statusCode == 200) {
         final data = json.decode(respuesta.body);
         if (data['exists']) {
           //El foro existe, devuelve sus detalles
           return xatAmic(
-            lastMessage: data['data']['last_msg'],
-            timeLastMessage: data['data']['last_time'],
-            recieverId: data['data']['receiverId'],
-            senderId: data['data']['senderId']
-          );
+              lastMessage: data['data']['last_msg'],
+              timeLastMessage: data['data']['last_time'],
+              recieverId: data['data']['receiverId'],
+              senderId: data['data']['senderId']);
         } else {
           return null; //El xat no existe
         }
       } else {
-        throw Exception('Fallo la obtención de datos: ${respuesta.statusCode}'); //Error en la solicitud HTTP
+        throw Exception(
+            'Fallo la obtención de datos: ${respuesta.statusCode}'); //Error en la solicitud HTTP
       }
     } catch (error) {
-      throw Exception('Fallo la obtención de datos: $error'); //Error de red u otro tipo de error
+      throw Exception(
+          'Fallo la obtención de datos: $error'); //Error de red u otro tipo de error
     }
   }
 
   Future<bool> createXat(String senderId, String receiverId) async {
     try {
-
       final Map<String, dynamic> xatdata = {
         'senderId': senderId,
         'receiverId': receiverId,
@@ -348,26 +352,25 @@ class ControladorDomini {
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
-        return querySnapshot.docs.first.id; // Devuelve el ID del primer documento 
+        return querySnapshot
+            .docs.first.id; // Devuelve el ID del primer documento
       } else {
-        return null; // Si no se encontró ningún documento 
+        return null; // Si no se encontró ningún documento
       }
     } catch (error) {
       return null; // Si ocurre algún error al obtener el ID del xat
     }
   }
 
-  void addMessage(String? xatId, String time, String text, String senderId) async {
+  void addMessage(
+      String? xatId, String time, String text, String senderId) async {
     try {
       final url = Uri.parse('http://10.0.2.2:8080/xats/$xatId/mensajes');
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'senderId': senderId,
-          'mensaje': text,
-          'fecha': time
-        }),
+        body:
+            jsonEncode({'senderId': senderId, 'mensaje': text, 'fecha': time}),
       );
 
       if (response.statusCode == 201) {
@@ -381,38 +384,43 @@ class ControladorDomini {
   }
 
   Future<List<Message>> getMessages(String? xatId) async {
-    try{
-      final response = await http.get(Uri.parse('http://10.0.2.2:8080/xats/$xatId/mensajes'));
-      
+    try {
+      final response = await http
+          .get(Uri.parse('http://10.0.2.2:8080/xats/$xatId/mensajes'));
+
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         // Mapear los datos de los mensajes a una lista de objetos Message
-        List<Message> mensajes = data.map((json) => Message.fromJson(json)).toList();
+        List<Message> mensajes =
+            data.map((json) => Message.fromJson(json)).toList();
         mensajes.sort((b, a) => a.timeSended.compareTo(b.timeSended));
         return mensajes;
       } else if (response.statusCode == 404) {
         return []; // Devolver una lista vacía si no hay posts para este xat
       } else {
-        throw Exception('Error al obtener los posts del foro: ${response.statusCode}');
+        throw Exception(
+            'Error al obtener los posts del foro: ${response.statusCode}');
       }
     } catch (error) {
       throw Exception('Error de red: $error');
     }
-  } 
+  }
 
   //get dels grups en els que es troba un usuari
   Future<List<Grup>> getUserGrups(String userId) async {
     try {
-      final response = await http.get(Uri.parse('http://10.0.2.2:8080/grups/users/$userId'));
-      
+      final response =
+          await http.get(Uri.parse('http://10.0.2.2:8080/grups/users/$userId'));
+
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         List<Grup> reply = data.map((json) => Grup.fromJson(json)).toList();
         return reply;
       } else if (response.statusCode == 404) {
-        return [];  
+        return [];
       } else {
-        throw Exception('Error al obtener los replies del post: ${response.statusCode}');
+        throw Exception(
+            'Error al obtener los replies del post: ${response.statusCode}');
       }
     } catch (error) {
       throw Exception('Error de red: $error');
@@ -422,16 +430,18 @@ class ControladorDomini {
   //get info d'un grup
   Future<Grup> getInfoGrup(String grupId) async {
     try {
-      final response = await http.get(Uri.parse('http://10.0.2.2:8080/grups/$grupId'));
-      
+      final response =
+          await http.get(Uri.parse('http://10.0.2.2:8080/grups/$grupId'));
+
       if (response.statusCode == 200) {
         final dynamic data = json.decode(response.body);
         Grup reply = data.map((json) => Grup.fromJson(json)).toList();
         return reply;
       } else if (response.statusCode == 404) {
-        throw Exception('grup no existeix'); 
+        throw Exception('grup no existeix');
       } else {
-        throw Exception('Error al obtener los replies del post: ${response.statusCode}');
+        throw Exception(
+            'Error al obtener los replies del post: ${response.statusCode}');
       }
     } catch (error) {
       throw Exception('Error de red: $error');
@@ -439,9 +449,9 @@ class ControladorDomini {
   }
 
   //crear grup
-  void createGrup(String name, String description, String image, List<String> members) async {
+  void createGrup(String name, String description, String image,
+      List<String> members) async {
     try {
-
       final Map<String, dynamic> grupata = {
         'nom': name,
         'descr': description,
@@ -466,9 +476,9 @@ class ControladorDomini {
   }
 
   //actualitzar info grup
-  void updateGrup(String grupId, String name, String description, String image, List<String> members) async {
+  void updateGrup(String grupId, String name, String description, String image,
+      List<String> members) async {
     try {
-
       final Map<String, dynamic> grupata = {
         'nom': name,
         'descr': description,
@@ -493,17 +503,15 @@ class ControladorDomini {
   }
 
   //afegir missatge al grup
-  void addGrupMessage(String grupId, String time, String text, String senderId) async {
+  void addGrupMessage(
+      String grupId, String time, String text, String senderId) async {
     try {
       final url = Uri.parse('http://10.0.2.2:8080/grups/$grupId/mensajes');
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'senderId': senderId,
-          'mensaje': text,
-          'fecha': time
-        }),
+        body:
+            jsonEncode({'senderId': senderId, 'mensaje': text, 'fecha': time}),
       );
 
       if (response.statusCode == 201) {
@@ -518,24 +526,25 @@ class ControladorDomini {
 
   //agafar missatges del grup
   Future<List<Message>> getGrupMessages(String grupId) async {
-    try{
-      final response = await http.get(Uri.parse('http://10.0.2.2:8080/grups/$grupId/mensajes'));
-      
+    try {
+      final response = await http
+          .get(Uri.parse('http://10.0.2.2:8080/grups/$grupId/mensajes'));
+
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         // Mapear los datos de los mensajes a una lista de objetos Message
-        List<Message> mensajes = data.map((json) => Message.fromJson(json)).toList();
+        List<Message> mensajes =
+            data.map((json) => Message.fromJson(json)).toList();
         mensajes.sort((b, a) => a.timeSended.compareTo(b.timeSended));
         return mensajes;
       } else if (response.statusCode == 404) {
         return []; // Devolver una lista vacía si no hay posts para este grupo
       } else {
-        throw Exception('Error al obtener los posts del foro: ${response.statusCode}');
+        throw Exception(
+            'Error al obtener los posts del foro: ${response.statusCode}');
       }
     } catch (error) {
       throw Exception('Error de red: $error');
     }
   }
-
-
 }
