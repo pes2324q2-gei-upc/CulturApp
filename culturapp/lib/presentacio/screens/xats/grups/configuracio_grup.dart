@@ -1,9 +1,11 @@
+import "package:culturapp/domain/models/grup.dart";
+import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:flutter/material.dart";
 
 class ConfigGrup extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
-  final List<String> participants;
+  final List<Usuari> participants;
 
   const ConfigGrup(
       {Key? key,
@@ -18,32 +20,42 @@ class ConfigGrup extends StatefulWidget {
 
 class _ConfigGrup extends State<ConfigGrup> {
   late ControladorPresentacion _controladorPresentacion;
+
   double llargadaPantalla = 440;
   double llargadaPantallaTitols = 438;
-  Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
   bool afegit = false;
 
-  List<String> _participants = [];
+  String nomGrup = '';
+  String descripcioGrup = '';
+  String imatgeGrup = '';
+  List<Usuari> _participants = [];
 
-  /*'participant1',
-    'participant2',
-    'participant3',
-    'participant4',
-    'participant5',
-    'participant6', */
+  Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
 
   _ConfigGrup(ControladorPresentacion controladorPresentacion,
-      List<String> participants) {
+      List<Usuari> participants) {
     _controladorPresentacion = controladorPresentacion;
     _participants = participants;
   }
 
-  void assignarNomGrup(String value) {
-    //ficar valor a "nom" de Grup
+  void assignarImatge(String value) {
+    //de moment no funcional
+    imatgeGrup = value;
   }
 
   void crearGrup() {
-    //funcio de post al back
+    Grup nouGrup = Grup(
+      nomGroup: nomGrup,
+      imageGroup: imatgeGrup,
+      descripcio:
+          'this is a grup for cool people :), the coolest around the sickest and the slayest',
+      lastMessage: 'Sigues el primer dir hola!',
+      timeLastMessage: DateTime.now().toString(),
+      participants: _participants,
+      missatgesGrup: [],
+    );
+
+    //cridar a funcio del back de crear el grup, passant com a parametre la variable nouGrup
     _controladorPresentacion.mostrarXats(context);
   }
 
@@ -98,9 +110,9 @@ class _ConfigGrup extends State<ConfigGrup> {
   }
 
   Widget _buildEscollirImatge() {
-    return Column(
+    return const Column(
       children: [
-        const Text(
+        Text(
           'Imatge (opt):',
           style: TextStyle(
             fontSize: 17,
@@ -109,13 +121,12 @@ class _ConfigGrup extends State<ConfigGrup> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(14),
-          child: Image.network(
-            'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
-            //cambiar imatge this one is pochilla
-            fit: BoxFit.cover,
-            width: 70,
-            height: 70,
+          padding: EdgeInsets.all(14),
+          child: Image(
+            image: AssetImage('assets/userImage.png'),
+            fit: BoxFit.fill,
+            width: 70.0,
+            height: 70.0,
           ),
         ),
       ],
@@ -145,6 +156,11 @@ class _ConfigGrup extends State<ConfigGrup> {
             child: TextField(
               cursorColor: Colors.white,
               cursorHeight: 20,
+              onChanged: (value) {
+                setState(() {
+                  nomGrup = value;
+                });
+              },
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.normal,
@@ -193,6 +209,11 @@ class _ConfigGrup extends State<ConfigGrup> {
             maxLines: 6,
             cursorColor: Colors.white,
             cursorHeight: 20,
+            onChanged: (value) {
+              setState(() {
+                descripcioGrup = value;
+              });
+            },
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.normal,
@@ -249,13 +270,13 @@ class _ConfigGrup extends State<ConfigGrup> {
       //una vegada tingui mes info del model
       //dels perfils lo seu seria canviar-ho
       contentPadding: const EdgeInsets.all(8.0),
-      leading: Image.network(
-        'https://w7.pngwing.com/pngs/635/97/png-transparent-computer-icons-the-broadleaf-group-people-icon-miscellaneous-monochrome-black.png',
-        fit: BoxFit.cover,
-        width: 50,
-        height: 50,
+      leading: Image(
+        image: AssetImage(_participants[index].image),
+        fit: BoxFit.fill,
+        width: 50.0,
+        height: 50.0,
       ),
-      title: Text(_participants[index],
+      title: Text(_participants[index].nom,
           style: const TextStyle(
             color: const Color(0xFFF4692A),
             fontWeight: FontWeight.bold,

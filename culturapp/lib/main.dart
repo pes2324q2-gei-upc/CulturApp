@@ -17,7 +17,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   final controladorPresentacion = ControladorPresentacion();
-
+  //controladorPresentacion.func_logout();
   User? currentUser = FirebaseAuth.instance.currentUser;
 
   if (currentUser != null) {

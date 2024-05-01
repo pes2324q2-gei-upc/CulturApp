@@ -1,45 +1,50 @@
+import "package:culturapp/domain/models/message.dart";
+import "package:culturapp/domain/models/usuari.dart";
+import "package:culturapp/domain/models/xat_amic.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/chat_bubble.dart";
 import "package:flutter/material.dart";
 
-class XatGrupScreen extends StatefulWidget {
+class XatAmicScreen extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
+  final Usuari usuari;
 
-  const XatGrupScreen({Key? key, required this.controladorPresentacion})
+  const XatAmicScreen(
+      {Key? key, required this.controladorPresentacion, required this.usuari})
       : super(key: key);
 
   @override
-  State<XatGrupScreen> createState() =>
-      _XatGrupScreen(this.controladorPresentacion);
+  State<XatAmicScreen> createState() =>
+      _XatAmicScreen(this.controladorPresentacion, this.usuari);
 }
 
-class _XatGrupScreen extends State<XatGrupScreen> {
+class _XatAmicScreen extends State<XatAmicScreen> {
   late ControladorPresentacion _controladorPresentacion;
+  late Usuari _usuari;
+  late xatAmic xat;
   Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
+  List<Message> missatges = [];
 
-  _XatGrupScreen(ControladorPresentacion controladorPresentacion) {
+  _XatAmicScreen(
+      ControladorPresentacion controladorPresentacion, Usuari usuari) {
     _controladorPresentacion = controladorPresentacion;
+    _usuari = usuari;
+    xat = xatMock;
+    //crida al back per agafar el xat amb el receiver(usuari i jo)
+    missatges = xat.missatges;
   }
-
-  List<Message> missatges = [
-    Message(text: 'text', sender: 'Rosa'),
-    Message(text: 'text llarggggggggggggggggggg', sender: 'Rosa'),
-    Message(text: 'text', sender: 'Me'),
-    Message(text: 'text', sender: 'Rosa'),
-    Message(text: 'text', sender: 'Me'),
-    Message(text: 'text', sender: 'Rosa'),
-    Message(text: 'text', sender: 'Me'),
-    Message(text: 'text', sender: 'Rosa'),
-    Message(text: 'text', sender: 'Andreu'),
-  ];
 
   final TextEditingController _controller = TextEditingController();
 
   void _handleSubmitted(String text) {
     _controller.clear();
     setState(() {
-      missatges.insert(0, Message(text: text, sender: 'Me'));
+      //crida al back per enviar un missatge
+      missatges.insert(
+        0,
+        Message(text: text, sender: 'Me', timeSended: '10:00'),
+      );
     });
   }
 
@@ -62,9 +67,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
                   return ChatBubble(
                     userName: missatges[index].sender,
                     message: missatges[index].text,
-                    time: "10:00 AM",
-                    //s'ha de tocar de tal manera que si soc jo l'usuari, es fiqui
-                    //a la dreta, mentre que si es qualsevol altre persona es fica a l'esquerra
+                    time: missatges[index].timeSended,
                   );
                 },
               ),
@@ -73,7 +76,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
           const Divider(height: 1.0),
           Container(
             decoration: BoxDecoration(color: Theme.of(context).cardColor),
-            child: _BottomInputField(),
+            child: _bottomInputField(),
           ),
         ],
       ),
@@ -82,33 +85,26 @@ class _XatGrupScreen extends State<XatGrupScreen> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: const Color(0xFFF4692A),
+      backgroundColor: Colors.orange,
       leading: IconButton(
         icon: const Icon(
           Icons.arrow_back,
           color: Colors.white,
         ),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: () => _controladorPresentacion.mostrarXats(context),
       ),
-      title: const Row(
+      title: Row(
         children: [
           CircleAvatar(
-            backgroundImage: AssetImage('assets/userImage.png'),
+            backgroundImage: AssetImage(_usuari.image),
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Nom del grup',
-                style: TextStyle(color: Colors.white),
-              ),
-              Text(
-                'Participants',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14.0,
-                ),
+                _usuari.nom,
+                style: const TextStyle(color: Colors.white),
               ),
             ],
           ),
@@ -121,18 +117,19 @@ class _XatGrupScreen extends State<XatGrupScreen> {
             color: Colors.white,
           ),
           onPressed: () {
-            //de moment res
+            //ns si més endevant estaria per poder reportar?
+            _controladorPresentacion.mostrarInfoAmic(context, _usuari);
           },
         ),
       ],
     );
   }
 
-  Widget _BottomInputField() {
+  Widget _bottomInputField() {
     return IconTheme(
-      data: IconThemeData(color: const Color(0xFFF4692A)),
+      data: const IconThemeData(color: Colors.orange),
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 8.0),
+        margin: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
           children: <Widget>[
             Flexible(
@@ -140,11 +137,11 @@ class _XatGrupScreen extends State<XatGrupScreen> {
                 controller: _controller,
                 onSubmitted: _handleSubmitted,
                 decoration:
-                    InputDecoration.collapsed(hintText: 'Send a message'),
+                    const InputDecoration.collapsed(hintText: 'Send a message'),
               ),
             ),
             IconButton(
-              icon: Icon(Icons.send),
+              icon: const Icon(Icons.send),
               onPressed: () => _handleSubmitted(_controller.text),
             ),
           ],
@@ -152,11 +149,4 @@ class _XatGrupScreen extends State<XatGrupScreen> {
       ),
     );
   }
-}
-
-class Message {
-  final String text;
-  final String sender;
-
-  Message({required this.text, required this.sender});
 }

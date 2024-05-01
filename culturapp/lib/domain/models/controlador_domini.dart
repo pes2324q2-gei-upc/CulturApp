@@ -182,20 +182,41 @@ class ControladorDomini {
     }
     return categorias;
   }
+    static const token = "976f2f7b53c188d8a77b9b71887621d1e1d207faec5663bf79de9572ac887ea7";
+    Future<List<String>> obteFollows(String username) async {
+      print(username);
+      print('VOY POR FOLLOWS');
+      final respuesta = await http.get(
+      Uri.parse('http://10.0.2.2:8080/amics/Pepe/following'),
+      headers: {
+      'Authorization': 'Bearer $token',
+      },
+    );
+    if (respuesta.statusCode == 200) {
+      print(respuesta.body);
+      print('NULLOOOSAJDKLAÑSDKLDLSADASD');
+      final body = respuesta.body;
+      final List<dynamic> data = json.decode(body);
+      final List<String> users = data.map((user) => user.toString()).toList();
+      return users;
+    } 
+    else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
 
   Future<bool>  createUser  (User? _user, String username, List<String> selectedCategories) async {
     try {
-      print(_user);
-      print(username);
+
       final Map<String, dynamic> userdata = {
         'uid': _user?.uid,
         'username': username,
         'email': _user?.email,
-        'favcategories': ["Carnaval","Art","Commemoració"]
+        'favcategories': selectedCategories
       };
 
       final respuesta = await http.post(
-        Uri.parse('http://${ip}:8080/users/create'),
+        Uri.parse('https://culturapp-back.onrender.com/users/create'),
         body: jsonEncode(userdata),
         headers: {'Content-Type': 'application/json'},
       );
