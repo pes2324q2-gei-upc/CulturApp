@@ -33,7 +33,7 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
     if(respuesta.statusCode == 200) {
       final body = respuesta.body;
       final List<dynamic> data = json.decode(body);
-      final List<String> users = data.map((user) => user['friend'].toString()).toList(); // Change 'user' to 'friend'
+      final List<String> users = data.map((user) => user['friend'].toString()).toList(); 
       return users;
     }
     else {
@@ -52,8 +52,12 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
     if (respuesta.statusCode == 200) {
       final body = respuesta.body;
       final List<dynamic> data = json.decode(body);
-      final List<String> users = data.map((user) => user['user'].toString()).toList();
-      return users;
+      if(endpoint == 'followers') {
+        return data.map((user) => user['user'].toString()).toList();
+      }else {
+        return data.map((user) => user['friend'].toString()).toList();
+      }
+      
     } else {
       throw Exception('Fallo la obtención de datos' /*"data_error_msg".tr(context)*/);
     }
@@ -135,7 +139,7 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
       ),
       body: Column(
         children: [
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           TabBar(
             controller: _tabController,
             tabs: const [

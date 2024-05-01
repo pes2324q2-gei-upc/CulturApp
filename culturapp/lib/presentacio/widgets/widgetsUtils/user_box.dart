@@ -107,7 +107,7 @@ class _userBoxState extends State<userBox> {
           ],
         );
       } else {
-        return Text("Solicitud $_action");
+        return Text("Solicitud $_action"); //Falta idioma
       }
   }
 
@@ -182,7 +182,7 @@ class _userBoxState extends State<userBox> {
                     ),
                   ),
                 ] else ...[
-                  Text("Solicitud $_action"),
+                  Text("Solicitud $_action"), //Falta idioma
                 ] 
               ]
             ],
