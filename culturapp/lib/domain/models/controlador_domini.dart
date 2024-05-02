@@ -489,7 +489,7 @@ class ControladorDomini {
       List<dynamic> members) async {
     try {
       final Map<String, dynamic> grupata = {
-        'nom': name,
+        'name': name,
         'descr': description,
         'imatge': image,
         'members': members
