@@ -46,19 +46,17 @@ class _ConfigGrup extends State<ConfigGrup> {
   }
 
   void crearGrup() {
-    Grup nouGrup = Grup(
-      id: id,
-      nomGroup: nomGrup,
-      imageGroup: imatgeGrup,
-      descripcio:
-          'this is a grup for cool people :), the coolest around the sickest and the slayest',
-      lastMessage: 'Sigues el primer dir hola!',
-      timeLastMessage: DateTime.now().toString(),
-      membres: membres,
-      missatgesGrup: [],
-    );
+    String imageHardcoded = 'assets/userImage.png';
+
+    List<String> membersHardcoded = ['Eman', 'hardcoded'];
+
+    membersHardcoded
+        .add('susssss'); //añadir el username de la persona que lo està creando
+    //cuando haga pull actualizar-lo, ya esta en back
 
     //cridar a funcio del back de crear el grup, passant com a parametre la variable nouGrup
+    _controladorPresentacion.createGrup(
+        nomGrup, descripcioGrup, imageHardcoded, membersHardcoded);
     _controladorPresentacion.mostrarXats(context);
   }
 
