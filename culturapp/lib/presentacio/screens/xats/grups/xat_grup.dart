@@ -2,7 +2,6 @@ import "package:cloud_firestore/cloud_firestore.dart";
 import "package:culturapp/domain/converters/convert_date_format.dart";
 import "package:culturapp/domain/models/grup.dart";
 import "package:culturapp/domain/models/message.dart";
-import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/chat_bubble.dart";
 import "package:firebase_auth/firebase_auth.dart";

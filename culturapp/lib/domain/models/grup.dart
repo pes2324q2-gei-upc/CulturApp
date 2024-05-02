@@ -1,5 +1,4 @@
 import 'package:culturapp/domain/models/message.dart';
-import 'package:culturapp/domain/models/usuari.dart';
 
 class Grup {
   String id;

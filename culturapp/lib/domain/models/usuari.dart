@@ -18,16 +18,6 @@ class Usuari {
   });
 }
 
-const Usuari usuariMock = Usuari(
-  id: '1',
-  nom: 'usuariMock',
-  email: 'usuari@gmail.com',
-  image: 'assets/userImage.png',
-  activitats: ["a", "b"],
-  favCategories: ["a", "b"],
-  followers: [],
-);
-
 const List<Usuari> allAmics = [
   Usuari(
     id: '1',
