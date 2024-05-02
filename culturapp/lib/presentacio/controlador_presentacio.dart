@@ -420,11 +420,12 @@ class ControladorPresentacion {
     return controladorDomini.getReplyPosts(foroId, postId);
   }
 
-
+  //eliminar post
   Future<void> deletePost(String foroId, String? postId) async {
     return controladorDomini.deletePost(foroId, postId);
   }
 
+  //eliminar reply
   Future<void> deleteReply(String foroId, String? postId, String? replyId) async {
     return controladorDomini.deleteReply(foroId, postId, replyId);
   }
