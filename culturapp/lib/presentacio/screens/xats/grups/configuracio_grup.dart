@@ -25,10 +25,9 @@ class _ConfigGrup extends State<ConfigGrup> {
   double llargadaPantallaTitols = 438;
   bool afegit = false;
 
-  String id = '';
-  String nomGrup = '';
+  String nomGrup = 'nomDefault';
   String descripcioGrup = '';
-  String imatgeGrup = '';
+  String imatgeGrup = 'assets/userImage.png';
   List<String> membres = [];
   List<Usuari> _participants = [];
 
@@ -46,7 +45,7 @@ class _ConfigGrup extends State<ConfigGrup> {
   }
 
   void crearGrup() {
-    String imageHardcoded = 'assets/userImage.png';
+    //imatge hardcoded de moment
 
     List<String> membersHardcoded = ['Eman', 'hardcoded'];
 
@@ -56,7 +55,7 @@ class _ConfigGrup extends State<ConfigGrup> {
 
     //cridar a funcio del back de crear el grup, passant com a parametre la variable nouGrup
     _controladorPresentacion.createGrup(
-        nomGrup, descripcioGrup, imageHardcoded, membersHardcoded);
+        nomGrup, descripcioGrup, imatgeGrup, membersHardcoded);
     _controladorPresentacion.mostrarXats(context);
   }
 
