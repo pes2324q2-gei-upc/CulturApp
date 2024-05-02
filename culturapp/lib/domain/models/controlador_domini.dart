@@ -13,8 +13,8 @@ class ControladorDomini {
   final String ip = "10.0.2.2";
 
   Future<List<Actividad>> getActivitiesAgenda() async {
-    final respuesta = await http.get(
-        Uri.parse('https://culturapp-back.onrender.com/activitats/read/all'));
+    final respuesta =
+        await http.get(Uri.parse('http://${ip}:8080/activitats/read/all'));
 
     if (respuesta.statusCode == 200) {
       return _convert_database_to_list(respuesta);
@@ -25,7 +25,7 @@ class ControladorDomini {
 
   Future<List<Actividad>> getUserActivities(String userID) async {
     final respuesta = await http.get(
-      Uri.parse('https://culturapp-back.onrender.com/users/$userID/activitats'),
+      Uri.parse('http://${ip}:8080/users/$userID/activitats'),
     );
 
     if (respuesta.statusCode == 200) {
@@ -37,8 +37,7 @@ class ControladorDomini {
 
   Future<List<Actividad>> searchMyActivities(String userID, String name) async {
     final respuesta = await http.get(
-      Uri.parse(
-          'https://culturapp-back.onrender.com/users/activitats/$userID/search/$name'),
+      Uri.parse('https://${ip}:8080/users/activitats/$userID/search/$name'),
     );
 
     if (respuesta.statusCode == 200) {
@@ -51,8 +50,8 @@ class ControladorDomini {
   }
 
   Future<List<Actividad>> searchActivitat(String squery) async {
-    final respuesta = await http.get(Uri.parse(
-        'https://culturapp-back.onrender.com/activitats/name/$squery'));
+    final respuesta =
+        await http.get(Uri.parse('https://${ip}:8080/activitats/name/$squery'));
 
     if (respuesta.statusCode == 200) {
       //final List<dynamic> responseData = jsonDecode(respuesta.body);
@@ -131,8 +130,8 @@ class ControladorDomini {
   }
 
   Future<bool> accountExists(User? user) async {
-    final respuesta = await http.get(Uri.parse(
-        'https://culturapp-back.onrender.com/users/exists?uid=${user?.uid}'));
+    final respuesta = await http
+        .get(Uri.parse('https://${ip}:8080/users/exists?uid=${user?.uid}'));
 
     if (respuesta.statusCode == 200) {
       print(respuesta);
@@ -143,8 +142,8 @@ class ControladorDomini {
   }
 
   Future<List<String>> obteCatsFavs(User? user) async {
-    final respuesta = await http.get(Uri.parse(
-        'https://culturapp-back.onrender.com/users/${user?.uid}/favcategories'));
+    final respuesta = await http
+        .get(Uri.parse('http://${ip}:8080/users/${user?.uid}/favcategories'));
     List<String> categorias = [];
 
     if (respuesta.statusCode == 200) {

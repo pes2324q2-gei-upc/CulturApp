@@ -31,6 +31,8 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
     _controladorPresentacion = controladorPresentacion;
     _grup = grup;
     amics = allAmics;
+
+    ///canviar més endevant per obté followers
     displayList = amics;
     participantAfegit = List.generate(
       displayList.length,
@@ -178,7 +180,6 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
                 width: 55.0,
                 height: 55.0,
               ),
-              //),
             ),
             Positioned(
               bottom: 9,
@@ -256,8 +257,8 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
       ),
       child: const Icon(Icons.check),
       onPressed: () {
-        //_grup.membres =
-        participants; ////////////////////////////////////////////////////////////////////////
+        _grup.membres = participants;
+        ////////////////////////////////////////////////////////////////////////
         //crida al backend per passar el grup updated
         _controladorPresentacion.mostrarInfoGrup(context, _grup);
       },
