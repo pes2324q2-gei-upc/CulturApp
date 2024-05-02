@@ -88,7 +88,7 @@ Widget build(BuildContext context) {
                 for (var user in usersRecom)
                   Padding(
                     padding: const EdgeInsets.only(top: 5.0),
-                    //child: userBox(text: user.username, recomm: true, type: "null"),
+                    child: userBox(text: user.username, recomm: true, type: "null", token: 'null',),
                   ),
               ]
             else 
@@ -96,7 +96,7 @@ Widget build(BuildContext context) {
               for (var user in usersBD)
               Padding(
                 padding: const EdgeInsets.only(top: 5.0),
-                //child: userBox(text: user.username, recomm: false,  type: "null"),
+                child: userBox(text: user.username, recomm: false,  type: "null", token: 'null',),
               ),
               ]
             ],

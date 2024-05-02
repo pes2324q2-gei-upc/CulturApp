@@ -98,7 +98,7 @@ class ControladorDomini {
       };
 
       final respuesta = await http.post(
-        Uri.parse('https://culturapp-back.onrender.com/users/edit'), //FALTA AÑADIR TOKENS
+        Uri.parse('https://culturapp-back.onrender.com/users/edit'), 
         body: jsonEncode(userdata),
         headers: {'Authorization': 'Bearer ${userLogged.getToken()}',
                   'Content-Type': 'application/json'},
@@ -116,10 +116,7 @@ class ControladorDomini {
 
   Future<bool> usernameUnique(String username) async {
     final respuesta = await http.get(Uri.parse(
-        'https://culturapp-back.onrender.com/users/uniqueUsername?username=$username'),
-        headers: {
-          'Authorization': 'Bearer ${userLogged.getToken()}',
-        });
+        'https://culturapp-back.onrender.com/users/uniqueUsername?username=$username'));
 
     if (respuesta.statusCode == 200) {
       print(respuesta);
@@ -264,6 +261,7 @@ class ControladorDomini {
       print('Error de red: $error');
     }
   }
+
   Future<List<String>> obteFollows(String username) async {
       print(username);
       print('VOY POR FOLLOWS');

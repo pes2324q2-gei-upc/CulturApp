@@ -49,9 +49,9 @@ class ControladorPresentacion {
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
       _user = currentUser;
-      controladorDomini.setInfoUserLogged(_user!.uid);
+      await controladorDomini.setInfoUserLogged(_user!.uid);
     }
-  if(userLogged()) {
+  if(await userLogged()) {
       await controladorDomini.setInfoUserLogged(_user!.uid);
       usernameLogged = controladorDomini.userLogged.getUsername();
 
@@ -65,11 +65,11 @@ class ControladorPresentacion {
       usersBD.removeWhere((usuario) => friends.contains(usuario.username));
   }
   }
-   bool userLogged() {
+   Future<bool> userLogged() async {
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
       _user = currentUser;
-      controladorDomini.setInfoUserLogged(_user!.uid);
+      await controladorDomini.setInfoUserLogged(_user!.uid);
       return true;
     } else {
       return false;
