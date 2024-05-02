@@ -24,10 +24,11 @@ class VistaVerActividad extends StatefulWidget{
 
 class _VistaVerActividadState extends State<VistaVerActividad> {
   late ControladorPresentacion _controladorPresentacion; 
-  final ControladorDomini controladorDominio = new ControladorDomini();
+  late ControladorDomini controladorDominio;
   int _selectedIndex = 0;
   late List<String> infoActividad;
   late Uri uriActividad;
+
 
   bool mostrarDescripcionCompleta = false;
   bool estaApuntado = false;
@@ -53,6 +54,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     infoActividad = info_actividad;
     uriActividad = uri_actividad;
     _controladorPresentacion = controladorPresentacion;
+    controladorDominio = _controladorPresentacion.getControladorDomini();
   }
 
   @override

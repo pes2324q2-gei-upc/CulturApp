@@ -25,7 +25,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
   
   _UserInfoWidgetState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
-    activitats = controladorPresentacion.getUserActivities() as List<Actividad>;
+    activitats = controladorPresentacion.getActivitatsUser();
     display_list = activitats;
   }
 

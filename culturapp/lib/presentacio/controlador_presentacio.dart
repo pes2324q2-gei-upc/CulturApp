@@ -37,6 +37,7 @@ class ControladorPresentacion {
   late List<Usuario> usersBD;
   late List<String> friends;
   late String usernameLogged;
+  late List<Actividad> activitatsUser;
 
   void funcLogout() async {
     _auth.signOut();
@@ -48,16 +49,30 @@ class ControladorPresentacion {
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
       _user = currentUser;
-
+      controladorDomini.setInfoUserLogged(_user!.uid);
+    }
+  if(userLogged()) {
       await controladorDomini.setInfoUserLogged(_user!.uid);
       usernameLogged = controladorDomini.userLogged.getUsername();
 
       activitats = await controladorDomini.getActivitiesAgenda();
+      activitatsUser = await controladorDomini.getUserActivities();
       usersBD = await controladorDomini.getUsers();
-
-      categsFav = await controladorDomini.obteCatsFavs(); 
+      friends = await controladorDomini.obteFollows(usernameLogged);
+      categsFav = await controladorDomini.obteCatsFavs(usernameLogged); 
       usersBD.removeWhere((usuario) => usuario.username == usernameLogged);
       usersRecom = calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
+      usersBD.removeWhere((usuario) => friends.contains(usuario.username));
+  }
+  }
+   bool userLogged() {
+    User? currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      _user = currentUser;
+      controladorDomini.setInfoUserLogged(_user!.uid);
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -79,6 +94,7 @@ class ControladorPresentacion {
         bool userExists =
             await controladorDomini.accountExists(userCredential.user);
         _user = userCredential.user;
+        print(userExists);
   
         if (!userExists) {
           mostrarSignup(context);
@@ -134,9 +150,12 @@ class ControladorPresentacion {
     return categsFav;
   }
 
-  Future<List<Actividad>> getUserActivities() => controladorDomini.getUserActivities();
+  List<Actividad> getActivitatsUser() => activitatsUser;
 
   List<Actividad> getActivitats() => activitats;
+
+  Future<List<Actividad>> getUserActivities() => controladorDomini.getUserActivities();
+  
 
   List<String> getActivitatsRecomm() {
     recomms = calcularActividadesRecomendadas(categsFav, activitats);
@@ -152,7 +171,10 @@ class ControladorPresentacion {
   }
 
   Future<List<Actividad>> searchMyActivitats(String name) {
-    return controladorDomini.searchMyActivities(usernameLogged, name);
+    return controladorDomini.searchMyActivities(name);
+  }
+  ControladorDomini getControladorDomini() {
+    return controladorDomini;
   }
 
   void mostrarVerActividad(
@@ -346,4 +368,9 @@ class ControladorPresentacion {
       ),
     );
   }
+
+  String getUsername() {
+    return usernameLogged;
+  }
+  
 }

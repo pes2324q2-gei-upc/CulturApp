@@ -1,14 +1,14 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
 class UserLogged{
-  late final String tokenUserLogged;
-  late final String usernameUserLogged;
+  late String tokenUserLogged;
+  late String usernameUserLogged;
 
   void setToken(String token){
     tokenUserLogged = token;
@@ -33,21 +33,26 @@ class ControladorDomini {
 
 
   Future<void> setInfoUserLogged(String uid) async {
-    final respuesta = await http.get(Uri.parse('https://culturapp-back.onrender.com/users/token'));
+    final respuesta = await http.get(Uri.parse('https://culturapp-back.onrender.com/users/infoToken'),
+    headers: {'Authorization' : 'Bearer $uid'});
 
     if (respuesta.statusCode == 200) {
       var data = json.decode(respuesta.body);
-      userLogged.setToken(data['token']);
-      userLogged.setToken(data['username']);
+        userLogged.setToken(data['token']);
+        userLogged.setUsername(data['username']);
+      
     } else {
       throw Exception('Fallo la obtención de datos');
     }
   }
 
   Future<bool> accountExists(User? user) async {
+    print(user?.uid);
     final respuesta = await http
         .get(Uri.parse('https://culturapp-back.onrender.com/users/exists?uid=${user?.uid}'));
-
+       
+      print(respuesta.statusCode);
+      print(respuesta.body);
     if (respuesta.statusCode == 200) {
       return (respuesta.body == "exists");
     } else {
@@ -95,8 +100,9 @@ class ControladorDomini {
       final respuesta = await http.post(
         Uri.parse('https://culturapp-back.onrender.com/users/edit'), //FALTA AÑADIR TOKENS
         body: jsonEncode(userdata),
-        headers: {'Content-Type': 'application/json'},
-      );
+        headers: {'Authorization': 'Bearer ${userLogged.getToken()}',
+                  'Content-Type': 'application/json'},
+        );
 
       if (respuesta.statusCode == 200) {
         print('Datos enviados exitosamente');
@@ -110,7 +116,10 @@ class ControladorDomini {
 
   Future<bool> usernameUnique(String username) async {
     final respuesta = await http.get(Uri.parse(
-        'https://culturapp-back.onrender.com/users/uniqueUsername?username=${username}'));
+        'https://culturapp-back.onrender.com/users/uniqueUsername?username=$username'),
+        headers: {
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+        });
 
     if (respuesta.statusCode == 200) {
       print(respuesta);
@@ -120,9 +129,9 @@ class ControladorDomini {
     }
   }
 
-  Future<List<String>> obteCatsFavs() async {
+  Future<List<String>> obteCatsFavs(String username) async {
     final respuesta = await http
-        .get(Uri.parse('https://culturapp-back.onrender.com/users/${userLogged.getUsername()}/favcategories')
+        .get(Uri.parse('https://culturapp-back.onrender.com/users/${username}/favcategories')
         , headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
         }
@@ -181,10 +190,12 @@ class ControladorDomini {
     }
   }
 
-  Future<List<Actividad>> searchMyActivities(String username, String name) async {
+  Future<List<Actividad>> searchMyActivities(String name) async {
     final respuesta = await http.get(
-      Uri.parse('https://culturapp-back.onrender.com/users/activitats/$userID/search/$name'), //FALTA AÑADIR TOKENS
-    );
+      Uri.parse('https://culturapp-back.onrender.com/users/activitats/search/$name'), //FALTA AÑADIR TOKENS
+    headers: {
+      'Authorization': 'Bearer ${userLogged.getToken()}',
+    });
 
     if (respuesta.statusCode == 200) {
       return _convert_database_to_list(respuesta);
@@ -216,7 +227,11 @@ class ControladorDomini {
 
   Future<bool> isUserInActivity(String? uid, String code) async {
     final respuesta = await http.get(Uri.parse(
-        'https://culturapp-back.onrender.com/users/activitats/isuserin?uid=${uid}&activityId=${code}'));
+        'https://culturapp-back.onrender.com/users/activitats/isuserin?id=$uid&activityId=$code'),
+        headers: {
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+        } 
+        );
 
     if (respuesta.statusCode == 200) {
       return (respuesta.body == "yes");
@@ -235,7 +250,9 @@ class ControladorDomini {
       final respuesta = await http.post(
         Uri.parse('https://culturapp-back.onrender.com/users/activitats/signup'),
         body: jsonEncode(requestData),
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ${userLogged.getToken()}',
+                },
       );
 
       if (respuesta.statusCode == 200) {
@@ -247,6 +264,28 @@ class ControladorDomini {
       print('Error de red: $error');
     }
   }
+  Future<List<String>> obteFollows(String username) async {
+      print(username);
+      print('VOY POR FOLLOWS');
+      final respuesta = await http.get(
+      Uri.parse('https://culturapp-back.onrender.com/amics/$username/following'),
+      headers: {
+      'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+    );
+    if (respuesta.statusCode == 200) {
+      print(respuesta.body);
+      print('NULLOOOSAJDKLAÑSDKLDLSADASD');
+      final body = respuesta.body;
+      final List<dynamic> data = json.decode(body);
+      final List<String> users = data.map((user) => user.toString()).toList();
+      return users;
+    } 
+    else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
+
 
   void signoutFromActivity(String? uid, String code) async {
     try {
@@ -258,7 +297,8 @@ class ControladorDomini {
       final respuesta = await http.post(
         Uri.parse('https://culturapp-back.onrender.com/users/activitats/signout'),
         body: jsonEncode(requestData),
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json',
+                  'Authorization': 'Bearer ${userLogged.getToken()}',},
       );
 
       if (respuesta.statusCode == 200) {
