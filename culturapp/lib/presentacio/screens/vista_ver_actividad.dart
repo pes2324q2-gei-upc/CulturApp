@@ -143,7 +143,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           Expanded(
             child: Text(
               tituloActividad,
-              style: const TextStyle(color: const Color(0xFFF4692A), fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: Color(0xFFF4692A), fontSize: 18, fontWeight: FontWeight.bold),
             ),
             
           ),
@@ -173,7 +173,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             style: const TextStyle(fontSize: 16, ),
             maxLines: mostrarDescripcionCompleta ? null : 2,
             overflow: mostrarDescripcionCompleta ? null: TextOverflow.ellipsis,
-            textAlign: TextAlign.justify, //hacer que el texto se vea formato cuadrado
+            textAlign: TextAlign.justify, 
         ),
       );
   }
@@ -234,7 +234,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
   Widget _getIconPlusTexto(String categoria, String texto){
 
-    late Icon icono; //late para indicar que se inicializará en el futuro y que cuando se acceda a su valor no sea nulo
+    late Icon icono; 
 
     switch(categoria){
       case 'ubicacion':

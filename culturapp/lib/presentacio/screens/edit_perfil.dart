@@ -11,19 +11,19 @@ class EditPerfil extends StatefulWidget {
 
   final ControladorPresentacion controladorPresentacion;
 
-  final String uid;
+  final String username;
 
-  const EditPerfil({Key? key, required this.controladorPresentacion, required this.uid}) : super(key: key);
+  const EditPerfil({Key? key, required this.controladorPresentacion, required this.username}) : super(key: key);
 
   @override
-  State<EditPerfil> createState() => _EditPerfil(this.controladorPresentacion, this.uid);
+  State<EditPerfil> createState() => _EditPerfil(this.controladorPresentacion, this.username);
 }
 
 class _EditPerfil extends State<EditPerfil> {
   //Usuari de Firebase
   int _selectedIndex = 3;
 
-  late String _uid;
+  late String _username;
 
   late Future<String?> _usernameFuture;
 
@@ -54,17 +54,16 @@ class _EditPerfil extends State<EditPerfil> {
 
   late User? user;
   
-  _EditPerfil(ControladorPresentacion controladorPresentacion, String uid) {
+  _EditPerfil(ControladorPresentacion controladorPresentacion, String username) {
     _controladorPresentacion = controladorPresentacion;
-    user = controladorPresentacion.getUser();
-    _uid = uid;
+    _username = username;
     selectedCategories = controladorPresentacion.getCategsFav();
   }
 
   @override
   void initState() {
     super.initState();
-    _usernameFuture = widget.controladorPresentacion.getUsername(_uid);
+    _usernameFuture = widget.username as Future<String?>;
   }
 
   @override

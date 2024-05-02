@@ -15,11 +15,11 @@ int calculaCoincidencias(List<String>categFav, List<String>categsUserActual){
   return coincidencias;
 }
 
-List<Usuario> calculaUsuariosRecomendados(List<Usuario>users, String idActual, List<String>categoriasFavoritas){
+List<Usuario> calculaUsuariosRecomendados(List<Usuario>users, String usernameActual, List<String>categoriasFavoritas){
   List<Usuario>recomms = [];
 
   for (int i = 0; i < users.length && recomms.length < 3; ++i){
-    if (users[i].identificador != idActual){
+    if (users[i].username != usernameActual){
       List<String> favcats = [];
       favcats = users[i].favCats.cast<String>();
       if (calculaCoincidencias(favcats, categoriasFavoritas) > 0) {
@@ -30,7 +30,7 @@ List<Usuario> calculaUsuariosRecomendados(List<Usuario>users, String idActual, L
 
   if (recomms.isEmpty || recomms.length < 3){
     for (int i = 0; i < users.length && recomms.length < 3; ++i){
-      if (users[i].identificador != idActual){
+      if (users[i].username != usernameActual){
         recomms.add(users[i]);
       }
     }

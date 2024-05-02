@@ -6,35 +6,33 @@ import 'package:culturapp/presentacio/controlador_presentacio.dart';
 
 class UserInfoWidget extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
-  final String uid;
+  final String username;
 
-  const UserInfoWidget({Key? key, required this.controladorPresentacion, required String this.uid}) : super(key: key);
+  const UserInfoWidget({Key? key, required this.controladorPresentacion, required String this.username}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _UserInfoWidgetState createState() => _UserInfoWidgetState(this.controladorPresentacion, this.uid);
+  _UserInfoWidgetState createState() => _UserInfoWidgetState(this.controladorPresentacion);
 }
 
 class _UserInfoWidgetState extends State<UserInfoWidget> {
   String _selectedText = "'Historico actividades'";
   int _selectedIndex = 0;
   late ControladorPresentacion _controladorPresentacion;
-  late String _uid;
-  late Future<String?> _usernameFuture;
+  late String _usernameFuture;
   late List<Actividad> activitats;
   late List<Actividad> display_list;
   
-  _UserInfoWidgetState(ControladorPresentacion controladorPresentacion, String uid) {
+  _UserInfoWidgetState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
-    _uid = uid;
-    activitats = controladorPresentacion.getActivitatsUser();
+    activitats = controladorPresentacion.getUserActivities() as List<Actividad>;
     display_list = activitats;
   }
 
   @override
   void initState() {
     super.initState();
-    _usernameFuture = widget.controladorPresentacion.getUsername(_uid);
+    _usernameFuture = widget.username;
   }
 
   void _onTabChange(int index) {
@@ -61,7 +59,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
     return Scaffold(
       body: Center(
         child: FutureBuilder<String?>(
-      future: _usernameFuture,
+      future: Future.value(_usernameFuture),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Muestra un indicador de carga mientras se obtiene el nombre de usuario
@@ -70,11 +68,11 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
             // Asigna un tamaño específico al contenedor
             width: 50, // Por ejemplo, puedes ajustar el ancho según tus necesidades
             height: 50, // También puedes ajustar la altura según tus necesidades
-            child: CircularProgressIndicator(color: const Color(0xFFF4692A)),
+            child: const CircularProgressIndicator(color:  Color(0xFFF4692A)),
           );
         } else if (snapshot.hasError) {
           // Muestra un mensaje de error si falla la obtención del nombre de usuario
-          return Text('Error al obtener el nombre de usuario');
+          return const Text('Error al obtener el nombre de usuario');
         } else {
           // Muestra el nombre de usuario obtenido
           final username = snapshot.data ?? '';

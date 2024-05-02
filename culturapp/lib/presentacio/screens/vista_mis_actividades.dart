@@ -36,7 +36,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   late String squery;
   late String? _selectedCategory;
   late String selectedData;
-  late User? usuario;
+  late User? usuario; //SOBRA DEBIDO LÓGICA GET ACTIVITATS USER
   int _selectedIndex = 1;
   TextEditingController _dateController = TextEditingController();
   TextEditingController _searchController = TextEditingController();
@@ -154,7 +154,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
 
   Future<List<Actividad>> fetchActivities() async {
     var actividadesaux = <Actividad>[];
-    actividadesaux = await _controladorPresentacion.getMisActivitats();
+    actividadesaux = await _controladorPresentacion.getUserActivities();
     return actividadesaux;
   }
 

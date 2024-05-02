@@ -168,7 +168,6 @@ class _SignupState extends State<Signup> {
       
       await _controladorPresentacion.createUser(usernameController.text, selectedCategories, context);
       await _controladorPresentacion.initialice();
-      await _controladorPresentacion.initialice2();
 
       _controladorPresentacion.mostrarMapa(context);
     }
