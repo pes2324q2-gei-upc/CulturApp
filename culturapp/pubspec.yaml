@@ -35,6 +35,7 @@ dependencies:
   carousel_slider: ^4.2.1
   flutter_localizations:
     sdk: flutter
+  shared_preferences: ^2.0.8
 
 dev_dependencies:
   flutter_test:
@@ -44,7 +45,7 @@ dev_dependencies:
 flutter:
   assets:
   - assets/lang/es.json
-  - assets/lang/cat.json
+  - assets/lang/ca.json
   - assets/lang/en.json
   - assets/pinarte.png
   - assets/pinconfe.png

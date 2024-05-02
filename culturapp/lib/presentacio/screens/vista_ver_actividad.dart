@@ -1,5 +1,6 @@
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:culturapp/translations/AppLocalizations';
 import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -89,7 +90,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
-        title: const Text("Actividad"),
+        title: Text("Activity".tr(context)),
         centerTitle: true, // Centrar el título
         toolbarHeight: 50.0,
         titleTextStyle: const TextStyle(
@@ -158,7 +159,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             backgroundColor: MaterialStateProperty.all<Color>(
             estaApuntado ? Colors.black : Colors.orange,),
             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),),
-            child: Text(estaApuntado ? 'Desapuntarse' : 'Apuntarse'),
+            child: Text(estaApuntado ? 'signout'.tr(context) : 'signin'.tr(context)),
           ),
         ],
       )
@@ -189,7 +190,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         alignment: Alignment.center,
         margin: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Text(
-          mostrarDescripcionCompleta ? "Ver menos" : "Ver más",
+          mostrarDescripcionCompleta ? 'see_less'.tr(context) : 'see_more'.tr(context),
           style: const TextStyle(color: Colors.grey,),
         ),
       ),
@@ -215,8 +216,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                   onTap: () {
                     launchUrl(urlEntrades); // Abrir la url de la actividad para ir a su pagina
                   },
-                  child: const Text(
-                    'Informació Entrades',
+                  child: Text(
+                    'tickets_info'.tr(context),
                     style: TextStyle(
                       decoration: TextDecoration.underline, // Subrayar 
                       fontWeight: FontWeight.bold,
