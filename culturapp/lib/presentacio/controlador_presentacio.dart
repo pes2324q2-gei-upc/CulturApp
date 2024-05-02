@@ -371,16 +371,17 @@ class ControladorPresentacion {
 
   //a partir de aqui modificar las que necesiten token o no
 
-  Future<void> getXat(String receiverId) async {
+  Future<void> getXat(String receiverName) async {
     try {
-      xatAmic? xat = await controladorDomini.xatExists(receiverId);
+      xatAmic? xat = await controladorDomini.xatExists(receiverName);
 
       if (xat != null) {
         // El foro existe, imprimir sus detalles
         print('Xat existente: $xat');
       } else {
         // El foro no existe, crear uno nuevo
-        bool creadoExitosamente = await controladorDomini.createXat(receiverId);
+        bool creadoExitosamente =
+            await controladorDomini.createXat(receiverName);
         if (creadoExitosamente) {
           print('Nuevo xat creado');
         } else {

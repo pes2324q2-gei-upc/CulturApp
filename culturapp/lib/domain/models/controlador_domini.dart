@@ -293,15 +293,19 @@ class ControladorDomini {
       "976f2f7b53c188d8a77b9b71887621d1e1d207faec5663bf79de9572ac887ea7";
 
   //xat existe? si no es asi crealo
-  Future<xatAmic?> xatExists(String receiverId) async {
+  Future<xatAmic?> xatExists(String receiverName) async {
     try {
       final respuesta = await http.get(
-          Uri.parse('http://10.0.2.2:8080/xats/exists?receiverId=$receiverId'));
+        Uri.parse('http://10.0.2.2:8080/xats/exists?receiverId=$receiverName'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
 
       if (respuesta.statusCode == 200) {
         final data = json.decode(respuesta.body);
         if (data['exists']) {
-          //El foro existe, devuelve sus detalles
+          //El xat existe, devuelve sus detalles
           return xatAmic(
               lastMessage: data['data']['last_msg'],
               timeLastMessage: data['data']['last_time'],
@@ -320,9 +324,9 @@ class ControladorDomini {
     }
   }
 
-  Future<bool> createXat(String receiverId) async {
+  Future<bool> createXat(String receiverName) async {
     try {
-      final Map<String, dynamic> xatdata = {'receiverId': receiverId};
+      final Map<String, dynamic> xatdata = {'receiverId': receiverName};
 
       final respuesta = await http.post(
         Uri.parse('https://culturapp-back.onrender.com/xats/create'),
@@ -414,8 +418,12 @@ class ControladorDomini {
   //get dels grups en els que es troba un usuari
   Future<List<Grup>> getUserGrups() async {
     try {
-      final response =
-          await http.get(Uri.parse('http://10.0.2.2:8080/grups/users/all'));
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:8080/grups/users/all'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -459,14 +467,14 @@ class ControladorDomini {
       List<String> members) async {
     try {
       final Map<String, dynamic> grupata = {
-        'nom': name,
+        'name': name,
         'descr': description,
         'imatge': image,
         'members': members
       };
 
       final respuesta = await http.post(
-        Uri.parse('https://10.0.2.2:8080/grups/create'),
+        Uri.parse('http://10.0.2.2:8080/grups/create'),
         body: jsonEncode(grupata),
         headers: {
           'Content-Type': 'application/json',
@@ -496,7 +504,7 @@ class ControladorDomini {
       };
 
       final respuesta = await http.put(
-        Uri.parse('https://10.0.2.2:8080/grups/$grupId/update'),
+        Uri.parse('http://10.0.2.2:8080/grups/$grupId/update'),
         body: jsonEncode(grupata),
         headers: {'Content-Type': 'application/json'},
       );
