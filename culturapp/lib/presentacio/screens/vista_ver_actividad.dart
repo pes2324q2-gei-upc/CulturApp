@@ -24,10 +24,11 @@ class VistaVerActividad extends StatefulWidget{
 
 class _VistaVerActividadState extends State<VistaVerActividad> {
   late ControladorPresentacion _controladorPresentacion; 
-  final ControladorDomini controladorDominio = new ControladorDomini();
+  late ControladorDomini controladorDominio;
   int _selectedIndex = 0;
   late List<String> infoActividad;
   late Uri uriActividad;
+
 
   bool mostrarDescripcionCompleta = false;
   bool estaApuntado = false;
@@ -53,6 +54,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     infoActividad = info_actividad;
     uriActividad = uri_actividad;
     _controladorPresentacion = controladorPresentacion;
+    controladorDominio = _controladorPresentacion.getControladorDomini();
   }
 
   @override
@@ -74,7 +76,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           _controladorPresentacion.mostrarActividadesUser(context);
         break;
       case 2:
-         _controladorPresentacion.mostrarXats(context);
+        _controladorPresentacion.mostrarXats(context);
         break;
       case 3:
           _controladorPresentacion.mostrarPerfil(context);
@@ -88,7 +90,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFFF4692A),
         title: const Text("Actividad"),
         centerTitle: true, // Centrar el título
         toolbarHeight: 50.0,
@@ -143,7 +145,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           Expanded(
             child: Text(
               tituloActividad,
-              style: const TextStyle(color: Colors.orange, fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: Color(0xFFF4692A), fontSize: 18, fontWeight: FontWeight.bold),
             ),
             
           ),
@@ -156,7 +158,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             },
             style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all<Color>(
-            estaApuntado ? Colors.black : Colors.orange,),
+            estaApuntado ? Colors.black : const Color(0xFFF4692A),),
             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),),
             child: Text(estaApuntado ? 'Desapuntarse' : 'Apuntarse'),
           ),
@@ -173,7 +175,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             style: const TextStyle(fontSize: 16, ),
             maxLines: mostrarDescripcionCompleta ? null : 2,
             overflow: mostrarDescripcionCompleta ? null: TextOverflow.ellipsis,
-            textAlign: TextAlign.justify, //hacer que el texto se vea formato cuadrado
+            textAlign: TextAlign.justify, 
         ),
       );
   }
@@ -234,7 +236,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
   Widget _getIconPlusTexto(String categoria, String texto){
 
-    late Icon icono; //late para indicar que se inicializará en el futuro y que cuando se acceda a su valor no sea nulo
+    late Icon icono; 
 
     switch(categoria){
       case 'ubicacion':

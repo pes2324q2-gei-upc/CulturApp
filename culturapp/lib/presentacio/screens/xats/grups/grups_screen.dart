@@ -20,6 +20,8 @@ class _GrupsScreenState extends State<GrupsScreen> {
   late List<Grup> display_list = [];
   String value = '';
 
+  Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
+
   _GrupsScreenState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
     _initialize();
@@ -51,6 +53,9 @@ class _GrupsScreenState extends State<GrupsScreen> {
       children: [
         Row(
           children: [
+            const SizedBox(
+              width: 10.0,
+            ),
             _buildCercador(),
             const SizedBox(
               width: 5.0,
@@ -61,8 +66,9 @@ class _GrupsScreenState extends State<GrupsScreen> {
         const SizedBox(
           height: 20.0,
         ),
-        SizedBox(
-          height: 420.0,
+        Container(
+          color: grisFluix,
+          height: 470.0,
           child: ListView.builder(
             itemCount: display_list.length,
             itemBuilder: (context, index) => _buildGrupItem(context, index),
@@ -74,30 +80,31 @@ class _GrupsScreenState extends State<GrupsScreen> {
 
   Widget _buildCercador() {
     return SizedBox(
-        height: 40.0,
-        width: 250.0,
-        child: TextField(
-          onChanged: (value) => updateList(value),
-          cursorColor: Colors.white,
-          cursorHeight: 20,
-          style: const TextStyle(
+      height: 40.0,
+      width: 280.0,
+      child: TextField(
+        onChanged: (value) => updateList(value),
+        cursorColor: Colors.white,
+        cursorHeight: 20,
+        style: const TextStyle(
+          color: Colors.white,
+        ),
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: const Color.fromRGBO(240, 186, 132, 1),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide.none,
+          ),
+          hintText: "Search...",
+          hintStyle: const TextStyle(
             color: Colors.white,
           ),
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: const Color.fromRGBO(240, 186, 132, 1),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: BorderSide.none,
-            ),
-            hintText: "Search...",
-            hintStyle: const TextStyle(
-              color: Colors.white,
-            ),
-            suffixIcon: const Icon(Icons.search),
-            suffixIconColor: Colors.white,
-          ),
-        ));
+          suffixIcon: const Icon(Icons.search),
+          suffixIconColor: Colors.white,
+        ),
+      ),
+    );
   }
 
   Widget _buildNewGroupButton() {
@@ -132,7 +139,7 @@ class _GrupsScreenState extends State<GrupsScreen> {
         ),
         title: Text(display_list[index].nomGroup,
             style: const TextStyle(
-              color: Colors.orange,
+              color: const Color(0xFFF4692A),
               fontWeight: FontWeight.bold,
             )),
         subtitle: Text(display_list[index].lastMessage),

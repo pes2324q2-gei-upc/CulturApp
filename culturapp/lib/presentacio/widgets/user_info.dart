@@ -1,31 +1,30 @@
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
+import 'package:culturapp/translations/AppLocalizations';
 import 'package:flutter/material.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 
 class UserInfoWidget extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
-  final String uid;
+  final String username;
 
-  const UserInfoWidget({Key? key, required this.controladorPresentacion, required String this.uid}) : super(key: key);
+  const UserInfoWidget({Key? key, required this.controladorPresentacion, required String this.username}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _UserInfoWidgetState createState() => _UserInfoWidgetState(this.controladorPresentacion, this.uid);
+  _UserInfoWidgetState createState() => _UserInfoWidgetState(this.controladorPresentacion);
 }
 
 class _UserInfoWidgetState extends State<UserInfoWidget> {
-  String _selectedText = 'Historico actividades';
+  String _selectedText = "'Historico actividades'";
   int _selectedIndex = 0;
   late ControladorPresentacion _controladorPresentacion;
-  late String _uid;
-  late Future<String?> _usernameFuture;
+  late String _usernameFuture;
   late List<Actividad> activitats;
   late List<Actividad> display_list;
   
-  _UserInfoWidgetState(ControladorPresentacion controladorPresentacion, String uid) {
+  _UserInfoWidgetState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
-    _uid = uid;
     activitats = controladorPresentacion.getActivitatsUser();
     display_list = activitats;
   }
@@ -33,7 +32,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
   @override
   void initState() {
     super.initState();
-    _usernameFuture = widget.controladorPresentacion.getUsername(_uid);
+    _usernameFuture = widget.username;
   }
 
   void _onTabChange(int index) {
@@ -60,7 +59,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
     return Scaffold(
       body: Center(
         child: FutureBuilder<String?>(
-      future: _usernameFuture,
+      future: Future.value(_usernameFuture),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Muestra un indicador de carga mientras se obtiene el nombre de usuario
@@ -69,11 +68,11 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
             // Asigna un tamaño específico al contenedor
             width: 50, // Por ejemplo, puedes ajustar el ancho según tus necesidades
             height: 50, // También puedes ajustar la altura según tus necesidades
-            child: CircularProgressIndicator(color: Colors.orange),
+            child: const CircularProgressIndicator(color:  Color(0xFFF4692A)),
           );
         } else if (snapshot.hasError) {
           // Muestra un mensaje de error si falla la obtención del nombre de usuario
-          return Text('Error al obtener el nombre de usuario');
+          return const Text('Error al obtener el nombre de usuario');
         } else {
           // Muestra el nombre de usuario obtenido
           final username = snapshot.data ?? '';
@@ -133,9 +132,9 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildInfoColumn('Esdeveniments assistits', '1'),
-              _buildInfoColumn('Seguidors', '12'),
-              _buildInfoColumn('Seguits', '40'),
+              _buildInfoColumn("assisted_events".tr(context), '1'),
+              _buildInfoColumn('followers'.tr(context), '12'),
+              _buildInfoColumn('following'.tr(context), '40'),
             ]
           ),
         ),
@@ -146,11 +145,11 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
               children: [
                 TabBar(
                   tabs: [
-                    Tab(text: 'Esdeveniments assistits'),
-                    Tab(text: 'Insígnies'),
+                    Tab(text: "assisted_events".tr(context)),
+                    Tab(text: "badges".tr(context)),
                   ],
-                  indicatorColor: Colors.orange,
-                  labelColor: Colors.orange,
+                  indicatorColor: const Color(0xFFF4692A),
+                  labelColor: const Color(0xFFF4692A),
 
                 ),
                 Expanded(
@@ -194,12 +193,12 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
         ),
         child: Row(
           children: [
-            Icon(icon, color: isSelected ? Colors.orange : Colors.white),
+            Icon(icon, color: isSelected ? const Color(0xFFF4692A) : Colors.white),
             const SizedBox(width: 6),
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? Colors.orange : Colors.white,
+                color: isSelected ? const Color(0xFFF4692A) : Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),

@@ -36,7 +36,7 @@ class _SettingsPerfil extends State<SettingsPerfil> {
     return Scaffold(
       //Header
       appBar: AppBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFFF4692A),
         title: const Text(
           'Seetings',
           style: TextStyle(color: Colors.white),

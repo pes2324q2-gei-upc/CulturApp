@@ -41,7 +41,6 @@ class _InfoAmicScreen extends State<InfoAmicScreen> {
               ),
               _buildImatge(),
               _buildNom(),
-              _buildEmail(),
               const SizedBox(
                 height: 20.0,
               ),
@@ -84,24 +83,12 @@ class _InfoAmicScreen extends State<InfoAmicScreen> {
 
   Widget _buildNom() {
     return Container(
-      padding: EdgeInsets.only(top: 20.0, bottom: 5.0),
+      padding: const EdgeInsets.only(top: 20.0, bottom: 5.0),
       child: Text(
         _usuari.nom,
         style: const TextStyle(
           fontSize: 20.0,
           fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEmail() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 100.0),
-      child: Text(
-        _usuari.email,
-        style: const TextStyle(
-          fontSize: 15.0,
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import "package:cloud_firestore/cloud_firestore.dart";
+import 'package:culturapp/translations/AppLocalizations';
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:hive/hive.dart";
@@ -72,9 +73,9 @@ class _SignupState extends State<Signup> {
               Column(
                 children: <Widget>[
                   const SizedBox(height: 60.0),
-                  const Text(
-                    "Crear compte",
-                    style: TextStyle(
+                  Text(
+                    "create_account".tr(context),
+                    style: const TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
                     ),
@@ -83,7 +84,7 @@ class _SignupState extends State<Signup> {
                     height: 20,
                   ),
                   Text(
-                    "Afegeix la teva informació",
+                    "add_info".tr(context),
                     style: TextStyle(fontSize: 15, color: Colors.grey[700]),
                   )
                 ],
@@ -94,13 +95,13 @@ class _SignupState extends State<Signup> {
                     style: TextStyle(fontSize: 16, color: Colors.grey[700]),
                     controller: usernameController,
                     decoration: InputDecoration(
-                      hintText: "Nom d'usuari",
-                      contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 25),
+                      hintText: "username".tr(context),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 25),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(18),
                         borderSide: BorderSide.none,
                       ),
-                      fillColor: Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
+                      fillColor: const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
                       filled: true,
                       prefixIcon: const Icon(Icons.person),
                     ),
@@ -112,7 +113,7 @@ class _SignupState extends State<Signup> {
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.resolveWith<Color?>(
                           (Set<MaterialState> states) {
-                            return Color.fromARGB(244, 255, 145, 0).withOpacity(0.1);
+                            return const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1);
                           },
                         ),
                         shadowColor: MaterialStateProperty.resolveWith<Color?>(
@@ -125,18 +126,18 @@ class _SignupState extends State<Signup> {
                             borderRadius: BorderRadius.circular(18.0), // Ajusta el radio de los bordes aquí
                           ),
                         ),
-                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.symmetric(vertical: 20, horizontal: 15)),
+                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.symmetric(vertical: 20, horizontal: 15)),
                         alignment: Alignment.centerLeft
                       ),
                       onPressed: _showMultiSelect,
                       icon: Icon(Icons.arrow_drop_down, color: Colors.grey[800],),
-                      label: Text("Categories preferides", style: TextStyle(fontSize: 16, color: Colors.grey[700]),),
+                      label: Text("favourite_categories".tr(context), style: TextStyle(fontSize: 16, color: Colors.grey[700]),),
                     ),
                   )
 
                   ,
                   
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
               ),
               Container(
@@ -145,14 +146,14 @@ class _SignupState extends State<Signup> {
                     onPressed: () {
                       createUser();
                     },
-                    child: const Text(
-                      "Crear compte",
-                      style: TextStyle(fontSize: 20, color: Colors.white),
-                    ),
                     style: ElevatedButton.styleFrom(
                       shape: const StadiumBorder(),
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: Color.fromARGB(244, 255, 145, 0),
+                      backgroundColor: const Color.fromARGB(244, 255, 145, 0),
+                    ),
+                    child: Text(
+                      "create_account".tr(context),
+                      style: const TextStyle(fontSize: 20, color: Colors.white),
                     ),
                   )),
             ],
@@ -164,12 +165,16 @@ class _SignupState extends State<Signup> {
 
   Future<void> createUser() async {
     if (await _controladorPresentacion.usernameUnique(usernameController.text)) {
-      _controladorPresentacion.createUser(usernameController.text, selectedCategories, context);
+      
+      await _controladorPresentacion.createUser(usernameController.text, selectedCategories, context);
+      await _controladorPresentacion.initialice();
+
+      _controladorPresentacion.mostrarMapa(context);
     }
     else {
       final scaffoldMessenger = ScaffoldMessenger.of(context);
       scaffoldMessenger.showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Ja hi ha un usuari amb aquest username'),
           backgroundColor: Colors.red,
         ),
@@ -188,10 +193,10 @@ class _SignupState extends State<Signup> {
           listType: MultiSelectListType.CHIP,
           initialValue: selectedCategories,
           onConfirm: (values) {
-             selectedCategories = values.take(3).toList();
+            selectedCategories = values.take(3).toList();
           },
-          selectedColor: Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
-          checkColor: Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
+          selectedColor: const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
+          checkColor: const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
           unselectedColor: Colors.white,
         );
       },

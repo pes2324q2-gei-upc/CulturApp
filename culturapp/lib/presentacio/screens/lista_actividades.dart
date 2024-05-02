@@ -52,7 +52,7 @@ class _ListaActividadesState extends State<ListaActividades> {
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.orange
+                                color: const Color(0xFFF4692A)
                               ),
                             ),
                           ),

@@ -63,7 +63,7 @@ class _ConfigGrup extends State<ConfigGrup> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFFF4692A),
         title: const Text(
           'Configuració Grup',
           style: TextStyle(color: Colors.white),
@@ -277,7 +277,7 @@ class _ConfigGrup extends State<ConfigGrup> {
       ),
       title: Text(_participants[index].nom,
           style: const TextStyle(
-            color: Colors.orange,
+            color: const Color(0xFFF4692A),
             fontWeight: FontWeight.bold,
           )),
     );
