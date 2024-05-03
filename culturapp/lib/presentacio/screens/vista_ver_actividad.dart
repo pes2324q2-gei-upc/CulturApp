@@ -99,6 +99,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   @override
   Widget build(BuildContext context) {
     _controladorPresentacion.getForo(infoActividad[1]); //verificar que tenga un foro
+    fId();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
@@ -152,6 +153,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
               ? PostWidget(
                 addPost: (foroId, mensaje, fecha, numeroLikes) async {
                   await _controladorPresentacion.addPost(foroId, mensaje, fecha, numeroLikes);
+                  print(foroId);
 
                   // Actualitza el llistat de posts
                   setState(() {
@@ -491,6 +493,11 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     });
   }
 
+  void fId() async {
+    String? foroId = await _controladorPresentacion.getForoId(infoActividad[1]);
+    idForo = foroId!;
+  }
+
   //conseguir posts del foro
   Future<List<Post>> getPosts() async {
     String? foroId = await _controladorPresentacion.getForoId(infoActividad[1]);
@@ -543,7 +550,6 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                     child: Text(
                       //quereis que añada tambien el numero de replies?
                       'comments'.trWithArg(context, {"num": "${posts.length}"}),
-                      //'${posts.length} comentarios',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
