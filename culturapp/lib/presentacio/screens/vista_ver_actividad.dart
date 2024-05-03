@@ -8,7 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:culturapp/translations/AppLocalizations';
 
 class VistaVerActividad extends StatefulWidget{
 
@@ -102,8 +102,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
-        title: const Text("Actividad"),
-        centerTitle: true, 
+        title: Text("Activity".tr(context)),
+        centerTitle: true,
         toolbarHeight: 50.0,
         titleTextStyle: const TextStyle(
           color: Colors.white,
@@ -222,7 +222,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             backgroundColor: MaterialStateProperty.all<Color>(
             estaApuntado ? Colors.black : const Color(0xFFF4692A),),
             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),),
-            child: Text(estaApuntado ? 'Desapuntarse' : 'Apuntarse'),
+            child: Text(estaApuntado ? 'signout'.tr(context) : 'signin'.tr(context)),
           ),
         ],
       )
@@ -253,7 +253,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         alignment: Alignment.center,
         margin: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Text(
-          mostrarDescripcionCompleta ? "Ver menos" : "Ver más",
+          mostrarDescripcionCompleta ? 'see_less'.tr(context) : 'see_more'.tr(context),
           style: const TextStyle(color: Colors.grey,),
         ),
       ),

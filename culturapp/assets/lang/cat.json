@@ -35,6 +35,12 @@
     "aplicattion_title": "Sol·licitud d'organitzador",
     "aplicattion_title_activity": "Títol de l'activitat",
     "aplicattion_reason": "Raó de la sol·licitud",
-    "aplicattion_title_missing": "Si us plau introdueixi un títol"
+    "aplicattion_title_missing": "Si us plau introdueixi un títol",
+    "erase_post": "Eliminar post",
+    "sure_erase": "Estas segur de que vols eliminar el post?",
+    "loading": "Carregant...",
+    "comments": "{num} comentaris",
+    "me_gusta": "Like",
+    "reply": "Respondre"
 }
  
