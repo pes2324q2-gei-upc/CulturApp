@@ -1,3 +1,4 @@
+import "package:culturapp/domain/models/user.dart";
 import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/translations/AppLocalizations";
@@ -16,8 +17,8 @@ class AmicsScreen extends StatefulWidget {
 
 class _AmicsScreenState extends State<AmicsScreen> {
   late ControladorPresentacion _controladorPresentacion;
-  late List<String> llista_amics;
-  late List<String> display_list;
+  late List<Usuari> llista_amics;
+  late List<Usuari> display_list;
 
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
 
@@ -42,15 +43,29 @@ class _AmicsScreenState extends State<AmicsScreen> {
       () {
         display_list = llista_amics
             .where((element) =>
-                element.toLowerCase().contains(value.toLowerCase()))
+                element.nom.toLowerCase().contains(value.toLowerCase()))
             .toList();
       },
     );
   }
 
+  Future<List<Usuari>> convertirStringEnUsuari(List<String> llistaNoms) async {
+    List<Usuari> llistaUsuaris = [];
+
+    for (String nom in llistaNoms) {
+      Usuari user = await _controladorPresentacion.getUserByName(nom);
+      llistaUsuaris.add(user);
+    }
+
+    return llistaUsuaris;
+  }
+
   Future<void> _loadFriends() async {
-    llista_amics =
-        await _controladorPresentacion.getFollowUsers('susssss', "followers");
+    String userName = _controladorPresentacion.getUsername();
+    List<String> llistaNoms =
+        await _controladorPresentacion.getFollowUsers(userName, "followers");
+
+    llista_amics = await convertirStringEnUsuari(llistaNoms);
     //llista_amics = await _controladorPresentacion.obteAmics();
     /*setState(() {
       messages = convertData(loadedMessages).reversed.toList();
@@ -132,9 +147,8 @@ class _AmicsScreenState extends State<AmicsScreen> {
       onTap: () {
         //anar cap a la pantalla de un xat amb l'usuari
         //crida al backend per agafar el xat del amic en concret
-        _controladorPresentacion.getXat(display_list[index]);
-        //_controladorPresentacion.mostrarXatAmic(context, display_list[index]);
-        _controladorPresentacion.mostrarXatAmic(context, mockUsuari);
+        _controladorPresentacion.getXat(display_list[index].nom);
+        _controladorPresentacion.mostrarXatAmic(context, display_list[index]);
       },
       child: ListTile(
         contentPadding: const EdgeInsets.all(8.0),
@@ -145,14 +159,13 @@ class _AmicsScreenState extends State<AmicsScreen> {
           width: 50,
           height: 50,
         ),
-        title: Text(display_list[index],
+        title: Text(display_list[index].nom,
             style: const TextStyle(
               color: Colors.orange,
               fontWeight: FontWeight.bold,
             )),
         subtitle: FutureBuilder<String>(
-          future: convertToNullableFutureString(
-              mockLastMessage), //agafarLastMessage(display_list[index]),
+          future: agafarLastMessage(display_list[index]),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Text('Loading...');
@@ -163,10 +176,8 @@ class _AmicsScreenState extends State<AmicsScreen> {
             }
           },
         ),
-        //Text(agafarLastMessage(display_list[index])),
         trailing: FutureBuilder<String>(
-          future: convertToNullableFutureString(
-              mockTimeMessage), //agafarTimeLastMessage(display_list[index]),
+          future: agafarTimeLastMessage(display_list[index]),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Text('Loading...');
@@ -177,7 +188,6 @@ class _AmicsScreenState extends State<AmicsScreen> {
             }
           },
         ),
-        //Text(agafarTimeLastMessage(display_list[index]),),
       ),
     );
   }

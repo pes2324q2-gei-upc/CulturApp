@@ -77,7 +77,6 @@ class _XatAmicScreen extends State<XatAmicScreen> {
         _controladorPresentacion.getUser()!; //cambiar més endevant per username
 
     if (message.sender == me.uid) {
-      //es un missatge meu
       message.sender = 'Me';
     }
 

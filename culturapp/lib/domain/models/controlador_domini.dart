@@ -6,6 +6,7 @@ import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/user.dart';
 import 'package:culturapp/domain/models/grup.dart';
 import 'package:culturapp/domain/models/message.dart';
+import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/domain/models/xat_amic.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
@@ -172,6 +173,16 @@ class ControladorDomini {
 
     if (respuesta.statusCode == 200) {
       return _convert_database_to_list_user(respuesta);
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
+
+  Future<Usuari> getUserByName(String name) async {
+    final respuesta =
+        await http.get(Uri.parse('http://$ip:8080/users/${name}/info'));
+    if (respuesta.statusCode == 200) {
+      return _convert_to_usuari(respuesta);
     } else {
       throw Exception('Fallo la obtención de datos');
     }
@@ -485,6 +496,19 @@ class ControladorDomini {
     }
 
     return actividades;
+  }
+
+  Usuari _convert_to_usuari(response) {
+    Usuari usuari = Usuari();
+
+    var usr = json.decode(response.body);
+
+    usuari.nom = usr['username'];
+    usuari.favCategories = usr['favcategories'] ?? '';
+    usuari.id = usr['id'];
+    usuari.image = 'assets/userImage.png';
+
+    return usuari;
   }
 
   List<Usuario> _convert_database_to_list_user(response) {

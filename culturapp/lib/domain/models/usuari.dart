@@ -1,13 +1,13 @@
 class Usuari {
-  final String id; //-> token
-  final String nom;
-  final String email;
-  final String image;
-  final List<String> activitats;
-  final List<String> favCategories;
-  final List<Usuari> followers; //aka amigos
+  late String id; //-> token
+  late String nom;
+  late String email;
+  late String image;
+  late List<String> activitats;
+  late List<dynamic> favCategories;
+  late List<Usuari> followers; //aka amigos
 
-  const Usuari({
+  /*const Usuari({
     required this.id,
     required this.nom,
     required this.email,
@@ -15,9 +15,9 @@ class Usuari {
     required this.activitats,
     required this.favCategories,
     required this.followers,
-  });
+  });*/
 }
-
+/*
 const Usuari mockUsuari = Usuari(
   id: '1',
   nom: 'Jaume',
@@ -83,4 +83,4 @@ const List<Usuari> allAmics = [
     favCategories: ["a", "b"],
     followers: [],
   ),
-];
+];*/

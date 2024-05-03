@@ -31,7 +31,7 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
       ControladorPresentacion controladorPresentacion, Grup grup) {
     _controladorPresentacion = controladorPresentacion;
     _grup = grup;
-    amics = allAmics;
+    amics = []; //allAmics;
 
     ///canviar més endevant per obté followers
     displayList = amics;

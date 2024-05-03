@@ -127,6 +127,10 @@ class ControladorPresentacion {
     }
   }
 
+  Future<Usuari> getUserByName(String name) async {
+    return await controladorDomini.getUserByName(name);
+  }
+
   Future<bool> createUser(String username, List<String> selectedCategories,
       BuildContext context) async {
     await controladorDomini.createUser(_user, username, selectedCategories);
