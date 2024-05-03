@@ -3,6 +3,7 @@ import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/domain/models/xat_amic.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/chat_bubble.dart";
+import "package:culturapp/translations/AppLocalizations";
 import "package:flutter/material.dart";
 
 class XatAmicScreen extends StatefulWidget {
@@ -137,7 +138,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
                 controller: _controller,
                 onSubmitted: _handleSubmitted,
                 decoration:
-                    const InputDecoration.collapsed(hintText: 'Send a message'),
+                    InputDecoration.collapsed(hintText: 'send_a_message'.tr(context)),
               ),
             ),
             IconButton(

@@ -4,6 +4,7 @@ import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/screens/afegir_amics.dart";
 import "package:culturapp/presentacio/screens/xats/amics/amics_screen.dart";
 import "package:culturapp/presentacio/screens/xats/grups/grups_screen.dart";
+import "package:culturapp/translations/AppLocalizations";
 import "package:culturapp/widgetsUtils/bnav_bar.dart";
 import "package:flutter/material.dart";
 
@@ -96,8 +97,8 @@ class _Xats extends State<Xats> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: const Color(0xFFF4692A),
-        title: const Text(
-          'Xats',
+        title: Text(
+          'chats'.tr(context),
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -130,7 +131,7 @@ class _Xats extends State<Xats> {
                             controladorPresentacion: _controladorPresentacion,
                           ));
                         },
-                        child: const Text('Amics'),
+                        child: Text('friends'.tr(context)),
                       )),
                   SizedBox(
                       height: 50.0,
@@ -150,7 +151,7 @@ class _Xats extends State<Xats> {
                             ),
                           );
                         },
-                        child: const Text('Grups'),
+                        child: Text('groups'.tr(context)),
                       )),
                   SizedBox(
                       height: 50.0,
@@ -170,7 +171,7 @@ class _Xats extends State<Xats> {
                             controladorPresentacion: _controladorPresentacion,
                           ));
                         },
-                        child: const Text('Afegir Amics'),
+                        child: Text('add_friends'.tr(context)),
                       )),
                 ],
               ),

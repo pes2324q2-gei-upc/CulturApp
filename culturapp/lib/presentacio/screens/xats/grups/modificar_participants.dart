@@ -1,6 +1,7 @@
 import "package:culturapp/domain/models/grup.dart";
 import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
+import "package:culturapp/translations/AppLocalizations";
 import "package:flutter/material.dart";
 
 class ModificarParticipantsScreen extends StatefulWidget {
@@ -63,8 +64,8 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: Colors.orange,
-        title: const Text(
-          'Modificar Participants',
+        title: Text(
+          'modify_participants'.tr(context),
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: const IconThemeData(
@@ -76,12 +77,12 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
           children: [
             Column(
               children: [
-                const SizedBox(
+                SizedBox(
                   child: Padding(
                     padding: EdgeInsets.only(
                         bottom: 20.0, left: 20.0, right: 20.0, top: 30.0),
                     child: Text(
-                      'Selecciona o deselecciona per agregar/eliminar participants:',
+                      'select_unselect_participants'.tr(context),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -136,7 +137,7 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
               borderRadius: BorderRadius.circular(8.0),
               borderSide: BorderSide.none,
             ),
-            hintText: "Search...",
+            hintText: "search".tr(context),
             hintStyle: const TextStyle(
               color: Colors.white,
             ),

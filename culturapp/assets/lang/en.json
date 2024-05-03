@@ -64,5 +64,22 @@
     "see_reply": "See replies",
     "no_reply": "Hide replies",
     "send_message": "Publish a post",
-    "send_reply": "Reply"
+    "send_reply": "Reply",
+    "chats": "Chats",
+    "friends": "Friends",
+    "groups": "Groups",
+    "add_friends": "Add friends",
+    "choose_participants": "Choose participants",
+    "send_a_message": "Send a message",
+    "see_profile_friend": "View friend profile",
+    "friend_info": "Friend info",
+    "group_info": "Group information",
+    "editing_group": "Editing group",
+    "image": "Image:",
+    "description": "Description:",
+    "participants": "Participants:",
+    "modify_participants": "Modificar participants",
+    "select_unselect_participants": "Select or unselect participants to add them",
+    "recommendations": "Recommendations:",
+    "send_organizer_request": "Send organizer request"
 }

@@ -115,7 +115,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         actions: <Widget>[
           PopupMenuButton<String>(
             onSelected: (String result) {
-              if (result == 'Enviar solicitud de organizador') {
+              if (result == 'send_organizer_request'.tr(context)) {
                 _controladorPresentacion.mostrarSolicitutOrganitzador(context, infoActividad[0], infoActividad[1]);
               }
             },
