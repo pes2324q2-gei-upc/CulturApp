@@ -1,12 +1,15 @@
 import "package:culturapp/domain/models/user.dart";
+import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/widgetsUtils/user_box.dart";
+import "package:culturapp/translations/AppLocalizations";
 import "package:flutter/material.dart";
 
 class AfegirAmics extends StatefulWidget {
   @override
   final List<Usuario>recomms;
   final List<Usuario>usersBD;
-  const AfegirAmics({super.key, required this.recomms, required this.usersBD});
+  final ControladorPresentacion controladorPresentacion;
+  const AfegirAmics({super.key, required this.recomms, required this.controladorPresentacion, required this.usersBD});
   
   @override
   State<StatefulWidget> createState()  => _AfegirAmicsState(recomms, usersBD);
@@ -55,7 +58,7 @@ Widget build(BuildContext context) {
                 borderRadius: BorderRadius.circular(8.0),
                 borderSide: BorderSide.none,
               ),
-              hintText: "Search...",
+              hintText: "search".tr(context),
               hintStyle: const TextStyle(
                 color: Colors.white,
               ),
@@ -73,10 +76,10 @@ Widget build(BuildContext context) {
             const Padding(padding: EdgeInsets.only(top: 20.0)),
             if (value == "" || value == " ")
               ...[
-              const Align(
+              Align(
               alignment: Alignment.topLeft,
               child: Text(
-                "Recomendaciones:",
+                "recommendations".tr(context),
                 style: TextStyle(
                   color: const Color(0xFFF4692A),
                   fontSize: 18.0,
@@ -88,7 +91,11 @@ Widget build(BuildContext context) {
                 for (var user in usersRecom)
                   Padding(
                     padding: const EdgeInsets.only(top: 5.0),
-                    child: userBox(text: user.username, recomm: true, type: "null", token: 'null',),
+                    child: userBox(
+                      text: user.username, 
+                      recomm: true, 
+                      type: "addSomeone", 
+                      controladorPresentacion: widget.controladorPresentacion),
                   ),
               ]
             else 
@@ -96,7 +103,11 @@ Widget build(BuildContext context) {
               for (var user in usersBD)
               Padding(
                 padding: const EdgeInsets.only(top: 5.0),
-                child: userBox(text: user.username, recomm: false,  type: "null", token: 'null',),
+                child: userBox(
+                  text: user.username, 
+                  recomm: false,  
+                  type: "null", 
+                  controladorPresentacion: widget.controladorPresentacion),
               ),
               ]
             ],

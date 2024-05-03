@@ -5,6 +5,7 @@ import "package:culturapp/domain/models/message.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/chat_bubble.dart";
 import "package:firebase_auth/firebase_auth.dart";
+import "package:culturapp/translations/AppLocalizations";
 import "package:flutter/material.dart";
 
 class XatGrupScreen extends StatefulWidget {
@@ -215,8 +216,8 @@ class _XatGrupScreen extends State<XatGrupScreen> {
               child: TextField(
                 controller: _controller,
                 onSubmitted: _sendMessage,
-                decoration:
-                    const InputDecoration.collapsed(hintText: 'Send a message'),
+                decoration: InputDecoration.collapsed(
+                    hintText: 'send_message'.tr(context)),
               ),
             ),
             IconButton(

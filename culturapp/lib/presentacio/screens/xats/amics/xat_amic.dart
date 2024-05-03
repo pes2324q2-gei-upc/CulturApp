@@ -5,6 +5,7 @@ import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/domain/models/xat_amic.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/chat_bubble.dart";
+import "package:culturapp/translations/AppLocalizations";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 
@@ -200,8 +201,8 @@ class _XatAmicScreen extends State<XatAmicScreen> {
               child: TextField(
                 controller: _controller,
                 onSubmitted: _sendMessage,
-                decoration:
-                    const InputDecoration.collapsed(hintText: 'Send a message'),
+                decoration: InputDecoration.collapsed(
+                    hintText: 'send_a_message'.tr(context)),
               ),
             ),
             IconButton(

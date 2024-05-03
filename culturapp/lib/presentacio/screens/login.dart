@@ -56,7 +56,7 @@ class _Login extends State<Login> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text("Benvingut a CulturApp",
+        Text("welcome_txt".tr(context),
         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
         const SizedBox(height: 70),
         Container(

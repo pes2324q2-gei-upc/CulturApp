@@ -51,6 +51,12 @@ class AppLocalizations {
 
    return translation;
  }
+
+  languageName(String languageCode) {
+    if (languageCode == 'en') return 'English';
+    else if (languageCode == 'ca') return 'Catalan';
+    else return 'Spanish';
+  }
 }
 
 class _AppLocalizationsDelegate
@@ -60,7 +66,7 @@ class _AppLocalizationsDelegate
  @override
  bool isSupported(Locale locale) {
    // Define the supported locales (e.g., 'en' for English, 'ar' for Arabic)
-   return ['en', 'es', 'cat'].contains(locale.languageCode);
+   return ['en', 'es', 'ca'].contains(locale.languageCode);
  }
 
  @override

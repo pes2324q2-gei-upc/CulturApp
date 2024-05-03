@@ -43,6 +43,7 @@ class ControladorDomini {
     if (respuesta.statusCode == 200) {
       var data = json.decode(respuesta.body);
       userLogged.setToken(data['token']);
+      print(userLogged.getToken());
       userLogged.setUsername(data['username']);
     } else {
       throw Exception('Fallo la obtención de datos');
@@ -270,26 +271,84 @@ class ControladorDomini {
     }
   }
 
-  Future<List<String>> obteFollows(String username) async {
-    print(username);
-    print('VOY POR FOLLOWS');
+  Future<List<dynamic>> obteFollows(String username, String endpoint) async {
     final respuesta = await http.get(
       Uri.parse(
-          'https://culturapp-back.onrender.com/amics/$username/following'),
+          'https://culturapp-back.onrender.com/amics/$username/$endpoint'),
       headers: {
         'Authorization': 'Bearer ${userLogged.getToken()}',
       },
     );
     if (respuesta.statusCode == 200) {
-      print(respuesta.body);
-      print('NULLOOOSAJDKLAÑSDKLDLSADASD');
       final body = respuesta.body;
       final List<dynamic> data = json.decode(body);
-      final List<String> users = data.map((user) => user.toString()).toList();
-      return users;
+      return data;
     } else {
       throw Exception('Fallo la obtención de datos');
     }
+  }
+
+  Future<List<String>> getRequestsUser() async {
+    final respuesta = await http.get(
+      Uri.parse('https://culturapp-back.onrender.com/amics/followingRequests'),
+      headers: {
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+    );
+    if (respuesta.statusCode == 200) {
+      final body = respuesta.body;
+      final List<dynamic> data = json.decode(body);
+      final List<String> users =
+          data.map((user) => user['friend'].toString()).toList();
+      return users;
+    } else {
+      throw Exception(
+          'Fallo la obtención de datos' /*"data_error_msg".tr(context)*/);
+    }
+  }
+
+  Future<void> acceptFriend(String person) async {
+    final http.Response response = await http.put(
+      Uri.parse('https://culturapp-back.onrender.com/amics/accept/$person'),
+      headers: {
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+    );
+
+    if (response.statusCode != 200)
+      throw Exception('Error al aceptar al usuario');
+  }
+
+  Future<void> deleteFriend(String person) async {
+    final http.Response response = await http.delete(
+      Uri.parse('https://culturapp-back.onrender.com/amics/delete/$person'),
+      headers: {
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+    );
+
+    if (response.statusCode != 200)
+      throw Exception('Error al eliminar al usuario');
+  }
+
+  Future<void> createFriend(String person) async {
+    final Map<String, dynamic> body = {
+      'friend': person,
+    };
+
+    final http.Response response = await http.post(
+      Uri.parse('https://culturapp-back.onrender.com/amics/create'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+      body: jsonEncode(body),
+    );
+
+    print(response.body);
+
+    if (response.statusCode != 200)
+      throw Exception('Error al eliminar al usuario');
   }
 
   void signoutFromActivity(String? uid, String code) async {
@@ -316,6 +375,65 @@ class ControladorDomini {
       }
     } catch (error) {
       print('Error de red: $error');
+    }
+  }
+
+  Future<int> sendReportBug(String titulo, String reporte) async {
+    final Map<String, dynamic> body = {
+      'titol': titulo,
+      'report': reporte,
+    };
+
+    try {
+      final response = await http.post(
+          Uri.parse(
+              'https://culturapp-back.onrender.com/tickets/reportBug/create'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${userLogged.getToken()}',
+          },
+          body: jsonEncode(body));
+
+      if (response.statusCode == 200) {
+        print('Reporte enviado exitosamente');
+      } else {
+        print('Error al enviar el reporte: ${response.body}');
+      }
+      return response.statusCode;
+    } catch (e) {
+      print(e);
+      return 500;
+    }
+  }
+
+  Future<int> sendOrganizerApplication(
+      String titol, String idActivitat, String motiu) async {
+    final Map<String, dynamic> body = {
+      'titol': titol,
+      'idActivitat': idActivitat,
+      'motiu': motiu,
+    };
+
+    try {
+      final response = await http.post(
+          Uri.parse(
+              'https://culturapp-back.onrender.com/tickets/solicitudsOrganitzador/create'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${userLogged.getToken()}',
+          },
+          body: jsonEncode(body));
+
+      if (response.statusCode == 200) {
+        print('Solicitud enviada exitosamente');
+        return 200;
+      } else {
+        print('Error al enviar la solicitud: ${response.body}');
+        return 500;
+      }
+    } catch (e) {
+      print(e);
+      return 500;
     }
   }
 

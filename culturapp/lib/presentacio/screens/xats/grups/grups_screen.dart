@@ -1,6 +1,7 @@
 import "package:culturapp/domain/converters/convert_date_format.dart";
 import "package:culturapp/domain/models/grup.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
+import "package:culturapp/translations/AppLocalizations";
 import "package:flutter/material.dart";
 
 class GrupsScreen extends StatefulWidget {
@@ -96,7 +97,7 @@ class _GrupsScreenState extends State<GrupsScreen> {
             borderRadius: BorderRadius.circular(8.0),
             borderSide: BorderSide.none,
           ),
-          hintText: "Search...",
+          hintText: "search".tr(context),
           hintStyle: const TextStyle(
             color: Colors.white,
           ),
