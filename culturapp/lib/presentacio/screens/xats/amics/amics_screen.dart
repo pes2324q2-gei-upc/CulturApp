@@ -1,5 +1,6 @@
 import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
+import "package:culturapp/translations/AppLocalizations";
 import "package:flutter/material.dart";
 
 class AmicsScreen extends StatefulWidget {
@@ -87,7 +88,7 @@ class _AmicsScreenState extends State<AmicsScreen> {
           borderRadius: BorderRadius.circular(8.0),
           borderSide: BorderSide.none,
         ),
-        hintText: "Search...",
+        hintText: "search".tr(context),
         hintStyle: const TextStyle(
           color: Colors.white,
         ),

@@ -53,5 +53,22 @@
     "aplicattion_title": "Solicitud de organizador",
     "aplicattion_title_activity": "Título de la actividad",
     "aplicattion_reason": "Motivo de la solicitud",
-    "aplicattion_reason_missing": "Por favor ingrese un motivo"
+    "aplicattion_reason_missing": "Por favor ingrese un motivo",
+    "chats": "Chats",
+    "friends": "Amigos",
+    "groups": "Grupos",
+    "add_friends": "Agregar amigos",
+    "choose_participants": "Elegir participantes",
+    "send_a_message": "Enviar un mensaje",
+    "see_profile_friend": "Ver perfil de amigo",
+    "friend_info": "Información de amigo",
+    "group_info": "Información del grupo",
+    "editing_group": "Editando grupo",
+    "image": "Imagen:",
+    "description": "Descripción:",
+    "participants": "Participantes:",
+    "modify_participants": "Modificar participantes",
+    "select_unselect_participants": "Selecciona o deselecciona participantes para añadirlos",
+    "recommendations": "Recomendaciones:",
+    "send_organizer_request": "Enviar solicitud de organizador"
 }

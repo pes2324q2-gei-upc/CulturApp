@@ -1,6 +1,7 @@
 import "package:culturapp/domain/models/user.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/widgetsUtils/user_box.dart";
+import "package:culturapp/translations/AppLocalizations";
 import "package:flutter/material.dart";
 
 class AfegirAmics extends StatefulWidget {
@@ -57,7 +58,7 @@ Widget build(BuildContext context) {
                 borderRadius: BorderRadius.circular(8.0),
                 borderSide: BorderSide.none,
               ),
-              hintText: "Search...",
+              hintText: "search".tr(context),
               hintStyle: const TextStyle(
                 color: Colors.white,
               ),
@@ -75,10 +76,10 @@ Widget build(BuildContext context) {
             const Padding(padding: EdgeInsets.only(top: 20.0)),
             if (value == "" || value == " ")
               ...[
-              const Align(
+              Align(
               alignment: Alignment.topLeft,
               child: Text(
-                "Recomendaciones:",
+                "recommendations".tr(context),
                 style: TextStyle(
                   color: const Color(0xFFF4692A),
                   fontSize: 18.0,

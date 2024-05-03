@@ -1,3 +1,4 @@
+import 'package:culturapp/translations/AppLocalizations';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
@@ -29,24 +30,24 @@ class CustomBottomNavigationBar extends StatelessWidget {
           onTabChange(index);
         },
         selectedIndex: currentIndex,
-        tabs: const [
+        tabs: [
           GButton(
-            text: "Mapa",
+            text: "map".tr(context),
             textStyle: TextStyle(fontSize: 12, color: const Color(0xFFF4692A)),
             icon: Icons.map,
           ),
           GButton(
-            text: "Mis Actividades",
+            text: "my_activities".tr(context),
             textStyle: TextStyle(fontSize: 12, color: const Color(0xFFF4692A)),
             icon: Icons.event,
           ),
           GButton(
-            text: "Chats",
+            text: "chats".tr(context),
             textStyle: TextStyle(fontSize: 12, color: const Color(0xFFF4692A)),
             icon: Icons.chat,
           ),
           GButton(
-            text: "Perfil",
+            text: "profile".tr(context),
             textStyle: TextStyle(fontSize: 12, color: const Color(0xFFF4692A)),
             icon: Icons.person,
           ),

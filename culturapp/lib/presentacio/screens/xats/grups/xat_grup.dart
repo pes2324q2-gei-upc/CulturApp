@@ -3,6 +3,7 @@ import "package:culturapp/domain/models/message.dart";
 import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/chat_bubble.dart";
+import "package:culturapp/translations/AppLocalizations";
 import "package:flutter/material.dart";
 
 class XatGrupScreen extends StatefulWidget {
@@ -162,7 +163,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
                 controller: _controller,
                 onSubmitted: _handleSubmitted,
                 decoration:
-                    const InputDecoration.collapsed(hintText: 'Send a message'),
+                    InputDecoration.collapsed(hintText: 'send_message'.tr(context)),
               ),
             ),
             IconButton(
