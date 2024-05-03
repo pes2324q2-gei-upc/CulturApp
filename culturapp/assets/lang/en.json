@@ -62,5 +62,7 @@
     "me_gusta": "Like",
     "reply": "Reply",
     "see_reply": "See replies",
-    "no_reply": "Hide replies"
+    "no_reply": "Hide replies",
+    "send_message": "Publish a post",
+    "send_reply": "Reply"
 }

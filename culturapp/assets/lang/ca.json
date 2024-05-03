@@ -43,5 +43,7 @@
     "me_gusta": "Like",
     "reply": "Respondre",
     "see_reply": "Veure respostes",
-    "no_reply": "Amagar respostas"
+    "no_reply": "Amagar respostas",
+    "send_message": "Publica un missatge",
+    "send_reply": "Resposta"
 }

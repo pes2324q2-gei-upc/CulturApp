@@ -62,5 +62,7 @@
     "me_gusta": "Me gusta",
     "reply": "Responder",
     "see_reply": "Ver respuestas",
-    "no_reply": "Esconder respuestas"
+    "no_reply": "Esconder respuestas",
+    "send_message": "Publica un mensaje",
+    "send_reply": "Respuesta"
 }

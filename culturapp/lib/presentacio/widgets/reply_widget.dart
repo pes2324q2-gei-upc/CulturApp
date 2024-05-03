@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:culturapp/translations/AppLocalizations';
 
 class ReplyWidget extends StatefulWidget {
   final String foroId;
@@ -38,8 +39,8 @@ class _ReplyWidgetState extends State<ReplyWidget> {
             Expanded(
               child: TextFormField(
                 controller: _controller,
-                decoration: const InputDecoration(
-                  hintText: 'Resposta',
+                decoration: InputDecoration(
+                  hintText: 'send_reply'.tr(context),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {

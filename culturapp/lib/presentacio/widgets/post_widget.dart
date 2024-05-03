@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:culturapp/translations/AppLocalizations';
 import 'package:flutter/material.dart';
 
 class PostWidget extends StatefulWidget {
@@ -36,8 +37,8 @@ class _PostWidgetState extends State<PostWidget> {
             Expanded(
               child: TextFormField(
                 controller: _controller,
-                decoration: const InputDecoration(
-                  hintText: 'Publica un missatge',
+                decoration: InputDecoration(
+                  hintText: 'send_message'.tr(context),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
