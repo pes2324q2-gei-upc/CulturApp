@@ -171,7 +171,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
                 style: const TextStyle(color: Colors.white),
               ),
               Text(
-                truncarString(nomParticipants.join(', '), 35),
+                truncarString(nomParticipants.join(', '), 30),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 14.0,
