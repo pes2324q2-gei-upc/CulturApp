@@ -3,6 +3,7 @@ import 'package:culturapp/domain/models/post.dart';
 import 'package:culturapp/presentacio/widgets/post_widget.dart';
 import 'package:culturapp/presentacio/widgets/reply_widget.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:culturapp/translations/AppLocalizations';
 import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -103,7 +104,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
         title: Text("Activity".tr(context)),
-        centerTitle: true,
+        centerTitle: true, // Centrar el título
         toolbarHeight: 50.0,
         titleTextStyle: const TextStyle(
           color: Colors.white,

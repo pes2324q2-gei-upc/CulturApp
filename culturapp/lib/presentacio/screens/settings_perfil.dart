@@ -1,8 +1,9 @@
-import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:flutter/material.dart';
+import 'package:culturapp/presentacio/controlador_presentacio.dart';
+
+import '../../translations/AppLocalizations'; // Importa tu clase de localización
 
 class SettingsPerfil extends StatefulWidget {
-
   final ControladorPresentacion controladorPresentacion;
 
   const SettingsPerfil({Key? key, required this.controladorPresentacion}) : super(key: key);
@@ -12,11 +13,9 @@ class SettingsPerfil extends StatefulWidget {
 }
 
 class _SettingsPerfil extends State<SettingsPerfil> {
-
   late ControladorPresentacion _controladorPresentacion;
-
   bool privat = false;
-  
+
   _SettingsPerfil(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
   }
@@ -24,22 +23,19 @@ class _SettingsPerfil extends State<SettingsPerfil> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //Header
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
-        title: const Text(
-          'Seetings',
+        title: Text(
+          'settings'.tr(context),
           style: TextStyle(color: Colors.white),
         ),
-      ),      
-      //opcions de configuracio
-      body: Column (
+      ),
+      body: Column(
         children: [
-          //privacidad
           SwitchListTile(
-            title: const Text("Privacidad"),
-            subtitle: const Text("Explicacion de lo que implicaria tener la cuenta privada"),
-            value: privat, 
+            title: Text("privacy".tr(context)),
+            subtitle: Text("privacy_explanation".tr(context)),
+            value: privat,
             onChanged: (bool value) {
               setState(() {
                 privat = value;
@@ -48,44 +44,30 @@ class _SettingsPerfil extends State<SettingsPerfil> {
             secondary: const Icon(Icons.lock),
           ),
           const Divider(height: 0),
-          //idioma
           ListTile(
-            title: const Text('Idioma'),
-            subtitle: const Text("Cambiar el idioma"),
+            title: const Text('Language'),
+            subtitle: Text(_controladorPresentacion.language!.languageCode),
             leading: const Icon(Icons.language),
             trailing: const Icon(Icons.arrow_forward),
             onTap: () {
-              // pantalla de selección de idioma
+              _showLanguageSelector(context);
             },
           ),
           const Divider(height: 0),
-          //contraseña
           ListTile(
-            title: const Text('Cambiar Contraseña'),
-            subtitle: const Text("Modificar la contraseña actual"),
-            leading: const Icon(Icons.vpn_key),
-            trailing: const Icon(Icons.arrow_forward),
-            onTap: () {
-              //pantalla de cambio de contraseña
-            },
-          ),
-          const Divider(height: 0),
-          //cerrar sessión
-          ListTile(
-            title: const Text('Cerrar Sesión'),
+            title: Text('logout'.tr(context)),
             leading: const Icon(Icons.exit_to_app),
             onTap: () {
-              signout(context);
+              _signOut(context);
             },
           ),
           const Divider(height: 0),
-          //eliminar cuenta
           ListTile(
-            title: const Text('Eliminar cuenta'),
-            subtitle: const Text("Borrar cuenta permanentemente"),
+            title: Text('delete_account'.tr(context)),
+            subtitle: Text("delete_account_permanently".tr(context)),
             leading: const Icon(Icons.delete),
             onTap: () {
-              //eliminar ceunta
+              // Delete account logic
             },
           ),
           const Divider(height: 0),
@@ -99,11 +81,58 @@ class _SettingsPerfil extends State<SettingsPerfil> {
           ),
           const Divider(height: 0),
         ],
-      )
+      ),
     );
   }
 
-  void signout(context) {
+  void _signOut(BuildContext context) {
     _controladorPresentacion.logout(context);
   }
+
+  void _showLanguageSelector(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('select'.tr(context)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildLanguageOption(context, Locale('en')),
+              _buildLanguageOption(context, Locale('ca')),
+              _buildLanguageOption(context, Locale('es')),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLanguageOption(BuildContext context, Locale locale) {
+    final languageCode = locale.languageCode;
+    String languageName;
+    if (languageCode == 'en') languageName = 'English';
+    else if (languageCode == 'ca') languageName = 'Catalan';
+    else languageName = 'Spanish';
+    return ListTile(
+      title: Text(languageName),
+      onTap: () {
+        changeLanguage(locale);
+      },
+    );
+  }
+  
+  void changeLanguage(Locale locale) {
+    _controladorPresentacion.changeLanguage(locale);
+    Navigator.of(context).pop();
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    scaffoldMessenger.showSnackBar(
+      SnackBar(
+        content: Text('restart_for_changes'.tr(context)),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+
+
 }
