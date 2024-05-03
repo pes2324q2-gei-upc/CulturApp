@@ -23,7 +23,7 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
   late List<Usuari> displayList;
   late List<Usuari> amics;
   late Grup _grup;
-  late List<Usuari> participants;
+  late List<String> participants;
 
   Color taronja_fluix = const Color.fromRGBO(240, 186, 132, 1);
 
@@ -31,15 +31,63 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
       ControladorPresentacion controladorPresentacion, Grup grup) {
     _controladorPresentacion = controladorPresentacion;
     _grup = grup;
-    amics = []; //allAmics;
+    amics = [];
+    participants = [];
+    participantAfegit = [];
+    displayList = [];
+
+    //amics = ; //allAmics;
+    _loadFriends();
 
     ///canviar més endevant per obté followers
-    displayList = amics;
-    participantAfegit = List.generate(
-      displayList.length,
-      (index) => _grup.membres.contains(displayList[index]),
-    );
-    participants = List.from(_grup.membres as Iterable);
+    //displayList = amics;
+  }
+
+  Future<void> _loadFriends() async {
+    String userName = _controladorPresentacion.getUsername();
+    List<String> llistaNoms =
+        await _controladorPresentacion.getFollowUsers(userName, "followers");
+
+    amics = await convertirStringEnUsuari(
+        _grup.membres.map((dynamic obj) => obj.toString()).toList());
+
+    List<Usuari> llistaFollowers = await convertirStringEnUsuari(llistaNoms);
+    for (Usuari usuari in llistaFollowers) {
+      for (Usuari amic in amics) {
+        if (amic.nom == usuari.nom) {
+          llistaFollowers.remove(usuari);
+          if (llistaFollowers.isEmpty) {
+            break;
+          }
+        }
+      }
+      if (llistaFollowers.isEmpty) {
+        break;
+      }
+    }
+
+    amics.addAll(
+        llistaFollowers); //s'uneixen els followers per si vols afegir someone
+
+    setState(() {
+      displayList = List.from(amics);
+      participantAfegit = List.generate(
+        displayList.length,
+        (index) => !_grup.membres.contains(displayList[index]),
+      );
+      participants = List.from(_grup.membres as Iterable);
+    });
+  }
+
+  Future<List<Usuari>> convertirStringEnUsuari(List<String> llistaNoms) async {
+    List<Usuari> llistaUsuaris = [];
+
+    for (String nom in llistaNoms) {
+      Usuari user = await _controladorPresentacion.getUserByName(nom);
+      llistaUsuaris.add(user);
+    }
+
+    return llistaUsuaris;
   }
 
   void updateList(String value) {
@@ -176,7 +224,8 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
             Container(
               alignment: Alignment.topCenter,
               child: Image(
-                image: AssetImage(participants[index].image),
+                image: AssetImage(
+                    'assets/userImage.png'), //AssetImage(participants[index].image),
                 fit: BoxFit.fill,
                 width: 55.0,
                 height: 55.0,
@@ -192,7 +241,7 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
                   padding:
                       const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                   child: Text(
-                    participants[index].nom,
+                    participants[index],
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 10,
@@ -236,10 +285,10 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
         setState(() {
           participantAfegit[index] = !participantAfegit[index];
           if (participantAfegit[index]) {
-            afegirParticipant(displayList[index]);
+            afegirParticipant(displayList[index].nom);
           } else {
             // Remove participant if button is toggled off
-            participants.remove(displayList[index]);
+            participants.remove(displayList[index].nom);
           }
         });
       },
