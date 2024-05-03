@@ -343,7 +343,7 @@ class _MapPageState extends State<MapPage> {
                                     style: const TextStyle(
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.bold,
-                                      color: const Color(0xFFF4692A),
+                                      color: Color(0xFFF4692A),
                                     ),
                                   ),
                                 ),
@@ -719,7 +719,7 @@ class _MapPageState extends State<MapPage> {
           // Muestra un indicador de carga si la ubicación aún no se ha cargado
           if (!ubicacionCargada)
             const Center(
-              child: CircularProgressIndicator(color: const Color(0xFFF4692A),),
+              child: CircularProgressIndicator(color: Color(0xFFF4692A),),
             ),
           // Muestra el mapa una vez que la ubicación esté cargada
           if (ubicacionCargada)
@@ -795,7 +795,7 @@ class _MapPageState extends State<MapPage> {
                       Text(
                         "available_activities".trWithArg(context, {"number": _actividades.length}),
                         style: const TextStyle(
-                          color: const Color(0xFFF4692A),
+                          color: Color(0xFFF4692A),
                         ),
                       ),
                       Expanded(

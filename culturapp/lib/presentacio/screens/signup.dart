@@ -1,14 +1,7 @@
-import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:culturapp/translations/AppLocalizations';
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
-import "package:hive/hive.dart";
-import "package:sign_in_button/sign_in_button.dart";
-import 'package:culturapp/presentacio/screens/logout.dart';
-import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
-import 'package:multi_select_flutter/multi_select_flutter.dart';
-import 'package:flutter/material.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class Signup extends StatefulWidget {

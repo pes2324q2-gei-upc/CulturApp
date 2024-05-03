@@ -16,7 +16,6 @@ class UserInfoWidget extends StatefulWidget {
 }
 
 class _UserInfoWidgetState extends State<UserInfoWidget> {
-  String _selectedText = "'Historico actividades'";
   int _selectedIndex = 0;
   late ControladorPresentacion _controladorPresentacion;
   late String _usernameFuture;
@@ -37,7 +36,6 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
   void _onTabChange(int index) {
     setState(() {
       _selectedIndex = index;
-      _selectedText = _getLabelText(index);
     });
   }
 
@@ -115,7 +113,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                     ),
                     const SizedBox(height: 5),
                     //XP
-                    Text(
+                    const Text(
                       '1500 XP',
                       style: TextStyle(fontSize: 14),
                     ),
@@ -194,7 +192,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                           ],
                         ),
                       ),
-                      Text("Insignias"),
+                      const Text("Insignias"),
                     ],
                   ),
                 ),

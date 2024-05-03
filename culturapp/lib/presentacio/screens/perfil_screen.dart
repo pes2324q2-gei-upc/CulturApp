@@ -1,11 +1,8 @@
-import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
-import 'package:culturapp/presentacio/screens/my_activities.dart';
 import 'package:culturapp/presentacio/widgets/user_info.dart';
 import 'package:culturapp/translations/AppLocalizations';
 import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
 
 class PerfilPage extends StatefulWidget {
   

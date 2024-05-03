@@ -1,8 +1,5 @@
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
-import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:flutter/material.dart';
-import "package:firebase_auth/firebase_auth.dart";
-import 'package:culturapp/presentacio/screens/login.dart';
 
 class SettingsPerfil extends StatefulWidget {
 
@@ -15,12 +12,6 @@ class SettingsPerfil extends StatefulWidget {
 }
 
 class _SettingsPerfil extends State<SettingsPerfil> {
-  //Usuari de Firebase
-  User? _user;
-  int _selectedIndex = 3;
-
-  //Instancia de autentificacio de Firebase
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   late ControladorPresentacion _controladorPresentacion;
 
