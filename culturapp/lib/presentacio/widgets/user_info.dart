@@ -113,7 +113,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                       username,
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     //XP
                     Text(
                       '1500 XP',

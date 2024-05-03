@@ -31,15 +31,12 @@ class _PerfilPageState extends State<PerfilPage> {
     _owner = owner;
   }
 
-
-  //no se que es esta funcuion
   @override
   void initState() {
-    
     super.initState();
   }
-  
-    void _onTabChange(int index) {
+
+  void _onTabChange(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -102,8 +99,6 @@ class _PerfilPageState extends State<PerfilPage> {
         onTabChange: _onTabChange,
     ),
     body: UserInfoWidget(controladorPresentacion: _controladorPresentacion, username: _username, owner: widget.owner),
-    
-    //container amb les diferents pantalles
     );
   }
 
