@@ -582,7 +582,6 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             //fer que nomes el que l'ha creat ho pugui veure
                             GestureDetector(
                               onTap: () async {
-                                //if(post.username == _user.id) _showDeleteOption(context, post, false);
                                 _showDeleteOption(context, post, false);
                               },
                               child: const Icon(Icons.more_vert, size: 20),
