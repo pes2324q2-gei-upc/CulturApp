@@ -1,5 +1,4 @@
 import "package:culturapp/domain/converters/convert_date_format.dart";
-import "package:culturapp/domain/models/user.dart";
 import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/translations/AppLocalizations";

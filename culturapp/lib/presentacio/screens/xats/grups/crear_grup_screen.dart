@@ -25,7 +25,7 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
 
   _CrearGrupScreen(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
-    String userName = _controladorPresentacion.getUsername();
+
     amics = []; //allAmics;
     participantAfegit = [];
     _loadFriends();

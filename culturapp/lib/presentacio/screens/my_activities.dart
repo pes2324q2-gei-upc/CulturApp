@@ -3,7 +3,6 @@ import "package:culturapp/translations/AppLocalizations";
 //import "package:culturapp/presentacio/routes/routes.dart";
 //import "package:culturapp/presentacio/screens/search_my_activities.dart";
 import "package:flutter/material.dart";
-import "package:google_nav_bar/google_nav_bar.dart";
 
 class MyActivities extends StatefulWidget {
   const MyActivities({super.key});

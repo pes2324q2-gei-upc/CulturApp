@@ -1,16 +1,11 @@
-import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import "package:culturapp/translations/AppLocalizations";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
 import "package:google_sign_in/google_sign_in.dart";
-import "package:hive/hive.dart";
 import "package:sign_in_button/sign_in_button.dart";
 //import 'package:culturapp/presentacio/routes/routes.dart';
-import 'package:culturapp/presentacio/screens/logout.dart';
-import 'package:culturapp/presentacio/screens/map_screen.dart';
-import 'package:culturapp/presentacio/screens/signup.dart';
 //import 'package:culturapp/presentacio/routes/routes.dart';
 
 

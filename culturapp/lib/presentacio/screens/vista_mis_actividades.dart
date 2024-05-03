@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:culturapp/translations/AppLocalizations';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,7 +6,6 @@ import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:googleapis/photoslibrary/v1.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:googleapis_auth/auth_io.dart' as auth;
@@ -364,7 +362,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                         style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
-                                          color: const Color(0xFFF4692A),
+                                          color: Color(0xFFF4692A),
                                         ),
                                       ),
                                     ),
@@ -460,7 +458,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                               },
                                               child: Text(
                                                 'buy_here'.tr(context),
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   decoration: TextDecoration
                                                       .none,
                                                       color: Colors.blueAccent // Subrayar para que se entienda que es un enlace
@@ -471,27 +469,29 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                         ],
                                       ),
                                       const Padding(padding: EdgeInsets.only(top: 8)),
-                                      Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 180,
-                                            child: TextButton(
-                                              onPressed: () {
-                                               agregarEventoGoogleCalendar(activitat.name, activitat.dataInici);
-                                              },
-                                              child: Row(
-                                                children: [
-                                                  Text('add_calendar'.tr(context), style: TextStyle(color: Color.fromARGB(255, 255, 196, 0)),),
-                                                  const Padding(padding: EdgeInsets.only(right: 5)),
-                                                  Image.asset('assets/calendar.png', height: 30,),
-                                                ],
+                                        Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 180,
+                                              child: Flexible(
+                                                child: TextButton(
+                                                  onPressed: () {
+                                                    agregarEventoGoogleCalendar(activitat.name, activitat.dataInici);
+                                                  },
+                                                  child: Row(
+                                                    children: [
+                                                      Flexible(
+                                                        child: Text('add_calendar'.tr(context), style: const TextStyle(color: Color.fromARGB(255, 255, 196, 0)),),
+                                                      ),
+                                                      const Padding(padding: EdgeInsets.only(right: 5)),
+                                                      Image.asset('assets/calendar.png', height: 30,),
+                                                    ],
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-
-                                        ],
+                                          ],
+                                        ),],
                                       ),
                                     ),
                                   ),
@@ -522,7 +522,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
         onChanged: (text) => changeSquery(text),
         cursorColor: const Color(0xFFF4692A),
         style: const TextStyle(
-          color: const Color(0xFFF4692A),
+          color: Color(0xFFF4692A),
         ),
         decoration: InputDecoration(
           filled: true,
@@ -534,19 +534,19 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
             borderSide: const BorderSide(
-              color: const Color(0xFFF4692A),
+              color: Color(0xFFF4692A),
             ),
           ),
           hintText: "search".tr(context),
           hintStyle: const TextStyle(
-            color: const Color(0xFFF4692A),
+            color: Color(0xFFF4692A),
             fontWeight: FontWeight.bold,
           ),
           suffixIcon: IconButton(
             onPressed: () {
               searchMyActivities(squery);
             },
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
           ),
           suffixIconColor: const Color(0xFFF4692A),
         ),
@@ -564,7 +564,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
           width: 200,
           height: 30,
           decoration: BoxDecoration(
-            color: Color.fromRGBO(255, 229, 204, 0.815),
+            color: const Color.fromRGBO(255, 229, 204, 0.815),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Center(
@@ -583,16 +583,16 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                 });
               },
               borderRadius: BorderRadius.circular(10),
-              dropdownColor: Color.fromRGBO(255, 229, 204, 0.815),
+              dropdownColor:const Color.fromRGBO(255, 229, 204, 0.815),
               icon: const Icon(
                 Icons.arrow_drop_down,
-                color: const Color(0xFFF4692A),
+                color: Color(0xFFF4692A),
               ),
               iconSize: 20,
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFFF4692A),
+                color: Color(0xFFF4692A),
               ),
               underline: Container(),
             ),
@@ -613,29 +613,29 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
           child: TextField(
             style: const TextStyle(
               fontSize: 14,
-              color: const Color(0xFFF4692A),
+              color: Color(0xFFF4692A),
               fontWeight: FontWeight.bold,
             ),
             controller: _dateController,
             decoration: InputDecoration(
               labelText: 'date'.tr(context),
-              labelStyle: TextStyle(
-                color: const Color(0xFFF4692A),
+              labelStyle: const TextStyle(
+                color: Color(0xFFF4692A),
                 fontWeight: FontWeight.bold,
               ),
               filled: true,
-              fillColor: Color.fromRGBO(255, 229, 204, 0.815),
-              prefixIcon: Icon(
+              fillColor: const Color.fromRGBO(255, 229, 204, 0.815),
+              prefixIcon: const Icon(
                 Icons.calendar_today,
                 size: 18,
-                color: const Color(0xFFF4692A),
+                color: Color(0xFFF4692A),
               ),
-              enabledBorder: OutlineInputBorder(
+              enabledBorder: const OutlineInputBorder(
                 borderSide: BorderSide.none,
               ),
-              focusedBorder: OutlineInputBorder(
+              focusedBorder: const OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: const Color(0xFFF4692A),
+                  color: Color(0xFFF4692A),
                 ),
               ),
             ),

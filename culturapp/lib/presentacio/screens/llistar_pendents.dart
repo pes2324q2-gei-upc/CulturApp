@@ -2,8 +2,6 @@ import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/translations/AppLocalizations';
 import 'package:flutter/material.dart';
 import 'package:culturapp/presentacio/widgets/widgetsUtils/user_box.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class LlistarPendents extends StatefulWidget {
   final String username;
