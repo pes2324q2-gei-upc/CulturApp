@@ -1,23 +1,32 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/translations/AppLocalizations';
 import 'package:flutter/material.dart';
 
 class PostWidget extends StatefulWidget {
-  final String foroId;
+  final String activitat;
+  final ControladorPresentacion controladorPresentacion;
 
   const PostWidget({
-    required this.foroId,
+    required this.controladorPresentacion,
+    required this.activitat,
     required this.addPost,
     super.key});
 
   final FutureOr<void> Function(String foroId, String mensaje, String fecha, int numeroLikes) addPost;
 
   @override
-  State<PostWidget> createState() => _PostWidgetState();
+  State<PostWidget> createState() => _PostWidgetState(controladorPresentacion);
 }
 
 class _PostWidgetState extends State<PostWidget> {
+  late ControladorPresentacion _controladorPresentacion; 
+
+   _PostWidgetState(ControladorPresentacion controladorPresentacion) {
+    _controladorPresentacion = controladorPresentacion;
+  }
+
   final _formKey = GlobalKey<FormState>(debugLabel: '_PostState');
   final _controller = TextEditingController();
 
@@ -52,8 +61,9 @@ class _PostWidgetState extends State<PostWidget> {
             ElevatedButton(
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  final String foro = widget.foroId; 
-                  String data = Timestamp.now().toDate().toIso8601String();
+                  String? foro = await _controladorPresentacion.getForoId(widget.activitat); 
+                  if (foro != null) {
+                    String data = Timestamp.now().toDate().toIso8601String();
                     await widget.addPost(
                       foro,
                       _controller.text,
@@ -62,6 +72,7 @@ class _PostWidgetState extends State<PostWidget> {
                     );
                   }
                   _controller.clear();
+                }
               },
               child: const Row(
                 children: [

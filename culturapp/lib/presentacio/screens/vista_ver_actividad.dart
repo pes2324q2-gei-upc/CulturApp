@@ -99,8 +99,6 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   @override
   Widget build(BuildContext context) {
     _controladorPresentacion.getForo(infoActividad[1]); //verificar que tenga un foro
-    fId();
-    print(idForo);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
@@ -152,16 +150,16 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             //barra para añadir mensajes
             child: reply == false
               ? PostWidget(
-                addPost: (idForo, mensaje, fecha, numeroLikes) async {
-                  await _controladorPresentacion.addPost(idForo, mensaje, fecha, numeroLikes);
-                  print(idForo);
+                addPost: (foroId, mensaje, fecha, numeroLikes) async {
+                  await _controladorPresentacion.addPost(foroId, mensaje, fecha, numeroLikes);
 
                   // Actualitza el llistat de posts
                   setState(() {
                     posts = _controladorPresentacion.getPostsForo(idForo);
                   });
                 },
-                foroId: idForo,
+                activitat: infoActividad[1],
+                controladorPresentacion: _controladorPresentacion,
               )
               : ReplyWidget(
                 addReply: (foroId, postIden, mensaje, fecha, numeroLikes) async {
@@ -476,7 +474,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     );
   }
 
-  void _deletePost(Post post, String? postId) {
+  Future<void> _deletePost(Post post, String? postId) async{
 
     _controladorPresentacion.deletePost(idForo, postId);
 
@@ -485,18 +483,13 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     });
   }
 
-  void _deleteReply(Post reply, String? postId, String? replyId) {
+  Future<void> _deleteReply(Post reply, String? postId, String? replyId) async{
 
     _controladorPresentacion.deleteReply(idForo, postId, replyId);
 
     setState(() {
       replies = _controladorPresentacion.getReplyPosts(idForo, postId);
     });
-  }
-
-  void fId() async {
-    String? foroId = await _controladorPresentacion.getForoId(infoActividad[1]);
-    idForo = foroId!;
   }
 
   //conseguir posts del foro
@@ -590,11 +583,6 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             GestureDetector(
                               onTap: () async {
                                 _showDeleteOption(context, post, false);
-                                //prueba de elminar el post al momento
-                                setState(() {
-                                  // Actualiza la lista de posts para reflejar el cambio
-                                  posts.removeWhere((element) => element == post);
-                                });
                               },
                               child: const Icon(Icons.more_vert, size: 20),
                             ),
@@ -765,7 +753,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       child: Padding(        
         padding: const EdgeInsets.only(left: 180),
         child: Text(
-          mostraReplies ? 'see_reply'.tr(context) : 'no_reply'.tr(context),
+          mostraReplies ? 'no_reply'.tr(context) : 'see_reply'.tr(context),
           style: const TextStyle(color: Colors.grey,),
         ),
       ),
