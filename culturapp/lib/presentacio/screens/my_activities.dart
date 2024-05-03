@@ -1,4 +1,5 @@
 import "package:culturapp/domain/models/actividad.dart";
+import "package:culturapp/translations/AppLocalizations";
 //import "package:culturapp/presentacio/routes/routes.dart";
 //import "package:culturapp/presentacio/screens/search_my_activities.dart";
 import "package:flutter/material.dart";
@@ -20,8 +21,8 @@ class _MyActivities extends State<MyActivities> {
       appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: const Color(0xFFF4692A),
-          title: const Text(
-            'Mis Actividades',
+          title: Text(
+            'my_activities'.tr(context),
             style: TextStyle(color: Colors.white),
           ),
           actions: [

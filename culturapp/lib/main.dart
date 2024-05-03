@@ -19,7 +19,7 @@ void main() async {
   final controladorPresentacion = ControladorPresentacion();
   //controladorPresentacion.funcLogout();
   User? currentUser = FirebaseAuth.instance.currentUser;
-
+   await controladorPresentacion.initialice2();
   if (currentUser != null) {
     await controladorPresentacion.initialice();
   }
@@ -69,7 +69,7 @@ class _MyAppState extends State<MyApp> {
       ),
       supportedLocales: const [
         Locale('en'),
-        Locale('cat'),
+        Locale('ca'),
         Locale('es'),
       ],
       localizationsDelegates: const [
@@ -79,6 +79,9 @@ class _MyAppState extends State<MyApp> {
         GlobalCupertinoLocalizations.delegate,
       ],
       localeResolutionCallback: (deviceLocale, supportedLocales) {
+        if (_controladorPresentacion.language != null) {
+          return _controladorPresentacion.language;
+        }
         for (var locale in supportedLocales) {
           if (deviceLocale != null && deviceLocale.languageCode == locale.languageCode) {
             return deviceLocale;

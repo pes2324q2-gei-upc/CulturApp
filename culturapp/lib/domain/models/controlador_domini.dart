@@ -39,6 +39,7 @@ class ControladorDomini {
     if (respuesta.statusCode == 200) {
       var data = json.decode(respuesta.body);
         userLogged.setToken(data['token']);
+        print(userLogged.getToken());
         userLogged.setUsername(data['username']);
       
     } else {

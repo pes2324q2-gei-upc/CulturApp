@@ -29,7 +29,9 @@ import 'package:culturapp/presentacio/screens/xats/xats.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:http/http.dart';
+//import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:http/http.dart';
 
 class ControladorPresentacion {
   final controladorDomini = ControladorDomini();
@@ -40,6 +42,8 @@ class ControladorPresentacion {
   late List<String> categsFav = [];
   late List<Usuario> usersRecom;
   late List<Usuario> usersBD;
+  late Locale? _language = Locale('en');
+  Locale? get language => _language;
   late List<String> friends;
   late String usernameLogged;
   late List<Actividad> activitatsUser;
@@ -51,6 +55,12 @@ class ControladorPresentacion {
   }
 
   Future<void> initialice() async {
+    activitats = await controladorDomini.getActivitiesAgenda();
+    usersBD = await controladorDomini.getUsers();
+    _loadLanguage();
+  }
+
+  Future<void> initialice2() async {
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
       _user = currentUser;
@@ -461,6 +471,21 @@ class ControladorPresentacion {
           titolActivitat: titol,),
       ),
     );
+  }
+
+  Future<void> _loadLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final languageCode = prefs.getString('languageCode');
+    if (languageCode != null) {
+      _language = Locale(languageCode);
+    }
+  }
+
+  void changeLanguage(Locale? lang) async {
+    _language = lang;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('languageCode', lang!.languageCode);
+    _loadLanguage();
   }
   
 }
