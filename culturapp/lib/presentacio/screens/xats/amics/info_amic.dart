@@ -1,5 +1,6 @@
 import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
+import "package:culturapp/translations/AppLocalizations";
 import "package:flutter/material.dart";
 
 class InfoAmicScreen extends StatefulWidget {
@@ -55,8 +56,8 @@ class _InfoAmicScreen extends State<InfoAmicScreen> {
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       backgroundColor: Colors.orange,
-      title: const Text(
-        'Informació Amic',
+      title: Text(
+        'friend_info'.tr(context),
         style: TextStyle(color: Colors.white),
       ),
       leading: IconButton(
@@ -105,8 +106,8 @@ class _InfoAmicScreen extends State<InfoAmicScreen> {
           backgroundColor: MaterialStateProperty.all<Color>(Colors.grey),
           //padding: MaterialStateProperty<EdgeInsetsGeometry?>(10.0),
         ),
-        child: const Text(
-          "Veure Perfil d'Amic",
+        child: Text(
+          "see_profile_friend".tr(context),
           style: TextStyle(
             color: Colors.white,
             fontSize: 15.0,

@@ -1,5 +1,6 @@
 import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
+import "package:culturapp/translations/AppLocalizations";
 import "package:flutter/material.dart";
 
 class CrearGrupScreen extends StatefulWidget {
@@ -68,12 +69,12 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
           children: [
             Column(
               children: [
-                const SizedBox(
+                SizedBox(
                   child: Padding(
                     padding: EdgeInsets.only(
                         bottom: 20.0, left: 20.0, right: 20.0, top: 30.0),
                     child: Text(
-                      'Escolleix els participants del nou grup: ',
+                      'choose_participants'.tr(context),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -128,7 +129,7 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
               borderRadius: BorderRadius.circular(8.0),
               borderSide: BorderSide.none,
             ),
-            hintText: "Search...",
+            hintText: "search".tr(context),
             hintStyle: const TextStyle(
               color: Colors.white,
             ),

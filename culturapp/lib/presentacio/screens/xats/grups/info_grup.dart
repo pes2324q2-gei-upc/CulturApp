@@ -1,5 +1,6 @@
 import "package:culturapp/domain/models/grup.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
+import "package:culturapp/translations/AppLocalizations";
 import "package:flutter/material.dart";
 
 class InfoGrupScreen extends StatefulWidget {
@@ -88,7 +89,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
     return AppBar(
       backgroundColor: Colors.orange,
       title: Text(
-        estaEditant ? 'Editant Grup' : 'Informació Grup',
+        estaEditant ? 'editing_group'.tr(context) : 'group_info'.tr(context),
         style: const TextStyle(color: Colors.white),
       ),
       leading: IconButton(
@@ -106,8 +107,8 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
   Widget _buildImatge() {
     return Column(
       children: [
-        const Text(
-          'Imatge:',
+        Text(
+          'image'.tr(context),
           style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.bold,
@@ -211,8 +212,8 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
           padding: const EdgeInsets.only(top: 10.0),
           width: llargadaPantallaTitols,
           alignment: Alignment.centerLeft,
-          child: const Text(
-            'Descripció:',
+          child: Text(
+            'description'.tr(context),
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -281,8 +282,8 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
           alignment: Alignment.centerLeft,
           child: Row(
             children: [
-              const Text(
-                'Participants:',
+              Text(
+                'participants'.tr(context),
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
