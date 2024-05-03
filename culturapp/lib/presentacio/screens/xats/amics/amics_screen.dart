@@ -1,3 +1,4 @@
+import "package:culturapp/domain/converters/convert_date_format.dart";
 import "package:culturapp/domain/models/user.dart";
 import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
@@ -23,8 +24,6 @@ class _AmicsScreenState extends State<AmicsScreen> {
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
 
   String mockImage = 'assets/userImage.png';
-  String mockLastMessage = 'mock';
-  String mockTimeMessage = '00:00';
 
   _AmicsScreenState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
@@ -76,13 +75,13 @@ class _AmicsScreenState extends State<AmicsScreen> {
   }
 
   Future<String> agafarLastMessage(Usuari amic) async {
-    String msg = await _controladorPresentacion.lastMsg(amic.id);
+    String msg = await _controladorPresentacion.lastMsg(amic.nom);
     return msg;
   }
 
   Future<String> agafarTimeLastMessage(Usuari amic) async {
-    String time = await _controladorPresentacion.lasTime(amic.id);
-    return time;
+    String time = await _controladorPresentacion.lasTime(amic.nom);
+    return convertTimeFormat(time);
   }
 
   @override
