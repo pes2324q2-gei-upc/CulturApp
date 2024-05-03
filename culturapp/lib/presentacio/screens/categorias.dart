@@ -53,7 +53,7 @@ class _CategoriasState extends State<Categorias> {
       
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFFF4692A),
         title: const Text(
           "Categories Preferides",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -149,7 +149,7 @@ class _CategoriasState extends State<Categorias> {
       child: Container(
         decoration: BoxDecoration(
           //Seleccionat color taronja, si no gris
-          color: isSelected[index] ? Colors.orange : Colors.grey.shade200,
+          color: isSelected[index] ? const Color(0xFFF4692A) : Colors.grey.shade200,
           borderRadius: const BorderRadius.all(Radius.circular(40.0)),
         ),
         //Columna per tenir tant imatge com nom

@@ -10,24 +10,24 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 class PerfilPage extends StatefulWidget {
   
   final ControladorPresentacion controladorPresentacion;
-  final String uid;
+  final String username;
   final bool owner;
 
-  const PerfilPage({Key? key, required this.controladorPresentacion, required String this.uid, required bool this.owner}) : super(key: key);
+  const PerfilPage({Key? key, required this.controladorPresentacion, required String this.username, required bool this.owner}) : super(key: key);
 
   @override
-  State<PerfilPage> createState() => _PerfilPageState(this.controladorPresentacion, this.uid, this.owner);
+  State<PerfilPage> createState() => _PerfilPageState(this.controladorPresentacion, this.username, this.owner);
 }
 
 class _PerfilPageState extends State<PerfilPage> {
   int _selectedIndex = 3;
   late ControladorPresentacion _controladorPresentacion;
-  late String _uid;
+  late String _username;
   late bool _owner;
   
-  _PerfilPageState(ControladorPresentacion controladorPresentacion, String uid, bool owner) {
+  _PerfilPageState(ControladorPresentacion controladorPresentacion, String username, bool owner) {
     _controladorPresentacion = controladorPresentacion;
-    _uid = uid;
+    _username = username;
     _owner = owner;
   }
 
@@ -68,7 +68,7 @@ class _PerfilPageState extends State<PerfilPage> {
     //header
     appBar: AppBar(
       automaticallyImplyLeading: false,
-      backgroundColor: Colors.orange,
+      backgroundColor: const Color(0xFFF4692A),
       title: Text(
         'profile'.tr(context),
         style: TextStyle(color: Colors.white),
@@ -83,7 +83,7 @@ class _PerfilPageState extends State<PerfilPage> {
           ),
           IconButton(
             onPressed: () {
-              _controladorPresentacion.mostrarEditPerfil(this.context, this._uid);
+              _controladorPresentacion.mostrarEditPerfil(this.context, _username);
             },
             icon: const Icon(Icons.edit, color: Colors.white),
           ),
@@ -101,7 +101,7 @@ class _PerfilPageState extends State<PerfilPage> {
         currentIndex: _selectedIndex,
         onTabChange: _onTabChange,
     ),
-    body: UserInfoWidget(controladorPresentacion: _controladorPresentacion, uid: _uid),
+    body: UserInfoWidget(controladorPresentacion: _controladorPresentacion, username: _username, owner: widget.owner),
     
     //container amb les diferents pantalles
     );

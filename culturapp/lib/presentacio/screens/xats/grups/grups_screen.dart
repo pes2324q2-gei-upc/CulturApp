@@ -131,7 +131,7 @@ class _GrupsScreenState extends State<GrupsScreen> {
         ),
         title: Text(display_list[index].nomGroup,
             style: const TextStyle(
-              color: Colors.orange,
+              color: const Color(0xFFF4692A),
               fontWeight: FontWeight.bold,
             )),
         subtitle: Text(display_list[index].lastMessage),

@@ -343,7 +343,7 @@ class _MapPageState extends State<MapPage> {
                                     style: const TextStyle(
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.orange,
+                                      color: const Color(0xFFF4692A),
                                     ),
                                   ),
                                 ),
@@ -431,7 +431,7 @@ class _MapPageState extends State<MapPage> {
                             List<String> act = [
                               actividad.name,
                               actividad.code,
-                              actividad.categoria[0],
+                              actividad.categoria.join(', '),
                               actividad.imageUrl,
                               actividad.descripcio,
                               actividad.dataInici,
@@ -461,7 +461,7 @@ class _MapPageState extends State<MapPage> {
                           },
                           style: ButtonStyle(
                             backgroundColor:
-                                MaterialStateProperty.all(Colors.orange),
+                                MaterialStateProperty.all(const Color(0xFFF4692A)),
                           ),
                           child: Text(
                             "see_more".tr(context),
@@ -719,7 +719,7 @@ class _MapPageState extends State<MapPage> {
           // Muestra un indicador de carga si la ubicación aún no se ha cargado
           if (!ubicacionCargada)
             const Center(
-              child: CircularProgressIndicator(color: Colors.orange,),
+              child: CircularProgressIndicator(color: const Color(0xFFF4692A),),
             ),
           // Muestra el mapa una vez que la ubicación esté cargada
           if (ubicacionCargada)
@@ -795,7 +795,7 @@ class _MapPageState extends State<MapPage> {
                       Text(
                         "available_activities".trWithArg(context, {"number": _actividades.length}),
                         style: const TextStyle(
-                          color: Colors.orange,
+                          color: const Color(0xFFF4692A),
                         ),
                       ),
                       Expanded(

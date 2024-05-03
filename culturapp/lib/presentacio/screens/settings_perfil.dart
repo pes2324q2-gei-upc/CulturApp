@@ -24,7 +24,7 @@ class _SettingsPerfil extends State<SettingsPerfil> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFFF4692A),
         title: Text(
           'settings'.tr(context),
           style: TextStyle(color: Colors.white),
@@ -68,6 +68,15 @@ class _SettingsPerfil extends State<SettingsPerfil> {
             leading: const Icon(Icons.delete),
             onTap: () {
               // Delete account logic
+            },
+          ),
+          const Divider(height: 0),
+          //si queremos, añadir tema de notificaciones
+          ListTile(
+            title: const Text('Reportar error en la aplicación'),
+            leading: const Icon(Icons.assignment),
+            onTap: () {
+              widget.controladorPresentacion.mostrarReportBug(context);
             },
           ),
           const Divider(height: 0),

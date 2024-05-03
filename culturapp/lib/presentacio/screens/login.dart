@@ -105,7 +105,6 @@ class _Login extends State<Login> {
 
     if (userCredential.user != null) {
       _controladorPresentacion.initialice();
-      _controladorPresentacion.initialice2();
       _controladorPresentacion.mostrarMapa(context);
     }
 

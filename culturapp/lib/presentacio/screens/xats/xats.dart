@@ -70,22 +70,22 @@ class _Xats extends State<Xats> {
   }
 
   Color _buttonAmics = Colors.grey;
-  Color _buttonGrups = Colors.orange;
-  Color _buttonAfegirAmics = Colors.orange;
+  Color _buttonGrups = const Color(0xFFF4692A);
+  Color _buttonAfegirAmics = const Color(0xFFF4692A);
 
   void _changeButtonColor(int buttonNumber) {
     setState(() {
       if (buttonNumber == 1) {
         _buttonAmics = Colors.grey;
-        _buttonGrups = Colors.orange;
-        _buttonAfegirAmics = Colors.orange;
+        _buttonGrups = const Color(0xFFF4692A);
+        _buttonAfegirAmics = const Color(0xFFF4692A);
       } else if (buttonNumber == 2) {
-        _buttonAmics = Colors.orange;
+        _buttonAmics = const Color(0xFFF4692A);
         _buttonGrups = Colors.grey;
-        _buttonAfegirAmics = Colors.orange;
+        _buttonAfegirAmics = const Color(0xFFF4692A);
       } else if (buttonNumber == 3) {
-        _buttonAmics = Colors.orange;
-        _buttonGrups = Colors.orange;
+        _buttonAmics = const Color(0xFFF4692A);
+        _buttonGrups = const Color(0xFFF4692A);
         _buttonAfegirAmics = Colors.grey;
       }
     });
@@ -96,7 +96,7 @@ class _Xats extends State<Xats> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFFF4692A),
         title: const Text(
           'Xats',
           style: TextStyle(color: Colors.white),
@@ -168,6 +168,7 @@ class _Xats extends State<Xats> {
                           changeContent(AfegirAmics(
                             recomms: usersRecom,
                             usersBD: usersBD,
+                            controladorPresentacion: _controladorPresentacion,
                           ));
                         },
                         child: const Text('Afegir Amics'),

@@ -20,7 +20,7 @@ class _MyActivities extends State<MyActivities> {
     return Scaffold(
       appBar: AppBar(
           automaticallyImplyLeading: false,
-          backgroundColor: Colors.orange,
+          backgroundColor: const Color(0xFFF4692A),
           title: Text(
             'my_activities'.tr(context),
             style: TextStyle(color: Colors.white),

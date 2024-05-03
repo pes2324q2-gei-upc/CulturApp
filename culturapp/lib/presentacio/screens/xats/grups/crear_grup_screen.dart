@@ -54,7 +54,7 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFFF4692A),
         title: const Text(
           'Crear Grup',
           style: TextStyle(color: Colors.white),
@@ -208,7 +208,7 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
       ),
       title: Text(displayList[index].nom,
           style: const TextStyle(
-            color: Colors.orange,
+            color: const Color(0xFFF4692A),
             fontWeight: FontWeight.bold,
           )),
       trailing: _buildBotoAfegir(displayList[index], index),
