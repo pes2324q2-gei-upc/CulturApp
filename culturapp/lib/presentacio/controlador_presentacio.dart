@@ -21,7 +21,6 @@ import 'package:culturapp/presentacio/screens/recomendador_actividades.dart';
 import 'package:culturapp/presentacio/screens/recomendador_users.dart';
 import 'package:culturapp/presentacio/screens/settings_perfil.dart';
 import 'package:culturapp/presentacio/screens/signup.dart';
-import 'package:culturapp/presentacio/screens/update_perfil.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_mis_actividades.dart';
 import 'package:culturapp/presentacio/screens/vista_ver_actividad.dart';
@@ -32,7 +31,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:culturapp/domain/models/foro_model.dart';
 import 'package:culturapp/domain/models/post.dart';
-import 'package:http/http.dart';
 
 class ControladorPresentacion {
   final controladorDomini = ControladorDomini();
@@ -480,10 +478,6 @@ class ControladorPresentacion {
   //eliminar reply
   Future<void> deleteReply(String foroId, String? postId, String? replyId) async {
     return controladorDomini.deleteReply(foroId, postId, replyId);
-  }
-
-  Future<String> getUsername(String uid) {
-    return controladorDomini.getUsername(uid);
   }
 
   void mostrarFollows(BuildContext context, bool follows) {

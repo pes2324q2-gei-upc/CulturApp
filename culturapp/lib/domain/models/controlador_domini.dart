@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-//import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/foro_model.dart';
 import 'package:culturapp/domain/models/post.dart';
@@ -512,7 +512,7 @@ class ControladorDomini {
   //foro existe? si no es asi crealo
   Future<Foro?> foroExists(String code) async {
     try {
-      final respuesta = await http.get(Uri.parse('http://10.0.2.2:8080/foros/exists?activitat_code=$code'));
+      final respuesta = await http.get(Uri.parse('https://culturapp-back.onrender.com/foros/exists?activitat_code=$code'));
 
       if (respuesta.statusCode == 200) {
         final data = json.decode(respuesta.body);
@@ -540,7 +540,7 @@ class ControladorDomini {
       };
 
       final respuesta = await http.post(
-        Uri.parse('http://10.0.2.2:8080/foros/create'),
+        Uri.parse('https://culturapp-back.onrender.com/foros/create'),
         body: jsonEncode(forodata),
         headers: {'Content-Type': 'application/json'},
       );
@@ -561,7 +561,7 @@ class ControladorDomini {
   //getPosts
   Future<List<Post>> getPostsForo(String foroId) async {
     try {
-      final response = await http.get(Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts'));
+      final response = await http.get(Uri.parse('https://culturapp-back.onrender.com/foros/$foroId/posts'));
       
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -582,12 +582,12 @@ class ControladorDomini {
   //crear post
   Future<void> addPost(String foroId, String mensaje, String fecha, int numeroLikes) async {
     try {
-      final url = Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts');
+      final url = Uri.parse('https://culturapp-back.onrender.com/foros/$foroId/posts');
       final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
+          'Authorization': 'Bearer ${userLogged.getToken()}'
         },
         body: jsonEncode({
           'mensaje': mensaje,
@@ -609,12 +609,12 @@ class ControladorDomini {
   //eliminar post
   Future<void> deletePost(String foroId, String? postId) async {
     try {
-      final url = Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts/$postId');
+      final url = Uri.parse('https://culturapp-back.onrender.com/foros/$foroId/posts/$postId');
       final response = await http.delete(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
+          'Authorization': 'Bearer ${userLogged.getToken()}'
         },
       );
 
@@ -631,12 +631,12 @@ class ControladorDomini {
   //eliminar reply
   Future<void> deleteReply(String foroId, String? postId, String? replyId) async {
     try {
-      final url = Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts/$postId/reply/$replyId');
+      final url = Uri.parse('https://culturapp-back.onrender.com/foros/$foroId/posts/$postId/reply/$replyId');
       final response = await http.delete(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
+          'Authorization': 'Bearer ${userLogged.getToken()}'
         },
       );
 
@@ -653,12 +653,12 @@ class ControladorDomini {
   //crear reply
   Future<void> addReplyPost(String foroId, String postId, String mensaje, String fecha, int numeroLikes) async {
     try {
-      final url = Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts/$postId/reply');
+      final url = Uri.parse('https://culturapp-back.onrender.com/foros/$foroId/posts/$postId/reply');
       final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
+          'Authorization': 'Bearer ${userLogged.getToken()}'
         },
         body: jsonEncode({
           'mensaje': mensaje,
@@ -680,7 +680,7 @@ class ControladorDomini {
   //getReplies
   Future<List<Post>> getReplyPosts(String foroId, String? postId) async {
     try {
-      final response = await http.get(Uri.parse('http://10.0.2.2:8080/foros/$foroId/posts/$postId/reply'));
+      final response = await http.get(Uri.parse('https://culturapp-back.onrender.com/foros/$foroId/posts/$postId/reply'));
       
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);

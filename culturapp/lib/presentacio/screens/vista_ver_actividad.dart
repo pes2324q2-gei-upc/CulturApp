@@ -140,7 +140,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                 const SizedBox(height: 10),
                 _descripcioActividad(infoActividad[4]), //Accedemos su descripcion
                 _expansionDescripcion(),
-                _infoActividad(infoActividad[7], infoActividad[5], infoActividad[6], uriActividad),
+                _infoActividad(infoActividad[7], infoActividad[5], infoActividad[6], infoActividad[2], uriActividad),
                 _foro(),
               ], //Accedemos ubicación, dataIni, DataFi, uri actividad
             ),
