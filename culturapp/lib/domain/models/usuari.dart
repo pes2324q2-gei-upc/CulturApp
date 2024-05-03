@@ -18,6 +18,16 @@ class Usuari {
   });
 }
 
+const Usuari mockUsuari = Usuari(
+  id: '1',
+  nom: 'Jaume',
+  email: 'usuari@gmail.com',
+  image: 'assets/userImage.png',
+  activitats: ["a", "b"],
+  favCategories: ["a", "b"],
+  followers: [],
+);
+
 const List<Usuari> allAmics = [
   Usuari(
     id: '1',

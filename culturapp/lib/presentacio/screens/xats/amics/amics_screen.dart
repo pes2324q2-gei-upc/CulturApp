@@ -15,14 +15,20 @@ class AmicsScreen extends StatefulWidget {
 
 class _AmicsScreenState extends State<AmicsScreen> {
   late ControladorPresentacion _controladorPresentacion;
-  late List<Usuari> llista_amics;
-  late List<Usuari> display_list;
+  late List<String> llista_amics;
+  late List<String> display_list;
 
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
 
+  String mockImage = 'assets/userImage.png';
+  String mockLastMessage = 'mock';
+  String mockTimeMessage = '00:00';
+
   _AmicsScreenState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
-    llista_amics = allAmics;
+    //llista_amics =
+    llista_amics = [];
+    _loadFriends();
     //crida a backend per agafar tots els amics de l'usuari
     display_list = List.from(llista_amics);
   }
@@ -35,10 +41,17 @@ class _AmicsScreenState extends State<AmicsScreen> {
       () {
         display_list = llista_amics
             .where((element) =>
-                element.nom.toLowerCase().contains(value.toLowerCase()))
+                element.toLowerCase().contains(value.toLowerCase()))
             .toList();
       },
     );
+  }
+
+  Future<void> _loadFriends() async {
+    llista_amics = await _controladorPresentacion.obteAmics();
+    /*setState(() {
+      messages = convertData(loadedMessages).reversed.toList();
+    });*/
   }
 
   Future<String> agafarLastMessage(Usuari amic) async {
@@ -97,7 +110,18 @@ class _AmicsScreenState extends State<AmicsScreen> {
     );
   }
 
+  Future<String>? convertToNullableFutureString(String? inputString) {
+    if (inputString != null) {
+      // Simulate an asynchronous operation with a delay of 0 milliseconds
+      return Future.delayed(Duration.zero, () => inputString);
+    } else {
+      return null;
+    }
+  }
+
   Widget _buildAmic(context, index) {
+    //crida per getUsuari
+
     return GestureDetector(
       onTap: () {
         //anar cap a la pantalla de un xat amb l'usuari
@@ -106,23 +130,26 @@ class _AmicsScreenState extends State<AmicsScreen> {
         _controladorPresentacion
             .getXat("Eman"); //quan obtingui followers, treure
 
-        _controladorPresentacion.mostrarXatAmic(context, display_list[index]);
+        //_controladorPresentacion.mostrarXatAmic(context, display_list[index]);
+        _controladorPresentacion.mostrarXatAmic(context, mockUsuari);
       },
       child: ListTile(
         contentPadding: const EdgeInsets.all(8.0),
         leading: Image(
-          image: AssetImage(display_list[index].image),
+          //image: AssetImage(display_list[index].image),
+          image: AssetImage(mockImage),
           fit: BoxFit.cover,
           width: 50,
           height: 50,
         ),
-        title: Text(display_list[index].nom,
+        title: Text(display_list[index],
             style: const TextStyle(
               color: Colors.orange,
               fontWeight: FontWeight.bold,
             )),
         subtitle: FutureBuilder<String>(
-          future: agafarLastMessage(display_list[index]),
+          future: convertToNullableFutureString(
+              mockLastMessage), //agafarLastMessage(display_list[index]),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Text('Loading...');
@@ -135,7 +162,8 @@ class _AmicsScreenState extends State<AmicsScreen> {
         ),
         //Text(agafarLastMessage(display_list[index])),
         trailing: FutureBuilder<String>(
-          future: agafarTimeLastMessage(display_list[index]),
+          future: convertToNullableFutureString(
+              mockTimeMessage), //agafarTimeLastMessage(display_list[index]),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Text('Loading...');

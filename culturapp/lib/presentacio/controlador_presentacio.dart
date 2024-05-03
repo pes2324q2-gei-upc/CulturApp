@@ -466,4 +466,8 @@ class ControladorPresentacion {
       throw Exception('Error al cojer mensajes del xat: $error');
     }
   }
+
+  Future<List<String>> obteAmics() async {
+    return await controladorDomini.obteFollows(usernameLogged);
+  }
 }
