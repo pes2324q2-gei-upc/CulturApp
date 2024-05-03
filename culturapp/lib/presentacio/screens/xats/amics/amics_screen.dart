@@ -55,6 +55,9 @@ class _AmicsScreenState extends State<AmicsScreen> {
     /*setState(() {
       messages = convertData(loadedMessages).reversed.toList();
     });*/
+    setState(() {
+      display_list = List.from(llista_amics);
+    });
   }
 
   Future<String> agafarLastMessage(Usuari amic) async {
@@ -129,10 +132,7 @@ class _AmicsScreenState extends State<AmicsScreen> {
       onTap: () {
         //anar cap a la pantalla de un xat amb l'usuari
         //crida al backend per agafar el xat del amic en concret
-        //_controladorPresentacion.getXat(display_list[index].nom);
-        _controladorPresentacion
-            .getXat("Eman"); //quan obtingui followers, treure
-
+        _controladorPresentacion.getXat(display_list[index]);
         //_controladorPresentacion.mostrarXatAmic(context, display_list[index]);
         _controladorPresentacion.mostrarXatAmic(context, mockUsuari);
       },
