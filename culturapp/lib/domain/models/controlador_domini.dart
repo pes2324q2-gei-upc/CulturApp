@@ -179,8 +179,8 @@ class ControladorDomini {
   }
 
   Future<Usuari> getUserByName(String name) async {
-    final respuesta =
-        await http.get(Uri.parse('http://$ip:8080/users/${name}/info'));
+    final respuesta = await http.get(
+        Uri.parse('https://culturapp-back.onrender.com/users/${name}/info'));
     if (respuesta.statusCode == 200) {
       return _convert_to_usuari(respuesta);
     } else {
@@ -545,8 +545,8 @@ class ControladorDomini {
   }
 
   Future<String> getUsername(String uid) async {
-    final respuesta = await http
-        .get(Uri.parse('http://${ip}:8080/users/username?uid=${uid}'));
+    final respuesta = await http.get(Uri.parse(
+        'https://culturapp-back.onrender.com/users/username?uid=${uid}'));
 
     if (respuesta.statusCode == 200) {
       return respuesta.body;
@@ -562,7 +562,8 @@ class ControladorDomini {
   Future<xatAmic?> xatExists(String receiverName) async {
     try {
       final respuesta = await http.get(
-        Uri.parse('http://10.0.2.2:8080/xats/exists?receiverId=$receiverName'),
+        Uri.parse(
+            'https://culturapp-back.onrender.com/xats/exists?receiverId=$receiverName'),
         headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
         },
@@ -638,7 +639,8 @@ class ControladorDomini {
 
   void addMessage(String? xatId, String time, String text) async {
     try {
-      final url = Uri.parse('http://10.0.2.2:8080/xats/$xatId/mensajes');
+      final url =
+          Uri.parse('https://culturapp-back.onrender.com/xats/$xatId/mensajes');
       final response = await http.post(
         url,
         headers: {
@@ -660,8 +662,8 @@ class ControladorDomini {
 
   Future<List<Message>> getMessages(String? xatId) async {
     try {
-      final response = await http
-          .get(Uri.parse('http://10.0.2.2:8080/xats/$xatId/mensajes'));
+      final response = await http.get(Uri.parse(
+          'https://culturapp-back.onrender.com/xats/$xatId/mensajes'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -685,7 +687,7 @@ class ControladorDomini {
   Future<List<Grup>> getUserGrups() async {
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8080/grups/users/all'),
+        Uri.parse('https://culturapp-back.onrender.com/grups/users/all'),
         headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
         },
@@ -710,8 +712,8 @@ class ControladorDomini {
   //get info d'un grup
   Future<Grup> getInfoGrup(String grupId) async {
     try {
-      final response =
-          await http.get(Uri.parse('http://10.0.2.2:8080/grups/$grupId'));
+      final response = await http
+          .get(Uri.parse('https://culturapp-back.onrender.com/grups/$grupId'));
 
       if (response.statusCode == 200) {
         final dynamic data = json.decode(response.body);
@@ -740,7 +742,7 @@ class ControladorDomini {
       };
 
       final respuesta = await http.post(
-        Uri.parse('http://10.0.2.2:8080/grups/create'),
+        Uri.parse('https://culturapp-back.onrender.com/grups/create'),
         body: jsonEncode(grupata),
         headers: {
           'Content-Type': 'application/json',
@@ -770,7 +772,7 @@ class ControladorDomini {
       };
 
       final respuesta = await http.put(
-        Uri.parse('http://10.0.2.2:8080/grups/$grupId/update'),
+        Uri.parse('https://culturapp-back.onrender.com/grups/$grupId/update'),
         body: jsonEncode(grupata),
         headers: {'Content-Type': 'application/json'},
       );
@@ -788,7 +790,8 @@ class ControladorDomini {
   //afegir missatge al grup
   void addGrupMessage(String grupId, String time, String text) async {
     try {
-      final url = Uri.parse('http://10.0.2.2:8080/grups/$grupId/mensajes');
+      final url = Uri.parse(
+          'https://culturapp-back.onrender.com/grups/$grupId/mensajes');
       final response = await http.post(
         url,
         headers: {
@@ -811,8 +814,8 @@ class ControladorDomini {
   //agafar missatges del grup
   Future<List<Message>> getGrupMessages(String grupId) async {
     try {
-      final response = await http
-          .get(Uri.parse('http://10.0.2.2:8080/grups/$grupId/mensajes'));
+      final response = await http.get(Uri.parse(
+          'https://culturapp-back.onrender.com/grups/$grupId/mensajes'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
