@@ -100,6 +100,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   Widget build(BuildContext context) {
     _controladorPresentacion.getForo(infoActividad[1]); //verificar que tenga un foro
     fId();
+    print(idForo);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
@@ -151,9 +152,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             //barra para añadir mensajes
             child: reply == false
               ? PostWidget(
-                addPost: (foroId, mensaje, fecha, numeroLikes) async {
-                  await _controladorPresentacion.addPost(foroId, mensaje, fecha, numeroLikes);
-                  print(foroId);
+                addPost: (idForo, mensaje, fecha, numeroLikes) async {
+                  await _controladorPresentacion.addPost(idForo, mensaje, fecha, numeroLikes);
+                  print(idForo);
 
                   // Actualitza el llistat de posts
                   setState(() {
@@ -530,8 +531,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const CircularProgressIndicator(), // Or you can remove this line if you don't want the circular indicator
-                const SizedBox(height: 10), // Add some space between the text and the circular indicator
+                const CircularProgressIndicator(), 
+                const SizedBox(height: 10), 
                 Text('loading'.tr(context)),
               ],
             ),
