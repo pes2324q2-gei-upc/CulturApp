@@ -557,8 +557,6 @@ class ControladorDomini {
 
   //a partir de aqui verificar si hace falta el token i adaptar el codigo
   //este token se debera cambiar por el del current user
-  static const token =
-      "976f2f7b53c188d8a77b9b71887621d1e1d207faec5663bf79de9572ac887ea7";
 
   //xat existe? si no es asi crealo
   Future<xatAmic?> xatExists(String receiverName) async {
@@ -566,7 +564,7 @@ class ControladorDomini {
       final respuesta = await http.get(
         Uri.parse('http://10.0.2.2:8080/xats/exists?receiverId=$receiverName'),
         headers: {
-          'Authorization': 'Bearer $token',
+          'Authorization': 'Bearer ${userLogged.getToken()}',
         },
       );
 
@@ -601,7 +599,7 @@ class ControladorDomini {
         body: jsonEncode(xatdata),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
+          'Authorization': 'Bearer ${userLogged.getToken()}'
         },
       );
 
@@ -645,7 +643,7 @@ class ControladorDomini {
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
+          'Authorization': 'Bearer ${userLogged.getToken()}'
         },
         body: jsonEncode({'mensaje': text, 'fecha': time}),
       );
@@ -689,7 +687,7 @@ class ControladorDomini {
       final response = await http.get(
         Uri.parse('http://10.0.2.2:8080/grups/users/all'),
         headers: {
-          'Authorization': 'Bearer $token',
+          'Authorization': 'Bearer ${userLogged.getToken()}',
         },
       );
 
@@ -746,7 +744,7 @@ class ControladorDomini {
         body: jsonEncode(grupata),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
+          'Authorization': 'Bearer ${userLogged.getToken()}'
         },
       );
 
@@ -795,7 +793,7 @@ class ControladorDomini {
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
+          'Authorization': 'Bearer ${userLogged.getToken()}'
         },
         body: jsonEncode({'mensaje': text, 'fecha': time}),
       );
