@@ -431,7 +431,7 @@ class _MapPageState extends State<MapPage> {
                             List<String> act = [
                               actividad.name,
                               actividad.code,
-                              actividad.categoria[0],
+                              actividad.categoria.join(', '),
                               actividad.imageUrl,
                               actividad.descripcio,
                               actividad.dataInici,

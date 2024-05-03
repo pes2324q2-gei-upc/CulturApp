@@ -168,6 +168,7 @@ class _Xats extends State<Xats> {
                           changeContent(AfegirAmics(
                             recomms: usersRecom,
                             usersBD: usersBD,
+                            controladorPresentacion: _controladorPresentacion,
                           ));
                         },
                         child: const Text('Afegir Amics'),

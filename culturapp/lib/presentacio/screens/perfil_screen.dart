@@ -101,7 +101,7 @@ class _PerfilPageState extends State<PerfilPage> {
         currentIndex: _selectedIndex,
         onTabChange: _onTabChange,
     ),
-    body: UserInfoWidget(controladorPresentacion: _controladorPresentacion, username: _username,),
+    body: UserInfoWidget(controladorPresentacion: _controladorPresentacion, username: _username, owner: widget.owner),
     
     //container amb les diferents pantalles
     );

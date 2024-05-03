@@ -1,11 +1,15 @@
+import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:culturapp/translations/AppLocalizations';
 import 'package:flutter/material.dart';
 import 'package:culturapp/presentacio/widgets/widgetsUtils/user_box.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class LlistarFollows extends StatefulWidget {
-  final String token;
-  const LlistarFollows({Key? key, required this.token}) : super(key: key);
+  final String username;
+  final ControladorPresentacion controladorPresentacion;
+  final bool follows;
+  const LlistarFollows({super.key, required this.controladorPresentacion, required this.username, required this.follows});
 
   @override
   _LlistarFollowsState createState() => _LlistarFollowsState();
@@ -19,56 +23,6 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
 
   _LlistarFollowsState() {
     users = [];
-    isFollows = true;
-  }
-
-  Future<List<String>> getRequestsUser(String token) async {
-
-    final respuesta = await http.get(
-      Uri.parse('http://10.0.2.2:8080/amics/followingRequests'), 
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
-    );
-    if(respuesta.statusCode == 200) {
-      final body = respuesta.body;
-      final List<dynamic> data = json.decode(body);
-      final List<String> users = data.map((user) => user['friend'].toString()).toList(); 
-      return users;
-    }
-    else {
-      throw Exception('Fallo la obtención de datos' /*"data_error_msg".tr(context)*/);
-    }
-  }
-
-  Future<List<String>> getUsers(String token, String endpoint) async {
-    final respuesta = await http.get(
-      Uri.parse('http://10.0.2.2:8080/amics/Pepe/$endpoint'),
-      headers: {
-      'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (respuesta.statusCode == 200) {
-      final body = respuesta.body;
-      final List<dynamic> data = json.decode(body);
-      if(endpoint == 'followers') {
-        return data.map((user) => user['user'].toString()).toList();
-      }else {
-        return data.map((user) => user['friend'].toString()).toList();
-      }
-      
-    } else {
-      throw Exception('Fallo la obtención de datos' /*"data_error_msg".tr(context)*/);
-    }
-  }
-
-  Future<List<String>> getFollowersUser(String token) async {
-    return getUsers(widget.token, 'followers');
-  }
-
-  Future<List<String>> getFollowingsUser(String token) async {
-    return getUsers(widget.token, 'following');
   }
 
   void updateUsers() async {
@@ -76,9 +30,9 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
       late List<String> followings;
       late List<String> requests;
 
-      followers = await getFollowersUser(widget.token);
-      followings = await getFollowingsUser(widget.token);
-      requests = await getRequestsUser(widget.token);
+      followers = await widget.controladorPresentacion.getFollowUsers(widget.username, "followers"); 
+      followings = await widget.controladorPresentacion.getFollowUsers(widget.username, "following"); 
+      requests = await widget.controladorPresentacion.getRequestsUser();
 
       Set<String> followersSet = Set.from(followers);
       Set<String> followingsSet = Set.from(followings);
@@ -109,6 +63,7 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
     isFollows = true;
     updateUsers();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.index = widget.follows ? 0 : 1;
     _tabController.addListener(() {
       setState(() {
         isFollows = _tabController.index == 0;
@@ -128,7 +83,7 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
-        title: const Text("Amics" /*"friends_title".tr(context)*/),
+        title: Text("friends_title".tr(context)),
         centerTitle: true,
         toolbarHeight: 50.0,
         titleTextStyle: const TextStyle(
@@ -142,9 +97,9 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
           const SizedBox(height: 16.0),
           TabBar(
             controller: _tabController,
-            tabs: const [
-              Tab(text: "Followers" /*"followers".tr(context)*/),
-              Tab(text: "Followings" /*"followings".tr(context)*/),
+            tabs: [
+              Tab(text: "followers".tr(context)),
+              Tab(text: "following".tr(context)),
             ],
             indicatorColor: const Color(0xFFF4692A),
             labelColor: const Color(0xFFF4692A),
@@ -187,7 +142,7 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
                   borderRadius: BorderRadius.circular(8.0),
                   borderSide: BorderSide.none,
                 ),
-                hintText: "Search..." /*"search".tr(context)*/,
+                hintText: "search".tr(context),
                 hintStyle: const TextStyle(
                   color: Colors.white,
                 ),
@@ -211,7 +166,7 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
                     type: isFollows 
                       ? (difference.contains(users[index]) ? "addSomeone" : "null") 
                       : "null", 
-                    token: widget.token
+                    controladorPresentacion: widget.controladorPresentacion,
                   ),
                 ],
               );
@@ -219,24 +174,6 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
           ),
         ),
       ],
-    );
-  }}
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'CulturApp',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const LlistarFollows(token: "976f2f7b53c188d8a77b9b71887621d1e1d207faec5663bf79de9572ac887ea7"),
     );
   }
 }

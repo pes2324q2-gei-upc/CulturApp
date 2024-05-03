@@ -1,13 +1,13 @@
-import 'dart:convert';
-
+import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:culturapp/translations/AppLocalizations';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+
 
 class SolicitutScreen extends StatefulWidget {
   final String idActivitat;
   final String titolActivitat;
-  final String token;
-  SolicitutScreen({Key? key, required this.idActivitat, required this.titolActivitat, required this.token}) : super(key: key);
+  final ControladorPresentacion controladorPresentacion;
+  SolicitutScreen({super.key, required this.controladorPresentacion, required this.idActivitat, required this.titolActivitat});
 
   @override
   _SolicitutScreenState createState() => _SolicitutScreenState();
@@ -18,42 +18,19 @@ class _SolicitutScreenState extends State<SolicitutScreen> {
   final _titleController = TextEditingController();
   final _motiuController = TextEditingController();
 
-  Future<void> _sendmotiu(String token) async {
+  Future<void> _sendmotiu() async {
 
-      final Map<String, dynamic> body = {
-        'titol': _titleController.text,
-        'idActivitat': widget.idActivitat,
-        'motiu': _motiuController.text,
-      };
+    int statusCode = await widget.controladorPresentacion.sendOrganizerApplication(_titleController.text, widget.idActivitat, _motiuController.text);  
 
-      try {
-        final response = await http.post(
-          Uri.parse('http://10.0.2.2:8080/tickets/solicitudsOrganitzador/create'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token',
-          },
-          body: jsonEncode(body)
-        );
-
-        if (response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Solicitud enviado correctamente' /*"correct_aplicattion_msg".tr(context)*/)),
-          );
-          _titleController.clear();
-          _motiuController.clear();
-
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error al enviar la solicitud: ${response.body}' /*"error_aplicattion_msg_parms".tr(context, {"error" : response.body})*/)),
-          );
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al enviar la solicitud' /*"error_aplicattion_msg".tr(context)*/)),
-        );
-      }
-  }
+    if (statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("correct_aplicattion_msg".tr(context))),
+      );
+      _titleController.clear();
+      _motiuController.clear();
+    }
+        
+}
 
   @override
   void dispose() {
@@ -67,7 +44,7 @@ class _SolicitutScreenState extends State<SolicitutScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
-        title: const Text("Solicitud de organizador" /*"aplicattion_title".tr(context)*/),
+        title: Text("aplicattion_title".tr(context)),
         centerTitle: true, 
         toolbarHeight: 50.0,
         titleTextStyle: const TextStyle(
@@ -86,8 +63,8 @@ class _SolicitutScreenState extends State<SolicitutScreen> {
               TextFormField(
                 initialValue: widget.titolActivitat,
                 enabled: false,
-                decoration: const InputDecoration(
-                  labelText: "Titulo de la actividad" /*"aplicattion_title_activity".tr(context)*/,
+                decoration: InputDecoration(
+                  labelText: "aplicattion_title_activity".tr(context),
                 ),
               ),
               const SizedBox(height: 5),
@@ -96,12 +73,12 @@ class _SolicitutScreenState extends State<SolicitutScreen> {
                 maxLength: 50,
                 minLines: 1,
                 maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: 'Asunto' /*"subject".tr(context)*/,
+                decoration: InputDecoration(
+                  labelText: "subject".tr(context),
                 ),
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese un asunto' /*"subject_missing".tr(context)*/;
+                  if (value == null || value.isEmpty || value.trim().isEmpty) {
+                    return "subject_missing".tr(context);
                   }
                   return null;
                 },
@@ -112,12 +89,12 @@ class _SolicitutScreenState extends State<SolicitutScreen> {
                 maxLength: 1500,
                 minLines: 1,
                 maxLines: 5,
-                decoration: const InputDecoration(
-                  labelText: 'Motivo de la solicitud' /*"aplicattion_reason".tr(context)*/,
+                decoration: InputDecoration(
+                  labelText: "aplicattion_reason".tr(context),
                 ),
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese un motivo' /*"aplicattion_reason_missing".tr(context)*/;
+                  if (value == null || value.isEmpty || value.trim().isEmpty) {
+                    return "aplicattion_reason_missing".tr(context);
                   }
                   return null;
                 },
@@ -127,39 +104,16 @@ class _SolicitutScreenState extends State<SolicitutScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
-                      _sendmotiu(widget.token);
+                      _sendmotiu();
                     }
                   },
-                  child: const Text('Enviar' /*"send".tr(context)*/),
+                  child: Text("send".tr(context)),
                 ),
               ),
             ],
           ),
         ),
       )
-    );
-  }
-}
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'CulturApp',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: SolicitutScreen(
-        idActivitat: '20240102001',
-        titolActivitat: 'titol Activitat',
-        token: "976f2f7b53c188d8a77b9b71887621d1e1d207faec5663bf79de9572ac887ea7"
-        ),
     );
   }
 }

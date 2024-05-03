@@ -100,6 +100,14 @@ class _SettingsPerfil extends State<SettingsPerfil> {
           ),
           const Divider(height: 0),
           //si queremos, añadir tema de notificaciones
+          ListTile(
+            title: const Text('Reportar error en la aplicación'),
+            leading: const Icon(Icons.assignment),
+            onTap: () {
+              widget.controladorPresentacion.mostrarReportBug(context);
+            },
+          ),
+          const Divider(height: 0),
         ],
       )
     );

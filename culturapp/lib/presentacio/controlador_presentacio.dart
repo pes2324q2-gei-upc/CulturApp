@@ -3,6 +3,10 @@ import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/grup.dart';
 import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/screens/edit_perfil.dart';
+import 'package:culturapp/presentacio/screens/llistar_follows.dart';
+import 'package:culturapp/presentacio/screens/llistar_pendents.dart';
+import 'package:culturapp/presentacio/screens/report_bug.dart';
+import 'package:culturapp/presentacio/screens/solicitud_organitzador.dart';
 import 'package:culturapp/presentacio/screens/xats/amics/info_amic.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/configuracio_grup.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/info_grup.dart';
@@ -25,6 +29,7 @@ import 'package:culturapp/presentacio/screens/xats/xats.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart';
 
 class ControladorPresentacion {
   final controladorDomini = ControladorDomini();
@@ -58,7 +63,7 @@ class ControladorPresentacion {
       activitats = await controladorDomini.getActivitiesAgenda();
       activitatsUser = await controladorDomini.getUserActivities();
       usersBD = await controladorDomini.getUsers();
-      friends = await controladorDomini.obteFollows(usernameLogged);
+      friends = await getFollowingAll(usernameLogged);
       categsFav = await controladorDomini.obteCatsFavs(usernameLogged); 
       usersBD.removeWhere((usuario) => usuario.username == usernameLogged);
       usersRecom = calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
@@ -116,7 +121,7 @@ class ControladorPresentacion {
   }
 
   void editUser(String username, List<String> selectedCategories,
-      BuildContext context) async { //FALTA AÑADIR SISTEMA TOKENS
+      BuildContext context) async { 
     controladorDomini.editUser(_user, username, selectedCategories);
     categsFav = selectedCategories;
     mostrarPerfil(context);
@@ -156,7 +161,6 @@ class ControladorPresentacion {
 
   Future<List<Actividad>> getUserActivities() => controladorDomini.getUserActivities();
   
-
   List<String> getActivitatsRecomm() {
     recomms = calcularActividadesRecomendadas(categsFav, activitats);
     return recomms;
@@ -175,6 +179,50 @@ class ControladorPresentacion {
   }
   ControladorDomini getControladorDomini() {
     return controladorDomini;
+  }
+
+  String getUsername() {
+    return usernameLogged;
+  }
+
+  Future<List<String>> getFollowingAll(String username) async {
+    return (await controladorDomini.obteFollows(username, 'following')).map((user) => user.toString()).toList();
+  }
+
+  Future<List<String>> getFollowUsers(String username, String type) async {
+  
+    if(type == 'followers') {
+      return (await controladorDomini.obteFollows(username, 'followers')).map((user) => user['user'].toString()).toList();
+    } else if (type == 'following') {
+      return (await controladorDomini.obteFollows(username, 'following')).map((user) => user['friend'].toString()).toList();
+    } else if (type == 'pending') {
+      return (await controladorDomini.obteFollows(username, 'pendents')).map((user) => user['user'].toString()).toList();
+    }
+    return [];
+  }
+
+  Future<List<String>> getRequestsUser() async {
+    return await controladorDomini.getRequestsUser();
+  }
+
+  Future<void> acceptFriend(String person) async {
+    await controladorDomini.acceptFriend(person);
+  }
+
+  Future<void> deleteFriend(String person) async {
+    await controladorDomini.deleteFriend(person);
+  }
+
+  Future<void> createFriend(String person) async {
+    await controladorDomini.createFriend(person);
+  }
+
+  Future<int> sendReportBug(String titol, String report) async {
+    return await controladorDomini.sendReportBug(titol, report);
+  }
+
+  Future<int> sendOrganizerApplication(String titol, String idActivitat, String motiu) async {
+    return await controladorDomini.sendOrganizerApplication(titol, idActivitat, motiu);
   }
 
   void mostrarVerActividad(
@@ -230,7 +278,7 @@ class ControladorPresentacion {
             MaterialPageRoute(
               builder: (context) => ListaMisActividades(
                 controladorPresentacion: this,
-                user: _user, //NECESITA USER
+                user: _user, 
               ),
             ),
           )
@@ -369,8 +417,50 @@ class ControladorPresentacion {
     );
   }
 
-  String getUsername() {
-    return usernameLogged;
+  void mostrarFollows(BuildContext context, bool follows) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LlistarFollows(
+          username: usernameLogged,
+          controladorPresentacion: this,
+          follows: follows,
+        ),
+      ),
+    );
+  }
+
+  void mostrarPendents(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LlistarPendents(
+          username: usernameLogged,
+          controladorPresentacion: this,
+        ),
+      ),
+    );
+  }
+
+  void mostrarReportBug(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ReportScreen(controladorPresentacion: this),
+      ),
+    );
+  }
+
+  void mostrarSolicitutOrganitzador(BuildContext context, String titol, String idActivitat) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SolicitutScreen(
+          controladorPresentacion: this, 
+          idActivitat: idActivitat,
+          titolActivitat: titol,),
+      ),
+    );
   }
   
 }

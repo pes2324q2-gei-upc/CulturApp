@@ -7,8 +7,8 @@ import 'package:culturapp/presentacio/controlador_presentacio.dart';
 class UserInfoWidget extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
   final String username;
-
-  const UserInfoWidget({Key? key, required this.controladorPresentacion, required String this.username}) : super(key: key);
+  final bool owner;
+  const UserInfoWidget({Key? key, required this.controladorPresentacion, required this.username, required this.owner}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -20,19 +20,18 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
   int _selectedIndex = 0;
   late ControladorPresentacion _controladorPresentacion;
   late String _usernameFuture;
-  late List<Actividad> activitats;
+  late List<Actividad> activitats = widget.owner ? _controladorPresentacion.getActivitatsUser() : [];
   late List<Actividad> display_list;
   
   _UserInfoWidgetState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
-    activitats = controladorPresentacion.getActivitatsUser();
-    display_list = activitats;
   }
 
   @override
   void initState() {
     super.initState();
     _usernameFuture = widget.username;
+    display_list = activitats;
   }
 
   void _onTabChange(int index) {
@@ -127,15 +126,44 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
           ),
         ),
         Container(
-          padding: const EdgeInsets.all(16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildInfoColumn("assisted_events".tr(context), '1'),
-              _buildInfoColumn('followers'.tr(context), '12'),
-              _buildInfoColumn('following'.tr(context), '40'),
-            ]
+              Container(
+                width: MediaQuery.of(context).size.width / 4, 
+                child:_buildInfoColumn("assisted_events".tr(context), '1'),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width / 4, 
+                child: GestureDetector(
+                  onTap: () {
+                    widget.controladorPresentacion.mostrarFollows(context, true); 
+                  },
+                  child: _buildInfoColumn('followers'.tr(context), '12'),
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width / 4, 
+                child: GestureDetector(
+                  onTap: () {
+                    widget.controladorPresentacion.mostrarFollows(context, false); 
+                  },
+                  child: _buildInfoColumn('following'.tr(context), '40'),
+                ),
+              ),
+              if (widget.owner) ...[
+                Container(
+                  width: MediaQuery.of(context).size.width / 4, 
+                  child: GestureDetector(
+                    onTap: () {
+                      widget.controladorPresentacion.mostrarPendents(context); 
+                    },
+                    child: _buildInfoColumn("friendship_requests_title".tr(context), '40'),
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
         Expanded(

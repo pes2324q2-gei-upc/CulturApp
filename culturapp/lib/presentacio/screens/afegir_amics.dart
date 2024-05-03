@@ -1,4 +1,5 @@
 import "package:culturapp/domain/models/user.dart";
+import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/widgetsUtils/user_box.dart";
 import "package:flutter/material.dart";
 
@@ -6,7 +7,8 @@ class AfegirAmics extends StatefulWidget {
   @override
   final List<Usuario>recomms;
   final List<Usuario>usersBD;
-  const AfegirAmics({super.key, required this.recomms, required this.usersBD});
+  final ControladorPresentacion controladorPresentacion;
+  const AfegirAmics({super.key, required this.recomms, required this.controladorPresentacion, required this.usersBD});
   
   @override
   State<StatefulWidget> createState()  => _AfegirAmicsState(recomms, usersBD);
@@ -88,7 +90,11 @@ Widget build(BuildContext context) {
                 for (var user in usersRecom)
                   Padding(
                     padding: const EdgeInsets.only(top: 5.0),
-                    child: userBox(text: user.username, recomm: true, type: "null", token: 'null',),
+                    child: userBox(
+                      text: user.username, 
+                      recomm: true, 
+                      type: "addSomeone", 
+                      controladorPresentacion: widget.controladorPresentacion),
                   ),
               ]
             else 
@@ -96,7 +102,11 @@ Widget build(BuildContext context) {
               for (var user in usersBD)
               Padding(
                 padding: const EdgeInsets.only(top: 5.0),
-                child: userBox(text: user.username, recomm: false,  type: "null", token: 'null',),
+                child: userBox(
+                  text: user.username, 
+                  recomm: false,  
+                  type: "null", 
+                  controladorPresentacion: widget.controladorPresentacion),
               ),
               ]
             ],
