@@ -23,7 +23,7 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
   late List<Usuari> displayList;
   late List<Usuari> amics;
   late Grup _grup;
-  late List<Usuari> participants;
+  late List<String> participants;
 
   Color taronja_fluix = const Color.fromRGBO(240, 186, 132, 1);
 
@@ -31,13 +31,58 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
       ControladorPresentacion controladorPresentacion, Grup grup) {
     _controladorPresentacion = controladorPresentacion;
     _grup = grup;
-    amics = allAmics;
-    displayList = amics;
-    participantAfegit = List.generate(
-      displayList.length,
-      (index) => _grup.participants.contains(displayList[index]),
-    );
-    participants = List.from(_grup.participants);
+    amics = [];
+    participants = [];
+    participantAfegit = [];
+    displayList = [];
+    _loadFriends();
+  }
+
+  Future<void> _loadFriends() async {
+    String userName = _controladorPresentacion.getUsername();
+    List<String> llistaNoms =
+        await _controladorPresentacion.getFollowUsers(userName, "followers");
+
+    amics = await convertirStringEnUsuari(
+        _grup.membres.map((dynamic obj) => obj.toString()).toList());
+
+    List<Usuari> llistaFollowers = await convertirStringEnUsuari(llistaNoms);
+    for (Usuari usuari in llistaFollowers) {
+      for (Usuari amic in amics) {
+        if (amic.nom == usuari.nom) {
+          llistaFollowers.remove(usuari);
+          if (llistaFollowers.isEmpty) {
+            break;
+          }
+        }
+      }
+      if (llistaFollowers.isEmpty) {
+        break;
+      }
+    }
+
+    amics.addAll(
+        llistaFollowers); //s'uneixen els followers per si vols afegir someone
+
+    setState(() {
+      displayList = List.from(amics);
+      participantAfegit = List.generate(
+        displayList.length,
+        (index) => !_grup.membres.contains(displayList[index]),
+      );
+      participants = List.from(_grup.membres as Iterable);
+    });
+  }
+
+  Future<List<Usuari>> convertirStringEnUsuari(List<String> llistaNoms) async {
+    List<Usuari> llistaUsuaris = [];
+
+    for (String nom in llistaNoms) {
+      Usuari user = await _controladorPresentacion.getUserByName(nom);
+      llistaUsuaris.add(user);
+    }
+
+    return llistaUsuaris;
   }
 
   void updateList(String value) {
@@ -66,7 +111,7 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
         backgroundColor: Colors.orange,
         title: Text(
           'modify_participants'.tr(context),
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
         iconTheme: const IconThemeData(
           color: Colors.white,
@@ -79,11 +124,11 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
               children: [
                 SizedBox(
                   child: Padding(
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                         bottom: 20.0, left: 20.0, right: 20.0, top: 30.0),
                     child: Text(
                       'select_unselect_participants'.tr(context),
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.blueGrey,
@@ -173,13 +218,13 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
           children: [
             Container(
               alignment: Alignment.topCenter,
-              child: Image(
-                image: AssetImage(participants[index].image),
+              child: const Image(
+                image: AssetImage(
+                    'assets/userImage.png'), //AssetImage(participants[index].image),
                 fit: BoxFit.fill,
                 width: 55.0,
                 height: 55.0,
               ),
-              //),
             ),
             Positioned(
               bottom: 9,
@@ -191,7 +236,7 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
                   padding:
                       const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                   child: Text(
-                    participants[index].nom,
+                    participants[index],
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 10,
@@ -235,10 +280,10 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
         setState(() {
           participantAfegit[index] = !participantAfegit[index];
           if (participantAfegit[index]) {
-            afegirParticipant(displayList[index]);
+            afegirParticipant(displayList[index].nom);
           } else {
             // Remove participant if button is toggled off
-            participants.remove(displayList[index]);
+            participants.remove(displayList[index].nom);
           }
         });
       },
@@ -246,8 +291,7 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
         participantAfegit[index] ? '-' : '+',
       ),
     );
-  } //com de moment no tinc l'estructura dels models
-  //dels participant i això serà un atribut d'ells, no val la pena continuar de moment
+  }
 
   Widget _buildConfirmButton() {
     return ElevatedButton(
@@ -257,7 +301,8 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
       ),
       child: const Icon(Icons.check),
       onPressed: () {
-        _grup.participants = participants;
+        _grup.membres = participants;
+
         //crida al backend per passar el grup updated
         _controladorPresentacion.mostrarInfoGrup(context, _grup);
       },

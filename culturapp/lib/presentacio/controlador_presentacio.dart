@@ -1,6 +1,7 @@
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/grup.dart';
+import 'package:culturapp/domain/models/message.dart';
 import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/screens/edit_perfil.dart';
 import 'package:culturapp/presentacio/screens/llistar_follows.dart';
@@ -28,6 +29,7 @@ import 'package:culturapp/presentacio/screens/xats/amics/xat_amic.dart';
 import 'package:culturapp/presentacio/screens/xats/xats.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../domain/models/xat_amic.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:culturapp/domain/models/foro_model.dart';
 import 'package:culturapp/domain/models/post.dart';
@@ -51,7 +53,7 @@ class ControladorPresentacion {
   void funcLogout() async {
     _auth.signOut();
     final GoogleSignIn googleSignIn = GoogleSignIn();
-    await googleSignIn.signOut(); 
+    await googleSignIn.signOut();
   }
 
   Future<void> initialice() async {
@@ -66,7 +68,7 @@ class ControladorPresentacion {
       _user = currentUser;
       await controladorDomini.setInfoUserLogged(_user!.uid);
     }
-  if(await userLogged()) {
+    if (await userLogged()) {
       await controladorDomini.setInfoUserLogged(_user!.uid);
       usernameLogged = controladorDomini.userLogged.getUsername();
 
@@ -74,13 +76,15 @@ class ControladorPresentacion {
       activitatsUser = await controladorDomini.getUserActivities();
       usersBD = await controladorDomini.getUsers();
       friends = await getFollowingAll(usernameLogged);
-      categsFav = await controladorDomini.obteCatsFavs(usernameLogged); 
+      categsFav = await controladorDomini.obteCatsFavs(usernameLogged);
       usersBD.removeWhere((usuario) => usuario.username == usernameLogged);
-      usersRecom = calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
+      usersRecom =
+          calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
       usersBD.removeWhere((usuario) => friends.contains(usuario.username));
+    }
   }
-  }
-   Future<bool> userLogged() async {
+
+  Future<bool> userLogged() async {
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
       _user = currentUser;
@@ -110,11 +114,10 @@ class ControladorPresentacion {
             await controladorDomini.accountExists(userCredential.user);
         _user = userCredential.user;
         print(userExists);
-  
+
         if (!userExists) {
           mostrarSignup(context);
-        }
-        else {
+        } else {
           await initialice();
           mostrarMapa(context);
         }
@@ -124,6 +127,10 @@ class ControladorPresentacion {
     }
   }
 
+  Future<Usuari> getUserByName(String name) async {
+    return await controladorDomini.getUserByName(name);
+  }
+
   Future<bool> createUser(String username, List<String> selectedCategories,
       BuildContext context) async {
     await controladorDomini.createUser(_user, username, selectedCategories);
@@ -131,7 +138,7 @@ class ControladorPresentacion {
   }
 
   void editUser(String username, List<String> selectedCategories,
-      BuildContext context) async { 
+      BuildContext context) async {
     controladorDomini.editUser(_user, username, selectedCategories);
     categsFav = selectedCategories;
     mostrarPerfil(context);
@@ -151,7 +158,7 @@ class ControladorPresentacion {
   void logout(BuildContext context) async {
     _auth.signOut();
     final GoogleSignIn googleSignIn = GoogleSignIn();
-    await googleSignIn.signOut(); 
+    await googleSignIn.signOut();
     Future.delayed(const Duration(seconds: 2), () {
       mostrarLogin(context);
     });
@@ -169,8 +176,9 @@ class ControladorPresentacion {
 
   List<Actividad> getActivitats() => activitats;
 
-  Future<List<Actividad>> getUserActivities() => controladorDomini.getUserActivities();
-  
+  Future<List<Actividad>> getUserActivities() =>
+      controladorDomini.getUserActivities();
+
   List<String> getActivitatsRecomm() {
     recomms = calcularActividadesRecomendadas(categsFav, activitats);
     return recomms;
@@ -187,6 +195,7 @@ class ControladorPresentacion {
   Future<List<Actividad>> searchMyActivitats(String name) {
     return controladorDomini.searchMyActivities(name);
   }
+
   ControladorDomini getControladorDomini() {
     return controladorDomini;
   }
@@ -196,17 +205,24 @@ class ControladorPresentacion {
   }
 
   Future<List<String>> getFollowingAll(String username) async {
-    return (await controladorDomini.obteFollows(username, 'following')).map((user) => user.toString()).toList();
+    return (await controladorDomini.obteFollows(username, 'following'))
+        .map((user) => user.toString())
+        .toList();
   }
 
   Future<List<String>> getFollowUsers(String username, String type) async {
-  
-    if(type == 'followers') {
-      return (await controladorDomini.obteFollows(username, 'followers')).map((user) => user['user'].toString()).toList();
+    if (type == 'followers') {
+      return (await controladorDomini.obteFollows(username, 'followers'))
+          .map((user) => user['user'].toString())
+          .toList();
     } else if (type == 'following') {
-      return (await controladorDomini.obteFollows(username, 'following')).map((user) => user['friend'].toString()).toList();
+      return (await controladorDomini.obteFollows(username, 'following'))
+          .map((user) => user['friend'].toString())
+          .toList();
     } else if (type == 'pending') {
-      return (await controladorDomini.obteFollows(username, 'pendents')).map((user) => user['user'].toString()).toList();
+      return (await controladorDomini.obteFollows(username, 'pendents'))
+          .map((user) => user['user'].toString())
+          .toList();
     }
     return [];
   }
@@ -231,8 +247,10 @@ class ControladorPresentacion {
     return await controladorDomini.sendReportBug(titol, report);
   }
 
-  Future<int> sendOrganizerApplication(String titol, String idActivitat, String motiu) async {
-    return await controladorDomini.sendOrganizerApplication(titol, idActivitat, motiu);
+  Future<int> sendOrganizerApplication(
+      String titol, String idActivitat, String motiu) async {
+    return await controladorDomini.sendOrganizerApplication(
+        titol, idActivitat, motiu);
   }
 
   void mostrarVerActividad(
@@ -276,7 +294,9 @@ class ControladorPresentacion {
       context,
       MaterialPageRoute(
         builder: (context) => PerfilPage(
-            controladorPresentacion: this, username: usernameLogged, owner: true),
+            controladorPresentacion: this,
+            username: usernameLogged,
+            owner: true),
       ),
     );
   }
@@ -288,7 +308,7 @@ class ControladorPresentacion {
             MaterialPageRoute(
               builder: (context) => ListaMisActividades(
                 controladorPresentacion: this,
-                user: _user, 
+                user: _user,
               ),
             ),
           )
@@ -437,7 +457,7 @@ class ControladorPresentacion {
       // El foro no existe, crear uno nuevo
       bool creadoExitosamente = await controladorDomini.createForo(code);
       if (creadoExitosamente) {
-          print('Nuevo foro creado');
+        print('Nuevo foro creado');
       } else {
         print('Error al crear el foro');
       }
@@ -450,23 +470,26 @@ class ControladorPresentacion {
   }
 
   //modificar el como se encuentra el post, maybe añadir param que sea id = username + fecha
-  Future<String?> getPostId(String foroId, String data) async{
+  Future<String?> getPostId(String foroId, String data) async {
     return controladorDomini.getPostId(foroId, data);
   }
 
   //agafa id fe la reply
-  Future<String?> getReplyId(String foroId, String? postId, String data) async{
+  Future<String?> getReplyId(String foroId, String? postId, String data) async {
     return controladorDomini.getReplyId(foroId, postId, data);
   }
 
   //afegir post a la bd
-  Future<void> addPost(String foroId, String mensaje, String fecha, int numeroLikes){
+  Future<void> addPost(
+      String foroId, String mensaje, String fecha, int numeroLikes) {
     return controladorDomini.addPost(foroId, mensaje, fecha, numeroLikes);
   }
 
   //afegir reply a la bd
-  Future<void> addReplyPost(String foroId, String postId, String mensaje, String fecha, int numeroLikes) async {
-    return controladorDomini.addReplyPost(foroId, postId, mensaje, fecha, numeroLikes);
+  Future<void> addReplyPost(String foroId, String postId, String mensaje,
+      String fecha, int numeroLikes) async {
+    return controladorDomini.addReplyPost(
+        foroId, postId, mensaje, fecha, numeroLikes);
   }
 
   //get posts de un foro
@@ -485,8 +508,94 @@ class ControladorPresentacion {
   }
 
   //eliminar reply
-  Future<void> deleteReply(String foroId, String? postId, String? replyId) async {
+  Future<void> deleteReply(
+      String foroId, String? postId, String? replyId) async {
     return controladorDomini.deleteReply(foroId, postId, replyId);
+  }
+
+  //a partir de aqui modificar las que necesiten token o no
+
+  Future<void> getXat(String receiverName) async {
+    try {
+      xatAmic? xat = await controladorDomini.xatExists(receiverName);
+
+      if (xat != null) {
+        // El foro existe, imprimir sus detalles
+        print('Xat existente: $xat');
+      } else {
+        // El foro no existe, crear uno nuevo
+        bool creadoExitosamente =
+            await controladorDomini.createXat(receiverName);
+        if (creadoExitosamente) {
+          print('Nuevo xat creado');
+        } else {
+          throw Exception('Error al crear el xat');
+        }
+      }
+    } catch (error) {
+      throw Exception('Error al obtener o crear el xat: $error');
+    }
+  }
+
+  Future<String> lastMsg(String receiverId) async {
+    xatAmic? xat = await controladorDomini.xatExists(receiverId);
+    return xat!.lastMessage;
+  }
+
+  Future<String> lasTime(String receiverId) async {
+    xatAmic? xat = await controladorDomini.xatExists(receiverId);
+    return xat!.timeLastMessage;
+  }
+
+  Future<void> addXatMessage(
+      String senderId, String receiverId, String time, String text) async {
+    String? xatId = await controladorDomini.getXatId(receiverId, senderId);
+    controladorDomini.addMessage(xatId, time, text);
+  }
+
+  Future<List<Message>> getXatMessages(String sender, String receiver) async {
+    String? xatId = await controladorDomini.getXatId(receiver, sender);
+    List<Message> missatges = await controladorDomini.getMessages(xatId);
+    return missatges;
+  }
+
+  Future<List<Grup>> getUserGrups() async {
+    List<Grup> grups = await controladorDomini.getUserGrups();
+    return grups;
+  }
+
+  void createGrup(
+      String name, String description, String image, List<String> members) {
+    controladorDomini.createGrup(name, description, image, members);
+  }
+
+  Future<Grup> getInfoGrup(String grupId) async {
+    Grup info = await controladorDomini.getInfoGrup(grupId);
+    return info;
+  }
+
+  void updateGrup(String grupId, String name, String description, String image,
+      List<dynamic> members) {
+    //es necesari afegir el meu user al llistat de membres?
+    controladorDomini.updateGrup(grupId, name, description, image, members);
+  }
+
+  //el grupId esta afegit com a parametre dels grups
+  void addGrupMessage(String grupId, String time, String text) async {
+    try {
+      controladorDomini.addGrupMessage(grupId, time, text);
+    } catch (error) {
+      throw Exception('Error al añadir mensaje al xat: $error');
+    }
+  }
+
+  Future<List<Message>> getGrupMessages(String grupId) async {
+    try {
+      List<Message> missatges = await controladorDomini.getGrupMessages(grupId);
+      return missatges;
+    } catch (error) {
+      throw Exception('Error al cojer mensajes del xat: $error');
+    }
   }
 
   void mostrarFollows(BuildContext context, bool follows) {
@@ -523,14 +632,16 @@ class ControladorPresentacion {
     );
   }
 
-  void mostrarSolicitutOrganitzador(BuildContext context, String titol, String idActivitat) {
+  void mostrarSolicitutOrganitzador(
+      BuildContext context, String titol, String idActivitat) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => SolicitutScreen(
-          controladorPresentacion: this, 
+          controladorPresentacion: this,
           idActivitat: idActivitat,
-          titolActivitat: titol,),
+          titolActivitat: titol,
+        ),
       ),
     );
   }
@@ -549,5 +660,8 @@ class ControladorPresentacion {
     await prefs.setString('languageCode', lang!.languageCode);
     _loadLanguage();
   }
-  
+
+  /*Future<List<String>> obteAmics() async {
+    return await controladorDomini.obteFollows(usernameLogged);
+  }*/
 }

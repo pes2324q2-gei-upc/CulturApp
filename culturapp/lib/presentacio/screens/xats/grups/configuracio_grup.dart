@@ -1,4 +1,3 @@
-import "package:culturapp/domain/models/grup.dart";
 import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:flutter/material.dart";
@@ -25,9 +24,10 @@ class _ConfigGrup extends State<ConfigGrup> {
   double llargadaPantallaTitols = 438;
   bool afegit = false;
 
-  String nomGrup = '';
+  String nomGrup = 'nomDefault';
   String descripcioGrup = '';
-  String imatgeGrup = '';
+  String imatgeGrup = 'assets/userImage.png';
+  List<String> membres = [];
   List<Usuari> _participants = [];
 
   Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
@@ -40,22 +40,18 @@ class _ConfigGrup extends State<ConfigGrup> {
 
   void assignarImatge(String value) {
     //de moment no funcional
-    imatgeGrup = value;
+    //imatgeGrup = value;
   }
 
   void crearGrup() {
-    Grup nouGrup = Grup(
-      nomGroup: nomGrup,
-      imageGroup: imatgeGrup,
-      descripcio:
-          'this is a grup for cool people :), the coolest around the sickest and the slayest',
-      lastMessage: 'Sigues el primer dir hola!',
-      timeLastMessage: DateTime.now().toString(),
-      participants: _participants,
-      missatgesGrup: [],
-    );
+    //imatge hardcoded de moment
+    for (Usuari usuari in _participants) {
+      membres.add(usuari.nom);
+    }
 
     //cridar a funcio del back de crear el grup, passant com a parametre la variable nouGrup
+    _controladorPresentacion.createGrup(
+        nomGrup, descripcioGrup, imatgeGrup, membres);
     _controladorPresentacion.mostrarXats(context);
   }
 
@@ -267,8 +263,6 @@ class _ConfigGrup extends State<ConfigGrup> {
 
   Widget _buildParticipant(context, index) {
     return ListTile(
-      //una vegada tingui mes info del model
-      //dels perfils lo seu seria canviar-ho
       contentPadding: const EdgeInsets.all(8.0),
       leading: Image(
         image: AssetImage(_participants[index].image),
@@ -278,7 +272,7 @@ class _ConfigGrup extends State<ConfigGrup> {
       ),
       title: Text(_participants[index].nom,
           style: const TextStyle(
-            color: const Color(0xFFF4692A),
+            color: Color(0xFFF4692A),
             fontWeight: FontWeight.bold,
           )),
     );

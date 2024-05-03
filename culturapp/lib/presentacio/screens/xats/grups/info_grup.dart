@@ -35,12 +35,14 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
 
   void canviarEstat() {
     setState(() {
-      estaEditant = !estaEditant;
       //si passa de editar a no editar es cridaria la funció de update grup per modificar-lo
 
       if (estaEditant) {
+        _controladorPresentacion.updateGrup(_grup.id, _grup.nomGroup,
+            _grup.descripcio, _grup.imageGroup, _grup.membres);
         //crida a funcio del back per fer un update de _grup amb els nous parametres
       }
+      estaEditant = !estaEditant;
     });
   }
 
@@ -109,7 +111,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
       children: [
         Text(
           'image'.tr(context),
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.bold,
             color: Colors.blueGrey,
@@ -124,8 +126,9 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
   }
 
   Widget _imatgeNoEditant() {
-    return Image(
-      image: AssetImage(_grup.imageGroup),
+    return const Image(
+      image: AssetImage(
+          'assets/userImage.png'), //quan s'implementi les imatges ja es tocarà
       fit: BoxFit.fill,
       width: 70.0,
       height: 70.0,
@@ -134,8 +137,8 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
 
   Widget _imatgeEditant() {
     //ns com es faria pero s'ha de poder canviar l'imatge amb una foto del movil
-    return Image(
-      image: AssetImage(_grup.imageGroup),
+    return const Image(
+      image: AssetImage('assets/userImage.png'),
       fit: BoxFit.fill,
       width: 70.0,
       height: 70.0,
@@ -214,7 +217,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
           alignment: Alignment.centerLeft,
           child: Text(
             'description'.tr(context),
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
               color: Colors.blueGrey,
@@ -284,7 +287,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
             children: [
               Text(
                 'participants'.tr(context),
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                   color: Colors.blueGrey,
@@ -316,7 +319,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
           height: 300,
           width: llargadaPantalla,
           child: ListView.builder(
-            itemCount: _grup.participants.length,
+            itemCount: _grup.membres.length,
             itemBuilder: (context, index) => _buildParticipant(context, index),
           ),
         ),
@@ -327,13 +330,14 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
   Widget _buildParticipant(context, index) {
     return ListTile(
       contentPadding: const EdgeInsets.all(8.0),
-      leading: Image(
-        image: AssetImage(_grup.participants[index].image),
+      leading: const Image(
+        image: AssetImage(
+            'assets/userImage.png'), //AssetImage(getImageMember(_grup.membres[index])),
         fit: BoxFit.fill,
         width: 50.0,
         height: 50.0,
       ),
-      title: Text(_grup.participants[index].nom,
+      title: Text(_grup.membres[index],
           style: const TextStyle(
             color: Colors.orange,
             fontWeight: FontWeight.bold,

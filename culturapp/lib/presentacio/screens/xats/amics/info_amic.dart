@@ -104,11 +104,10 @@ class _InfoAmicScreen extends State<InfoAmicScreen> {
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all<Color>(Colors.grey),
-          //padding: MaterialStateProperty<EdgeInsetsGeometry?>(10.0),
         ),
         child: Text(
           "see_profile_friend".tr(context),
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 15.0,
           ),

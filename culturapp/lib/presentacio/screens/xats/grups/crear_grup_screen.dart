@@ -25,12 +25,38 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
 
   _CrearGrupScreen(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
-    amics = allAmics;
+
+    amics = []; //allAmics;
+    participantAfegit = [];
+    _loadFriends();
     displayList = amics;
-    participantAfegit = List.filled(displayList.length, false);
   }
 
   List<Usuari> participants = [];
+
+  Future<void> _loadFriends() async {
+    String userName = _controladorPresentacion.getUsername();
+    List<String> llistaNoms =
+        await _controladorPresentacion.getFollowUsers(userName, "followers");
+
+    amics = await convertirStringEnUsuari(llistaNoms);
+
+    setState(() {
+      displayList = List.from(amics);
+      participantAfegit = List.filled(displayList.length, false);
+    });
+  }
+
+  Future<List<Usuari>> convertirStringEnUsuari(List<String> llistaNoms) async {
+    List<Usuari> llistaUsuaris = [];
+
+    for (String nom in llistaNoms) {
+      Usuari user = await _controladorPresentacion.getUserByName(nom);
+      llistaUsuaris.add(user);
+    }
+
+    return llistaUsuaris;
+  }
 
   void updateList(String value) {
     //funcio on es filtrarà la nostra llista (cercador)
@@ -71,11 +97,11 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
               children: [
                 SizedBox(
                   child: Padding(
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                         bottom: 20.0, left: 20.0, right: 20.0, top: 30.0),
                     child: Text(
                       'choose_participants'.tr(context),
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.blueGrey,
@@ -209,7 +235,7 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
       ),
       title: Text(displayList[index].nom,
           style: const TextStyle(
-            color: const Color(0xFFF4692A),
+            color: Color(0xFFF4692A),
             fontWeight: FontWeight.bold,
           )),
       trailing: _buildBotoAfegir(displayList[index], index),
@@ -238,8 +264,7 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
         participantAfegit[index] ? '-' : '+',
       ),
     );
-  } //com de moment no tinc l'estructura dels models
-  //dels participant i això serà un atribut d'ells, no val la pena continuar de moment
+  }
 
   Widget _buildNextPageButton() {
     return ElevatedButton(

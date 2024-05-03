@@ -1,3 +1,4 @@
+import "package:culturapp/domain/converters/convert_date_format.dart";
 import "package:culturapp/domain/models/grup.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/translations/AppLocalizations";
@@ -17,16 +18,22 @@ class GrupsScreen extends StatefulWidget {
 class _GrupsScreenState extends State<GrupsScreen> {
   late ControladorPresentacion _controladorPresentacion;
   late List<Grup> llista_grups;
-  late List<Grup> display_list;
+  late List<Grup> display_list = [];
   String value = '';
 
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
 
   _GrupsScreenState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
-    llista_grups =
-        allGroups; //fer crida al backend per agafar tots els grups que l'usuari forma part
-    display_list = llista_grups; //comencem amb tots els grups
+    _initialize();
+  }
+
+  void _initialize() async {
+    List<Grup> grups = await _controladorPresentacion.getUserGrups();
+    setState(() {
+      llista_grups = grups;
+      display_list = llista_grups;
+    });
   }
 
   void updateList(String value) {
@@ -120,12 +127,12 @@ class _GrupsScreenState extends State<GrupsScreen> {
       onTap: () {
         //anar cap a la pantalla de un xat
         _controladorPresentacion.mostrarXatGrup(context, display_list[index]);
-        //si al final es necessari, crida per agafar tots els missatges del grup
       },
       child: ListTile(
         contentPadding: const EdgeInsets.all(8.0),
-        leading: Image(
-          image: AssetImage(display_list[index].imageGroup),
+        leading: const Image(
+          //image: AssetImage(display_list[index].imageGroup),
+          image: AssetImage('assets/userImage.png'),
           fit: BoxFit.cover,
           width: 50,
           height: 50,
@@ -136,9 +143,7 @@ class _GrupsScreenState extends State<GrupsScreen> {
               fontWeight: FontWeight.bold,
             )),
         subtitle: Text(display_list[index].lastMessage),
-        trailing: Text(
-          display_list[index].timeLastMessage,
-        ),
+        trailing: Text(convertTimeFormat(display_list[index].timeLastMessage)),
       ),
     );
   }

@@ -1,3 +1,4 @@
+import "package:culturapp/domain/converters/convert_date_format.dart";
 import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/translations/AppLocalizations";
@@ -21,9 +22,12 @@ class _AmicsScreenState extends State<AmicsScreen> {
 
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
 
+  String mockImage = 'assets/userImage.png';
+
   _AmicsScreenState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
-    llista_amics = allAmics;
+    llista_amics = [];
+    _loadFriends();
     //crida a backend per agafar tots els amics de l'usuari
     display_list = List.from(llista_amics);
   }
@@ -42,14 +46,37 @@ class _AmicsScreenState extends State<AmicsScreen> {
     );
   }
 
-  String agafarLastMessage(Usuari amic) {
-    return 'de moment res';
-    //crida a back i guess?
+  Future<List<Usuari>> convertirStringEnUsuari(List<String> llistaNoms) async {
+    List<Usuari> llistaUsuaris = [];
+
+    for (String nom in llistaNoms) {
+      Usuari user = await _controladorPresentacion.getUserByName(nom);
+      llistaUsuaris.add(user);
+    }
+
+    return llistaUsuaris;
   }
 
-  String agafarTimeLastMessage(Usuari amic) {
-    return '00:00';
-    //crida a back i guess?
+  Future<void> _loadFriends() async {
+    String userName = _controladorPresentacion.getUsername();
+    List<String> llistaNoms =
+        await _controladorPresentacion.getFollowUsers(userName, "followers");
+
+    llista_amics = await convertirStringEnUsuari(llistaNoms);
+
+    setState(() {
+      display_list = List.from(llista_amics);
+    });
+  }
+
+  Future<String> agafarLastMessage(Usuari amic) async {
+    String msg = await _controladorPresentacion.lastMsg(amic.nom);
+    return msg;
+  }
+
+  Future<String> agafarTimeLastMessage(Usuari amic) async {
+    String time = await _controladorPresentacion.lasTime(amic.nom);
+    return convertTimeFormat(time);
   }
 
   @override
@@ -98,17 +125,30 @@ class _AmicsScreenState extends State<AmicsScreen> {
     );
   }
 
+  Future<String>? convertToNullableFutureString(String? inputString) {
+    if (inputString != null) {
+      // Simulate an asynchronous operation with a delay of 0 milliseconds
+      return Future.delayed(Duration.zero, () => inputString);
+    } else {
+      return null;
+    }
+  }
+
   Widget _buildAmic(context, index) {
+    //crida per getUsuari
+
     return GestureDetector(
       onTap: () {
         //anar cap a la pantalla de un xat amb l'usuari
         //crida al backend per agafar el xat del amic en concret
+        _controladorPresentacion.getXat(display_list[index].nom);
         _controladorPresentacion.mostrarXatAmic(context, display_list[index]);
       },
       child: ListTile(
         contentPadding: const EdgeInsets.all(8.0),
         leading: Image(
-          image: AssetImage(display_list[index].image),
+          //image: AssetImage(display_list[index].image),
+          image: AssetImage(mockImage),
           fit: BoxFit.cover,
           width: 50,
           height: 50,
@@ -118,9 +158,29 @@ class _AmicsScreenState extends State<AmicsScreen> {
               color: Colors.orange,
               fontWeight: FontWeight.bold,
             )),
-        subtitle: Text(agafarLastMessage(display_list[index])),
-        trailing: Text(
-          agafarTimeLastMessage(display_list[index]),
+        subtitle: FutureBuilder<String>(
+          future: agafarLastMessage(display_list[index]),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Text('Loading...');
+            } else if (snapshot.hasError) {
+              return const Text('');
+            } else {
+              return Text(snapshot.data ?? '');
+            }
+          },
+        ),
+        trailing: FutureBuilder<String>(
+          future: agafarTimeLastMessage(display_list[index]),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Text('Loading...');
+            } else if (snapshot.hasError) {
+              return const Text('');
+            } else {
+              return Text(snapshot.data ?? '');
+            }
+          },
         ),
       ),
     );

@@ -1,6 +1,7 @@
+import "package:cloud_firestore/cloud_firestore.dart";
+import "package:culturapp/domain/converters/convert_date_format.dart";
 import "package:culturapp/domain/models/grup.dart";
 import "package:culturapp/domain/models/message.dart";
-import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/chat_bubble.dart";
 import "package:culturapp/translations/AppLocalizations";
@@ -24,6 +25,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
   late Grup _grup;
   late List<String> nomParticipants;
   late List<Message> missatges;
+  late ScrollController _scrollController;
 
   Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
@@ -31,18 +33,43 @@ class _XatGrupScreen extends State<XatGrupScreen> {
   _XatGrupScreen(ControladorPresentacion controladorPresentacion, Grup grup) {
     _controladorPresentacion = controladorPresentacion;
     _grup = grup;
-    nomParticipants = agafarNomsParticipants(_grup.participants);
-    missatges = _grup.missatgesGrup;
+    nomParticipants = [];
+    agafarNomsParticipants(_grup.membres);
+    missatges = [];
+    _scrollController = ScrollController();
+    _loadMessages();
   }
 
-  List<String> agafarNomsParticipants(List<Usuari> participants) {
-    List<String> nomParticipants = [];
+  Message convertIntoRigthVersion(Message message) {
+    //una funcio que converteix el temps en apropiat i el id del ususari en el nom de l'usuari
 
-    for (int i = 0; i < participants.length; ++i) {
-      nomParticipants.add(participants[i].nom);
+    String myName = _controladorPresentacion.getUsername();
+
+    if (message.sender == myName) {
+      message.sender = 'Me';
     }
 
-    return nomParticipants;
+    message.timeSended = convertTimeFormat(message.timeSended);
+    return message;
+  }
+
+  List<Message> convertData(List<Message> messagelist) {
+    return messagelist.map(convertIntoRigthVersion).toList();
+  }
+
+  Future<void> _loadMessages() async {
+    List<Message> loadedMessages =
+        await _controladorPresentacion.getGrupMessages(_grup.id);
+    setState(() {
+      missatges = convertData(loadedMessages).reversed.toList();
+    });
+  }
+
+  void agafarNomsParticipants(List<dynamic> participants) async {
+    for (int i = 0; i < participants.length; ++i) {
+      //s'haurien de conseguir el noms del users
+      nomParticipants.add(_grup.membres[i]);
+    }
   }
 
   String truncarString(String noms, int maxLength) {
@@ -55,19 +82,40 @@ class _XatGrupScreen extends State<XatGrupScreen> {
 
   final TextEditingController _controller = TextEditingController();
 
-  void _handleSubmitted(String text) {
-    _controller.clear();
-    setState(() {
-      missatges.insert(
-        0,
-        Message(text: text, sender: 'Me', timeSended: "10:00"),
-      );
-      //crida al backend per penjar missatge al grup
-    });
+  void _sendMessage(String text) {
+    //enviar missatge, jo
+
+    if (text.isNotEmpty) {
+      _controller.clear();
+      setState(() {
+        //crida al backend per penjar missatge al grup
+        String time = Timestamp.now().toDate().toIso8601String();
+        _controladorPresentacion.addGrupMessage(_grup.id, time, text);
+
+        time = convertTimeFormat(time);
+
+        missatges.insert(
+          missatges.length,
+          Message(text: text, sender: 'Me', timeSended: time),
+        );
+      });
+    }
+  }
+
+  void _scrollToBottom() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottom();
+    });
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: _buildAppBar(),
@@ -78,17 +126,11 @@ class _XatGrupScreen extends State<XatGrupScreen> {
               color: grisFluix,
               alignment: Alignment.topCenter,
               child: ListView.builder(
-                reverse: true,
+                controller: _scrollController,
                 shrinkWrap: true,
                 itemCount: missatges.length,
                 itemBuilder: (context, index) {
-                  return ChatBubble(
-                    userName: missatges[index].sender,
-                    message: missatges[index].text,
-                    time: "10:00 AM",
-                    //s'ha de tocar de tal manera que si soc jo l'usuari, es fiqui
-                    //a la dreta, mentre que si es qualsevol altre persona es fica a l'esquerra
-                  );
+                  return _buildChatBubble(missatges[index]);
                 },
               ),
             ),
@@ -115,8 +157,9 @@ class _XatGrupScreen extends State<XatGrupScreen> {
       ),
       title: Row(
         children: [
-          CircleAvatar(
-            backgroundImage: AssetImage(_grup.imageGroup),
+          const CircleAvatar(
+            backgroundImage: AssetImage('assets/userImage.png'),
+            //AssetImage(_grup.imageGroup),
           ),
           const SizedBox(width: 10),
           Column(
@@ -127,7 +170,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
                 style: const TextStyle(color: Colors.white),
               ),
               Text(
-                truncarString(nomParticipants.join(', '), 35),
+                truncarString(nomParticipants.join(', '), 30),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 14.0,
@@ -151,6 +194,14 @@ class _XatGrupScreen extends State<XatGrupScreen> {
     );
   }
 
+  Widget _buildChatBubble(message) {
+    return ChatBubble(
+      userName: message.sender,
+      message: message.text,
+      time: message.timeSended,
+    );
+  }
+
   Widget _bottomInputField() {
     return IconTheme(
       data: const IconThemeData(color: Colors.orange),
@@ -161,14 +212,14 @@ class _XatGrupScreen extends State<XatGrupScreen> {
             Flexible(
               child: TextField(
                 controller: _controller,
-                onSubmitted: _handleSubmitted,
-                decoration:
-                    InputDecoration.collapsed(hintText: 'send_message'.tr(context)),
+                onSubmitted: _sendMessage,
+                decoration: InputDecoration.collapsed(
+                    hintText: 'send_message'.tr(context)),
               ),
             ),
             IconButton(
               icon: const Icon(Icons.send),
-              onPressed: () => _handleSubmitted(_controller.text),
+              onPressed: () => _sendMessage(_controller.text),
             ),
           ],
         ),
