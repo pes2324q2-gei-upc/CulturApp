@@ -35,12 +35,7 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
     participants = [];
     participantAfegit = [];
     displayList = [];
-
-    //amics = ; //allAmics;
     _loadFriends();
-
-    ///canviar més endevant per obté followers
-    //displayList = amics;
   }
 
   Future<void> _loadFriends() async {
@@ -116,7 +111,7 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
         backgroundColor: Colors.orange,
         title: Text(
           'modify_participants'.tr(context),
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
         iconTheme: const IconThemeData(
           color: Colors.white,
@@ -129,11 +124,11 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
               children: [
                 SizedBox(
                   child: Padding(
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                         bottom: 20.0, left: 20.0, right: 20.0, top: 30.0),
                     child: Text(
                       'select_unselect_participants'.tr(context),
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.blueGrey,
@@ -223,7 +218,7 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
           children: [
             Container(
               alignment: Alignment.topCenter,
-              child: Image(
+              child: const Image(
                 image: AssetImage(
                     'assets/userImage.png'), //AssetImage(participants[index].image),
                 fit: BoxFit.fill,
@@ -296,8 +291,7 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
         participantAfegit[index] ? '-' : '+',
       ),
     );
-  } //com de moment no tinc l'estructura dels models
-  //dels participant i això serà un atribut d'ells, no val la pena continuar de moment
+  }
 
   Widget _buildConfirmButton() {
     return ElevatedButton(
@@ -308,7 +302,7 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
       child: const Icon(Icons.check),
       onPressed: () {
         _grup.membres = participants;
-        ////////////////////////////////////////////////////////////////////////
+
         //crida al backend per passar el grup updated
         _controladorPresentacion.mostrarInfoGrup(context, _grup);
       },

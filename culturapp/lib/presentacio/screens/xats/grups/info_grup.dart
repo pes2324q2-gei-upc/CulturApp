@@ -111,7 +111,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
       children: [
         Text(
           'image'.tr(context),
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.bold,
             color: Colors.blueGrey,
@@ -217,7 +217,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
           alignment: Alignment.centerLeft,
           child: Text(
             'description'.tr(context),
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
               color: Colors.blueGrey,
@@ -287,7 +287,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
             children: [
               Text(
                 'participants'.tr(context),
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                   color: Colors.blueGrey,

@@ -127,7 +127,6 @@ class _GrupsScreenState extends State<GrupsScreen> {
       onTap: () {
         //anar cap a la pantalla de un xat
         _controladorPresentacion.mostrarXatGrup(context, display_list[index]);
-        //si al final es necessari, crida per agafar tots els missatges del grup
       },
       child: ListTile(
         contentPadding: const EdgeInsets.all(8.0),

@@ -27,7 +27,6 @@ class _AmicsScreenState extends State<AmicsScreen> {
 
   _AmicsScreenState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
-    //llista_amics =
     llista_amics = [];
     _loadFriends();
     //crida a backend per agafar tots els amics de l'usuari
@@ -65,10 +64,7 @@ class _AmicsScreenState extends State<AmicsScreen> {
         await _controladorPresentacion.getFollowUsers(userName, "followers");
 
     llista_amics = await convertirStringEnUsuari(llistaNoms);
-    //llista_amics = await _controladorPresentacion.obteAmics();
-    /*setState(() {
-      messages = convertData(loadedMessages).reversed.toList();
-    });*/
+
     setState(() {
       display_list = List.from(llista_amics);
     });

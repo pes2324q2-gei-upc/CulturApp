@@ -263,8 +263,6 @@ class _ConfigGrup extends State<ConfigGrup> {
 
   Widget _buildParticipant(context, index) {
     return ListTile(
-      //una vegada tingui mes info del model
-      //dels perfils lo seu seria canviar-ho
       contentPadding: const EdgeInsets.all(8.0),
       leading: Image(
         image: AssetImage(_participants[index].image),
@@ -274,7 +272,7 @@ class _ConfigGrup extends State<ConfigGrup> {
       ),
       title: Text(_participants[index].nom,
           style: const TextStyle(
-            color: const Color(0xFFF4692A),
+            color: Color(0xFFF4692A),
             fontWeight: FontWeight.bold,
           )),
     );

@@ -27,7 +27,6 @@ class _Xats extends State<Xats> {
   int _selectedIndex = 2;
   late List<Usuario> usersRecom;
   late List<Usuario> usersBD;
-  //List<Actividad> activitats = null; quan tinguem de base de dades fer-ho bé
   late Widget currentContent;
 
   _Xats(ControladorPresentacion controladorPresentacion, List<Usuario> recomms,
@@ -100,7 +99,7 @@ class _Xats extends State<Xats> {
         backgroundColor: const Color(0xFFF4692A),
         title: Text(
           'chats'.tr(context),
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(

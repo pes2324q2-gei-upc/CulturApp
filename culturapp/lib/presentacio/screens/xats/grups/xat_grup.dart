@@ -4,7 +4,6 @@ import "package:culturapp/domain/models/grup.dart";
 import "package:culturapp/domain/models/message.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/chat_bubble.dart";
-import "package:firebase_auth/firebase_auth.dart";
 import "package:culturapp/translations/AppLocalizations";
 import "package:flutter/material.dart";
 
