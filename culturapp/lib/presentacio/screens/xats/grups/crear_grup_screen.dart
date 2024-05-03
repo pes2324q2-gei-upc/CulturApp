@@ -27,11 +27,39 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
     _controladorPresentacion = controladorPresentacion;
     String userName = _controladorPresentacion.getUsername();
     amics = []; //allAmics;
+    participantAfegit = [];
+    _loadFriends();
     displayList = amics;
-    participantAfegit = List.filled(displayList.length, false);
   }
 
   List<Usuari> participants = [];
+
+  Future<void> _loadFriends() async {
+    String userName = _controladorPresentacion.getUsername();
+    List<String> llistaNoms =
+        await _controladorPresentacion.getFollowUsers(userName, "followers");
+
+    amics = await convertirStringEnUsuari(llistaNoms);
+    //llista_amics = await _controladorPresentacion.obteAmics();
+    /*setState(() {
+      messages = convertData(loadedMessages).reversed.toList();
+    });*/
+    setState(() {
+      displayList = List.from(amics);
+      participantAfegit = List.filled(displayList.length, false);
+    });
+  }
+
+  Future<List<Usuari>> convertirStringEnUsuari(List<String> llistaNoms) async {
+    List<Usuari> llistaUsuaris = [];
+
+    for (String nom in llistaNoms) {
+      Usuari user = await _controladorPresentacion.getUserByName(nom);
+      llistaUsuaris.add(user);
+    }
+
+    return llistaUsuaris;
+  }
 
   void updateList(String value) {
     //funcio on es filtrarà la nostra llista (cercador)

@@ -45,16 +45,13 @@ class _ConfigGrup extends State<ConfigGrup> {
 
   void crearGrup() {
     //imatge hardcoded de moment
-
-    List<String> membersHardcoded = ['Eman', 'hardcoded'];
-
-    membersHardcoded
-        .add('susssss'); //añadir el username de la persona que lo està creando
-    //cuando haga pull actualizar-lo, ya esta en back
+    for (Usuari usuari in _participants) {
+      membres.add(usuari.nom);
+    }
 
     //cridar a funcio del back de crear el grup, passant com a parametre la variable nouGrup
     _controladorPresentacion.createGrup(
-        nomGrup, descripcioGrup, imatgeGrup, membersHardcoded);
+        nomGrup, descripcioGrup, imatgeGrup, membres);
     _controladorPresentacion.mostrarXats(context);
   }
 
