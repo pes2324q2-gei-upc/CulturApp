@@ -21,8 +21,8 @@ class CustomBottomNavigationBar extends StatelessWidget {
       child: GNav(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         backgroundColor: Colors.white,
-        color: Colors.orange,
-        activeColor: Colors.orange,
+        color: const Color(0xFFF4692A),
+        activeColor: const Color(0xFFF4692A),
         tabBackgroundColor: Colors.grey.shade100,
         gap: 6,
         onTabChange: (index) {
@@ -32,22 +32,22 @@ class CustomBottomNavigationBar extends StatelessWidget {
         tabs: const [
           GButton(
             text: "Mapa",
-            textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+            textStyle: TextStyle(fontSize: 12, color: const Color(0xFFF4692A)),
             icon: Icons.map,
           ),
           GButton(
             text: "Mis Actividades",
-            textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+            textStyle: TextStyle(fontSize: 12, color: const Color(0xFFF4692A)),
             icon: Icons.event,
           ),
           GButton(
             text: "Chats",
-            textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+            textStyle: TextStyle(fontSize: 12, color: const Color(0xFFF4692A)),
             icon: Icons.chat,
           ),
           GButton(
             text: "Perfil",
-            textStyle: TextStyle(fontSize: 12, color: Colors.orange),
+            textStyle: TextStyle(fontSize: 12, color: const Color(0xFFF4692A)),
             icon: Icons.person,
           ),
         ],

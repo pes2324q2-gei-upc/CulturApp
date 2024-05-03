@@ -11,22 +11,19 @@ class EditPerfil extends StatefulWidget {
 
   final ControladorPresentacion controladorPresentacion;
 
-  final String uid;
+  final String username;
 
-  const EditPerfil({Key? key, required this.controladorPresentacion, required this.uid}) : super(key: key);
+  const EditPerfil({Key? key, required this.controladorPresentacion, required this.username}) : super(key: key);
 
   @override
-  State<EditPerfil> createState() => _EditPerfil(this.controladorPresentacion, this.uid);
+  State<EditPerfil> createState() => _EditPerfil(this.controladorPresentacion, this.username);
 }
 
 class _EditPerfil extends State<EditPerfil> {
   //Usuari de Firebase
   int _selectedIndex = 3;
 
-  late String _uid;
-
-  late Future<String?> _usernameFuture;
-
+  late String _username;
   //Instancia de autentificacio de Firebase
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -54,42 +51,34 @@ class _EditPerfil extends State<EditPerfil> {
 
   late User? user;
   
-  _EditPerfil(ControladorPresentacion controladorPresentacion, String uid) {
+  _EditPerfil(ControladorPresentacion controladorPresentacion, String username) {
     _controladorPresentacion = controladorPresentacion;
-    user = controladorPresentacion.getUser();
-    _uid = uid;
+    _username = controladorPresentacion.getUsername();
     selectedCategories = controladorPresentacion.getCategsFav();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _usernameFuture = widget.controladorPresentacion.getUsername(_uid);
   }
 
   @override
   Widget build(BuildContext context) {
     print(selectedCategories.toString());
-    return FutureBuilder<String?>(
-      future: _usernameFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Container(
-            alignment: Alignment.center,
-            // Asigna un tamaño específico al contenedor
-            width: 50, // Por ejemplo, puedes ajustar el ancho según tus necesidades
-            height: 50, // También puedes ajustar la altura según tus necesidades
-            child: CircularProgressIndicator(color: Colors.orange),
-          );
-        } else if (snapshot.hasError) {
-          return Text("profile_error_msg".tr(context));
-        } else {
-          // Muestra el nombre de usuario obtenido
-          final username = snapshot.data ?? '';
-          return _buildUserInfo(username);
-        }
-      },
-    );
+    return Builder(
+  builder: (context) {
+    // Aquí puedes acceder a los datos que necesitas para construir tu widget.
+    // Como Builder no maneja Futures, necesitarás obtener los datos de otra manera.
+    // Por ejemplo, podrías obtener los datos en un método initState y almacenarlos en una variable de estado.
+    final username = this._username ?? ''; // Reemplaza esto con tu lógica para obtener el nombre de usuario
+
+    if (username.isEmpty) {
+      return Container(
+        alignment: Alignment.center,
+        width: 50,
+        height: 50,
+        child: CircularProgressIndicator(color: const Color(0xFFF4692A)),
+      );
+    } else {
+      return _buildUserInfo(username);
+    }
+  },
+);
   }
 
   Widget _buildUserInfo(String username) {
@@ -97,7 +86,7 @@ class _EditPerfil extends State<EditPerfil> {
     return Scaffold(
       //Header
       appBar: AppBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFFF4692A),
         title: const Text(
           'Edit',
           style: TextStyle(color: Colors.white),
@@ -228,7 +217,7 @@ class _EditPerfil extends State<EditPerfil> {
   }
   
   Future<bool> sameName() async {
-    String? name = await _usernameFuture;
+    String? name = await _username;
     return usernameController.text == name;
   }
 }

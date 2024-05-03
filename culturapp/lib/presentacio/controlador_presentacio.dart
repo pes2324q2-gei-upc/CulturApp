@@ -1,9 +1,12 @@
-// ignore_for_file: non_constant_identifier_names, no_leading_underscores_for_local_identifiers, use_build_context_synchronously, avoid_print
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/grup.dart';
 import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/screens/edit_perfil.dart';
+import 'package:culturapp/presentacio/screens/llistar_follows.dart';
+import 'package:culturapp/presentacio/screens/llistar_pendents.dart';
+import 'package:culturapp/presentacio/screens/report_bug.dart';
+import 'package:culturapp/presentacio/screens/solicitud_organitzador.dart';
 import 'package:culturapp/presentacio/screens/xats/amics/info_amic.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/configuracio_grup.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/info_grup.dart';
@@ -11,7 +14,6 @@ import 'package:culturapp/presentacio/screens/xats/grups/modificar_participants.
 import 'package:culturapp/presentacio/screens/xats/grups/xat_grup.dart';
 import 'package:culturapp/domain/models/user.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
-import 'package:culturapp/presentacio/screens/logout.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/crear_grup_screen.dart';
 import 'package:culturapp/presentacio/screens/perfil_screen.dart';
@@ -30,57 +32,200 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:culturapp/domain/models/foro_model.dart';
 import 'package:culturapp/domain/models/post.dart';
+import 'package:http/http.dart';
 
 class ControladorPresentacion {
   final controladorDomini = ControladorDomini();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  late User? _user = null;
+  late User? _user;
   late List<Actividad> activitats;
-  late List<Actividad> activitatsUser;
   late List<String> recomms;
   late List<String> categsFav = [];
   late List<Usuario> usersRecom;
   late List<Usuario> usersBD;
   late List<String> friends;
+  late String usernameLogged;
+  late List<Actividad> activitatsUser;
 
-  void func_logout() async {
+  void funcLogout() async {
     _auth.signOut();
     final GoogleSignIn googleSignIn = GoogleSignIn();
     await googleSignIn.signOut(); 
   }
 
   Future<void> initialice() async {
-    activitats = await controladorDomini.getActivitiesAgenda();
-    usersBD = await controladorDomini.getUsers();
-  }
-
-  Future<void> initialice2() async {
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
       _user = currentUser;
+      await controladorDomini.setInfoUserLogged(_user!.uid);
     }
+  if(await userLogged()) {
+      await controladorDomini.setInfoUserLogged(_user!.uid);
+      usernameLogged = controladorDomini.userLogged.getUsername();
 
-    if (userLogged()) {
-      categsFav = await controladorDomini.obteCatsFavs(_user);
-      activitatsUser = await controladorDomini.getUserActivities(_user!.uid);
-      /*
-      Future<String> usname = getUsername(_user!.uid);
-      String username = await usname;
-      friends = await controladorDomini.obteFollows(username);*/
-      usersBD.removeWhere((usuario) => usuario.identificador == _user!.uid);
-      //usersBD.removeWhere((usuario) => friends.contains(usuario.username));
-      usersRecom = calculaUsuariosRecomendados(usersBD, _user!.uid, categsFav);
-    }
+      activitats = await controladorDomini.getActivitiesAgenda();
+      activitatsUser = await controladorDomini.getUserActivities();
+      usersBD = await controladorDomini.getUsers();
+      friends = await getFollowingAll(usernameLogged);
+      categsFav = await controladorDomini.obteCatsFavs(usernameLogged); 
+      usersBD.removeWhere((usuario) => usuario.username == usernameLogged);
+      usersRecom = calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
+      usersBD.removeWhere((usuario) => friends.contains(usuario.username));
   }
-
-  bool userLogged() {
+  }
+   Future<bool> userLogged() async {
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
       _user = currentUser;
+      await controladorDomini.setInfoUserLogged(_user!.uid);
       return true;
     } else {
       return false;
     }
+  }
+
+  Future<void> handleGoogleSignIn(BuildContext context) async {
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (googleUser != null) {
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        UserCredential userCredential =
+            await _auth.signInWithCredential(credential);
+
+        bool userExists =
+            await controladorDomini.accountExists(userCredential.user);
+        _user = userCredential.user;
+        print(userExists);
+  
+        if (!userExists) {
+          mostrarSignup(context);
+        }
+        else {
+          await initialice();
+          mostrarMapa(context);
+        }
+      }
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<bool> createUser(String username, List<String> selectedCategories,
+      BuildContext context) async {
+    await controladorDomini.createUser(_user, username, selectedCategories);
+    return true;
+  }
+
+  void editUser(String username, List<String> selectedCategories,
+      BuildContext context) async { 
+    controladorDomini.editUser(_user, username, selectedCategories);
+    categsFav = selectedCategories;
+    mostrarPerfil(context);
+  }
+
+  void checkLoggedInUser(BuildContext context) {
+    User? currentUser = _auth.currentUser;
+
+    if (currentUser != null) {
+      _user = currentUser;
+      controladorDomini.setInfoUserLogged(_user!.uid);
+      usernameLogged = controladorDomini.userLogged.getUsername();
+      mostrarMapa(context);
+    }
+  }
+
+  void logout(BuildContext context) async {
+    _auth.signOut();
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    await googleSignIn.signOut(); 
+    Future.delayed(const Duration(seconds: 2), () {
+      mostrarLogin(context);
+    });
+  }
+
+  Future<bool> usernameUnique(String username) {
+    return controladorDomini.usernameUnique(username);
+  }
+
+  List<String> getCategsFav() {
+    return categsFav;
+  }
+
+  List<Actividad> getActivitatsUser() => activitatsUser;
+
+  List<Actividad> getActivitats() => activitats;
+
+  Future<List<Actividad>> getUserActivities() => controladorDomini.getUserActivities();
+  
+  List<String> getActivitatsRecomm() {
+    recomms = calcularActividadesRecomendadas(categsFav, activitats);
+    return recomms;
+  }
+
+  User? getUser() {
+    return _user;
+  }
+
+  Future<List<Actividad>> searchActivitat(String squery) {
+    return controladorDomini.searchActivitat(squery);
+  }
+
+  Future<List<Actividad>> searchMyActivitats(String name) {
+    return controladorDomini.searchMyActivities(name);
+  }
+  ControladorDomini getControladorDomini() {
+    return controladorDomini;
+  }
+
+  String getUsername() {
+    return usernameLogged;
+  }
+
+  Future<List<String>> getFollowingAll(String username) async {
+    return (await controladorDomini.obteFollows(username, 'following')).map((user) => user.toString()).toList();
+  }
+
+  Future<List<String>> getFollowUsers(String username, String type) async {
+  
+    if(type == 'followers') {
+      return (await controladorDomini.obteFollows(username, 'followers')).map((user) => user['user'].toString()).toList();
+    } else if (type == 'following') {
+      return (await controladorDomini.obteFollows(username, 'following')).map((user) => user['friend'].toString()).toList();
+    } else if (type == 'pending') {
+      return (await controladorDomini.obteFollows(username, 'pendents')).map((user) => user['user'].toString()).toList();
+    }
+    return [];
+  }
+
+  Future<List<String>> getRequestsUser() async {
+    return await controladorDomini.getRequestsUser();
+  }
+
+  Future<void> acceptFriend(String person) async {
+    await controladorDomini.acceptFriend(person);
+  }
+
+  Future<void> deleteFriend(String person) async {
+    await controladorDomini.deleteFriend(person);
+  }
+
+  Future<void> createFriend(String person) async {
+    await controladorDomini.createFriend(person);
+  }
+
+  Future<int> sendReportBug(String titol, String report) async {
+    return await controladorDomini.sendReportBug(titol, report);
+  }
+
+  Future<int> sendOrganizerApplication(String titol, String idActivitat, String motiu) async {
+    return await controladorDomini.sendOrganizerApplication(titol, idActivitat, motiu);
   }
 
   void mostrarVerActividad(
@@ -124,28 +269,23 @@ class ControladorPresentacion {
       context,
       MaterialPageRoute(
         builder: (context) => PerfilPage(
-            controladorPresentacion: this, uid: _user!.uid, owner: true),
+            controladorPresentacion: this, username: usernameLogged, owner: true),
       ),
     );
   }
 
   Future<void> mostrarMisActividades(BuildContext context) async {
-    getUserActivities(_user!.uid).then((actividades) => {
+    getUserActivities().then((actividades) => {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => ListaMisActividades(
                 controladorPresentacion: this,
-                user: _user,
+                user: _user, 
               ),
             ),
           )
         });
-  }
-
-  Future<List<Actividad>> getMisActivitats() async {
-    activitatsUser = await controladorDomini.getUserActivities(_user!.uid);
-    return activitatsUser;
   }
 
   void mostrarActividades(BuildContext context) async {
@@ -166,88 +306,10 @@ class ControladorPresentacion {
       MaterialPageRoute(
         builder: (context) => ListaMisActividades(
           controladorPresentacion: this,
-          user: _user,
+          user: _user, //NECESITA USER
         ),
       ),
     );
-  }
-
-  List<Actividad> getActivitats() => activitats;
-
-  List<Actividad> getActivitatsUser() => activitatsUser;
-
-  List<String> getActivitatsRecomm() {
-    recomms = calcularActividadesRecomendadas(categsFav, activitats);
-    return recomms;
-  }
-
-  Future<List<Actividad>> getUserActivities(String userID) =>
-      controladorDomini.getUserActivities(userID);
-
-  FirebaseAuth getFirebaseAuth() {
-    return _auth;
-  }
-
-  void setUser(User? event) async {
-    _user = event;
-  }
-
-  User? getUser() {
-    return _user;
-  }
-
-  Future<List<Actividad>> searchActivitat(String squery) {
-    return controladorDomini.searchActivitat(squery);
-  }
-
-  Future<List<Actividad>> searchMyActivitats(String name) {
-    return controladorDomini.searchMyActivities(_user!.uid, name);
-  }
-
-
-  void checkLoggedInUser(BuildContext context) {
-    //Obte l'usuari autentificat en el moment si existeix
-    User? currentUser = _auth.currentUser;
-
-    //Si existeix l'usuari, estableix l'usuari de l'estat i redirigeix a la pantalla principal
-    if (currentUser != null) {
-      _user = currentUser;
-      mostrarMapa(context);
-    }
-  }
-
-  Future<void> handleGoogleSignIn(BuildContext context) async {
-    try {
-      final GoogleSignIn googleSignIn = GoogleSignIn();
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-      if (googleUser != null) {
-        final GoogleSignInAuthentication googleAuth =
-            await googleUser.authentication;
-        final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
-
-        UserCredential userCredential =
-            await _auth.signInWithCredential(credential);
-
-        bool userExists =
-            await controladorDomini.accountExists(userCredential.user);
-        _user = userCredential.user;
-        //Si no hi ha un usuari associat al compte de google, redirigir a la pantalla de registre
-        if (!userExists) {
-          mostrarSignup(context);
-        }
-        //Altrament redirigir a la pantalla principal de l'app
-        else {
-          await initialice();
-          await initialice2();
-          mostrarMapa(context);
-        }
-      }
-    } catch (error) {
-      print(error);
-    }
   }
 
   void mostrarSignup(BuildContext context) {
@@ -266,12 +328,6 @@ class ControladorPresentacion {
         builder: (context) => Login(controladorPresentacion: this),
       ),
     );
-  }
-
-  Future<bool> createUser(String username, List<String> selectedCategories,
-      BuildContext context) async {
-    await controladorDomini.createUser(_user, username, selectedCategories);
-    return true;
   }
 
   void mostrarCrearNouGrup(BuildContext context) {
@@ -354,19 +410,15 @@ class ControladorPresentacion {
     );
   }
 
-  void logout(BuildContext context) async {
-    _auth.signOut();
-    final GoogleSignIn googleSignIn = GoogleSignIn();
-    await googleSignIn.signOut(); 
-    Future.delayed(Duration(seconds: 2), () {
-      mostrarLogin(context);
-    });
+  void mostrarEditPerfil(BuildContext context, String username) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            EditPerfil(controladorPresentacion: this, username: username),
+      ),
+    );
   }
-
-  Future<bool> usernameUnique(String username) {
-    return controladorDomini.usernameUnique(username);
-  }
-
 
   //veure si existeix el foro i si no el crea
   Future<void> getForo(String code) async {
@@ -434,25 +486,50 @@ class ControladorPresentacion {
     return controladorDomini.getUsername(uid);
   }
 
-  void mostrarEditPerfil(BuildContext context, String uid) {
+  void mostrarFollows(BuildContext context, bool follows) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            EditPerfil(controladorPresentacion: this, uid: uid),
+        builder: (context) => LlistarFollows(
+          username: usernameLogged,
+          controladorPresentacion: this,
+          follows: follows,
+        ),
       ),
     );
   }
 
-  List<String> getCategsFav() {
-    return categsFav;
+  void mostrarPendents(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LlistarPendents(
+          username: usernameLogged,
+          controladorPresentacion: this,
+        ),
+      ),
+    );
   }
 
-  void editUser(String username, List<String> selectedCategories,
-      BuildContext context) async {
-    controladorDomini.editUser(_user, username, selectedCategories);
-    categsFav = selectedCategories;
-    mostrarPerfil(context);
+  void mostrarReportBug(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ReportScreen(controladorPresentacion: this),
+      ),
+    );
+  }
+
+  void mostrarSolicitutOrganitzador(BuildContext context, String titol, String idActivitat) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SolicitutScreen(
+          controladorPresentacion: this, 
+          idActivitat: idActivitat,
+          titolActivitat: titol,),
+      ),
+    );
   }
 
 }

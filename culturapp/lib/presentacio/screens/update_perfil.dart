@@ -21,7 +21,7 @@ class _UpdatePerfil extends State<UpdatePerfil> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFFF4692A),
         title: const Text(
           'Actualiza Perfil',
           style: TextStyle(color: Colors.white),

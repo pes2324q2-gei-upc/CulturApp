@@ -36,7 +36,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   late String squery;
   late String? _selectedCategory;
   late String selectedData;
-  late User? usuario;
+  late User? usuario; //SOBRA DEBIDO LÓGICA GET ACTIVITATS USER
   int _selectedIndex = 1;
   TextEditingController _dateController = TextEditingController();
   TextEditingController _searchController = TextEditingController();
@@ -154,7 +154,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
 
   Future<List<Actividad>> fetchActivities() async {
     var actividadesaux = <Actividad>[];
-    actividadesaux = await _controladorPresentacion.getMisActivitats();
+    actividadesaux = await _controladorPresentacion.getUserActivities();
     return actividadesaux;
   }
 
@@ -270,7 +270,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFFF4692A),
         title: const Text("Mis actividades"),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
@@ -363,7 +363,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                         style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.orange,
+                                          color: const Color(0xFFF4692A),
                                         ),
                                       ),
                                     ),
@@ -519,9 +519,9 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
       child: TextField(
         controller: _searchController,
         onChanged: (text) => changeSquery(text),
-        cursorColor: Colors.orange,
+        cursorColor: const Color(0xFFF4692A),
         style: const TextStyle(
-          color: Colors.orange,
+          color: const Color(0xFFF4692A),
         ),
         decoration: InputDecoration(
           filled: true,
@@ -533,12 +533,12 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
             borderSide: const BorderSide(
-              color: Colors.orange,
+              color: const Color(0xFFF4692A),
             ),
           ),
           hintText: "Search...",
           hintStyle: const TextStyle(
-            color: Colors.orange,
+            color: const Color(0xFFF4692A),
             fontWeight: FontWeight.bold,
           ),
           suffixIcon: IconButton(
@@ -547,7 +547,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
             },
             icon: Icon(Icons.search),
           ),
-          suffixIconColor: Colors.orange,
+          suffixIconColor: const Color(0xFFF4692A),
         ),
       ),
     );
@@ -585,13 +585,13 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
               dropdownColor: Color.fromRGBO(255, 229, 204, 0.815),
               icon: const Icon(
                 Icons.arrow_drop_down,
-                color: Colors.orange,
+                color: const Color(0xFFF4692A),
               ),
               iconSize: 20,
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.orange,
+                color: const Color(0xFFF4692A),
               ),
               underline: Container(),
             ),
@@ -612,14 +612,14 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
           child: TextField(
             style: const TextStyle(
               fontSize: 14,
-              color: Colors.orange,
+              color: const Color(0xFFF4692A),
               fontWeight: FontWeight.bold,
             ),
             controller: _dateController,
             decoration: const InputDecoration(
               labelText: 'Data',
               labelStyle: TextStyle(
-                color: Colors.orange,
+                color: const Color(0xFFF4692A),
                 fontWeight: FontWeight.bold,
               ),
               filled: true,
@@ -627,14 +627,14 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
               prefixIcon: Icon(
                 Icons.calendar_today,
                 size: 18,
-                color: Colors.orange,
+                color: const Color(0xFFF4692A),
               ),
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide.none,
               ),
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: Colors.orange,
+                  color: const Color(0xFFF4692A),
                 ),
               ),
             ),

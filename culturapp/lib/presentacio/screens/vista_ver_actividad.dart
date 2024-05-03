@@ -9,9 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-//name, code, categoria, imageUrl, description, dataInici, dataFi, ubicacio
-// urlEntrades
-
 
 class VistaVerActividad extends StatefulWidget{
 
@@ -27,11 +24,12 @@ class VistaVerActividad extends StatefulWidget{
 
 class _VistaVerActividadState extends State<VistaVerActividad> {
   late ControladorPresentacion _controladorPresentacion; 
-  final ControladorDomini controladorDominio = new ControladorDomini();
+  late ControladorDomini controladorDominio;
   int _selectedIndex = 0;
 
   late List<String> infoActividad;
   late Uri uriActividad;
+
 
   bool mostrarDescripcionCompleta = false;
   
@@ -66,6 +64,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     infoActividad = info_actividad;
     uriActividad = uri_actividad;
     _controladorPresentacion = controladorPresentacion;
+    controladorDominio = _controladorPresentacion.getControladorDomini();
   }
 
   @override
@@ -102,15 +101,30 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     _controladorPresentacion.getForo(infoActividad[1]); //verificar que tenga un foro
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: const Color(0xFFF4692A),
         title: const Text("Actividad"),
-        centerTitle: true, // Centrar el título
+        centerTitle: true, 
         toolbarHeight: 50.0,
         titleTextStyle: const TextStyle(
           color: Colors.white,
           fontSize: 20.0,
           fontWeight: FontWeight.bold
         ),
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: (String result) {
+              if (result == 'Enviar solicitud de organizador') {
+                _controladorPresentacion.mostrarSolicitutOrganitzador(context, infoActividad[0], infoActividad[1]);
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'Enviar solicitud de organizador',
+                child: Text('Enviar solicitud de organizador'),
+              ),
+            ],
+          ),
+        ],
       ),
        bottomNavigationBar: CustomBottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -168,14 +182,14 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
   Widget _imagenActividad(String imagenUrl){
     return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0), // Establece márgenes horizontales
+            margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0), 
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10.0),
               child: Image.network(
                 imagenUrl,
                 height: 200,
-                width: double.infinity, //Ocupar todo espacio posible horizontal
-                fit: BoxFit.cover, //Escala y recorta imagen para que ocupe todo el cuadro, manteniendo proporcion aspecto
+                width: double.infinity, 
+                fit: BoxFit.cover, 
               ),
             ),
     );
@@ -188,12 +202,12 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
-            child: _retornaIcon(categoriaActividad), //Obtener el icono de la categoria
+            child: _retornaIcon(categoriaActividad), 
           ),
           Expanded(
             child: Text(
               tituloActividad,
-              style: const TextStyle(color: Colors.orange, fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: Color(0xFFF4692A), fontSize: 18, fontWeight: FontWeight.bold),
             ),
             
           ),
@@ -206,7 +220,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             },
             style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all<Color>(
-            estaApuntado ? Colors.black : Colors.orange,),
+            estaApuntado ? Colors.black : const Color(0xFFF4692A),),
             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),),
             child: Text(estaApuntado ? 'Desapuntarse' : 'Apuntarse'),
           ),
@@ -223,7 +237,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             style: const TextStyle(fontSize: 16, ),
             maxLines: mostrarDescripcionCompleta ? null : 2,
             overflow: mostrarDescripcionCompleta ? null: TextOverflow.ellipsis,
-            textAlign: TextAlign.justify, //hacer que el texto se vea formato cuadrado
+            textAlign: TextAlign.justify, 
         ),
       );
   }
@@ -246,7 +260,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     );
   }
   
-  Widget _infoActividad(String ubicacion, String dataIni, String dataFi, Uri urlEntrades) {
+  Widget _infoActividad(String ubicacion, String dataIni, String dataFi, String categorias, Uri urlEntrades) {
     return Container(
       color: Colors.grey.shade200,
       child: Container(
@@ -254,8 +268,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         child: Column( 
           children: [
           _getIconPlusTexto('ubicacion', ubicacion),
-          _getIconPlusTexto('calendario', dataIni),
-          _getIconPlusTexto('calendario', dataFi),
+          _getIconPlusTexto('calendario', 'DataIni: $dataIni'),
+          _getIconPlusTexto('calendario', 'DataFi: $dataFi'),
           Row(
             children: [
               const Icon(Icons.local_atm),
@@ -263,12 +277,12 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
               Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    launchUrl(urlEntrades); // Abrir la url de la actividad para ir a su pagina
+                    launchUrl(urlEntrades); 
                   },
                   child: const Text(
                     'Informació Entrades',
                     style: TextStyle(
-                      decoration: TextDecoration.underline, // Subrayar 
+                      decoration: TextDecoration.underline, 
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -276,6 +290,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
               ),
             ],
           ),
+          _getIconPlusTexto('categoria', categorias)
           ]
         ),
       ),
@@ -284,7 +299,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
  Widget _getIconPlusTexto(String categoria, String texto){
 
-    late Icon icono; //late para indicar que se inicializará en el futuro y que cuando se acceda a su valor no sea nulo
+    late Icon icono; 
 
     switch(categoria){
       case 'ubicacion':
@@ -292,6 +307,16 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         break;
       case 'calendario':
         icono = const Icon(Icons.calendar_month);
+        break;
+      case 'categoria':
+        icono = const Icon(Icons.category);
+
+        List<String> listaCategoriasMayusculas = (texto.split(', ')).map((categoria) {
+          return '${categoria[0].toUpperCase()}${categoria.substring(1)}';
+        }).toList();
+
+        texto = listaCategoriasMayusculas.join(', ');
+        
         break;
     }
 
