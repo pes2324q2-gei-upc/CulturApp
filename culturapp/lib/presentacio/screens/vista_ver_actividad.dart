@@ -473,7 +473,6 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     );
   }
 
-  //fer que nomes el pugui eliminar el que l'ha creat
   void _deletePost(Post post, String? postId) {
 
     _controladorPresentacion.deletePost(idForo, postId);
@@ -543,7 +542,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
                     child: Text(
                       //quereis que añada tambien el numero de replies?
-                      '${posts.length} comentarios',
+                      'comments'.trWithArg(context, {"num": "${posts.length}"}),
+                      //'${posts.length} comentarios',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
