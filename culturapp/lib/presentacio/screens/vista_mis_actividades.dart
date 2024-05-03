@@ -458,7 +458,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                               },
                                               child: Text(
                                                 'buy_here'.tr(context),
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   decoration: TextDecoration
                                                       .none,
                                                       color: Colors.blueAccent // Subrayar para que se entienda que es un enlace
@@ -469,27 +469,29 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                         ],
                                       ),
                                       const Padding(padding: EdgeInsets.only(top: 8)),
-                                      Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 180,
-                                            child: TextButton(
-                                              onPressed: () {
-                                               agregarEventoGoogleCalendar(activitat.name, activitat.dataInici);
-                                              },
-                                              child: Row(
-                                                children: [
-                                                  Text('add_calendar'.tr(context), style: TextStyle(color: Color.fromARGB(255, 255, 196, 0)),),
-                                                  const Padding(padding: EdgeInsets.only(right: 5)),
-                                                  Image.asset('assets/calendar.png', height: 30,),
-                                                ],
+                                        Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 180,
+                                              child: Flexible(
+                                                child: TextButton(
+                                                  onPressed: () {
+                                                    agregarEventoGoogleCalendar(activitat.name, activitat.dataInici);
+                                                  },
+                                                  child: Row(
+                                                    children: [
+                                                      Flexible(
+                                                        child: Text('add_calendar'.tr(context), style: const TextStyle(color: Color.fromARGB(255, 255, 196, 0)),),
+                                                      ),
+                                                      const Padding(padding: EdgeInsets.only(right: 5)),
+                                                      Image.asset('assets/calendar.png', height: 30,),
+                                                    ],
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-
-                                        ],
+                                          ],
+                                        ),],
                                       ),
                                     ),
                                   ),
@@ -617,21 +619,21 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
             controller: _dateController,
             decoration: InputDecoration(
               labelText: 'date'.tr(context),
-              labelStyle: TextStyle(
+              labelStyle: const TextStyle(
                 color: Color(0xFFF4692A),
                 fontWeight: FontWeight.bold,
               ),
               filled: true,
-              fillColor: Color.fromRGBO(255, 229, 204, 0.815),
-              prefixIcon: Icon(
+              fillColor: const Color.fromRGBO(255, 229, 204, 0.815),
+              prefixIcon: const Icon(
                 Icons.calendar_today,
                 size: 18,
                 color: Color(0xFFF4692A),
               ),
-              enabledBorder: OutlineInputBorder(
+              enabledBorder: const OutlineInputBorder(
                 borderSide: BorderSide.none,
               ),
-              focusedBorder: OutlineInputBorder(
+              focusedBorder: const OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Color(0xFFF4692A),
                 ),
