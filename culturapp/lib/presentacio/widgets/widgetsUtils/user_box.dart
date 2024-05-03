@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 class userBox extends StatefulWidget {
   final String text;

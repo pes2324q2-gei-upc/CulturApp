@@ -1,10 +1,7 @@
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/translations/AppLocalizations';
-import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:flutter/material.dart';
-import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
-import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class EditPerfil extends StatefulWidget {
@@ -20,12 +17,8 @@ class EditPerfil extends StatefulWidget {
 }
 
 class _EditPerfil extends State<EditPerfil> {
-  //Usuari de Firebase
-  int _selectedIndex = 3;
 
   late String _username;
-  //Instancia de autentificacio de Firebase
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   late ControladorPresentacion _controladorPresentacion;
 
@@ -65,14 +58,14 @@ class _EditPerfil extends State<EditPerfil> {
     // Aquí puedes acceder a los datos que necesitas para construir tu widget.
     // Como Builder no maneja Futures, necesitarás obtener los datos de otra manera.
     // Por ejemplo, podrías obtener los datos en un método initState y almacenarlos en una variable de estado.
-    final username = this._username ?? ''; // Reemplaza esto con tu lógica para obtener el nombre de usuario
+    final username = this._username; // Reemplaza esto con tu lógica para obtener el nombre de usuario
 
     if (username.isEmpty) {
       return Container(
         alignment: Alignment.center,
         width: 50,
         height: 50,
-        child: CircularProgressIndicator(color: const Color(0xFFF4692A)),
+        child: const CircularProgressIndicator(color:Color(0xFFF4692A)),
       );
     } else {
       return _buildUserInfo(username);
@@ -109,12 +102,12 @@ class _EditPerfil extends State<EditPerfil> {
                     controller: usernameController,
                     decoration: InputDecoration(
                       hintText: "Nom d'usuari",
-                      contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 25),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 25),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(18),
                         borderSide: BorderSide.none,
                       ),
-                      fillColor: Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
+                      fillColor: const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
                       filled: true,
                       prefixIcon: const Icon(Icons.person),
                     ),
@@ -126,7 +119,7 @@ class _EditPerfil extends State<EditPerfil> {
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.resolveWith<Color?>(
                           (Set<MaterialState> states) {
-                            return Color.fromARGB(244, 255, 145, 0).withOpacity(0.1);
+                            return const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1);
                           },
                         ),
                         shadowColor: MaterialStateProperty.resolveWith<Color?>(
@@ -154,7 +147,7 @@ class _EditPerfil extends State<EditPerfil> {
               onTap: () {
                 editUser();
               },
-              child: Text(
+              child: const Text(
                 'Guardar',
                 textAlign: TextAlign.right, // Alineado a la derecha
                 style: TextStyle(
@@ -174,15 +167,13 @@ class _EditPerfil extends State<EditPerfil> {
   Future<void> editUser() async {
     bool ok = await _controladorPresentacion.usernameUnique(usernameController.text);
     bool ok2 = await sameName();
-    print("Ok" + ok.toString());
-    print("Same name" + sameName().toString());
     if (ok2 || ok) {
       _controladorPresentacion.editUser(usernameController.text, selectedCategories, context);
     }
     else {
       final scaffoldMessenger = ScaffoldMessenger.of(context);
       scaffoldMessenger.showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Ja hi ha un usuari amb aquest username'),
           backgroundColor: Colors.red,
         ),
@@ -208,8 +199,8 @@ class _EditPerfil extends State<EditPerfil> {
              selectedCategories = values.take(3).toList();
              valoresSeleccionados = _categories.where((categoria) => selectedCategories.contains(categoria)).toList();
           },
-          selectedColor: Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
-          checkColor: Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
+          selectedColor: const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
+          checkColor: const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
           unselectedColor: Colors.white,
         );
       },
@@ -217,7 +208,7 @@ class _EditPerfil extends State<EditPerfil> {
   }
   
   Future<bool> sameName() async {
-    String? name = await _username;
+    String? name = _username;
     return usernameController.text == name;
   }
 }

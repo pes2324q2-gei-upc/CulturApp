@@ -29,9 +29,9 @@ import 'package:culturapp/presentacio/screens/xats/xats.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-//import 'package:flutter/material.dart';
+import 'package:culturapp/domain/models/foro_model.dart';
+import 'package:culturapp/domain/models/post.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-//import 'package:http/http.dart';
 
 class ControladorPresentacion {
   final controladorDomini = ControladorDomini();
@@ -42,7 +42,7 @@ class ControladorPresentacion {
   late List<String> categsFav = [];
   late List<Usuario> usersRecom;
   late List<Usuario> usersBD;
-  late Locale? _language = Locale('en');
+  late Locale? _language = const Locale('en');
   Locale? get language => _language;
   late List<String> friends;
   late String usernameLogged;
@@ -425,6 +425,68 @@ class ControladorPresentacion {
             EditPerfil(controladorPresentacion: this, username: username),
       ),
     );
+  }
+
+  //veure si existeix el foro i si no el crea
+  Future<void> getForo(String code) async {
+    Foro? foro = await controladorDomini.foroExists(code);
+    if (foro != null) {
+      // El foro existe, imprimir sus detalles
+      print('Foro existente: $foro');
+    } else {
+      // El foro no existe, crear uno nuevo
+      bool creadoExitosamente = await controladorDomini.createForo(code);
+      if (creadoExitosamente) {
+          print('Nuevo foro creado');
+      } else {
+        print('Error al crear el foro');
+      }
+    }
+  }
+
+  //agafar id del foro
+  Future<String?> getForoId(String activitatCode) async {
+    return controladorDomini.getForoId(activitatCode);
+  }
+
+  //modificar el como se encuentra el post, maybe añadir param que sea id = username + fecha
+  Future<String?> getPostId(String foroId, String data) async{
+    return controladorDomini.getPostId(foroId, data);
+  }
+
+  //agafa id fe la reply
+  Future<String?> getReplyId(String foroId, String? postId, String data) async{
+    return controladorDomini.getReplyId(foroId, postId, data);
+  }
+
+  //afegir post a la bd
+  Future<void> addPost(String foroId, String mensaje, String fecha, int numeroLikes){
+    return controladorDomini.addPost(foroId, mensaje, fecha, numeroLikes);
+  }
+
+  //afegir reply a la bd
+  Future<void> addReplyPost(String foroId, String postId, String mensaje, String fecha, int numeroLikes) async {
+    return controladorDomini.addReplyPost(foroId, postId, mensaje, fecha, numeroLikes);
+  }
+
+  //get posts de un foro
+  Future<List<Post>> getPostsForo(String foroId) async {
+    return controladorDomini.getPostsForo(foroId);
+  }
+
+  //get replies de los posts
+  Future<List<Post>> getReplyPosts(String foroId, String? postId) async {
+    return controladorDomini.getReplyPosts(foroId, postId);
+  }
+
+  //eliminar post
+  Future<void> deletePost(String foroId, String? postId) async {
+    return controladorDomini.deletePost(foroId, postId);
+  }
+
+  //eliminar reply
+  Future<void> deleteReply(String foroId, String? postId, String? replyId) async {
+    return controladorDomini.deleteReply(foroId, postId, replyId);
   }
 
   void mostrarFollows(BuildContext context, bool follows) {
