@@ -55,9 +55,12 @@
     "aplicattion_reason": "Motivo de la solicitud",
     "aplicattion_reason_missing": "Por favor ingrese un motivo",
     "erase_post": "Eliminar post",
+    "erase": "Eliminar",
     "sure_erase": "Estas seguro de que quieres eliminar el post?",
     "loading": "Cargando...",
     "comments": "{num} comentarios",
     "me_gusta": "Me gusta",
-    "reply": "Responder"
+    "reply": "Responder",
+    "see_reply": "Ver respuestas",
+    "no_reply": "Esconder respuestas"
 }

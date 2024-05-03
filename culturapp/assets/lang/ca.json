@@ -35,8 +35,13 @@
     "delete_account_permanently": "Eliminar compte permanentment",
     "restart_for_changes": "Idioma canviat! Reinicia l'app per veure els canvis.",
     "add_calendar": "Afegir al calendari",
+    "erase_post": "Eliminar post",
+    "erase": "Eliminar",
+    "sure_erase": "Estas segur de que vols eliminar el post?",
     "loading": "Carregant...",
     "comments": "{num} comentaris",
     "me_gusta": "Like",
-    "reply": "Respondre"
+    "reply": "Respondre",
+    "see_reply": "Veure respostes",
+    "no_reply": "Amagar respostas"
 }

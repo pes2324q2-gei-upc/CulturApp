@@ -9,7 +9,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:culturapp/translations/AppLocalizations';
 
 class VistaVerActividad extends StatefulWidget{
 
@@ -445,14 +444,14 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Eliminar Post'),
-          content: const Text('Estas segur de que vols eliminar aquest post?'),
+          title: Text('erase_post'.tr(context)),
+          content: Text('sure_erase'.tr(context)),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Cierra el dialog
               },
-              child: const Text('Cancelar'),
+              child: Text('cancel'.tr(context)),
             ),
             TextButton(
               onPressed: () async {
@@ -466,7 +465,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                 }
                 Navigator.of(context).pop(); // Cierra el dialog
               },
-              child: const Text('Eliminar'),
+              child: Text('erase'.tr(context)),
             ),
           ],
         );
@@ -521,13 +520,13 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       future: getPosts(), 
       builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
+          return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularProgressIndicator(), // Or you can remove this line if you don't want the circular indicator
-                SizedBox(height: 10), // Add some space between the text and the circular indicator
-                Text('Loading...'),
+                const CircularProgressIndicator(), // Or you can remove this line if you don't want the circular indicator
+                const SizedBox(height: 10), // Add some space between the text and the circular indicator
+                Text('loading'.tr(context)),
               ],
             ),
           );
@@ -615,7 +614,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                 });
                               },
                             ),
-                              const Text('Me gusta'),
+                              Text('me_gusta'.tr(context)),
                               const SizedBox(width: 20),
                               //respuesta
                               IconButton(
@@ -628,7 +627,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                 },
                               ), 
                               const SizedBox(width: 5),
-                              const Text('Responder'),
+                              Text('reply'.tr(context)),
                               const SizedBox(width: 20),
                             ],
                           ),
@@ -728,7 +727,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                   });
                                 },
                               ),
-                              const Text('Me gusta')
+                              Text('me_gusta'.tr(context))
                             ]
                           )
                         )
@@ -754,7 +753,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       child: Padding(        
         padding: const EdgeInsets.only(left: 180),
         child: Text(
-          mostraReplies ? "Esconder replies" : "Ver replies",
+          mostraReplies ? 'see_reply'.tr(context) : 'no_reply'.tr(context),
           style: const TextStyle(color: Colors.grey,),
         ),
       ),
