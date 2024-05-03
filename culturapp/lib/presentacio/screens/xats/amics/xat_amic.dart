@@ -52,7 +52,8 @@ class _XatAmicScreen extends State<XatAmicScreen> {
       setState(() {
         //crida al back per enviar un missatge
         String time = Timestamp.now().toDate().toIso8601String();
-        _controladorPresentacion.addXatMessage(_usuari.id, time, text);
+        String myName = _controladorPresentacion.getUsername();
+        _controladorPresentacion.addXatMessage(myName, _usuari.nom, time, text);
 
         time = convertTimeFormat(time);
 
@@ -65,18 +66,18 @@ class _XatAmicScreen extends State<XatAmicScreen> {
   }
 
   Future<List<Message>> getMessage() async {
+    String myName = _controladorPresentacion.getUsername();
     List<Message> msg =
-        await _controladorPresentacion.getXatMessages(_usuari.id);
+        await _controladorPresentacion.getXatMessages(myName, _usuari.nom);
     return msg;
   }
 
   Message convertIntoRigthVersion(Message message) {
     //una funcio que converteix el temps en apropiat i el id del ususari en el nom de l'usuari
 
-    User me =
-        _controladorPresentacion.getUser()!; //cambiar més endevant per username
+    String myName = _controladorPresentacion.getUsername();
 
-    if (message.sender == me.uid) {
+    if (message.sender == myName) {
       message.sender = 'Me';
     }
 
@@ -89,8 +90,9 @@ class _XatAmicScreen extends State<XatAmicScreen> {
   }
 
   Future<void> _loadMessages() async {
+    String myName = _controladorPresentacion.getUsername();
     List<Message> loadedMessages =
-        await _controladorPresentacion.getXatMessages(_usuari.id);
+        await _controladorPresentacion.getXatMessages(myName, _usuari.nom);
     setState(() {
       messages = convertData(loadedMessages).reversed.toList();
     });
