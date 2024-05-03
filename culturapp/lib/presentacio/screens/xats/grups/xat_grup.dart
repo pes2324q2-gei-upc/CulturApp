@@ -44,11 +44,9 @@ class _XatGrupScreen extends State<XatGrupScreen> {
   Message convertIntoRigthVersion(Message message) {
     //una funcio que converteix el temps en apropiat i el id del ususari en el nom de l'usuari
 
-    User me =
-        _controladorPresentacion.getUser()!; //cambiar més endevant per username
+    String myName = _controladorPresentacion.getUsername();
 
-    if (message.sender == me.uid) {
-      //es un missatge meu
+    if (message.sender == myName) {
       message.sender = 'Me';
     }
 
