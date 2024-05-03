@@ -591,7 +591,10 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                               onTap: () async {
                                 _showDeleteOption(context, post, false);
                                 //prueba de elminar el post al momento
-                                posts.removeWhere((element) => element == post);
+                                setState(() {
+                                  // Actualiza la lista de posts para reflejar el cambio
+                                  posts.removeWhere((element) => element == post);
+                                });
                               },
                               child: const Icon(Icons.more_vert, size: 20),
                             ),
