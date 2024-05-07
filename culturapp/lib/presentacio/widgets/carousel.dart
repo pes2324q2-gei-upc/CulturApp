@@ -19,8 +19,7 @@ class _MyCarouselState extends State<MyCarousel> {
       _buildCarouselItem(context, 'Infantil', 'infantil', 1),
       _buildCarouselItem(context, 'Circ', 'circ', 2),
       _buildCarouselItem(context, 'Commemoracio', 'commemoracions', 3),
-      _buildCarouselItem(context, 'Exposicions', 'exposicions', 4),
-      _buildCarouselItem(context, 'Art', '', 5),
+      _buildCarouselItem(context, 'Art', 'exposicions', 4),
       _buildCarouselItem(context, 'Carnaval', 'carnavals', 6),
       _buildCarouselItem(context, 'Concerts', 'concerts', 7),
       _buildCarouselItem(context, 'Conferencies', 'conferencies', 8),
@@ -80,6 +79,11 @@ Image _retornaIcon(String categoria) {
         case 'teatre':
           return Image.asset(
             'assets/categoriateatre.png',
+            width: 45.0,
+          );
+        case 'art':
+          return Image.asset(
+            'assets/categoriaexpo.png',
             width: 45.0,
           );
         case 'concerts':
@@ -187,7 +191,7 @@ Image _retornaIcon(String categoria) {
       },
       child: IntrinsicWidth(
         child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 5.0),
+          margin: const EdgeInsets.symmetric(horizontal: 5.0),
           decoration: BoxDecoration(
           color: selectedIndices.contains(index) ? Colors.white70 : Colors.grey[300],
             borderRadius: BorderRadius.circular(20.0),
@@ -195,12 +199,15 @@ Image _retornaIcon(String categoria) {
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: IntrinsicHeight(
+              child: IntrinsicWidth(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _retornaIcon(iconName),
-                    SizedBox(width: 8), // Adjust the spacing between icon and text as needed
+                    Padding(
+                      padding: const EdgeInsets.only(top: 5.0), // Add padding on top of the icon
+                      child: _retornaIcon(iconName),
+                    ),
+                    const SizedBox(width: 8), // Adjust the spacing between icon and text as needed
                     Flexible(
                       child: Text(
                         label,
@@ -208,7 +215,7 @@ Image _retornaIcon(String categoria) {
                         style: TextStyle(fontSize: 18.0),
                       ),
                     ),
-                    SizedBox(width: 8,)
+                    const SizedBox(width: 8,)
                     ],
                   ),
                 ),
@@ -219,5 +226,4 @@ Image _retornaIcon(String categoria) {
       ),
     );
   }
-
 }

@@ -136,7 +136,6 @@ class _MapPageState extends State<MapPage> {
     }
 
     if (permission == LocationPermission.deniedForever) {
-      print("no tengo permiso");
       // Si el usuario ha negado el permiso permanentemente, poner por defecto 
       setState(() {
         myLatLng = const LatLng(41.6543172, 2.2233522);
@@ -145,7 +144,6 @@ class _MapPageState extends State<MapPage> {
       return;
     }
     else {
-      print("tengo permiso");
       //Obtener ubicacion y asignar
       /*Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       LatLng currentLatLng = LatLng(position.latitude, position.longitude);*/
@@ -705,7 +703,6 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-  //Se crea la ''pantalla'' para el mapa - falta añadir dock inferior y barra de busqueda
   @override
   Widget build(BuildContext context) {
     return Scaffold(

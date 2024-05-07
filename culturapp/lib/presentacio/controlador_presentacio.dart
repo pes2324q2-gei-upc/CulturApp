@@ -118,6 +118,7 @@ class ControladorPresentacion {
         if (!userExists) {
           mostrarSignup(context);
         } else {
+          await initialice2();
           await initialice();
           mostrarMapa(context);
         }

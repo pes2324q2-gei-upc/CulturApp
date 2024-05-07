@@ -101,7 +101,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
               ),
               const SizedBox(width: 20),
               Padding(
-                padding: EdgeInsets.only(top: 25),
+                padding: const EdgeInsets.only(top: 25),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -109,7 +109,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                     //username
                     Text(
                       username,
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 5),
                     //XP
