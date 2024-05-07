@@ -9,6 +9,7 @@ import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:geolocator/geolocator.dart';
 
 
@@ -89,6 +90,57 @@ class _MapPageState extends State<MapPage> {
   List<Actividad> _actividades = [];
   GoogleMapController? _mapController;
 
+void mostrarValoracion(BuildContext context) {
+  final TextEditingController controller = TextEditingController();
+  double rating = 0;
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Nos importa tu opinión!'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            RatingBar.builder(
+              initialRating: 0,
+              minRating: 0,
+              direction: Axis.horizontal,
+              allowHalfRating: false,
+              itemCount: 5,
+              itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+              itemBuilder: (context, _) => const Icon(
+                Icons.star,
+                color: Colors.amber,
+              ),
+              onRatingUpdate: (ratingValue) {
+                rating = ratingValue;
+              },
+            ),
+            TextField(
+              controller: controller,
+              decoration: const InputDecoration(
+                labelText: 'Comentario',
+              ),
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Cerrar'),
+            onPressed: () {
+              // Aquí puedes hacer algo con el rating y el comentario
+              print('Rating: $rating, Comentario: ${controller.text}');
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+
   double radians(double degrees) {
     return degrees * (math.pi / 180.0);
   }
@@ -138,7 +190,7 @@ class _MapPageState extends State<MapPage> {
     if (permission == LocationPermission.deniedForever) {
       // Si el usuario ha negado el permiso permanentemente, poner por defecto 
       setState(() {
-        myLatLng = const LatLng(41.6543172, 2.2233522);
+        myLatLng = const LatLng(41.389376, 2.113236);
         ubicacionCargada = true;
       });
       return;
@@ -148,7 +200,7 @@ class _MapPageState extends State<MapPage> {
       /*Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       LatLng currentLatLng = LatLng(position.latitude, position.longitude);*/
 
-      LatLng currentLatLng = const LatLng(41.5165601, 2.1273099);
+      LatLng currentLatLng = const LatLng(41.389376, 2.113236);
           // Actualizar ubicacion
       setState(() {
         myLatLng = currentLatLng;
@@ -396,7 +448,7 @@ class _MapPageState extends State<MapPage> {
                                     },
                                     child: Text(
                                       'tickets_info'.tr(context),
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         decoration: TextDecoration
                                             .underline, // Subrayar para que se entienda que es un enlace
                                       ),
@@ -463,7 +515,7 @@ class _MapPageState extends State<MapPage> {
                           ),
                           child: Text(
                             "see_more".tr(context),
-                            style: TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.white),
                           ),
                         ),
                       ),
@@ -660,6 +712,7 @@ class _MapPageState extends State<MapPage> {
   //Se crea el mapa y atribuye a la variable mapa
   void _onMapCreated(GoogleMapController controller) {
     _mapController = controller;
+    mostrarValoracion(context);
   }
 
   var querySearch = '';
