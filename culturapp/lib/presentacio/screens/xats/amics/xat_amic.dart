@@ -28,7 +28,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
   late List<Message> messages;
   late ScrollController _scrollController;
 
-  Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
+  Color taronjaVermellos = const Color(0xFFF4692A);
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
 
   final TextEditingController _controller = TextEditingController();
@@ -142,7 +142,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.orange,
+      backgroundColor: taronjaVermellos,
       leading: IconButton(
         icon: const Icon(
           Icons.arrow_back,
@@ -192,7 +192,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
 
   Widget _bottomInputField() {
     return IconTheme(
-      data: const IconThemeData(color: Colors.orange),
+      data: IconThemeData(color: taronjaVermellos),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(

@@ -21,6 +21,8 @@ class _AmicsScreenState extends State<AmicsScreen> {
   late List<Usuari> display_list;
 
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
+  Color taronjaVermellos = const Color(0xFFF4692A);
+  Color taronjaVermellosFluix = const Color.fromARGB(199, 250, 141, 90);
 
   String mockImage = 'assets/userImage.png';
 
@@ -110,7 +112,7 @@ class _AmicsScreenState extends State<AmicsScreen> {
       ),
       decoration: InputDecoration(
         filled: true,
-        fillColor: const Color.fromRGBO(240, 186, 132, 1),
+        fillColor: taronjaVermellosFluix,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
           borderSide: BorderSide.none,
@@ -154,8 +156,8 @@ class _AmicsScreenState extends State<AmicsScreen> {
           height: 50,
         ),
         title: Text(display_list[index].nom,
-            style: const TextStyle(
-              color: Colors.orange,
+            style: TextStyle(
+              color: taronjaVermellos,
               fontWeight: FontWeight.bold,
             )),
         subtitle: FutureBuilder<String>(

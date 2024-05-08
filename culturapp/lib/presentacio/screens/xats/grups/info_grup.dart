@@ -25,7 +25,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
   double llargadaPantallaTitols = 438;
   bool estaEditant = false;
 
-  Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
+  Color taronjaVermellos = const Color(0xFFF4692A);
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
 
   _InfoGrupScreen(ControladorPresentacion controladorPresentacion, Grup grup) {
@@ -89,7 +89,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.orange,
+      backgroundColor: taronjaVermellos,
       title: Text(
         estaEditant ? 'editing_group'.tr(context) : 'group_info'.tr(context),
         style: const TextStyle(color: Colors.white),
@@ -300,7 +300,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
                 child: estaEditant
                     ? ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: taronjaFluix,
+                          backgroundColor: taronjaVermellos,
                           foregroundColor: Colors.white,
                         ),
                         onPressed: () {
@@ -338,8 +338,8 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
         height: 50.0,
       ),
       title: Text(_grup.membres[index],
-          style: const TextStyle(
-            color: Colors.orange,
+          style: TextStyle(
+            color: taronjaVermellos,
             fontWeight: FontWeight.bold,
           )),
     );
@@ -348,7 +348,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
   Widget _buildEditarGrupButton() {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: taronjaFluix,
+        backgroundColor: taronjaVermellos,
         foregroundColor: Colors.white,
       ),
       onPressed: canviarEstat,

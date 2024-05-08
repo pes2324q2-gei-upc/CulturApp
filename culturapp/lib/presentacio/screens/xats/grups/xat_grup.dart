@@ -27,7 +27,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
   late List<Message> missatges;
   late ScrollController _scrollController;
 
-  Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
+  Color taronjaVermellos = const Color(0xFFF4692A);
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
 
   _XatGrupScreen(ControladorPresentacion controladorPresentacion, Grup grup) {
@@ -147,7 +147,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.orange,
+      backgroundColor: taronjaVermellos,
       leading: IconButton(
         icon: const Icon(
           Icons.arrow_back,
@@ -204,7 +204,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
 
   Widget _bottomInputField() {
     return IconTheme(
-      data: const IconThemeData(color: Colors.orange),
+      data: IconThemeData(color: taronjaVermellos),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
