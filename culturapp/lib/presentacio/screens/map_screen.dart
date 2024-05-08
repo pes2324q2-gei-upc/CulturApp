@@ -93,41 +93,156 @@ class _MapPageState extends State<MapPage> {
 void mostrarValoracion(BuildContext context) {
   final TextEditingController controller = TextEditingController();
   double rating = 0;
+  Actividad actividad =  activitats[0];
 
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: const Text('Nos importa tu opinión!'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            RatingBar.builder(
-              initialRating: 0,
-              minRating: 0,
-              direction: Axis.horizontal,
-              allowHalfRating: false,
-              itemCount: 5,
-              itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-              itemBuilder: (context, _) => const Icon(
-                Icons.star,
-                color: Colors.amber,
+        titlePadding: EdgeInsets.all(0), // Elimina el padding del título
+              title: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                  const Padding(padding: EdgeInsets.only(bottom: 15.0)),
+                  const Align(
+                    child: Text('Nos importa tu opinión!'),
+                  ),
+                ],
               ),
-              onRatingUpdate: (ratingValue) {
-                rating = ratingValue;
-              },
-            ),
-            TextField(
-              controller: controller,
-              decoration: const InputDecoration(
-                labelText: 'Comentario',
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      //Imagen
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: SizedBox(
+                          height: 125.0,
+                          width: 125.0,
+                          child: Image.network(
+                            actividad.imageUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              // Widget de error que se mostrará si la imagen no se carga correctamente
+                              return const Center(
+                                child: Icon(
+                                  Icons.error_outline,
+                                  color: Colors.red,
+                                  size: 24,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10.0),
+                      Flexible(
+                        // Para que los textos se ajusten bien
+                        child: Column(
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start, // Que los textos empiezen en el ''inicio''
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    actividad.name,
+                                    style: const TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFFF4692A),
+                                    ),
+                                  ),
+                                ),
+                                const Padding(
+                                    padding: EdgeInsets.only(right: 5.0,)),
+                                Align(
+                                  alignment: Alignment.topCenter,
+                                  child: Transform.translate(
+                                    offset: const Offset(0, -4), // Mueve el icono 2 píxeles hacia arriba
+                                    child: Transform.scale(
+                                      scale: 0.9, // Ajusta este valor para cambiar el tamaño de la imagen
+                                      child: _retornaIcon(actividad.categoria[0]), //Obtener el icono de la categoria
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              // Atributos - icono + info
+                              children: [
+                                const Icon(Icons.location_on),
+                                const Padding(
+                                    padding: EdgeInsets.only(right: 7.5)),
+                                Expanded(
+                                  child: Text(
+                                    actividad.ubicacio,
+                                    overflow: TextOverflow
+                                        .ellipsis, //Poner puntos suspensivos para evitar pixel overflow
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Padding(padding: EdgeInsets.only(top: 5.0)),
+                            Row(
+                              children: [
+                                const Icon(Icons.calendar_month),
+                                const Padding(
+                                    padding: EdgeInsets.only(right: 7.5)),
+                                Text(actividad.dataInici),
+                              ],
+                            ),
+                            const Padding(padding: EdgeInsets.only(top: 5.0)),
+                            Row(
+                              children: [
+                                const Icon(Icons.calendar_month),
+                                const Padding(
+                                    padding: EdgeInsets.only(right: 7.5)),
+                                Text(actividad.dataFi),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      
+                    ],
+                  ),
+                  const Padding(padding: EdgeInsets.only(bottom: 20.0)),
+              RatingBar.builder(
+                initialRating: 0,
+                minRating: 0,
+                direction: Axis.horizontal,
+                allowHalfRating: false,
+                itemCount: 5,
+                itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                itemBuilder: (context, _) => const Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                ),
+                onRatingUpdate: (ratingValue) {
+                  rating = ratingValue;
+                },
               ),
-            ),
-          ],
+              TextField(
+                controller: controller,
+                decoration: const InputDecoration(
+                  labelText: 'Comentario',
+                ),
+              ),
+            ],
+          ),
         ),
         actions: <Widget>[
           TextButton(
-            child: const Text('Cerrar'),
+            child: const Text('Enviar'),
             onPressed: () {
               // Aquí puedes hacer algo con el rating y el comentario
               print('Rating: $rating, Comentario: ${controller.text}');
