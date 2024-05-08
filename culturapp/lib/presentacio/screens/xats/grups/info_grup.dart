@@ -77,9 +77,14 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
               ),
             ),
             Positioned(
-              bottom: 20.0,
+              top: 20.0,
               right: 20.0,
               child: _buildEditarGrupButton(),
+            ),
+            Positioned(
+              bottom: 330.0,
+              right: 20.0,
+              child: _buildEditarParticipantsButton(),
             ),
           ],
         ),
@@ -283,47 +288,50 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
           padding: const EdgeInsets.only(top: 10.0, bottom: 20.0),
           width: llargadaPantallaTitols,
           alignment: Alignment.centerLeft,
-          child: Row(
+          child: Column(
             children: [
-              Text(
-                'participants'.tr(context),
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueGrey,
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'participants'.tr(context),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blueGrey,
+                  ),
                 ),
               ),
-              Container(
-                alignment: Alignment.centerRight,
-                padding: const EdgeInsets.only(left: 191.0),
-                height: 22,
-                child: estaEditant
-                    ? ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: taronjaVermellos,
-                          foregroundColor: Colors.white,
-                        ),
-                        onPressed: () {
-                          //go to the pagina of modificar participants
-                          _controladorPresentacion.mostrarModificarParticipants(
-                              context, _grup);
-                        },
-                        child: const Icon(Icons.mode),
-                      )
-                    : null,
+              SizedBox(
+                height: 300,
+                width: llargadaPantalla,
+                child: ListView.builder(
+                  itemCount: _grup.membres.length,
+                  itemBuilder: (context, index) =>
+                      _buildParticipant(context, index),
+                ),
               ),
             ],
           ),
         ),
-        SizedBox(
-          height: 300,
-          width: llargadaPantalla,
-          child: ListView.builder(
-            itemCount: _grup.membres.length,
-            itemBuilder: (context, index) => _buildParticipant(context, index),
-          ),
-        ),
       ],
+    );
+  }
+
+  Widget _buildEditarParticipantsButton() {
+    return Container(
+      alignment: Alignment.topRight,
+      padding: const EdgeInsets.only(left: 191.0),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: taronjaVermellos,
+          foregroundColor: Colors.white,
+        ),
+        onPressed: () {
+          //go to the pagina of modificar participants
+          _controladorPresentacion.mostrarModificarParticipants(context, _grup);
+        },
+        child: const Icon(Icons.mode),
+      ),
     );
   }
 
