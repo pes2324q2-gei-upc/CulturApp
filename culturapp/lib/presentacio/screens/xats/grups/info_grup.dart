@@ -308,7 +308,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
                           _controladorPresentacion.mostrarModificarParticipants(
                               context, _grup);
                         },
-                        child: const Icon(Icons.format_paint_rounded),
+                        child: const Icon(Icons.mode),
                       )
                     : null,
               ),
@@ -352,7 +352,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
         foregroundColor: Colors.white,
       ),
       onPressed: canviarEstat,
-      child: Icon(estaEditant ? Icons.check : Icons.format_paint_rounded),
+      child: Icon(estaEditant ? Icons.check : Icons.mode),
     );
   }
 }
