@@ -151,6 +151,36 @@ class ControladorDomini {
     return categorias;
   }
 
+    Future<List<String>> obteActsValoradas(String username) async {
+    final respuesta = await http.get(
+        Uri.parse(
+            'http://10.0.2.2:8080/users/${username}/valoradas'),
+        headers: {
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+        });
+    List<String> categorias = [];
+
+    if (respuesta.statusCode == 200) {
+      List<dynamic> jsonResponse = jsonDecode(respuesta.body);
+      categorias = jsonResponse.cast<String>();
+    }
+    return categorias;
+  }
+
+    Future<List<Actividad>> getActivitiesVencudes() async {
+    final respuesta = await http.get(
+        Uri.parse('http://10.0.2.2:8080/activitats/read/vencidas'),
+        headers: {
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+        });
+
+    if (respuesta.statusCode == 200) {
+      return _convert_database_to_list(respuesta);
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
+
   Future<List<Actividad>> getActivitiesAgenda() async {
     final respuesta = await http.get(
         Uri.parse('https://culturapp-back.onrender.com/activitats/read/all'),
@@ -523,6 +553,12 @@ class ControladorDomini {
         usuario.username = userJson['username'];
         usuario.favCats = userJson['favcategories'] ?? '';
         usuario.identificador = userJson['id'];
+        if (userJson['valoradas'] != null) {
+        List<dynamic> jsonResponse = userJson['valoradas'];
+        usuario.valoradas = jsonResponse.cast<Actividad>();
+      } else {
+        usuario.valoradas = [];
+      }
 
         usuarios.add(usuario);
       });

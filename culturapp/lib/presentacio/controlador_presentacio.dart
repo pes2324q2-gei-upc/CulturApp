@@ -49,6 +49,8 @@ class ControladorPresentacion {
   late List<String> friends;
   late String usernameLogged;
   late List<Actividad> activitatsUser;
+  late List<Actividad> actividadesVencidas;
+  late List<String> actividadesValoradas;
 
   void funcLogout() async {
     _auth.signOut();
@@ -71,16 +73,17 @@ class ControladorPresentacion {
     if (await userLogged()) {
       await controladorDomini.setInfoUserLogged(_user!.uid);
       usernameLogged = controladorDomini.userLogged.getUsername();
-
       activitats = await controladorDomini.getActivitiesAgenda();
       activitatsUser = await controladorDomini.getUserActivities();
+      actividadesVencidas = await controladorDomini.getActivitiesVencudes();
       usersBD = await controladorDomini.getUsers();
       friends = await getFollowingAll(usernameLogged);
       categsFav = await controladorDomini.obteCatsFavs(usernameLogged);
+      actividadesValoradas = await controladorDomini.obteActsValoradas(usernameLogged);
       usersBD.removeWhere((usuario) => usuario.username == usernameLogged);
-      usersRecom =
-          calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
+      usersRecom = calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
       usersBD.removeWhere((usuario) => friends.contains(usuario.username));
+      
     }
   }
 
@@ -173,6 +176,44 @@ class ControladorPresentacion {
     return categsFav;
   }
 
+  List<Actividad> checkNoValoration(){
+    //Valoradas -> Actividades que ha valorado el usuario
+    //Vencidas -> Actividades que han pasado de fecha
+    //Mis Actividades -> Actividades a las que ha ido el usuario
+    //Actividades No Valoradas -> Actividades vencidas que estan en Mis Actividades pero no en Valoradas
+    List<Actividad> noValoradas = [];
+    for (int i = 0; i < activitatsUser.length; i++) {
+      if (actividadesVencidas.any((actividad) => actividad.code == activitatsUser[i].code) && !actividadesValoradas.contains(activitatsUser[i].code) ) {
+        print('TRUE');
+        noValoradas.add(activitatsUser[i]);
+      }
+    }
+    
+    print('------------------noValoradas----------------------');
+
+      print(noValoradas.length);
+    
+
+    print('-------------------actividadesValoradas---------------------');
+
+
+      print(actividadesValoradas.length);
+
+    //print(actividadesValoradas[0].name);
+
+    print('------------------activitatsUser----------------------');
+
+
+      print(activitatsUser.length);
+    
+    print('-------------------actividadesVencidas---------------------');
+
+
+      print(actividadesVencidas.length);
+
+    return noValoradas;
+  }
+
   List<Actividad> getActivitatsUser() => activitatsUser;
 
   List<Actividad> getActivitats() => activitats;
@@ -203,6 +244,10 @@ class ControladorPresentacion {
 
   String getUsername() {
     return usernameLogged;
+  }
+
+  List<Actividad>getActividadesVencidas(){
+    return actividadesVencidas;
   }
 
   Future<List<String>> getFollowingAll(String username) async {
@@ -272,7 +317,7 @@ class ControladorPresentacion {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MapPage(controladorPresentacion: this),
+        builder: (context) => MapPage(controladorPresentacion: this, vencidas: actividadesVencidas,),
       ),
     );
   }

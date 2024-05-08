@@ -1,3 +1,4 @@
+
 import 'dart:math' as math;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
@@ -17,12 +18,13 @@ class MapPage extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
 
   final List<String>? recomenacions;
+  final List<Actividad>vencidas;
 
   const MapPage(
-      {Key? key, required this.controladorPresentacion, this.recomenacions});
+      {Key? key, required this.controladorPresentacion, this.recomenacions, required this.vencidas});
 
   @override
-  State<MapPage> createState() => _MapPageState(controladorPresentacion);
+  State<MapPage> createState() => _MapPageState(controladorPresentacion, vencidas);
 }
 
 class _MapPageState extends State<MapPage> {
@@ -33,6 +35,7 @@ class _MapPageState extends State<MapPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late List<String> categoriesFiltres = [];
   List<String> categoriasFavoritas = [];
+  List<Actividad> actsvencidas = [];
 
   void clickCarouselCat(String cat) {
     setState(() {
@@ -44,8 +47,9 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
-  _MapPageState(ControladorPresentacion controladorPresentacion) {
+  _MapPageState(ControladorPresentacion controladorPresentacion, List<Actividad> vencidas) {
     _controladorPresentacion = controladorPresentacion;
+    actsvencidas = vencidas;
     categoriasFavoritas = _controladorPresentacion.getCategsFav();
     activitats = _controladorPresentacion.getActivitats();
     recomms = _controladorPresentacion.getActivitatsRecomm();
@@ -90,175 +94,178 @@ class _MapPageState extends State<MapPage> {
   List<Actividad> _actividades = [];
   GoogleMapController? _mapController;
 
-void mostrarValoracion(BuildContext context) {
-  final TextEditingController controller = TextEditingController();
-  double rating = 0;
-  Actividad actividad =  activitats[0];
+  void mostrarValoracion(BuildContext context, List<Actividad> actividades_vencidas) {
+    final TextEditingController controller = TextEditingController();
+    double rating = 0;
+    Actividad actividad =  actividades_vencidas[0];
 
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
       return AlertDialog(
         titlePadding: EdgeInsets.all(0), // Elimina el padding del título
-              title: Stack(
-                children: [
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: IconButton(
-                      icon: Icon(Icons.close),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ),
-                  const Padding(padding: EdgeInsets.only(bottom: 15.0)),
-                  const Align(
-                    child: Text('Nos importa tu opinión!'),
-                  ),
-                ],
-              ),
-        content: SingleChildScrollView(
-          child: ListBody(
-            children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      //Imagen
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: SizedBox(
-                          height: 125.0,
-                          width: 125.0,
-                          child: Image.network(
-                            actividad.imageUrl,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              // Widget de error que se mostrará si la imagen no se carga correctamente
-                              return const Center(
-                                child: Icon(
-                                  Icons.error_outline,
-                                  color: Colors.red,
-                                  size: 24,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10.0),
-                      Flexible(
-                        // Para que los textos se ajusten bien
-                        child: Column(
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start, // Que los textos empiezen en el ''inicio''
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    actividad.name,
-                                    style: const TextStyle(
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFFF4692A),
-                                    ),
-                                  ),
-                                ),
-                                const Padding(
-                                    padding: EdgeInsets.only(right: 5.0,)),
-                                Align(
-                                  alignment: Alignment.topCenter,
-                                  child: Transform.translate(
-                                    offset: const Offset(0, -4), // Mueve el icono 2 píxeles hacia arriba
-                                    child: Transform.scale(
-                                      scale: 0.9, // Ajusta este valor para cambiar el tamaño de la imagen
-                                      child: _retornaIcon(actividad.categoria[0]), //Obtener el icono de la categoria
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              // Atributos - icono + info
-                              children: [
-                                const Icon(Icons.location_on),
-                                const Padding(
-                                    padding: EdgeInsets.only(right: 7.5)),
-                                Expanded(
-                                  child: Text(
-                                    actividad.ubicacio,
-                                    overflow: TextOverflow
-                                        .ellipsis, //Poner puntos suspensivos para evitar pixel overflow
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const Padding(padding: EdgeInsets.only(top: 5.0)),
-                            Row(
-                              children: [
-                                const Icon(Icons.calendar_month),
-                                const Padding(
-                                    padding: EdgeInsets.only(right: 7.5)),
-                                Text(actividad.dataInici),
-                              ],
-                            ),
-                            const Padding(padding: EdgeInsets.only(top: 5.0)),
-                            Row(
-                              children: [
-                                const Icon(Icons.calendar_month),
-                                const Padding(
-                                    padding: EdgeInsets.only(right: 7.5)),
-                                Text(actividad.dataFi),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      
-                    ],
-                  ),
-                  const Padding(padding: EdgeInsets.only(bottom: 20.0)),
-              RatingBar.builder(
-                initialRating: 0,
-                minRating: 0,
-                direction: Axis.horizontal,
-                allowHalfRating: false,
-                itemCount: 5,
-                itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-                itemBuilder: (context, _) => const Icon(
-                  Icons.star,
-                  color: Colors.amber,
-                ),
-                onRatingUpdate: (ratingValue) {
-                  rating = ratingValue;
+        title: Stack(
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  Navigator.of(context).pop();
                 },
               ),
-              TextField(
-                controller: controller,
-                decoration: const InputDecoration(
-                  labelText: 'Comentario',
-                ),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(top: 45.0, bottom: 15.0, left: 25.0), // Ajusta este valor para mover el texto hacia abajo
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text('¡Nos importa tu opinión!'),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('Enviar'),
-            onPressed: () {
-              // Aquí puedes hacer algo con el rating y el comentario
-              print('Rating: $rating, Comentario: ${controller.text}');
-              Navigator.of(context).pop();
-            },
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        //Imagen
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: SizedBox(
+                            height: 125.0,
+                            width: 125.0,
+                            child: Image.network(
+                              actividad.imageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                // Widget de error que se mostrará si la imagen no se carga correctamente
+                                return const Center(
+                                  child: Icon(
+                                    Icons.error_outline,
+                                    color: Colors.red,
+                                    size: 24,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10.0),
+                        Flexible(
+                          // Para que los textos se ajusten bien
+                          child: Column(
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start, // Que los textos empiezen en el ''inicio''
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      actividad.name,
+                                      style: const TextStyle(
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFFF4692A),
+                                      ),
+                                    ),
+                                  ),
+                                  const Padding(
+                                      padding: EdgeInsets.only(right: 5.0,)),
+                                  Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Transform.translate(
+                                      offset: const Offset(0, -4), // Mueve el icono 2 píxeles hacia arriba
+                                      child: Transform.scale(
+                                        scale: 0.9, // Ajusta este valor para cambiar el tamaño de la imagen
+                                        child: _retornaIcon(actividad.categoria[0]), //Obtener el icono de la categoria
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                // Atributos - icono + info
+                                children: [
+                                  const Icon(Icons.location_on),
+                                  const Padding(
+                                      padding: EdgeInsets.only(right: 7.5)),
+                                  Expanded(
+                                    child: Text(
+                                      actividad.ubicacio,
+                                      overflow: TextOverflow
+                                          .ellipsis, //Poner puntos suspensivos para evitar pixel overflow
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Padding(padding: EdgeInsets.only(top: 5.0)),
+                              Row(
+                                children: [
+                                  const Icon(Icons.calendar_month),
+                                  const Padding(
+                                      padding: EdgeInsets.only(right: 7.5)),
+                                  Text(actividad.dataInici),
+                                ],
+                              ),
+                              const Padding(padding: EdgeInsets.only(top: 5.0)),
+                              Row(
+                                children: [
+                                  const Icon(Icons.calendar_month),
+                                  const Padding(
+                                      padding: EdgeInsets.only(right: 7.5)),
+                                  Text(actividad.dataFi),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        
+                      ],
+                    ),
+                    const Padding(padding: EdgeInsets.only(bottom: 20.0)),
+                RatingBar.builder(
+                  initialRating: 0,
+                  minRating: 0,
+                  direction: Axis.horizontal,
+                  allowHalfRating: false,
+                  itemCount: 5,
+                  itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  itemBuilder: (context, _) => const Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+                  onRatingUpdate: (ratingValue) {
+                    rating = ratingValue;
+                  },
+                ),
+                TextField(
+                  controller: controller,
+                  decoration: const InputDecoration(
+                    labelText: 'Comentario',
+                  ),
+                ),
+              ],
+            ),
           ),
-        ],
-      );
-    },
-  );
-}
-
-
-  double radians(double degrees) {
-    return degrees * (math.pi / 180.0);
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Enviar'),
+              onPressed: () {
+                // Aquí puedes hacer algo con el rating y el comentario
+                print('Rating: $rating, Comentario: ${controller.text}');
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
+
+
+double radians(double degrees) {
+    return degrees * (math.pi / 180.0);
+}
 
 // Formula de Haversine para calcular que actividades entran en el radio del zoom de la pantalla
   double calculateDistance(LatLng from, LatLng to) {
@@ -824,10 +831,14 @@ void mostrarValoracion(BuildContext context) {
     }
   }
 
-  //Se crea el mapa y atribuye a la variable mapa
+
   void _onMapCreated(GoogleMapController controller) {
     _mapController = controller;
-    mostrarValoracion(context);
+    actsvencidas = _controladorPresentacion.checkNoValoration();
+    print(actsvencidas.length);
+    if (actsvencidas.isNotEmpty) mostrarValoracion(context, actsvencidas);
+    
+    
   }
 
   var querySearch = '';
@@ -840,8 +851,6 @@ void mostrarValoracion(BuildContext context) {
   }
 
   Future<void> busquedaActivitat(String querySearch) async {
-    //de moment res pq això es per backend
-    //Metropolitan Union Quartet
     List<Actividad> llista =
         (await _controladorPresentacion.searchActivitat(querySearch));
     activitat = llista.first;
