@@ -28,6 +28,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
   late ScrollController _scrollController;
 
   Color taronjaVermellos = const Color(0xFFF4692A);
+  Color taronjaVermellosFluix = const Color.fromARGB(199, 250, 141, 90);
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
 
   _XatGrupScreen(ControladorPresentacion controladorPresentacion, Grup grup) {
@@ -155,42 +156,75 @@ class _XatGrupScreen extends State<XatGrupScreen> {
         ),
         onPressed: () => _controladorPresentacion.mostrarXats(context),
       ),
-      title: Row(
-        children: [
-          const CircleAvatar(
-            backgroundImage: AssetImage('assets/userImage.png'),
-            //AssetImage(_grup.imageGroup),
-          ),
-          const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                _grup.nomGroup,
-                style: const TextStyle(color: Colors.white),
-              ),
-              Text(
-                truncarString(nomParticipants.join(', '), 30),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14.0,
+      title: GestureDetector(
+        onTap: () {
+          _controladorPresentacion.mostrarInfoGrup(context, _grup);
+        },
+        child: Row(
+          children: [
+            const CircleAvatar(
+              backgroundImage: AssetImage('assets/userImage.png'),
+              //AssetImage(_grup.imageGroup),
+            ),
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _grup.nomGroup,
+                  style: const TextStyle(color: Colors.white),
                 ),
-              ),
-            ],
-          ),
-        ],
+                Text(
+                  truncarString(nomParticipants.join(', '), 30),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14.0,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
       actions: [
-        IconButton(
-          icon: const Icon(
-            Icons.more_vert,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            _controladorPresentacion.mostrarInfoGrup(context, _grup);
-          },
+        _showDropdown(),
+      ],
+    );
+  }
+
+  late String itemSelected;
+
+  Widget _showDropdown() {
+    return PopupMenuButton<int>(
+      icon: const Icon(
+        Icons.more_vert,
+        color: Colors.white,
+      ),
+      color: taronjaVermellosFluix.withOpacity(1),
+      onSelected: (value) {
+        // Handle item selection
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: 1,
+          child: _ItemDropdown("Sortir de grup"),
+        ),
+        PopupMenuItem(
+          value: 2,
+          child: Text('Option 2'),
+        ),
+        PopupMenuItem(
+          value: 3,
+          child: Text('Option 3'),
         ),
       ],
+    );
+  }
+
+  Widget _ItemDropdown(String text) {
+    return Text(
+      text,
+      style: TextStyle(color: Colors.white),
     );
   }
 
@@ -211,6 +245,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
           children: <Widget>[
             Flexible(
               child: TextField(
+                maxLines: null,
                 controller: _controller,
                 onSubmitted: _sendMessage,
                 decoration: InputDecoration.collapsed(

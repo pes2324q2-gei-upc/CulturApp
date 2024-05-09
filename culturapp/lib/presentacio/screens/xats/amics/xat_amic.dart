@@ -203,6 +203,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
           children: <Widget>[
             Flexible(
               child: TextField(
+                maxLines: null,
                 controller: _controller,
                 onSubmitted: _sendMessage,
                 decoration: InputDecoration.collapsed(
