@@ -340,7 +340,7 @@ double radians(double degrees) {
 
   // Obtener actividades del JSON para mostrarlas por pantalla
   Future<List<Actividad>> fetchActivities(LatLng center, double zoom) async {
-    double radius = 500 * (16 / zoom);
+    double radius = 750 * (16 / zoom);
     var actividadesaux = <Actividad>[];
     for (var actividad in activitats) {
       // Comprobar si la actividad está dentro del radio

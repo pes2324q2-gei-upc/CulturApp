@@ -121,7 +121,6 @@ class ControladorPresentacion {
         bool userExists =
             await controladorDomini.accountExists(userCredential.user);
         _user = userCredential.user;
-        print(userExists);
 
         if (!userExists) {
           mostrarSignup(context);
