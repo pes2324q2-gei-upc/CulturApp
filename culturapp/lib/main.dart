@@ -1,6 +1,7 @@
 // ignore_for_file: no_logic_in_create_state, library_private_types_in_public_api
 
 import 'package:culturapp/data/firebase_options.dart';
+import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
@@ -43,6 +44,7 @@ class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
   bool _isLoggedIn = false;
   bool _isLoading = true; // Nueva variable para controlar la carga
+  late List<Actividad> vencidas;
 
   _MyAppState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
@@ -52,6 +54,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     userLogged();
+    getActividadesVencidas();
   }
 
   void userLogged() async {
@@ -61,6 +64,10 @@ class _MyAppState extends State<MyApp> {
       _selectedIndex = _isLoggedIn ? _selectedIndex : 4; // Si no está logueado, selecciona el índice 4
       _isLoading = false; // Una vez que la verificación de inicio de sesión haya terminado, deja de cargar
     });
+  }
+
+  void getActividadesVencidas() {
+    vencidas =  _controladorPresentacion.getActividadesVencidas();
   }
 
   @override
@@ -105,7 +112,7 @@ class _MyAppState extends State<MyApp> {
       },
       home: Scaffold(
         body: _isLoggedIn
-            ? MapPage(controladorPresentacion: _controladorPresentacion)
+            ? MapPage(controladorPresentacion: _controladorPresentacion, vencidas: vencidas,)
             : Login(
                 controladorPresentacion: _controladorPresentacion,
               ),

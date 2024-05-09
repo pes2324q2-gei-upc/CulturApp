@@ -19,8 +19,7 @@ class _MyCarouselState extends State<MyCarousel> {
       _buildCarouselItem(context, 'Infantil', 'infantil', 1),
       _buildCarouselItem(context, 'Circ', 'circ', 2),
       _buildCarouselItem(context, 'Commemoracio', 'commemoracions', 3),
-      _buildCarouselItem(context, 'Exposicions', 'exposicions', 4),
-      _buildCarouselItem(context, 'Art', '', 5),
+      _buildCarouselItem(context, 'Art', 'exposicions', 4),
       _buildCarouselItem(context, 'Carnaval', 'carnavals', 6),
       _buildCarouselItem(context, 'Concerts', 'concerts', 7),
       _buildCarouselItem(context, 'Conferencies', 'conferencies', 8),
@@ -81,6 +80,11 @@ Image _retornaIcon(String categoria) {
           return Image.asset(
             'assets/categoriateatre.png',
             width: 30.0,
+          );
+        case 'art':
+          return Image.asset(
+            'assets/categoriaexpo.png',
+            width: 45.0,
           );
         case 'concerts':
           return Image.asset(
@@ -229,6 +233,4 @@ Widget _buildCarouselItem(BuildContext context, String label, String iconName, i
     ),
   );
 }
-
-
 }

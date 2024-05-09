@@ -90,100 +90,63 @@ class _Xats extends State<Xats> {
     });
   }
 
+  
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: const Color(0xFFF4692A),
-        title: Text(
-          'chats'.tr(context),
-          style: const TextStyle(color: Colors.white),
-        ),
-      ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTabChange: _onTabChange,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  SizedBox(
-                      height: 50.0,
-                      width: 120.0,
-                      child: TextButton(
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(_buttonAmics),
-                          foregroundColor:
-                              MaterialStateProperty.all<Color>(Colors.white),
-                        ),
-                        onPressed: () {
-                          _changeButtonColor(1);
-                          changeContent(AmicsScreen(
-                            controladorPresentacion: _controladorPresentacion,
-                          ));
-                        },
-                        child: Text('friends'.tr(context)),
-                      )),
-                  SizedBox(
-                      height: 50.0,
-                      width: 120.0,
-                      child: TextButton(
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(_buttonGrups),
-                          foregroundColor:
-                              MaterialStateProperty.all<Color>(Colors.white),
-                        ),
-                        onPressed: () {
-                          _changeButtonColor(2);
-                          changeContent(
-                            GrupsScreen(
-                              controladorPresentacion: _controladorPresentacion,
-                            ),
-                          );
-                        },
-                        child: Text('groups'.tr(context)),
-                      )),
-                  SizedBox(
-                      height: 50.0,
-                      width: 120.0,
-                      child: TextButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              _buttonAfegirAmics),
-                          foregroundColor:
-                              MaterialStateProperty.all<Color>(Colors.white),
-                        ),
-                        onPressed: () {
-                          _changeButtonColor(3);
-                          changeContent(AfegirAmics(
-                            recomms: usersRecom,
-                            usersBD: usersBD,
-                            controladorPresentacion: _controladorPresentacion,
-                          ));
-                        },
-                        child: Text('add_friends'.tr(context)),
-                      )),
-                ],
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
-              SizedBox(
-                child: Column(
-                  children: [currentContent],
-                ),
-              ),
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: const Color(0xFFF4692A),
+          title: const Text(
+            'Comunidad',
+            style: TextStyle(color: Colors.white),
+          ),
+          bottom: TabBar(
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white,
+            indicatorColor: Colors.white,
+            tabs: [
+              Tab(text: 'friends'.tr(context)),
+              Tab(text: 'groups'.tr(context)),
+              Tab(text: 'add_friends'.tr(context)),
             ],
           ),
+        ),
+        bottomNavigationBar: CustomBottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTabChange: _onTabChange,
+        ),
+        body: TabBarView(
+          children: [
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: AmicsScreen(
+                  controladorPresentacion: _controladorPresentacion,
+                ),
+              ),
+            ),
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: GrupsScreen(
+                  controladorPresentacion: _controladorPresentacion,
+                ),
+              ),
+            ),
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: AfegirAmics(
+                  recomms: usersRecom,
+                  usersBD: usersBD,
+                  controladorPresentacion: _controladorPresentacion,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
