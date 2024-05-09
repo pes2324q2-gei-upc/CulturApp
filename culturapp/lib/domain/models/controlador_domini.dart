@@ -891,7 +891,19 @@ class ControladorDomini {
         return querySnapshot
             .docs.first.id; // Devuelve el ID del primer documento
       } else {
-        return null; // Si no se encontró ningún documento
+        QuerySnapshot xatSnapshot = await FirebaseFirestore.instance
+          .collection('xats')
+          .where('receiverId', isEqualTo: sender)
+          .where('senderId', isEqualTo: receiver)
+          .limit(1)
+          .get();
+        
+        if (xatSnapshot.docs.isNotEmpty) {
+          return xatSnapshot
+              .docs.first.id; // Devuelve el ID del primer documento
+        } else {
+          return null; // Si no se encontró ningún documento
+        }
       }
     } catch (error) {
       return null; // Si ocurre algún error al obtener el ID del xat

@@ -4,7 +4,6 @@ import 'package:culturapp/presentacio/widgets/post_widget.dart';
 import 'package:culturapp/presentacio/widgets/reply_widget.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/translations/AppLocalizations';
-import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -25,8 +24,7 @@ class VistaVerActividad extends StatefulWidget{
 class _VistaVerActividadState extends State<VistaVerActividad> {
   late ControladorPresentacion _controladorPresentacion; 
   late ControladorDomini controladorDominio;
-  int _selectedIndex = 0;
-
+  
   late List<String> infoActividad;
   late Uri uriActividad;
 
