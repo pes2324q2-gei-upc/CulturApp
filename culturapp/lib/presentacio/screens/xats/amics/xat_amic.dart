@@ -174,8 +174,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
             color: Colors.white,
           ),
           onPressed: () {
-            //ns si més endevant estaria per poder reportar?
-            _controladorPresentacion.mostrarInfoAmic(context, _usuari);
+            //ficar dropdown per reportar o el link directe per reportar
           },
         ),
       ],
