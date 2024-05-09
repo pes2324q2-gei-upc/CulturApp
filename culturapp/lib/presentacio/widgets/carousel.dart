@@ -67,7 +67,7 @@ Image _retornaIcon(String categoria) {
     if (catsAMB.contains(categoria)){
       return Image.asset(
             'assets/categoriareciclar.png',
-            width: 45.0,
+            width: 30.0,
           );
     }
     else {
@@ -75,149 +75,160 @@ Image _retornaIcon(String categoria) {
         case 'carnavals':
           return Image.asset(
             'assets/categoriacarnaval.png',
-            width: 45.0,
+            width: 30.0,
           );
         case 'teatre':
           return Image.asset(
             'assets/categoriateatre.png',
-            width: 45.0,
+            width: 30.0,
           );
         case 'concerts':
           return Image.asset(
             'assets/categoriaconcert.png',
-            width: 45.0,
+            width: 30.0,
           );
         case 'circ':
           return Image.asset(
             'assets/categoriacirc.png',
-            width: 45.0,
+            width: 30.0,
           );
         case 'exposicions':
           return Image.asset(
             'assets/categoriaarte.png',
-            width: 45.0,
+            width: 30.0,
           );
         case 'conferencies':
           return Image.asset(
             'assets/categoriaconfe.png',
-            width: 45.0,
+            width: 30.0,
           );
         case 'commemoracions':
           return Image.asset(
             'assets/categoriacommemoracio.png',
-            width: 45.0,
+            width: 30.0,
           );
         case 'rutes-i-visites':
           return Image.asset(
             'assets/categoriaruta.png',
-            width: 45.0,
+            width: 30.0,
           );
         case 'cursos':
           return Image.asset(
             'assets/categoriaexpo.png',
-            width: 45.0,
+            width: 30.0,
           );
         case 'activitats-virtuals':
           return Image.asset(
             'assets/categoriavirtual.png',
-            width: 45.0,
+            width: 30.0,
           );
         case 'infantil':
           return Image.asset(
             'assets/categoriainfantil.png',
-            width: 45.0,
+            width: 30.0,
           );
         case 'festes':
           return Image.asset(
             'assets/categoriafesta.png',
-            width: 45.0,
+            width: 30.0,
           );
         case 'festivals-i-mostres':
           return Image.asset(
             'assets/categoriafesta.png',
-            width: 45.0,
+            width: 30.0,
           );
         case 'dansa':
           return Image.asset(
             'assets/categoriafesta.png',
-            width: 45.0,
+            width: 30.0,
           );
         case 'cicles':
           return Image.asset(
             'assets/categoriaexpo.png',
-            width: 45.0,
+            width: 30.0,
           );
         case 'cultura-digital':
           return Image.asset(
             'assets/categoriavirtual.png',
-            width: 45.0,
+            width: 30.0,
           );
         case 'fires-i-mercats':
           return Image.asset(
             'assets/categoriainfantil.png',
-            width: 45.0,
+            width: 30.0,
           );
         case 'gegants':
           return Image.asset(
             'assets/categoriafesta.png',
-            width: 45.0,
+            width: 30.0,
           );
         default:
           return Image.asset(
             'assets/categoriarecom.png',
-            width: 45.0,
+            width: 30.0,
           );
       }
     }
   }
 
-  Widget _buildCarouselItem(BuildContext context, String label, String iconName, int index) {
+Widget _buildCarouselItem(BuildContext context, String label, String iconName, int index) {
   return Padding(
-    padding: EdgeInsets.all(5.0), // Add padding between items
+    padding: EdgeInsets.only(left: 5.0, right: 5.0, top: 7.0, bottom: 7.0), // Agregar padding entre elementos
     child: GestureDetector(
       onTap: () {
         setState(() {
-            if (selectedIndices.contains(index)) {
-              selectedIndices.remove(index);
-            } else {
-              selectedIndices.add(index);
-            }
+          if (selectedIndices.contains(index)) {
+            selectedIndices.remove(index);
+          } else {
+            selectedIndices.add(index);
+          }
         });
         widget.clickCarouselCat(iconName);
       },
       child: IntrinsicWidth(
         child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 5.0),
+          margin: EdgeInsets.symmetric(horizontal: .0),
           decoration: BoxDecoration(
-          color: selectedIndices.contains(index) ? Colors.white70 : Colors.grey[300],
-            borderRadius: BorderRadius.circular(20.0),
+                color: selectedIndices.contains(index) ? Colors.orange.withOpacity(1) : Colors.white.withOpacity(1),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    spreadRadius: 3,
+                    blurRadius: 7,
+                    offset: Offset(0, 3), // changes position of shadow
+                  ),
+                ],
+                borderRadius: BorderRadius.circular(25.0),
           ),
           child: Center(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: IntrinsicHeight(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _retornaIcon(iconName),
-                    SizedBox(width: 8), // Adjust the spacing between icon and text as needed
-                    Flexible(
-                      child: Text(
-                        label,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 18.0),
-                      ),
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center, // Ajustar la alineación vertical
+                children: [
+                  Column(
+                    children: [SizedBox(height: 4), _retornaIcon(iconName),],
+                    mainAxisAlignment: MainAxisAlignment.center,),
+                    
+                  SizedBox(width: 8), // Ajustar el espacio entre el icono y el texto según sea necesario
+                  Flexible(
+                    child: Text(
+                      label,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 18.0, color: selectedIndices.contains(index) ? Colors.white : Color(0xFF333333)),
                     ),
-                    SizedBox(width: 8,)
-                    ],
                   ),
-                ),
+                  SizedBox(width: 8,)
+                ],
               ),
             ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
 }

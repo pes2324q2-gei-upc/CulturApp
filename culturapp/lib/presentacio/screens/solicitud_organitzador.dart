@@ -50,7 +50,9 @@ class _SolicitutScreenState extends State<SolicitutScreen> {
         titleTextStyle: const TextStyle(
           color: Colors.white,
           fontSize: 20.0,
-          fontWeight: FontWeight.bold
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.white, // Cambia el color de la flecha de retroceso
         ),
       ),
       body: Padding(

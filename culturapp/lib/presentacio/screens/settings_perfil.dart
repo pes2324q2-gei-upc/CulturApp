@@ -29,6 +29,9 @@ class _SettingsPerfil extends State<SettingsPerfil> {
           'settings'.tr(context),
           style: TextStyle(color: Colors.white),
         ),
+        iconTheme: IconThemeData(
+          color: Colors.white, // Cambia el color de la flecha de retroceso
+        ),
       ),
       body: Column(
         children: [
@@ -111,9 +114,9 @@ class _SettingsPerfil extends State<SettingsPerfil> {
   Widget _buildLanguageOption(BuildContext context, Locale locale) {
     final languageCode = locale.languageCode;
     String languageName;
-    if (languageCode == 'en') languageName = 'English';
-    else if (languageCode == 'ca') languageName = 'Catalan';
-    else languageName = 'Spanish';
+    if (languageCode == 'en') languageName = 'english'.tr(context);
+    else if (languageCode == 'ca') languageName = 'catalan'.tr(context);
+    else languageName = 'spanish'.tr(context);
     return ListTile(
       title: Text(languageName),
       onTap: () {

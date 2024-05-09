@@ -108,19 +108,21 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         titleTextStyle: const TextStyle(
           color: Colors.white,
           fontSize: 20.0,
-          fontWeight: FontWeight.bold
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.white, // Cambia el color de la flecha de retroceso
         ),
         actions: <Widget>[
           PopupMenuButton<String>(
             onSelected: (String result) {
-              if (result == 'send_organizer_request'.tr(context)) {
+              if (result == 'Enviar solicitud de organizador') {
                 _controladorPresentacion.mostrarSolicitutOrganitzador(context, infoActividad[0], infoActividad[1]);
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
+              PopupMenuItem<String>(
                 value: 'Enviar solicitud de organizador',
-                child: Text('Enviar solicitud de organizador'),
+                child: Text('send_organizer_request'.tr(context)),
               ),
             ],
           ),

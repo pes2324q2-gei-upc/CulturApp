@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter/material.dart';
 
 
 class MapPage extends StatefulWidget {
@@ -32,6 +33,7 @@ class _MapPageState extends State<MapPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late List<String> categoriesFiltres = [];
   List<String> categoriasFavoritas = [];
+  bool _isSheetExpanded = false;
 
   void clickCarouselCat(String cat) {
     setState(() {
@@ -730,37 +732,46 @@ class _MapPageState extends State<MapPage> {
               onMapCreated: _onMapCreated,
             ),
           Positioned(
-            top: 50.0,
+            top: 55.0,
             left: 25.0,
             right: 25.0,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.75),
-                border: Border.all(color: Colors.black, width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 3,
+                    blurRadius: 7,
+                    offset: Offset(0, 3), // changes position of shadow
+                  ),
+                ],
+                color: Colors.white.withOpacity(1),
                 borderRadius: BorderRadius.circular(25.0),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                padding: const EdgeInsets.only(left: 25.0, right: 15.0),
                 child: TextField(
-                    //en aquest cas, només "onPressed pq només pot haver-hi una"
-                    decoration: InputDecoration(
-                        hintText: 'search'.tr(context),
-                        border: InputBorder.none,
-                        suffixIcon: IconButton(
-                            onPressed: () {
-                              busquedaActivitat(querySearch);
-                            },
-                            icon: const Icon(Icons.search))),
-                    onChanged: (value) {
-                      querySearch = value;
-                    }),
+                  decoration: InputDecoration(
+                    hintText: 'search'.tr(context),
+                    border: InputBorder.none,
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        busquedaActivitat(querySearch);
+                      },
+                      icon: const Icon(Icons.search)
+                    )
+                  ),
+                  onChanged: (value) {
+                    querySearch = value;
+                  },
+                ),
               ),
             ),
           ),
           Positioned(
-              top: 100.0, // Adjust this value as needed
-              left: 25.0,
-              right: 25.0,
+              top: 110.0, // Adjust this value as needed
+              left: 0,
+              right: 0,
               child: MyCarousel(clickCarouselCat)),
           Positioned.fill(
             child: DraggableScrollableSheet(
