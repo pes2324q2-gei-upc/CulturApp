@@ -79,13 +79,14 @@ class ControladorPresentacion {
       usersBD = await controladorDomini.getUsers();
       friends = await getFollowingAll(usernameLogged);
       categsFav = await controladorDomini.obteCatsFavs(usernameLogged);
-      actividadesValoradas = await controladorDomini.obteActsValoradas(usernameLogged);
       usersBD.removeWhere((usuario) => usuario.username == usernameLogged);
       usersRecom = calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
       usersBD.removeWhere((usuario) => friends.contains(usuario.username));
       
     }
   }
+
+
 
   Future<bool> userLogged() async {
     User? currentUser = _auth.currentUser;
@@ -96,6 +97,10 @@ class ControladorPresentacion {
     } else {
       return false;
     }
+  }
+
+  Future<void> createValoracion(String id, String comentario, double puntuacion) async {
+    await controladorDomini.addValoracion(id, puntuacion, comentario);
   }
 
   Future<void> handleGoogleSignIn(BuildContext context) async {
@@ -176,12 +181,13 @@ class ControladorPresentacion {
     return categsFav;
   }
 
-  List<Actividad> checkNoValoration(){
+  Future<List<Actividad>> checkNoValoration() async {
     //Valoradas -> Actividades que ha valorado el usuario
     //Vencidas -> Actividades que han pasado de fecha
     //Mis Actividades -> Actividades a las que ha ido el usuario
     //Actividades No Valoradas -> Actividades vencidas que estan en Mis Actividades pero no en Valoradas
     List<Actividad> noValoradas = [];
+    actividadesValoradas = await controladorDomini.obteActsValoradas(usernameLogged);
     for (int i = 0; i < activitatsUser.length; i++) {
       if (actividadesVencidas.any((actividad) => actividad.code == activitatsUser[i].code) && !actividadesValoradas.contains(activitatsUser[i].code) ) {
         print('TRUE');
@@ -212,6 +218,10 @@ class ControladorPresentacion {
       print(actividadesVencidas.length);
 
     return noValoradas;
+  }
+
+  void addValorada(String code) async {
+    await controladorDomini.addValorada(_user!.uid, code);
   }
 
   List<Actividad> getActivitatsUser() => activitatsUser;

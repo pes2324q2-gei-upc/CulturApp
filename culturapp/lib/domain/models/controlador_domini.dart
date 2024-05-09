@@ -420,6 +420,65 @@ class ControladorDomini {
     }
   }
 
+    Future<String> addValoracion(String idActividad, double puntuacion, String comentario) async {
+
+  final Map<String, dynamic> body = {
+    'idActividad': idActividad,
+    'puntuacion': puntuacion,
+    'comentario': comentario,
+  };
+
+  try {
+      final response = await http.post(
+          Uri.parse(
+              'http://10.0.2.2:8080/activitats/create/valoracion'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${userLogged.getToken()}',
+          },
+          body: jsonEncode(body));
+
+    if (response.statusCode == 200) {
+      print('Valoración creada o actualizada con éxito');
+      return 'Valoración creada o actualizada con éxito';
+    } else {
+      print('Error al crear o actualizar la valoración');
+      return 'Error al crear o actualizar la valoración';
+    }
+  } catch (e) {
+    print(e);
+    return 'Error al crear o actualizar la valoración';
+  }
+}
+
+    Future<int> addValorada(String uid, String code) async {
+    final Map<String, String> body = {
+        'uid': uid,
+        'activityId': code,
+    };
+
+    try {
+      final response = await http.post(
+          Uri.parse(
+              'http://10.0.2.2:8080/users/addValorada'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${userLogged.getToken()}',
+          },
+          body: jsonEncode(body));
+
+      if (response.statusCode == 200) {
+        print('Actividad añadida exitosamente');
+      } else {
+        print('Error al añadir la actividad');
+      }
+      return response.statusCode;
+    } catch (e) {
+      print(e);
+      return -1;
+    }
+  }
+
   Future<int> sendReportBug(String titulo, String reporte) async {
     final Map<String, dynamic> body = {
       'titol': titulo,

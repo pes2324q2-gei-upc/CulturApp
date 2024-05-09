@@ -110,7 +110,9 @@ class _MapPageState extends State<MapPage> {
               alignment: Alignment.topRight,
               child: IconButton(
                 icon: const Icon(Icons.close),
-                onPressed: () {
+                onPressed: () async {
+                  _controladorPresentacion.addValorada(actividad.code);
+                  actsvencidas = await _controladorPresentacion.checkNoValoration();
                   Navigator.of(context).pop();
                 },
               ),
@@ -250,8 +252,10 @@ class _MapPageState extends State<MapPage> {
           actions: <Widget>[
             TextButton(
               child: const Text('Enviar'),
-              onPressed: () {
-                // Aquí puedes hacer algo con el rating y el comentario
+              onPressed: () async {
+                _controladorPresentacion.addValorada(actividad.code);
+                _controladorPresentacion.createValoracion(actividad.code, controller.text, rating);
+                actsvencidas = await _controladorPresentacion.checkNoValoration();
                 print('Rating: $rating, Comentario: ${controller.text}');
                 Navigator.of(context).pop();
               },
@@ -832,9 +836,9 @@ double radians(double degrees) {
   }
 
 
-  void _onMapCreated(GoogleMapController controller) {
+  void _onMapCreated(GoogleMapController controller) async {
     _mapController = controller;
-    actsvencidas = _controladorPresentacion.checkNoValoration();
+    actsvencidas = await _controladorPresentacion.checkNoValoration();
     print(actsvencidas.length);
     if (actsvencidas.isNotEmpty) mostrarValoracion(context, actsvencidas);
     
