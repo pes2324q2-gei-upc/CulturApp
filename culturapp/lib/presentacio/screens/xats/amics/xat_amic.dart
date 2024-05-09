@@ -150,22 +150,27 @@ class _XatAmicScreen extends State<XatAmicScreen> {
         ),
         onPressed: () => _controladorPresentacion.mostrarXats(context),
       ),
-      title: Row(
-        children: [
-          CircleAvatar(
-            backgroundImage: AssetImage(_usuari.image),
-          ),
-          const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                _usuari.nom,
-                style: const TextStyle(color: Colors.white),
-              ),
-            ],
-          ),
-        ],
+      title: GestureDetector(
+        onTap: () {
+          //link a anar pantalla de perfil amic
+        },
+        child: Row(
+          children: [
+            CircleAvatar(
+              backgroundImage: AssetImage(_usuari.image),
+            ),
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _usuari.nom,
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
       actions: [
         IconButton(
