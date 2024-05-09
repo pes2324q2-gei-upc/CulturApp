@@ -28,7 +28,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
   late List<Message> messages;
   late ScrollController _scrollController;
 
-  Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
+  Color taronjaVermellos = const Color(0xFFF4692A);
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
 
   final TextEditingController _controller = TextEditingController();
@@ -142,7 +142,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.orange,
+      backgroundColor: taronjaVermellos,
       leading: IconButton(
         icon: const Icon(
           Icons.arrow_back,
@@ -150,22 +150,27 @@ class _XatAmicScreen extends State<XatAmicScreen> {
         ),
         onPressed: () => _controladorPresentacion.mostrarXats(context),
       ),
-      title: Row(
-        children: [
-          CircleAvatar(
-            backgroundImage: AssetImage(_usuari.image),
-          ),
-          const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                _usuari.nom,
-                style: const TextStyle(color: Colors.white),
-              ),
-            ],
-          ),
-        ],
+      title: GestureDetector(
+        onTap: () {
+          //link a anar pantalla de perfil amic
+        },
+        child: Row(
+          children: [
+            CircleAvatar(
+              backgroundImage: AssetImage(_usuari.image),
+            ),
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _usuari.nom,
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
       actions: [
         IconButton(
@@ -174,8 +179,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
             color: Colors.white,
           ),
           onPressed: () {
-            //ns si més endevant estaria per poder reportar?
-            _controladorPresentacion.mostrarInfoAmic(context, _usuari);
+            //ficar dropdown per reportar o el link directe per reportar
           },
         ),
       ],
@@ -192,13 +196,14 @@ class _XatAmicScreen extends State<XatAmicScreen> {
 
   Widget _bottomInputField() {
     return IconTheme(
-      data: const IconThemeData(color: Colors.orange),
+      data: IconThemeData(color: taronjaVermellos),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
           children: <Widget>[
             Flexible(
               child: TextField(
+                maxLines: null,
                 controller: _controller,
                 onSubmitted: _sendMessage,
                 decoration: InputDecoration.collapsed(

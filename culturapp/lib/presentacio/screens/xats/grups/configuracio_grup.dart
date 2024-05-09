@@ -30,7 +30,8 @@ class _ConfigGrup extends State<ConfigGrup> {
   List<String> membres = [];
   List<Usuari> _participants = [];
 
-  Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
+  Color taronjaVermellos = const Color(0xFFF4692A);
+  Color taronjaVermellosFluix = const Color.fromARGB(199, 250, 141, 90);
 
   _ConfigGrup(ControladorPresentacion controladorPresentacion,
       List<Usuari> participants) {
@@ -60,7 +61,7 @@ class _ConfigGrup extends State<ConfigGrup> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF4692A),
+        backgroundColor: taronjaVermellos,
         title: const Text(
           'Configuració Grup',
           style: TextStyle(color: Colors.white),
@@ -163,7 +164,7 @@ class _ConfigGrup extends State<ConfigGrup> {
               ),
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Colors.blueGrey,
+                fillColor: Colors.blueGrey.withOpacity(0.7),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                   borderSide: BorderSide.none,
@@ -216,7 +217,7 @@ class _ConfigGrup extends State<ConfigGrup> {
             ),
             decoration: InputDecoration(
               filled: true,
-              fillColor: Colors.blueGrey,
+              fillColor: Colors.blueGrey.withOpacity(0.7),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
                 borderSide: BorderSide.none,
@@ -241,7 +242,6 @@ class _ConfigGrup extends State<ConfigGrup> {
           alignment: Alignment.centerLeft,
           child: const Text(
             'Participants:',
-            selectionColor: Colors.blue,
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
@@ -281,7 +281,7 @@ class _ConfigGrup extends State<ConfigGrup> {
   Widget _buildCrearGrupButton() {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: taronjaFluix,
+        backgroundColor: taronjaVermellos,
         foregroundColor: Colors.white,
       ),
       child: const Icon(Icons.check),

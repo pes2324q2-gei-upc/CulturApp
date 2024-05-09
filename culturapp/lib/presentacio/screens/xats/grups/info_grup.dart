@@ -1,5 +1,6 @@
 import "package:culturapp/domain/models/grup.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
+import "package:culturapp/presentacio/widgets/widgetsUtils/user_box.dart";
 import "package:culturapp/translations/AppLocalizations";
 import "package:flutter/material.dart";
 
@@ -25,7 +26,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
   double llargadaPantallaTitols = 438;
   bool estaEditant = false;
 
-  Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
+  Color taronjaVermellos = const Color(0xFFF4692A);
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
 
   _InfoGrupScreen(ControladorPresentacion controladorPresentacion, Grup grup) {
@@ -77,9 +78,14 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
               ),
             ),
             Positioned(
-              bottom: 20.0,
+              top: 20.0,
               right: 20.0,
               child: _buildEditarGrupButton(),
+            ),
+            Positioned(
+              bottom: 330.0,
+              right: 20.0,
+              child: _buildEditarParticipantsButton(),
             ),
           ],
         ),
@@ -89,7 +95,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.orange,
+      backgroundColor: taronjaVermellos,
       title: Text(
         estaEditant ? 'editing_group'.tr(context) : 'group_info'.tr(context),
         style: const TextStyle(color: Colors.white),
@@ -283,47 +289,59 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
           padding: const EdgeInsets.only(top: 10.0, bottom: 20.0),
           width: llargadaPantallaTitols,
           alignment: Alignment.centerLeft,
-          child: Row(
+          child: Column(
             children: [
-              Text(
-                'participants'.tr(context),
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueGrey,
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'participants'.tr(context),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blueGrey,
+                  ),
                 ),
               ),
-              Container(
-                alignment: Alignment.centerRight,
-                padding: const EdgeInsets.only(left: 191.0),
-                height: 22,
-                child: estaEditant
-                    ? ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: taronjaFluix,
-                          foregroundColor: Colors.white,
-                        ),
-                        onPressed: () {
-                          //go to the pagina of modificar participants
-                          _controladorPresentacion.mostrarModificarParticipants(
-                              context, _grup);
-                        },
-                        child: const Icon(Icons.format_paint_rounded),
-                      )
-                    : null,
+              SizedBox(
+                height: 300,
+                width: llargadaPantalla,
+                child: ListView.builder(
+                    itemCount: _grup.membres.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          userBox(
+                            text: _grup.membres[index],
+                            recomm: false,
+                            type: "null",
+                            controladorPresentacion: _controladorPresentacion,
+                          )
+                        ],
+                      );
+                    }),
               ),
             ],
           ),
         ),
-        SizedBox(
-          height: 300,
-          width: llargadaPantalla,
-          child: ListView.builder(
-            itemCount: _grup.membres.length,
-            itemBuilder: (context, index) => _buildParticipant(context, index),
-          ),
-        ),
       ],
+    );
+  }
+
+  Widget _buildEditarParticipantsButton() {
+    return Container(
+      alignment: Alignment.topRight,
+      padding: const EdgeInsets.only(left: 191.0),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: taronjaVermellos,
+          foregroundColor: Colors.white,
+        ),
+        onPressed: () {
+          //go to the pagina of modificar participants
+          _controladorPresentacion.mostrarModificarParticipants(context, _grup);
+        },
+        child: const Icon(Icons.mode),
+      ),
     );
   }
 
@@ -338,8 +356,8 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
         height: 50.0,
       ),
       title: Text(_grup.membres[index],
-          style: const TextStyle(
-            color: Colors.orange,
+          style: TextStyle(
+            color: taronjaVermellos,
             fontWeight: FontWeight.bold,
           )),
     );
@@ -348,11 +366,11 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
   Widget _buildEditarGrupButton() {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: taronjaFluix,
+        backgroundColor: taronjaVermellos,
         foregroundColor: Colors.white,
       ),
       onPressed: canviarEstat,
-      child: Icon(estaEditant ? Icons.check : Icons.format_paint_rounded),
+      child: Icon(estaEditant ? Icons.check : Icons.mode),
     );
   }
 }

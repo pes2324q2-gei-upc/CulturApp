@@ -21,7 +21,8 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
   late List<Usuari> amics;
   //o millor fer-ho dels noms només?? -> millor en usuaris pq després els haurem de passar per fer un grup
 
-  Color taronja_fluix = const Color.fromRGBO(240, 186, 132, 1);
+  Color taronjaVermellos = const Color(0xFFF4692A);
+  Color taronjaVermellosFluix = const Color.fromARGB(199, 250, 141, 90);
 
   _CrearGrupScreen(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
@@ -81,7 +82,7 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF4692A),
+        backgroundColor: taronjaVermellos,
         title: const Text(
           'Crear Grup',
           style: TextStyle(color: Colors.white),
@@ -150,7 +151,7 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
           ),
           decoration: InputDecoration(
             filled: true,
-            fillColor: taronja_fluix,
+            fillColor: taronjaVermellosFluix,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
               borderSide: BorderSide.none,
@@ -205,7 +206,7 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
                 borderRadius:
                     BorderRadius.circular(8.0), // Adjust the radius as needed
                 child: Container(
-                  color: taronja_fluix.withOpacity(0.90),
+                  color: taronjaVermellosFluix,
                   padding:
                       const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                   child: Text(
@@ -234,8 +235,8 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
         height: 50.0,
       ),
       title: Text(displayList[index].nom,
-          style: const TextStyle(
-            color: Color(0xFFF4692A),
+          style: TextStyle(
+            color: taronjaVermellos,
             fontWeight: FontWeight.bold,
           )),
       trailing: _buildBotoAfegir(displayList[index], index),
@@ -246,7 +247,7 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         shape: const CircleBorder(),
-        backgroundColor: const Color.fromRGBO(240, 186, 132, 1),
+        backgroundColor: taronjaVermellosFluix,
         foregroundColor: Colors.white,
       ),
       onPressed: () {
@@ -269,7 +270,7 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
   Widget _buildNextPageButton() {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color.fromRGBO(240, 186, 132, 1),
+        backgroundColor: taronjaVermellos,
         foregroundColor: Colors.white,
       ),
       child: const Icon(Icons.arrow_forward),
