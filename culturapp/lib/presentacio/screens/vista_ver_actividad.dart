@@ -44,6 +44,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   String? postIden = '';
   bool reply = false;
   bool mostraReplies = false;
+  bool organizador = false;
   
   final List<String> catsAMB = ["Residus",
   "territori.espai_public_platges",
@@ -108,12 +109,14 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         titleTextStyle: const TextStyle(
           color: Colors.white,
           fontSize: 20.0,
-          fontWeight: FontWeight.bold
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.white, // Cambia el color de la flecha de retroceso
         ),
         actions: <Widget>[
           PopupMenuButton<String>(
             onSelected: (String result) {
-              if (result == 'send_organizer_request'.tr(context)) {
+              if (result == 'Enviar solicitud de organizador') {
                 _controladorPresentacion.mostrarSolicitutOrganitzador(context, infoActividad[0], infoActividad[1]);
               }
             },
@@ -122,6 +125,16 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                 value: 'Enviar solicitud de organizador',
                 child: Text('Enviar solicitud de organizador'),
               ),
+              if (!organizador)
+                const PopupMenuItem<String>(
+                  value: 'scan_qr',
+                  child: Text('Escanear QR'),
+                ),
+              if (organizador)
+                const PopupMenuItem<String>(
+                  value: 'view_qr',
+                  child: Text('Ver QR'),
+                ),
             ],
           ),
         ],

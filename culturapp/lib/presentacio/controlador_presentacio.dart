@@ -48,6 +48,8 @@ class ControladorPresentacion {
   late List<String> friends;
   late String usernameLogged;
   late List<Actividad> activitatsUser;
+  late List<Actividad> actividadesVencidas;
+  late List<String> actividadesValoradas;
 
   void funcLogout() async {
     _auth.signOut();
@@ -70,18 +72,20 @@ class ControladorPresentacion {
     if (await userLogged()) {
       await controladorDomini.setInfoUserLogged(_user!.uid);
       usernameLogged = controladorDomini.userLogged.getUsername();
-
       activitats = await controladorDomini.getActivitiesAgenda();
       activitatsUser = await controladorDomini.getUserActivities();
+      actividadesVencidas = await controladorDomini.getActivitiesVencudes();
       usersBD = await controladorDomini.getUsers();
       friends = await getFollowingAll(usernameLogged);
       categsFav = await controladorDomini.obteCatsFavs(usernameLogged);
       usersBD.removeWhere((usuario) => usuario.username == usernameLogged);
-      usersRecom =
-          calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
+      usersRecom = calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
       usersBD.removeWhere((usuario) => friends.contains(usuario.username));
+      
     }
   }
+
+
 
   Future<bool> userLogged() async {
     User? currentUser = _auth.currentUser;
@@ -92,6 +96,10 @@ class ControladorPresentacion {
     } else {
       return false;
     }
+  }
+
+  Future<void> createValoracion(String id, String comentario, double puntuacion) async {
+    await controladorDomini.addValoracion(id, puntuacion, comentario);
   }
 
   Future<void> handleGoogleSignIn(BuildContext context) async {
@@ -112,7 +120,6 @@ class ControladorPresentacion {
         bool userExists =
             await controladorDomini.accountExists(userCredential.user);
         _user = userCredential.user;
-        print(userExists);
 
         if (!userExists) {
           mostrarSignup(context);
@@ -172,6 +179,25 @@ class ControladorPresentacion {
     return categsFav;
   }
 
+  Future<List<Actividad>> checkNoValoration() async {
+    //Valoradas -> Actividades que ha valorado el usuario
+    //Vencidas -> Actividades que han pasado de fecha
+    //Mis Actividades -> Actividades a las que ha ido el usuario
+    //Actividades No Valoradas -> Actividades vencidas que estan en Mis Actividades pero no en Valoradas
+    List<Actividad> noValoradas = [];
+    actividadesValoradas = await controladorDomini.obteActsValoradas(usernameLogged);
+    for (int i = 0; i < activitatsUser.length; i++) {
+      if (actividadesVencidas.any((actividad) => actividad.code == activitatsUser[i].code) && !actividadesValoradas.contains(activitatsUser[i].code) ) {
+        noValoradas.add(activitatsUser[i]);
+      }
+    }
+    return noValoradas;
+  }
+
+  void addValorada(String code) async {
+    await controladorDomini.addValorada(_user!.uid, code);
+  }
+
   List<Actividad> getActivitatsUser() => activitatsUser;
 
   List<Actividad> getActivitats() => activitats;
@@ -202,6 +228,10 @@ class ControladorPresentacion {
 
   String getUsername() {
     return usernameLogged;
+  }
+
+  List<Actividad>getActividadesVencidas(){
+    return actividadesVencidas;
   }
 
   Future<List<String>> getFollowingAll(String username) async {
@@ -271,7 +301,7 @@ class ControladorPresentacion {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MapPage(controladorPresentacion: this),
+        builder: (context) => MapPage(controladorPresentacion: this, vencidas: actividadesVencidas,),
       ),
     );
   }
