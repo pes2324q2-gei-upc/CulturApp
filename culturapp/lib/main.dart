@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +43,7 @@ class _MyAppState extends State<MyApp> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   int _selectedIndex = 0;
   bool _isLoggedIn = false;
+  bool _isLoading = true; // Nueva variable para controlar la carga
   late List<Actividad> vencidas;
 
   _MyAppState(ControladorPresentacion controladorPresentacion) {
@@ -55,11 +57,12 @@ class _MyAppState extends State<MyApp> {
     getActividadesVencidas();
   }
 
-  void userLogged() {
+  void userLogged() async {
     User? currentUser = _auth.currentUser;
     setState(() {
       _isLoggedIn = currentUser != null;
       _selectedIndex = _isLoggedIn ? _selectedIndex : 4; // Si no está logueado, selecciona el índice 4
+      _isLoading = false; // Una vez que la verificación de inicio de sesión haya terminado, deja de cargar
     });
   }
 
@@ -69,6 +72,17 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      // Muestra el indicador de carga mientras se verifica el inicio de sesión
+      return MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+    }
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

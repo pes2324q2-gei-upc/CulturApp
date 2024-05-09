@@ -52,7 +52,7 @@
     "correct_report_msg": "Report correctament enviat",
     "error_report_msg_parms": "Error a l'enviar el report: {error}",
     "error_report_msg": "Error a l'enviar el report",
-    "report_bug_title": "Reportar error en l'aplicació",
+    "report_bug_title": "Reportar error de l'aplicació",
     "subject": "Assumpte",
     "subject_missing": "Si us plau introdueixi un assumpte",
     "report_bug_description": "Descriu l'error de l'aplicació",
@@ -81,5 +81,9 @@
     "description": "Descripció:",
     "participants": "Participants:",
     "modify_participants": "Modificar participants",
-    "select_unselect_participants": "Selecciona o desselecciona participants per afegir-los"
+    "select_unselect_participants": "Selecciona o desselecciona participants per afegir-los",
+    "catalan": "Català",
+    "spanish": "Castellà",
+    "english": "Anglés",
+    "map": "Mapa"
 }

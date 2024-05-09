@@ -84,6 +84,9 @@ class _EditPerfil extends State<EditPerfil> {
           'edit'.tr(context),
           style: TextStyle(color: Colors.white),
         ),
+        iconTheme: IconThemeData(
+          color: Colors.white, // Cambia el color de la flecha de retroceso
+        ),
       ),      
       //opcions de edicio
       body: _editProfileScreen(context)
