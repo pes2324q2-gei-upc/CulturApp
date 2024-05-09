@@ -604,17 +604,29 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                           padding: const EdgeInsets.only(left: 30),
                           child: Row(
                             children: [
-                              IconButton(
-                                icon: const Icon(Icons.reply), // Icono de responder
-                                onPressed: () async {
+                               GestureDetector(
+                                onTap: () async {
                                   postIden = await _controladorPresentacion.getPostId(idForo, post.fecha);
                                   setState(() {
                                      reply = true;
                                   });
                                 },
+                                child: Row(
+                                  children: [
+                                    IconButton(
+                                      onPressed: () async {
+                                        postIden = await _controladorPresentacion.getPostId(idForo, post.fecha);
+                                        setState(() {
+                                          reply = true;
+                                        });
+                                      }, 
+                                      icon: const Icon(Icons.reply), // Icono de responder
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Text('reply'.tr(context)),
+                                  ],
+                                )
                               ), 
-                              const SizedBox(width: 5),
-                              Text('reply'.tr(context)),
                               const SizedBox(width: 20),
                             ],
                           ),
