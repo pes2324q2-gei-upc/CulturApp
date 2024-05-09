@@ -57,8 +57,6 @@ class ControladorDomini {
     final respuesta = await http.get(Uri.parse(
         'https://culturapp-back.onrender.com/users/exists?uid=${user?.uid}'));
 
-    print(respuesta.statusCode);
-    print(respuesta.body);
     if (respuesta.statusCode == 200) {
       return (respuesta.body == "exists");
     } else {
@@ -149,6 +147,36 @@ class ControladorDomini {
       categorias = jsonResponse.cast<String>();
     }
     return categorias;
+  }
+
+    Future<List<String>> obteActsValoradas(String username) async {
+    final respuesta = await http.get(
+        Uri.parse(
+            'https://culturapp-back.onrender.com/users/${username}/valoradas'),
+        headers: {
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+        });
+    List<String> categorias = [];
+
+    if (respuesta.statusCode == 200) {
+      List<dynamic> jsonResponse = jsonDecode(respuesta.body);
+      categorias = jsonResponse.cast<String>();
+    }
+    return categorias;
+  }
+
+    Future<List<Actividad>> getActivitiesVencudes() async {
+    final respuesta = await http.get(
+        Uri.parse('https://culturapp-back.onrender.com/activitats/read/vencidas'),
+        headers: {
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+        });
+
+    if (respuesta.statusCode == 200) {
+      return _convert_database_to_list(respuesta);
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
   }
 
   Future<List<Actividad>> getActivitiesAgenda() async {
@@ -357,8 +385,6 @@ class ControladorDomini {
       body: jsonEncode(body),
     );
 
-    print(response.body);
-
     if (response.statusCode != 200)
       throw Exception('Error al eliminar al usuario');
   }
@@ -387,6 +413,65 @@ class ControladorDomini {
       }
     } catch (error) {
       print('Error de red: $error');
+    }
+  }
+
+    Future<String> addValoracion(String idActividad, double puntuacion, String comentario) async {
+
+  final Map<String, dynamic> body = {
+    'idActividad': idActividad,
+    'puntuacion': puntuacion,
+    'comentario': comentario,
+  };
+
+  try {
+      final response = await http.post(
+          Uri.parse(
+              'https://culturapp-back.onrender.com/activitats/create/valoracion'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${userLogged.getToken()}',
+          },
+          body: jsonEncode(body));
+
+    if (response.statusCode == 200) {
+      print('Valoración creada o actualizada con éxito');
+      return 'Valoración creada o actualizada con éxito';
+    } else {
+      print('Error al crear o actualizar la valoración');
+      return 'Error al crear o actualizar la valoración';
+    }
+  } catch (e) {
+    print(e);
+    return 'Error al crear o actualizar la valoración';
+  }
+}
+
+    Future<int> addValorada(String uid, String code) async {
+    final Map<String, String> body = {
+        'uid': uid,
+        'activityId': code,
+    };
+
+    try {
+      final response = await http.post(
+          Uri.parse(
+              'https://culturapp-back.onrender.com/users/addValorada'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${userLogged.getToken()}',
+          },
+          body: jsonEncode(body));
+
+      if (response.statusCode == 200) {
+        print('Actividad añadida exitosamente');
+      } else {
+        print('Error al añadir la actividad');
+      }
+      return response.statusCode;
+    } catch (e) {
+      print(e);
+      return -1;
     }
   }
 
@@ -523,6 +608,12 @@ class ControladorDomini {
         usuario.username = userJson['username'];
         usuario.favCats = userJson['favcategories'] ?? '';
         usuario.identificador = userJson['id'];
+        if (userJson['valoradas'] != null) {
+        List<dynamic> jsonResponse = userJson['valoradas'];
+        usuario.valoradas = jsonResponse.cast<Actividad>();
+      } else {
+        usuario.valoradas = [];
+      }
 
         usuarios.add(usuario);
       });

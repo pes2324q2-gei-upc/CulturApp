@@ -1,6 +1,7 @@
 // ignore_for_file: no_logic_in_create_state, library_private_types_in_public_api
 
 import 'package:culturapp/data/firebase_options.dart';
+import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
@@ -41,6 +42,7 @@ class _MyAppState extends State<MyApp> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   int _selectedIndex = 0;
   bool _isLoggedIn = false;
+  late List<Actividad> vencidas;
 
   _MyAppState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
@@ -50,6 +52,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     userLogged();
+    getActividadesVencidas();
   }
 
   void userLogged() {
@@ -58,6 +61,10 @@ class _MyAppState extends State<MyApp> {
       _isLoggedIn = currentUser != null;
       _selectedIndex = _isLoggedIn ? _selectedIndex : 4; // Si no está logueado, selecciona el índice 4
     });
+  }
+
+  void getActividadesVencidas() {
+    vencidas =  _controladorPresentacion.getActividadesVencidas();
   }
 
   @override
@@ -91,7 +98,7 @@ class _MyAppState extends State<MyApp> {
       },
       home: Scaffold(
         body: _isLoggedIn
-            ? MapPage(controladorPresentacion: _controladorPresentacion)
+            ? MapPage(controladorPresentacion: _controladorPresentacion, vencidas: vencidas,)
             : Login(
                 controladorPresentacion: _controladorPresentacion,
               ),
