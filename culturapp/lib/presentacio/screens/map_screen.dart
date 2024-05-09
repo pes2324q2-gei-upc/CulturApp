@@ -111,9 +111,9 @@ class _MapPageState extends State<MapPage> {
               child: IconButton(
                 icon: const Icon(Icons.close),
                 onPressed: () async {
+                    Navigator.of(context).pop();
                   _controladorPresentacion.addValorada(actividad.code);
                   actsvencidas = await _controladorPresentacion.checkNoValoration();
-                  Navigator.of(context).pop();
                 },
               ),
             ),
@@ -253,11 +253,12 @@ class _MapPageState extends State<MapPage> {
             TextButton(
               child: const Text('Enviar'),
               onPressed: () async {
+                Navigator.of(context).pop();
                 _controladorPresentacion.addValorada(actividad.code);
                 _controladorPresentacion.createValoracion(actividad.code, controller.text, rating);
                 actsvencidas = await _controladorPresentacion.checkNoValoration();
                 print('Rating: $rating, Comentario: ${controller.text}');
-                Navigator.of(context).pop();
+                
               },
             ),
           ],

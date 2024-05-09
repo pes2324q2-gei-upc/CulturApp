@@ -57,8 +57,6 @@ class ControladorDomini {
     final respuesta = await http.get(Uri.parse(
         'https://culturapp-back.onrender.com/users/exists?uid=${user?.uid}'));
 
-    print(respuesta.statusCode);
-    print(respuesta.body);
     if (respuesta.statusCode == 200) {
       return (respuesta.body == "exists");
     } else {
@@ -154,7 +152,7 @@ class ControladorDomini {
     Future<List<String>> obteActsValoradas(String username) async {
     final respuesta = await http.get(
         Uri.parse(
-            'http://10.0.2.2:8080/users/${username}/valoradas'),
+            'https://culturapp-back.onrender.com/users/${username}/valoradas'),
         headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
         });
@@ -169,7 +167,7 @@ class ControladorDomini {
 
     Future<List<Actividad>> getActivitiesVencudes() async {
     final respuesta = await http.get(
-        Uri.parse('http://10.0.2.2:8080/activitats/read/vencidas'),
+        Uri.parse('https://culturapp-back.onrender.com/activitats/read/vencidas'),
         headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
         });
@@ -387,8 +385,6 @@ class ControladorDomini {
       body: jsonEncode(body),
     );
 
-    print(response.body);
-
     if (response.statusCode != 200)
       throw Exception('Error al eliminar al usuario');
   }
@@ -431,7 +427,7 @@ class ControladorDomini {
   try {
       final response = await http.post(
           Uri.parse(
-              'http://10.0.2.2:8080/activitats/create/valoracion'),
+              'https://culturapp-back.onrender.com/activitats/create/valoracion'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ${userLogged.getToken()}',
@@ -460,7 +456,7 @@ class ControladorDomini {
     try {
       final response = await http.post(
           Uri.parse(
-              'http://10.0.2.2:8080/users/addValorada'),
+              'https://culturapp-back.onrender.com/users/addValorada'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ${userLogged.getToken()}',

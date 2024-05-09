@@ -190,33 +190,9 @@ class ControladorPresentacion {
     actividadesValoradas = await controladorDomini.obteActsValoradas(usernameLogged);
     for (int i = 0; i < activitatsUser.length; i++) {
       if (actividadesVencidas.any((actividad) => actividad.code == activitatsUser[i].code) && !actividadesValoradas.contains(activitatsUser[i].code) ) {
-        print('TRUE');
         noValoradas.add(activitatsUser[i]);
       }
     }
-    
-    print('------------------noValoradas----------------------');
-
-      print(noValoradas.length);
-    
-
-    print('-------------------actividadesValoradas---------------------');
-
-
-      print(actividadesValoradas.length);
-
-    //print(actividadesValoradas[0].name);
-
-    print('------------------activitatsUser----------------------');
-
-
-      print(activitatsUser.length);
-    
-    print('-------------------actividadesVencidas---------------------');
-
-
-      print(actividadesVencidas.length);
-
     return noValoradas;
   }
 
