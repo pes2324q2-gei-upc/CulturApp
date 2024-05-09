@@ -26,6 +26,7 @@ class _MyCarouselState extends State<MyCarousel> {
       _buildCarouselItem(context, 'Rutes', 'rutes-i-visites', 9),
       _buildCarouselItem(context, 'Activitats Virtuals', 'activitats-virtuals', 10),
       _buildCarouselItem(context, 'Teatre', 'teatre', 11),
+      _buildCarouselItem(context, 'Bateries', 'bateries', 12),
     ];
 
     return Row(
@@ -85,6 +86,11 @@ Image _retornaIcon(String categoria) {
           return Image.asset(
             'assets/categoriaexpo.png',
             width: 45.0,
+          );
+        case 'bateries':
+          return Image.asset(
+            'assets/categoriabateria.png',
+            width: 30.0,
           );
         case 'concerts':
           return Image.asset(
@@ -223,7 +229,7 @@ Widget _buildCarouselItem(BuildContext context, String label, String iconName, i
                       style: TextStyle(fontSize: 18.0, color: selectedIndices.contains(index) ? Colors.white : Color(0xFF333333)),
                     ),
                   ),
-                  SizedBox(width: 8,)
+                  const SizedBox(width: 8,)
                 ],
               ),
             ),

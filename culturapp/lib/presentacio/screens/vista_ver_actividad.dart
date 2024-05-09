@@ -4,10 +4,8 @@ import 'package:culturapp/presentacio/widgets/post_widget.dart';
 import 'package:culturapp/presentacio/widgets/reply_widget.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/translations/AppLocalizations';
-import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -17,11 +15,12 @@ class VistaVerActividad extends StatefulWidget{
   final List<String> info_actividad;
   final ControladorPresentacion controladorPresentacion;
   final Uri uri_actividad;
+  final bool esOrganizador;
 
-  const VistaVerActividad({super.key, required this.info_actividad, required this.uri_actividad, required this.controladorPresentacion});
+  const VistaVerActividad({super.key, required this.info_actividad, required this.uri_actividad, required this.controladorPresentacion, required this.esOrganizador});
 
   @override
-  State<VistaVerActividad> createState() => _VistaVerActividadState(controladorPresentacion ,info_actividad, uri_actividad);
+  State<VistaVerActividad> createState() => _VistaVerActividadState(controladorPresentacion ,info_actividad, uri_actividad, esOrganizador);
 }
 
 class _VistaVerActividadState extends State<VistaVerActividad> {
@@ -63,11 +62,12 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   "territori.espai_public_rius",
   "Espai públic - Platges"];
   
-  _VistaVerActividadState(ControladorPresentacion controladorPresentacion ,List<String> info_actividad, Uri uri_actividad) {
+  _VistaVerActividadState(ControladorPresentacion controladorPresentacion ,List<String> info_actividad, Uri uri_actividad, bool esOrganizador) {
     infoActividad = info_actividad;
     uriActividad = uri_actividad;
     _controladorPresentacion = controladorPresentacion;
     controladorDominio = _controladorPresentacion.getControladorDomini();
+    organizador = esOrganizador;
   }
 
 
@@ -88,19 +88,19 @@ void mostrarQR() {
                 },
               ),
             ),
-            const Padding(padding: EdgeInsets.only(bottom: 5)),
             BarcodeWidget( 
-              padding: const EdgeInsets.only(left: 10, right: 10),
+              padding: const EdgeInsets.only(left: 15, right: 15),
               barcode: Barcode.qrCode(),
               data: infoActividad[1],
-              width: 250, // Aumenta el tamaño del QR
-              height: 250, // Aumenta el tamaño del QR
+              width: 250,
+              height: 250,
             ),
             const Padding(padding: EdgeInsets.only(top: 30)),
             Text('Code: ${infoActividad[1]}', style: const TextStyle(
               fontSize: 22, // Aumenta el tamaño del texto
               fontWeight: FontWeight.bold,
             ),),
+            const Padding(padding: EdgeInsets.only(bottom: 10)),
           ],
         ),
       );

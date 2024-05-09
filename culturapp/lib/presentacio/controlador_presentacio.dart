@@ -50,6 +50,7 @@ class ControladorPresentacion {
   late List<Actividad> activitatsUser;
   late List<Actividad> actividadesVencidas;
   late List<String> actividadesValoradas;
+  late List<String> actividadesOrganizadas;
 
   void funcLogout() async {
     _auth.signOut();
@@ -75,13 +76,14 @@ class ControladorPresentacion {
       activitats = await controladorDomini.getActivitiesAgenda();
       activitatsUser = await controladorDomini.getUserActivities();
       actividadesVencidas = await controladorDomini.getActivitiesVencudes();
+      actividadesOrganizadas = await controladorDomini.obteActivitatsOrganitzades(_user!.uid);
       usersBD = await controladorDomini.getUsers();
       friends = await getFollowingAll(usernameLogged);
       categsFav = await controladorDomini.obteCatsFavs(usernameLogged);
       usersBD.removeWhere((usuario) => usuario.username == usernameLogged);
       usersRecom = calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
       usersBD.removeWhere((usuario) => friends.contains(usuario.username));
-      
+
     }
   }
 
@@ -283,8 +285,14 @@ class ControladorPresentacion {
         titol, idActivitat, motiu);
   }
 
-  void mostrarVerActividad(
-      BuildContext context, List<String> info_act, Uri uri_act) {
+  void mostrarVerActividad(BuildContext context, List<String> info_act, Uri uri_act) {
+      bool organiza;
+      if (actividadesOrganizadas.contains(info_act[1])) {
+        organiza = true;
+      } else {
+        organiza = false;
+      }
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -292,6 +300,7 @@ class ControladorPresentacion {
           info_actividad: info_act,
           uri_actividad: uri_act,
           controladorPresentacion: this,
+          esOrganizador: organiza,
         ),
       ),
     );

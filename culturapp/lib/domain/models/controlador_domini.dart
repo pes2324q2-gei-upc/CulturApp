@@ -93,8 +93,7 @@ class ControladorDomini {
     return true;
   }
 
-  void editUser(
-      User? user, String username, List<String> selectedCategories) async {
+  void editUser(User? user, String username, List<String> selectedCategories) async {
     try {
       final Map<String, dynamic> userdata = {
         'uid': user?.uid,
@@ -147,6 +146,26 @@ class ControladorDomini {
       categorias = jsonResponse.cast<String>();
     }
     return categorias;
+  }
+
+  Future<List<String>> obteActivitatsOrganitzades(String uid) async {
+    final respuesta = await http.get(
+      Uri.parse('http://10.0.2.2:8080/users/${uid}/actividadesorganizadas'),
+      headers: {
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+        'Content-Type': 'application/json'
+      },
+    );
+
+    List<String> actividadesOrganizadas = [];
+
+    if (respuesta.statusCode == 200) {
+      List<dynamic> jsonResponse = jsonDecode(respuesta.body);
+      print('kfklsfklsdlfsdlfslfsklfs');
+      print(jsonResponse);
+      actividadesOrganizadas = jsonResponse.cast<String>();
+    }
+    return actividadesOrganizadas;
   }
 
     Future<List<String>> obteActsValoradas(String username) async {
