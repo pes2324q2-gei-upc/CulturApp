@@ -81,5 +81,9 @@
     "modify_participants": "Modificar participants",
     "select_unselect_participants": "Select or unselect participants to add them",
     "recommendations": "Recommendations:",
-    "send_organizer_request": "Send organizer request"
+    "send_organizer_request": "Send organizer request",
+    "catalan": "Catalan",
+    "spanish": "Spanish",
+    "english": "English",
+    "map": "Map"
 }

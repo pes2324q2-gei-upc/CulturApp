@@ -59,7 +59,6 @@ class _PerfilPageState extends State<PerfilPage> {
   @override
   Widget build(BuildContext context) {
   return Scaffold(
-    //header
     appBar: AppBar(
       automaticallyImplyLeading: false,
       backgroundColor: const Color(0xFFF4692A),
@@ -67,11 +66,10 @@ class _PerfilPageState extends State<PerfilPage> {
         'profile'.tr(context),
         style: TextStyle(color: Colors.white),
       ),
-      //botons
-        actions: _owner ? [
+      actions: _owner ? [
           IconButton(
             onPressed: () {
-              
+              _controladorPresentacion.mostrarPendents(context); 
             },
             icon: const Icon(Icons.notifications, color: Colors.white),
           ),
@@ -83,8 +81,6 @@ class _PerfilPageState extends State<PerfilPage> {
           ),
           IconButton(
             onPressed: () {
-              //hacer que no se vea si estas viendo el perfil de otro user
-              //Navigator.pushNamed(context, Routes.settings);
               _controladorPresentacion.mostrarSettings(context);
             },
             icon: const Icon(Icons.settings, color: Colors.white),
@@ -95,7 +91,13 @@ class _PerfilPageState extends State<PerfilPage> {
         currentIndex: _selectedIndex,
         onTabChange: _onTabChange,
     ),
-    body: UserInfoWidget(controladorPresentacion: _controladorPresentacion, username: _username, owner: widget.owner),
+    body: Expanded(
+      child: UserInfoWidget(
+        controladorPresentacion: _controladorPresentacion,
+        username: _username,
+        owner: widget.owner,
+      ),
+    ),
     );
   }
 

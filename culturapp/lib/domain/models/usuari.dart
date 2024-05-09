@@ -1,3 +1,5 @@
+import 'package:culturapp/domain/models/actividad.dart';
+
 class Usuari {
   late String id; //-> token
   late String nom;
@@ -6,6 +8,7 @@ class Usuari {
   late List<String> activitats;
   late List<dynamic> favCategories;
   late List<Usuari> followers; //aka amigos
+  late List<Actividad> valoradas;
 
   /*const Usuari({
     required this.id,

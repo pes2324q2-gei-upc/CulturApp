@@ -75,11 +75,8 @@ class _userBoxState extends State<userBox> {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(10.0), // Borde superior redondeado
-          bottom: Radius.circular(10.0), // Borde inferior redondeado
-        ),
-        color: Colors.grey[100], // Cambia el color de fondo según necesites
+        border: Border(bottom: BorderSide(width: 0.25, color: Colors.grey), top: BorderSide(width: 0.25, color: Colors.grey)),
+        color: Colors.white, // Cambia el color de fondo según necesites
       ),
       child: Row(
         children: [

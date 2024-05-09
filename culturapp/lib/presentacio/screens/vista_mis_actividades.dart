@@ -270,7 +270,8 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
-        title: Text("my_activities".tr(context)),
+        title: Text("my_activities".tr(context), style: TextStyle(color: Colors.white,)),
+        automaticallyImplyLeading: false,
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -278,24 +279,47 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                _buildCercador(),
-                const SizedBox(
-                  height: 10.0,
-                ),
-                Row(
-                  children: [
-                    _buildFiltreCategoria(),
-                    const SizedBox(
-                      width: 10.0,
-                    ),
-                    _buildFiltreData(),
-                  ],
-                ),
-              ],
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 3,
+                    blurRadius: 5,
+                    offset: Offset(0, 3), // changes position of shadow
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                children: [
+                  const SizedBox(
+                    height: 10.0,
+                  ),
+                  _buildCercador(),
+                  const SizedBox(
+                    height: 10.0,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildFiltreCategoria(),
+                      ),
+                      const SizedBox(
+                        width: 10.0,
+                      ),
+                      Expanded(
+                        child: _buildFiltreData(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 15.0,
+                  ),
+                ],
+              ),
             ),
           ),
           Expanded(
@@ -351,18 +375,20 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                             children: [
                               Row(
                                 children: [
-                                  Expanded(
-                                    child: Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 20),
-                                      child: Text(
-                                        activitat.name,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFFF4692A),
+                                  Padding(padding: EdgeInsets.symmetric(horizontal: 30), child:
+                                    Expanded(
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 20),
+                                        child: Text(
+                                          activitat.name,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFFF4692A),
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -516,56 +542,54 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
 
   Widget _buildCercador() {
     return SizedBox(
-      height: 40.0,
+      height: 50.0,
       child: TextField(
         controller: _searchController,
         onChanged: (text) => changeSquery(text),
-        cursorColor: const Color(0xFFF4692A),
+        cursorColor: Color(0xFF333333),
         style: const TextStyle(
-          color: Color(0xFFF4692A),
+          color: Color(0xFF333333),
         ),
         decoration: InputDecoration(
           filled: true,
-          fillColor: const Color.fromRGBO(255, 229, 204, 0.815),
+          fillColor: Colors.white,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide.none,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: const BorderSide(
-              color: Color(0xFFF4692A),
-            ),
+            borderRadius: BorderRadius.circular(25.0),
+            borderSide: BorderSide(color: Colors.grey),
           ),
           hintText: "search".tr(context),
           hintStyle: const TextStyle(
-            color: Color(0xFFF4692A),
-            fontWeight: FontWeight.bold,
+            color: Color(0xFF333333),
+            
           ),
-          suffixIcon: IconButton(
-            onPressed: () {
-              searchMyActivities(squery);
-            },
-            icon: const Icon(Icons.search),
+          contentPadding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
+          suffixIcon: Padding(
+            padding: const EdgeInsets.only(right: 8.0), // Ajusta el padding a la derecha según sea necesario
+            child: IconButton(
+              onPressed: () {
+                searchMyActivities(squery);
+              },
+              icon: const Icon(Icons.search),
+            ),
           ),
-          suffixIconColor: const Color(0xFFF4692A),
+          suffixIconColor: Color(0xFF333333),
         ),
       ),
     );
   }
 
   Widget _buildFiltreCategoria() {
-    return SizedBox(
-      height: 30.0,
-      width: 200.0,
+    return Container(
+      height: 35.0,
       child: Align(
         alignment: Alignment.centerLeft,
         child: Container(
           width: 200,
-          height: 30,
+          height: 35,
           decoration: BoxDecoration(
-            color: const Color.fromRGBO(255, 229, 204, 0.815),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey, width: 1.5),
           ),
           child: Center(
             child: DropdownButton<String>(
@@ -586,13 +610,12 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
               dropdownColor:const Color.fromRGBO(255, 229, 204, 0.815),
               icon: const Icon(
                 Icons.arrow_drop_down,
-                color: Color(0xFFF4692A),
+                color: Color(0xFF333333),
               ),
               iconSize: 20,
               style: const TextStyle(
                 fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFFF4692A),
+                color: Color(0xFF333333),
               ),
               underline: Container(),
             ),
@@ -603,51 +626,43 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   }
 
   Widget _buildFiltreData() {
-    return SizedBox(
-      height: 30.0,
-      width: 150.0,
-      child: Align(
-        alignment: Alignment.center,
-        child: Container(
-          width: 500.0,
-          child: TextField(
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFFF4692A),
-              fontWeight: FontWeight.bold,
-            ),
-            controller: _dateController,
-            decoration: InputDecoration(
-              labelText: 'date'.tr(context),
-              labelStyle: const TextStyle(
-                color: Color(0xFFF4692A),
-                fontWeight: FontWeight.bold,
-              ),
-              filled: true,
-              fillColor: const Color.fromRGBO(255, 229, 204, 0.815),
-              prefixIcon: const Icon(
-                Icons.calendar_today,
-                size: 18,
-                color: Color(0xFFF4692A),
-              ),
-              enabledBorder: const OutlineInputBorder(
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Color(0xFFF4692A),
-                ),
-              ),
-            ),
-            readOnly: true,
-            onTap: () {
-              _selectDate();
-            },
+  return Container(
+    height: 35.0,
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(color: Colors.grey, width: 1.5),
+    ),
+    child: Align(
+      alignment: Alignment.center,
+      child: Container(
+        width: 500.0,
+        child: TextField(
+          style: const TextStyle(
+            fontSize: 14,
+            color: Color(0xFF333333),
           ),
+          controller: _dateController,
+          decoration: InputDecoration(
+            labelText: _dateController.text.isNotEmpty ? '' : 'date'.tr(context),
+            border: InputBorder.none,
+            fillColor: Colors.white,
+            prefixIcon: const Icon(
+              Icons.calendar_today,
+              size: 18,
+              color: Color(0xFF333333),
+            ),
+          ),
+          readOnly: true,
+          onTap: () {
+            _selectDate();
+          },
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Future<void> _selectDate() async {
     DateTime? picked = await showDatePicker(
