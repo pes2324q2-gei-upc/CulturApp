@@ -16,7 +16,7 @@ class LlistarFollows extends StatefulWidget {
 class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProviderStateMixin {
   late List<String> users;
   late List<String> difference;
-  late bool isFollows;
+  late bool isFollows = widget.follows;
   late TabController _tabController;
 
   _LlistarFollowsState() {
@@ -162,8 +162,8 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
                     text: users[index], 
                     recomm: false, 
                     type: isFollows 
-                      ? (difference.contains(users[index]) ? "addSomeone" : "null") 
-                      : "null", 
+                      ? (difference.contains(users[index]) ? "addSomeone" : "deleteFollower") 
+                      : "deleteFollowing", 
                     controladorPresentacion: widget.controladorPresentacion,
                   ),
                 ],

@@ -244,6 +244,10 @@ class ControladorPresentacion {
     await controladorDomini.createFriend(person);
   }
 
+  Future<void> deleteFollowing(String person) async {
+    await controladorDomini.deleteFollowing(person);
+  }
+
   Future<int> sendReportBug(String titol, String report) async {
     return await controladorDomini.sendReportBug(titol, report);
   }

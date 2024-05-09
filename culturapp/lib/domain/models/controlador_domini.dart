@@ -343,6 +343,20 @@ class ControladorDomini {
       throw Exception('Error al eliminar al usuario');
   }
 
+  Future<void> deleteFollowing(String person) async {
+    final http.Response response = await http.delete(
+      Uri.parse('https://culturapp-back.onrender.com/amics/deleteFollow/$person'),
+      headers: {
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+    );
+
+    if (response.statusCode != 200)
+      throw Exception('Error al eliminar al usuario');
+  }
+
+
+
   Future<void> createFriend(String person) async {
     final Map<String, dynamic> body = {
       'friend': person,

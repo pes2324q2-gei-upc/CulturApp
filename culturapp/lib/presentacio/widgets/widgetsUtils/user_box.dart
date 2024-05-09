@@ -23,6 +23,8 @@ class _userBoxState extends State<userBox> {
       widget.controladorPresentacion.deleteFriend(text);
     } else if (action == "create") {
       widget.controladorPresentacion.createFriend(text);
+    } else if (action == "deleteFollowing") {
+      widget.controladorPresentacion.deleteFollowing(text);
     }
 
     setState(() {
@@ -141,8 +143,46 @@ class _userBoxState extends State<userBox> {
                 ] else ...[
                   Text("Solicitud $_action"), //Falta idioma
                 ] 
-              ]
-            ],
+              ] else if(widget.type == "deleteFollowing") ...[
+                  if (_showButtons) ...[
+                    const SizedBox(width: 8.0),
+                      SizedBox(
+                        width: 50,
+                        child: TextButton(
+                          onPressed: () {
+                            _action = "eliminado";
+                            _handleButtonPress("deleteFollowing", widget.text);
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFF4692A)),
+                          ),
+                          child: const Text('-', style: TextStyle(fontSize: 24, color: Color.fromARGB(255, 255, 255, 255))),
+                        ),
+                      ),
+                  ] else ...[
+                  Text("Follower $_action"), //Falta idioma
+                ] 
+              ] else if (widget.type == "deleteFollower") ...[
+                if (_showButtons) ...[
+                  const SizedBox(width: 8.0),
+                  SizedBox(
+                    width: 50,
+                    child: TextButton(
+                      onPressed: () {
+                        _action = "eliminado";
+                        _handleButtonPress("delete", widget.text);
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFF4692A)),
+                      ),
+                      child: const Text('-', style: TextStyle(fontSize: 24, color: Color.fromARGB(255, 255, 255, 255))),
+                    ),
+                  ),
+                ] else ...[
+                  Text("Follower $_action"), //Falta idioma
+                ], 
+              ],
+            ],  
           ),
         ],
       ),
