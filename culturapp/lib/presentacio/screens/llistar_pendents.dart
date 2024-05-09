@@ -107,6 +107,7 @@ class _LlistarPendentsState extends State<LlistarPendents> {
                       text: users[index], 
                       recomm: false, 
                       type: "pending", 
+                      popUpStyle: "default",
                       controladorPresentacion: widget.controladorPresentacion),
                     const SizedBox(height: 5.0), 
                   ],

@@ -166,8 +166,9 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
                     text: users[index], 
                     recomm: false, 
                     type: isFollows 
-                      ? (difference.contains(users[index]) ? "followerNotFollowed" : (requests.contains(users[index])) ? "followerSendRequest" : "followerFollowed") 
+                      ? (difference.contains(users[index]) ? "followerNotFollowed" : (requests.contains(users[index])) ? "followerRequestSend" : "followerFollowed") 
                       : "following", 
+                    popUpStyle: "default",
                     controladorPresentacion: widget.controladorPresentacion,
                   ),
                 ],

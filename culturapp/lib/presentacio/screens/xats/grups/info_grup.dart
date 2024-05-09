@@ -313,8 +313,9 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
                           userBox(
                             text: _grup.membres[index],
                             recomm: false,
-                            type: "null",
+                            type: "reportUser",
                             controladorPresentacion: _controladorPresentacion,
+                            popUpStyle: "orange",
                           )
                         ],
                       );

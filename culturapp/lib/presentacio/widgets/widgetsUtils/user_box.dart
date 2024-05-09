@@ -5,8 +5,9 @@ class userBox extends StatefulWidget {
   final String text;
   final bool recomm;
   final String type;
+  final String popUpStyle;
   final ControladorPresentacion controladorPresentacion;
-  const userBox({super.key, required this.text, required this.recomm, required this.type, required this.controladorPresentacion,});
+  const userBox({super.key, required this.text, required this.recomm, required this.type, required this.popUpStyle, required this.controladorPresentacion,});
 
   @override
   State<userBox> createState() => _userBoxState();
@@ -15,6 +16,21 @@ class userBox extends StatefulWidget {
 class _userBoxState extends State<userBox> {
   bool _showButtons = true;
   String _action = "";
+  late final Color popUpColorBackground;
+  late final Color popUpColorText;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.popUpStyle == "orange") {
+      popUpColorBackground = const Color.fromARGB(199, 250, 141, 90).withOpacity(1);
+      popUpColorText = Colors.white;
+    } else {
+      popUpColorBackground = Colors.white;
+      popUpColorText = Colors.black;
+    }
+    
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +93,7 @@ class _userBoxState extends State<userBox> {
                 _buildPopUpMenuFollowing(),
               ] else if (widget.type == "reportUser") ...[
                 _buildPopUpMenuReportUser(),
-              ] else if(widget.type == 'followerSendRequest') ...[
+              ] else if(widget.type == 'followerRequestSend') ...[
                 _buildPopUpMenuFollowerRequestSend(),
               ],
             ],  
@@ -241,10 +257,11 @@ class _userBoxState extends State<userBox> {
           const SizedBox(width: 8.0),
           PopupMenuButton(
             icon: const Icon(Icons.more_vert),
+            color: popUpColorBackground,
             itemBuilder: (BuildContext context) => options.map((String option) {
               return PopupMenuItem(
                 value: option,
-                child:Text(option),
+                child:Text(option, style: TextStyle(color: popUpColorText)),
               );
             }).toList(),
             onSelected: (String value) async {
