@@ -334,7 +334,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                       List<String> act = [
                         activitat.name,
                         activitat.code,
-                        activitat.categoria[0],
+                        activitat.categoria.join(', '),
                         activitat.imageUrl,
                         activitat.descripcio,
                         activitat.dataInici,

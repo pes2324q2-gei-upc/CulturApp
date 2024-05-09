@@ -373,7 +373,7 @@ class ControladorDomini {
 
   Future<void> deleteFollowing(String person) async {
     final http.Response response = await http.delete(
-      Uri.parse('https://culturapp-back.onrender.com/amics/deleteFollow/$person'),
+      Uri.parse('https://culturapp-back.onrender.com/amics/deleteFollowing/$person'),
       headers: {
         'Authorization': 'Bearer ${userLogged.getToken()}',
       },
@@ -400,7 +400,7 @@ class ControladorDomini {
     );
 
     if (response.statusCode != 200)
-      throw Exception('Error al eliminar al usuario');
+      throw Exception('Error al crear la solicitud de amistad');
   }
 
   void signoutFromActivity(String? uid, String code) async {

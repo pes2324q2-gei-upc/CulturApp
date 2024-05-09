@@ -5,7 +5,6 @@ import "package:culturapp/translations/AppLocalizations";
 import "package:flutter/material.dart";
 
 class AfegirAmics extends StatefulWidget {
-  @override
   final List<Usuario>recomms;
   final List<Usuario>usersBD;
   final ControladorPresentacion controladorPresentacion;
@@ -80,8 +79,8 @@ Widget build(BuildContext context) {
               alignment: Alignment.topLeft,
               child: Text(
                 "recommendations".tr(context),
-                style: TextStyle(
-                  color: const Color(0xFFF4692A),
+                style: const TextStyle(
+                  color: Color(0xFFF4692A),
                   fontSize: 18.0,
                   fontWeight: FontWeight.bold,
                 ),

@@ -15,8 +15,9 @@ class LlistarFollows extends StatefulWidget {
 
 class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProviderStateMixin {
   late List<String> users;
+  late List<String> requests;
   late List<String> difference;
-  late bool isFollows = widget.follows;
+  late bool isFollows;
   late TabController _tabController;
 
   _LlistarFollowsState() {
@@ -26,7 +27,6 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
   void updateUsers() async {
       late List<String> followers;
       late List<String> followings;
-      late List<String> requests;
 
       followers = await widget.controladorPresentacion.getFollowUsers(widget.username, "followers"); 
       followings = await widget.controladorPresentacion.getFollowUsers(widget.username, "following"); 
@@ -58,7 +58,7 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-    isFollows = true;
+    isFollows = widget.follows;
     updateUsers();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.index = widget.follows ? 0 : 1;
@@ -88,7 +88,7 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
           color: Colors.white,
           fontSize: 20.0,
         ),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.white, // Cambia el color de la flecha de retroceso
         ),
       ),
@@ -133,7 +133,7 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
                     color: Colors.grey.withOpacity(0.3),
                     spreadRadius: 2,
                     blurRadius: 7,
-                    offset: Offset(0, 3), // changes position of shadow
+                    offset: const Offset(0, 3), 
                   ),
                 ],
                 color: Colors.white.withOpacity(1),
@@ -154,7 +154,7 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
             ),
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
         Expanded(
           child: ListView.builder(
             itemCount: users.length,
@@ -166,8 +166,8 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
                     text: users[index], 
                     recomm: false, 
                     type: isFollows 
-                      ? (difference.contains(users[index]) ? "addSomeone" : "deleteFollower") 
-                      : "deleteFollowing", 
+                      ? (difference.contains(users[index]) ? "followerNotFollowed" : (requests.contains(users[index])) ? "followerSendRequest" : "followerFollowed") 
+                      : "following", 
                     controladorPresentacion: widget.controladorPresentacion,
                   ),
                 ],
