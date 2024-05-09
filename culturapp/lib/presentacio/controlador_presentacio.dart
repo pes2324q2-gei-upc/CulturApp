@@ -549,7 +549,7 @@ class ControladorPresentacion {
   }
 
   Future<void> addXatMessage(
-      String senderId, String receiverId, String time, String text) async {
+    String senderId, String receiverId, String time, String text) async {
     String? xatId = await controladorDomini.getXatId(receiverId, senderId);
     controladorDomini.addMessage(xatId, time, text);
   }

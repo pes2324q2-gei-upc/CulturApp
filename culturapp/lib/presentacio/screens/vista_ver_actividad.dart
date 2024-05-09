@@ -523,98 +523,105 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                   mostrarReplies(),
                 ]
               ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: posts.length,
-                itemBuilder: (context, index) {
-                  final post = posts[index];
-                  DateTime dateTime = DateTime.parse(post.fecha);
-                  String formattedDate = DateFormat('yyyy/MM/dd HH:mm').format(dateTime);
-                  return ListTile(
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            //se tendra que modificar por la imagen del usuario
-                            const Icon(Icons.account_circle, size: 45), // Icono de usuario
-                            const SizedBox(width: 5),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(post.username), // Nombre de usuario
-                                const SizedBox(width: 5),
-                                Text(
-                                  formattedDate,
-                                  style: const TextStyle(color: Colors.grey),
-                                ),
-                              ],
-                            ),
-                            const Spacer(),
-                            //fer que nomes el que l'ha creat ho pugui veure
-                            GestureDetector(
-                              onTap: () async {
-                                _showDeleteOption(context, post, false);
-                              },
-                              child: Visibility(
-                                visible: username == post.username, // Condition to show the icon
-                                child: const Icon(Icons.more_vert, size: 20),
-                              )
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 50),
-                          child: Text(
-                            post.mensaje, // Mensaje del post
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 30),
-                          child: Row(
-                            children: [
-                               GestureDetector(
-                                onTap: () async {
-                                  postIden = await _controladorPresentacion.getPostId(idForo, post.fecha);
-                                  setState(() {
-                                     reply = true;
-                                  });
-                                },
-                                child: Row(
-                                  children: [
-                                    IconButton(
-                                      onPressed: () async {
-                                        postIden = await _controladorPresentacion.getPostId(idForo, post.fecha);
-                                        setState(() {
-                                          reply = true;
-                                        });
-                                      }, 
-                                      icon: const Icon(Icons.reply), // Icono de responder
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Text('reply'.tr(context)),
-                                  ],
-                                )
-                              ), 
-                              const SizedBox(width: 20),
-                            ],
-                          ),
-                        ),
-                        if (mostraReplies) 
-                          Padding(
-                            padding: const EdgeInsets.only(left: 20),
-                            child: infoReply(post.fecha)
-                          )
-                      ], 
-                    ),
-                  );
-                },
-              ),
+              _post(posts)
             ],
           );
         }
+      },
+    );
+  }
+
+  Widget _post(list_posts) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: list_posts.length,
+      itemBuilder: (context, index) {
+        final post = list_posts[index];
+        DateTime dateTime = DateTime.parse(post.fecha);
+        String formattedDate = DateFormat('yyyy/MM/dd HH:mm').format(dateTime);
+        return ListTile(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  //se tendra que modificar por la imagen del usuario
+                  const Icon(Icons.account_circle, size: 45), // Icono de usuario
+                  const SizedBox(width: 5),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(post.username), // Nombre de usuario
+                      const SizedBox(width: 5),
+                      Text(
+                        formattedDate,
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  //fer que nomes el que l'ha creat ho pugui veure
+                  GestureDetector(
+                    onTap: () async {
+                      _showDeleteOption(context, post, false);
+                    },
+                    child: const Icon(Icons.more_vert, size: 20)
+                    /*
+                    child: Visibility(
+                      visible: username == post.username, // Condition to show the icon
+                      child: const Icon(Icons.more_vert, size: 20),
+                    )
+                    */
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 50),
+                child: Text(
+                  post.mensaje, // Mensaje del post
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 30),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        postIden = await _controladorPresentacion.getPostId(idForo, post.fecha);
+                        setState(() {
+                          reply = true;
+                        });
+                      },
+                      child: Row(
+                        children: [
+                          IconButton(
+                            onPressed: () async {
+                              postIden = await _controladorPresentacion.getPostId(idForo, post.fecha);
+                              setState(() {
+                                reply = true;
+                              });
+                            }, 
+                            icon: const Icon(Icons.reply), // Icono de responder
+                          ),
+                          const SizedBox(width: 5),
+                          Text('reply'.tr(context)),
+                        ],
+                      )
+                    ), 
+                    const SizedBox(width: 20),
+                  ],
+                ),
+              ),
+              if (mostraReplies) 
+                Padding(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: infoReply(post.fecha)
+                )
+            ], 
+          ),
+        );
       },
     );
   }
@@ -669,11 +676,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                   _showDeleteOption(context, rep, true);
                                 }
                               },
-                              child:  Visibility(
-                                visible: username == rep.username, // Condition to show the icon
-                                child: const Icon(Icons.more_vert, size: 20),
-                              )
-                            ),
+                              child: const Icon(Icons.more_vert, size: 20),
+                            )
                           ],
                         ),
                         Padding(

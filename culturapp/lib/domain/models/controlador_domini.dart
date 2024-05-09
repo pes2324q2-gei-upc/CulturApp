@@ -824,7 +824,7 @@ class ControladorDomini {
     try {
       final respuesta = await http.get(
         Uri.parse(
-            'http://{$ip}:8080/xats/exists?receiverId=$receiverName'),
+            'http://${ip}:8080/xats/exists?receiverId=$receiverName'),
         headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
         },
