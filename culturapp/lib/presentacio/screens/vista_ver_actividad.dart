@@ -44,6 +44,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   String? postIden = '';
   bool reply = false;
   bool mostraReplies = false;
+  String username = '';
   
   final List<String> catsAMB = ["Residus",
   "territori.espai_public_platges",
@@ -73,7 +74,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     checkApuntado(_user!.uid, infoActividad);
   } 
 
-    void _onTabChange(int index) {
+  void _onTabChange(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -99,6 +100,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   @override
   Widget build(BuildContext context) {
     _controladorPresentacion.getForo(infoActividad[1]); //verificar que tenga un foro
+    username = username = _controladorPresentacion.getUsername();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
@@ -584,7 +586,10 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                               onTap: () async {
                                 _showDeleteOption(context, post, false);
                               },
-                              child: const Icon(Icons.more_vert, size: 20),
+                              child: Visibility(
+                                visible: username == post.username, // Condition to show the icon
+                                child: const Icon(Icons.more_vert, size: 20),
+                              )
                             ),
                           ],
                         ),
@@ -599,24 +604,6 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                           padding: const EdgeInsets.only(left: 30),
                           child: Row(
                             children: [
-                            IconButton(
-                              icon: Icon(
-                                post.numeroLikes > 0 ? Icons.favorite : Icons.favorite_border, 
-                                color: post.numeroLikes > 0 ? Colors.red : null, 
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  if (post.numeroLikes > 0) {
-                                    post.numeroLikes = 0; // Si ya hay likes, los elimina
-                                  } else {
-                                    post.numeroLikes = 1; // Si no hay likes, añade uno
-                                  }
-                                });
-                              },
-                            ),
-                              Text('me_gusta'.tr(context)),
-                              const SizedBox(width: 20),
-                              //respuesta
                               IconButton(
                                 icon: const Icon(Icons.reply), // Icono de responder
                                 onPressed: () async {
@@ -695,9 +682,14 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             GestureDetector(
                               onTap: () async {
                                 postIden = await _controladorPresentacion.getPostId(idForo, date);
-                                _showDeleteOption(context, rep, true);
+                                if(username == rep.username) {
+                                  _showDeleteOption(context, rep, true);
+                                }
                               },
-                              child: const Icon(Icons.more_vert, size: 20),
+                              child:  Visibility(
+                                visible: username == rep.username, // Condition to show the icon
+                                child: const Icon(Icons.more_vert, size: 20),
+                              )
                             ),
                           ],
                         ),
@@ -708,6 +700,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             style: const TextStyle(fontSize: 16),
                           ),
                         ),
+                        /*
                         Padding(
                           padding: const EdgeInsets.only(left: 30),
                           child: Row(
@@ -730,7 +723,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                               Text('me_gusta'.tr(context))
                             ]
                           )
-                        )
+                        )^
+                        */
                       ]
                     )
                   );
