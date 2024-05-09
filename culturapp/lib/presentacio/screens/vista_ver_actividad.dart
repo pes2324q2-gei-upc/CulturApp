@@ -7,7 +7,9 @@ import 'package:culturapp/translations/AppLocalizations';
 import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:barcode_widget/barcode_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class VistaVerActividad extends StatefulWidget{
@@ -44,7 +46,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   String? postIden = '';
   bool reply = false;
   bool mostraReplies = false;
-  bool organizador = false;
+  bool organizador = true;
   
   final List<String> catsAMB = ["Residus",
   "territori.espai_public_platges",
@@ -67,6 +69,45 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     _controladorPresentacion = controladorPresentacion;
     controladorDominio = _controladorPresentacion.getControladorDomini();
   }
+
+
+void mostrarQR() {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+            const Padding(padding: EdgeInsets.only(bottom: 5)),
+            BarcodeWidget( 
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              barcode: Barcode.qrCode(),
+              data: infoActividad[1],
+              width: 250, // Aumenta el tamaño del QR
+              height: 250, // Aumenta el tamaño del QR
+            ),
+            const Padding(padding: EdgeInsets.only(top: 30)),
+            Text('Code: ${infoActividad[1]}', style: const TextStyle(
+              fontSize: 22, // Aumenta el tamaño del texto
+              fontWeight: FontWeight.bold,
+            ),),
+          ],
+        ),
+      );
+    },
+  );
+}
+
 
   @override
   void initState(){
@@ -110,7 +151,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           color: Colors.white,
           fontSize: 20.0,
         ),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.white, // Cambia el color de la flecha de retroceso
         ),
         actions: <Widget>[
@@ -118,6 +159,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             onSelected: (String result) {
               if (result == 'Enviar solicitud de organizador') {
                 _controladorPresentacion.mostrarSolicitutOrganitzador(context, infoActividad[0], infoActividad[1]);
+              }
+              else if (result == 'view_qr') {
+                mostrarQR();
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -133,15 +177,11 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
               if (organizador)
                 const PopupMenuItem<String>(
                   value: 'view_qr',
-                  child: Text('Ver QR'),
+                  child: Text('Mostrar QR'),
                 ),
             ],
           ),
         ],
-      ),
-       bottomNavigationBar: CustomBottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTabChange: _onTabChange,
       ),
       body: Column(
         children:[ 

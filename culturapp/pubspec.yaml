@@ -37,6 +37,8 @@ dependencies:
     sdk: flutter
   shared_preferences: ^2.0.8
   flutter_rating_bar: ^4.0.1
+  qr_flutter: ^4.1.0
+  barcode_widget: ^2.0.4
 
 dev_dependencies:
   flutter_test:
