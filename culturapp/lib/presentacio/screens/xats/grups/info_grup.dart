@@ -1,5 +1,6 @@
 import "package:culturapp/domain/models/grup.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
+import "package:culturapp/presentacio/widgets/widgetsUtils/user_box.dart";
 import "package:culturapp/translations/AppLocalizations";
 import "package:flutter/material.dart";
 
@@ -305,10 +306,19 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
                 height: 300,
                 width: llargadaPantalla,
                 child: ListView.builder(
-                  itemCount: _grup.membres.length,
-                  itemBuilder: (context, index) =>
-                      _buildParticipant(context, index),
-                ),
+                    itemCount: _grup.membres.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          userBox(
+                            text: _grup.membres[index],
+                            recomm: false,
+                            type: "null",
+                            controladorPresentacion: _controladorPresentacion,
+                          )
+                        ],
+                      );
+                    }),
               ),
             ],
           ),

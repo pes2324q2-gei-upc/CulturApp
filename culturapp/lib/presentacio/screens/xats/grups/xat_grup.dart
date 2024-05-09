@@ -207,24 +207,28 @@ class _XatGrupScreen extends State<XatGrupScreen> {
       itemBuilder: (context) => [
         PopupMenuItem(
           value: 1,
-          child: _ItemDropdown("Sortir de grup"),
+          child: _buildItemDropdown("Sortir de grup"),
         ),
         PopupMenuItem(
           value: 2,
-          child: Text('Option 2'),
-        ),
-        PopupMenuItem(
-          value: 3,
-          child: Text('Option 3'),
+          child: _buildItemDropdown("Opcion 2"),
         ),
       ],
     );
   }
 
-  Widget _ItemDropdown(String text) {
-    return Text(
-      text,
-      style: TextStyle(color: Colors.white),
+  Widget _buildItemDropdown(String text) {
+    return GestureDetector(
+      onTap: () {
+        //llamar a función update quitandome el user 'me' de la lista de members
+      },
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
     );
   }
 
