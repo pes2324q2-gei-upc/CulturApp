@@ -79,13 +79,11 @@ class ControladorPresentacion {
       friends = await getFollowingAll(usernameLogged);
       categsFav = await controladorDomini.obteCatsFavs(usernameLogged);
       usersBD.removeWhere((usuario) => usuario.username == usernameLogged);
-      usersRecom = calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
+      usersRecom =
+          calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
       usersBD.removeWhere((usuario) => friends.contains(usuario.username));
-      
     }
   }
-
-
 
   Future<bool> userLogged() async {
     User? currentUser = _auth.currentUser;
@@ -98,7 +96,8 @@ class ControladorPresentacion {
     }
   }
 
-  Future<void> createValoracion(String id, String comentario, double puntuacion) async {
+  Future<void> createValoracion(
+      String id, String comentario, double puntuacion) async {
     await controladorDomini.addValoracion(id, puntuacion, comentario);
   }
 
@@ -185,9 +184,12 @@ class ControladorPresentacion {
     //Mis Actividades -> Actividades a las que ha ido el usuario
     //Actividades No Valoradas -> Actividades vencidas que estan en Mis Actividades pero no en Valoradas
     List<Actividad> noValoradas = [];
-    actividadesValoradas = await controladorDomini.obteActsValoradas(usernameLogged);
+    actividadesValoradas =
+        await controladorDomini.obteActsValoradas(usernameLogged);
     for (int i = 0; i < activitatsUser.length; i++) {
-      if (actividadesVencidas.any((actividad) => actividad.code == activitatsUser[i].code) && !actividadesValoradas.contains(activitatsUser[i].code) ) {
+      if (actividadesVencidas
+              .any((actividad) => actividad.code == activitatsUser[i].code) &&
+          !actividadesValoradas.contains(activitatsUser[i].code)) {
         noValoradas.add(activitatsUser[i]);
       }
     }
@@ -230,7 +232,7 @@ class ControladorPresentacion {
     return usernameLogged;
   }
 
-  List<Actividad>getActividadesVencidas(){
+  List<Actividad> getActividadesVencidas() {
     return actividadesVencidas;
   }
 
@@ -301,12 +303,15 @@ class ControladorPresentacion {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MapPage(controladorPresentacion: this, vencidas: actividadesVencidas,),
+        builder: (context) => MapPage(
+          controladorPresentacion: this,
+          vencidas: actividadesVencidas,
+        ),
       ),
     );
   }
 
-  void mostrarXats(BuildContext context) {
+  void mostrarXats(BuildContext context, String pagina) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -314,6 +319,7 @@ class ControladorPresentacion {
           controladorPresentacion: this,
           recomms: usersRecom,
           usersBD: usersBD,
+          pagina: pagina,
         ),
       ),
     );

@@ -12,24 +12,27 @@ class Xats extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
   final List<Usuario> recomms;
   final List<Usuario> usersBD;
+  final String pagina;
   const Xats(
       {super.key,
       required this.controladorPresentacion,
       required this.recomms,
-      required this.usersBD});
+      required this.usersBD,
+      required this.pagina});
   @override
-  State<Xats> createState() => _Xats(controladorPresentacion, recomms, usersBD);
+  State<Xats> createState() =>
+      _Xats(controladorPresentacion, recomms, usersBD, pagina);
 }
 
 class _Xats extends State<Xats> {
   late ControladorPresentacion _controladorPresentacion;
-  int _selectedIndex = 2;
+  late int _selectedIndex;
   late List<Usuario> usersRecom;
   late List<Usuario> usersBD;
   late Widget currentContent;
 
   _Xats(ControladorPresentacion controladorPresentacion, List<Usuario> recomms,
-      List<Usuario> usBD) {
+      List<Usuario> usBD, String pagina) {
     _controladorPresentacion = controladorPresentacion;
     currentContent = AmicsScreen(
       controladorPresentacion: _controladorPresentacion,
@@ -37,6 +40,19 @@ class _Xats extends State<Xats> {
 
     usersRecom = recomms;
     usersBD = usBD;
+
+    _loadIndex(pagina);
+  }
+
+  void _loadIndex(String pagina) {
+    if (pagina == "Grups") {
+      _selectedIndex = 1;
+    } else if (pagina == "Amics") {
+      _selectedIndex = 2;
+    } else {
+      //Afegir Amics
+      _selectedIndex = 3;
+    }
   }
 
   void changeContent(Widget newContent) {
@@ -58,7 +74,7 @@ class _Xats extends State<Xats> {
         _controladorPresentacion.mostrarActividadesUser(context);
         break;
       case 2:
-        _controladorPresentacion.mostrarXats(context);
+        _controladorPresentacion.mostrarXats(context, "Amics");
         break;
       case 3:
         _controladorPresentacion.mostrarPerfil(context);
@@ -68,29 +84,6 @@ class _Xats extends State<Xats> {
     }
   }
 
-  Color _buttonAmics = Colors.grey;
-  Color _buttonGrups = const Color(0xFFF4692A);
-  Color _buttonAfegirAmics = const Color(0xFFF4692A);
-
-  void _changeButtonColor(int buttonNumber) {
-    setState(() {
-      if (buttonNumber == 1) {
-        _buttonAmics = Colors.grey;
-        _buttonGrups = const Color(0xFFF4692A);
-        _buttonAfegirAmics = const Color(0xFFF4692A);
-      } else if (buttonNumber == 2) {
-        _buttonAmics = const Color(0xFFF4692A);
-        _buttonGrups = Colors.grey;
-        _buttonAfegirAmics = const Color(0xFFF4692A);
-      } else if (buttonNumber == 3) {
-        _buttonAmics = const Color(0xFFF4692A);
-        _buttonGrups = const Color(0xFFF4692A);
-        _buttonAfegirAmics = Colors.grey;
-      }
-    });
-  }
-
-  
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(

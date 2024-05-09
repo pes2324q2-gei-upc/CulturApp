@@ -12,19 +12,19 @@ import 'package:googleapis_auth/auth_io.dart' as auth;
 import 'package:googleapis/calendar/v3.dart' as calendar;
 import 'package:http/http.dart' as http;
 
-
 class ListaMisActividades extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
   final User? user;
-  
+
   ListaMisActividades({
     Key? key,
-    required this.controladorPresentacion, required this.user,
+    required this.controladorPresentacion,
+    required this.user,
   }) : super(key: key);
 
   @override
-  State<ListaMisActividades> createState() => _ListaMisActividadesState(
-        controladorPresentacion, user);
+  State<ListaMisActividades> createState() =>
+      _ListaMisActividadesState(controladorPresentacion, user);
 }
 
 class _ListaMisActividadesState extends State<ListaMisActividades> {
@@ -59,7 +59,8 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     'exposicions'
   ];
 
-  _ListaMisActividadesState(ControladorPresentacion controladorPresentacion, User? user) {
+  _ListaMisActividadesState(
+      ControladorPresentacion controladorPresentacion, User? user) {
     _controladorPresentacion = controladorPresentacion;
     squery = '';
     _selectedCategory = '-totes-';
@@ -79,8 +80,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     });
   }
 
-
- Future<void> agregarEventoGoogleCalendar(String nameAct, String date) async {
+  Future<void> agregarEventoGoogleCalendar(String nameAct, String date) async {
     final FirebaseAuth authFirebase = FirebaseAuth.instance;
     final User? user = authFirebase.currentUser;
     final idTokenResult = await user!.getIdTokenResult();
@@ -96,10 +96,10 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     final GoogleSignInAuthentication googleAuth;
     if (googleUser == null) {
       try {
-        googleUser = await googleSignIn.signIn();  
+        googleUser = await googleSignIn.signIn();
       } catch (e) {
         print('Error al iniciar sesión: $e');
-        return; 
+        return;
       }
       if (googleUser != null) {
         googleAuth = (await googleUser.authentication)!;
@@ -108,7 +108,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
           idToken: googleAuth.idToken,
         );
       } else {
-        return; 
+        return;
       }
     } else {
       googleAuth = await googleUser.authentication;
@@ -127,7 +127,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
           [calendar.CalendarApi.calendarScope],
         ),
       );
-        
+
       final calendarApi = calendar.CalendarApi(authClient);
 
       DateFormat formatter = DateFormat("yyyy-MM-dd");
@@ -251,7 +251,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
         _controladorPresentacion.mostrarActividadesUser(context);
         break;
       case 2:
-        _controladorPresentacion.mostrarXats(context);
+        _controladorPresentacion.mostrarXats(context, "Amics");
         break;
       case 3:
         _controladorPresentacion.mostrarPerfil(context);
@@ -261,16 +261,17 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     }
   }
 
-  void addActivityToCalendar(Actividad act){
-
-  }
+  void addActivityToCalendar(Actividad act) {}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
-        title: Text("my_activities".tr(context), style: TextStyle(color: Colors.white,)),
+        title: Text("my_activities".tr(context),
+            style: TextStyle(
+              color: Colors.white,
+            )),
         automaticallyImplyLeading: false,
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
@@ -279,21 +280,21 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
       ),
       body: Column(
         children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 3,
-                    blurRadius: 5,
-                    offset: Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 3,
+                  blurRadius: 5,
+                  offset: Offset(0, 3), // changes position of shadow
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
                 children: [
                   const SizedBox(
                     height: 10.0,
@@ -375,8 +376,10 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                             children: [
                               Row(
                                 children: [
-                                  Padding(padding: EdgeInsets.symmetric(horizontal: 30), child:
-                                    Expanded(
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 30),
+                                    child: Expanded(
                                       child: Padding(
                                         padding:
                                             const EdgeInsets.only(bottom: 20),
@@ -471,53 +474,76 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                               ),
                                             ],
                                           ),
-                                      Row(
-                                        children: [
-                                          const Icon(Icons.local_atm),
-                                          const Padding(
-                                              padding: EdgeInsets.only(right: 7.5)),
-                                          Expanded(
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                launchUrl(activitat
-                                                    .urlEntrades); // abrir la url de la actividad para ir a su pagina
-                                              },
-                                              child: Text(
-                                                'buy_here'.tr(context),
-                                                style: const TextStyle(
-                                                  decoration: TextDecoration
-                                                      .none,
-                                                      color: Colors.blueAccent // Subrayar para que se entienda que es un enlace
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const Padding(padding: EdgeInsets.only(top: 8)),
-                                        Row(
-                                          children: [
-                                            SizedBox(
-                                              width: 180,
-                                              child: Flexible(
-                                                child: TextButton(
-                                                  onPressed: () {
-                                                    agregarEventoGoogleCalendar(activitat.name, activitat.dataInici);
+                                          Row(
+                                            children: [
+                                              const Icon(Icons.local_atm),
+                                              const Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: 7.5)),
+                                              Expanded(
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    launchUrl(activitat
+                                                        .urlEntrades); // abrir la url de la actividad para ir a su pagina
                                                   },
-                                                  child: Row(
-                                                    children: [
-                                                      Flexible(
-                                                        child: Text('add_calendar'.tr(context), style: const TextStyle(color: Color.fromARGB(255, 255, 196, 0)),),
-                                                      ),
-                                                      const Padding(padding: EdgeInsets.only(right: 5)),
-                                                      Image.asset('assets/calendar.png', height: 30,),
-                                                    ],
+                                                  child: Text(
+                                                    'buy_here'.tr(context),
+                                                    style: const TextStyle(
+                                                        decoration:
+                                                            TextDecoration.none,
+                                                        color: Colors
+                                                            .blueAccent // Subrayar para que se entienda que es un enlace
+                                                        ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
-                                        ),],
+                                            ],
+                                          ),
+                                          const Padding(
+                                              padding: EdgeInsets.only(top: 8)),
+                                          Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 180,
+                                                child: Flexible(
+                                                  child: TextButton(
+                                                    onPressed: () {
+                                                      agregarEventoGoogleCalendar(
+                                                          activitat.name,
+                                                          activitat.dataInici);
+                                                    },
+                                                    child: Row(
+                                                      children: [
+                                                        Flexible(
+                                                          child: Text(
+                                                            'add_calendar'
+                                                                .tr(context),
+                                                            style:
+                                                                const TextStyle(
+                                                                    color: Color
+                                                                        .fromARGB(
+                                                                            255,
+                                                                            255,
+                                                                            196,
+                                                                            0)),
+                                                          ),
+                                                        ),
+                                                        const Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    right: 5)),
+                                                        Image.asset(
+                                                          'assets/calendar.png',
+                                                          height: 30,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -560,11 +586,12 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
           hintText: "search".tr(context),
           hintStyle: const TextStyle(
             color: Color(0xFF333333),
-            
           ),
           contentPadding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
           suffixIcon: Padding(
-            padding: const EdgeInsets.only(right: 8.0), // Ajusta el padding a la derecha según sea necesario
+            padding: const EdgeInsets.only(
+                right:
+                    8.0), // Ajusta el padding a la derecha según sea necesario
             child: IconButton(
               onPressed: () {
                 searchMyActivities(squery);
@@ -607,7 +634,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                 });
               },
               borderRadius: BorderRadius.circular(10),
-              dropdownColor:const Color.fromRGBO(255, 229, 204, 0.815),
+              dropdownColor: const Color.fromRGBO(255, 229, 204, 0.815),
               icon: const Icon(
                 Icons.arrow_drop_down,
                 color: Color(0xFF333333),
@@ -626,43 +653,43 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   }
 
   Widget _buildFiltreData() {
-  return Container(
-    height: 35.0,
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(8),
-      border: Border.all(color: Colors.grey, width: 1.5),
-    ),
-    child: Align(
-      alignment: Alignment.center,
-      child: Container(
-        width: 500.0,
-        child: TextField(
-          style: const TextStyle(
-            fontSize: 14,
-            color: Color(0xFF333333),
-          ),
-          controller: _dateController,
-          decoration: InputDecoration(
-            labelText: _dateController.text.isNotEmpty ? '' : 'date'.tr(context),
-            border: InputBorder.none,
-            fillColor: Colors.white,
-            prefixIcon: const Icon(
-              Icons.calendar_today,
-              size: 18,
+    return Container(
+      height: 35.0,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey, width: 1.5),
+      ),
+      child: Align(
+        alignment: Alignment.center,
+        child: Container(
+          width: 500.0,
+          child: TextField(
+            style: const TextStyle(
+              fontSize: 14,
               color: Color(0xFF333333),
             ),
+            controller: _dateController,
+            decoration: InputDecoration(
+              labelText:
+                  _dateController.text.isNotEmpty ? '' : 'date'.tr(context),
+              border: InputBorder.none,
+              fillColor: Colors.white,
+              prefixIcon: const Icon(
+                Icons.calendar_today,
+                size: 18,
+                color: Color(0xFF333333),
+              ),
+            ),
+            readOnly: true,
+            onTap: () {
+              _selectDate();
+            },
           ),
-          readOnly: true,
-          onTap: () {
-            _selectDate();
-          },
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   Future<void> _selectDate() async {
     DateTime? picked = await showDatePicker(

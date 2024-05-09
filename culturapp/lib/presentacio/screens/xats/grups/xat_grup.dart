@@ -154,7 +154,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
           Icons.arrow_back,
           color: Colors.white,
         ),
-        onPressed: () => _controladorPresentacion.mostrarXats(context),
+        onPressed: () => _controladorPresentacion.mostrarXats(context, "Grups"),
       ),
       title: GestureDetector(
         onTap: () {
@@ -221,7 +221,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
 
       _controladorPresentacion.updateGrup(_grup.id, _grup.nomGroup,
           _grup.descripcio, _grup.imageGroup, _grup.membres);
-      _controladorPresentacion.mostrarXats(context);
+      _controladorPresentacion.mostrarXats(context, "Grups");
       //crida a funcio del back per fer un update de _grup amb els nous parametres
     });
   }
