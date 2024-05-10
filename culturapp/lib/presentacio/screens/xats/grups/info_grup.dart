@@ -96,6 +96,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       backgroundColor: taronjaVermellos,
+      centerTitle: true,
       title: Text(
         estaEditant ? 'editing_group'.tr(context) : 'group_info'.tr(context),
         style: const TextStyle(color: Colors.white),

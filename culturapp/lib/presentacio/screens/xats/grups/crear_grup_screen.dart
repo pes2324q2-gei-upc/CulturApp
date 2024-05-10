@@ -83,6 +83,7 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: taronjaVermellos,
+        centerTitle: true,
         title: const Text(
           'Crear Grup',
           style: TextStyle(color: Colors.white),
