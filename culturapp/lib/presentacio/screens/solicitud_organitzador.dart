@@ -24,7 +24,11 @@ class _SolicitutScreenState extends State<SolicitutScreen> {
 
     if (statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("correct_aplicattion_msg".tr(context))),
+        SnackBar(
+          content: Text("correct_aplicattion_msg".tr(context)),
+          backgroundColor: Colors.green,
+        ),
+        
       );
       _titleController.clear();
       _motiuController.clear();
@@ -51,68 +55,83 @@ class _SolicitutScreenState extends State<SolicitutScreen> {
           color: Colors.white,
           fontSize: 20.0,
         ),
-        iconTheme: IconThemeData(
-          color: Colors.white, // Cambia el color de la flecha de retroceso
+        iconTheme: const IconThemeData(
+          color: Colors.white, 
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Form(
           key: _formKey,
-          child: Column(
-            children: <Widget>[
-              const SizedBox(height: 5),
-              TextFormField(
-                initialValue: widget.titolActivitat,
-                enabled: false,
-                decoration: InputDecoration(
-                  labelText: "aplicattion_title_activity".tr(context),
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                const SizedBox(height: 10),
+                const Text(
+                  'Por favor, tambien añada la siguiente información en la aplicación para solicitar ser organizador:',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-              ),
-              const SizedBox(height: 5),
-              TextFormField(
-                controller: _titleController,
-                maxLength: 50,
-                minLines: 1,
-                maxLines: 3,
-                decoration: InputDecoration(
-                  labelText: "subject".tr(context),
+                const SizedBox(height: 5),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '- DNI\n- Teléfono\n- Correo\n- Empresa (si representa a alguna)',
+                    style: TextStyle(fontSize: 14),
+                  ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty || value.trim().isEmpty) {
-                    return "subject_missing".tr(context);
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 5),
-              TextFormField(
-                controller: _motiuController,
-                maxLength: 1500,
-                minLines: 1,
-                maxLines: 5,
-                decoration: InputDecoration(
-                  labelText: "aplicattion_reason".tr(context),
+                const SizedBox(height: 5),
+                TextFormField(
+                  initialValue: widget.titolActivitat,
+                  enabled: false,
+                  decoration: InputDecoration(
+                    labelText: "aplicattion_title_activity".tr(context),
+                  ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty || value.trim().isEmpty) {
-                    return "aplicattion_reason_missing".tr(context);
-                  }
-                  return null;
-                },
-              ),
-              Align(
-                alignment: Alignment.bottomLeft,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState != null && _formKey.currentState!.validate()) {
-                      _sendmotiu();
+                const SizedBox(height: 5),
+                TextFormField(
+                  controller: _titleController,
+                  maxLength: 50,
+                  minLines: 1,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    labelText: "subject".tr(context),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty || value.trim().isEmpty) {
+                      return "subject_missing".tr(context);
                     }
+                    return null;
                   },
-                  child: Text("send".tr(context)),
                 ),
-              ),
-            ],
+                const SizedBox(height: 5),
+                TextFormField(
+                  controller: _motiuController,
+                  maxLength: 1500,
+                  minLines: 1,
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    labelText: "aplicattion_reason".tr(context),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty || value.trim().isEmpty) {
+                      return "aplicattion_reason_missing".tr(context);
+                    }
+                    return null;
+                  },
+                ),
+                Align(
+                  alignment: Alignment.bottomLeft,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+                        _sendmotiu();
+                      }
+                    },
+                    child: Text("send".tr(context)),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       )
