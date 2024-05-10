@@ -110,7 +110,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           color: Colors.white,
           fontSize: 20.0,
         ),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.white, // Cambia el color de la flecha de retroceso
         ),
         actions: <Widget>[
@@ -345,6 +345,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     );
   }
 
+  //Posible duplicaciñon de código
   Image _retornaIcon(String categoria) {
     if (catsAMB.contains(categoria)){
       return Image.asset(
@@ -593,12 +594,15 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             ),
                             const Spacer(),
                             //fer que nomes el que l'ha creat ho pugui veure
+                            _buildPopUpMenuNotBlocked(context, post, false, post.username, ''),
+                            /*
                             GestureDetector(
                               onTap: () async {
                                 _showDeleteOption(context, post, false);
                               },
                               child: const Icon(Icons.more_vert, size: 20),
                             ),
+                            */
                           ],
                         ),
                         Padding(
@@ -705,6 +709,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             ),
                             const Spacer(),
                             //fer que nomes el que l'ha creat ho pugui veure
+                            _buildPopUpMenuNotBlocked(context, rep, true, rep.username, date)
+                            /*
                             GestureDetector(
                               onTap: () async {
                                 postIden = await _controladorPresentacion.getPostId(idForo, date);
@@ -712,6 +718,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                               },
                               child: const Icon(Icons.more_vert, size: 20),
                             ),
+                            */
                           ],
                         ),
                         Padding(
@@ -770,6 +777,112 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           style: const TextStyle(color: Colors.grey,),
         ),
       ),
+    );
+  }
+
+  Widget _buildPopUpMenuNotBlocked(BuildContext context, Post post, bool reply, String username, String date) {
+    String owner = _controladorPresentacion.getUsername();
+    if(owner == username) {
+      return _buildPopupMenu([
+      'Bloquear usuario',
+      'Reportar usuario',
+      (reply) ? 'Eliminar reply' : 'Eliminar post',
+    ], context, post, reply, username, date);
+    } else {
+      return _buildPopupMenu([
+      'Bloquear usuario',
+      'Reportar usuario',
+    ], context, post, reply, username, date);
+    }
+  }
+
+  Widget _buildPopUpMenuBloqued(BuildContext context, Post post, bool reply, String username, String date) {
+    String owner = _controladorPresentacion.getUsername();
+    if(owner == username) {
+      return _buildPopupMenu([
+      'Desbloquear usuario',
+      'Reportar usuario',
+      (reply) ? 'Eliminar reply' : 'Eliminar post',
+    ], context, post, reply, username, date);
+    } else {
+      return _buildPopupMenu([
+      'Desbloquear usuario',
+      'Reportar usuario',
+    ], context, post, reply, username, date);
+    }
+  }
+
+  
+  Future<bool?> confirmPopUp(String dialogContent) async {
+    return await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmación'),
+          content: Text(dialogContent),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: const Text('Aceptar'),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildPopupMenu(List<String> options, BuildContext context, Post post, bool reply, String username, String date) {
+    return Row(
+      children: [
+        const SizedBox(width: 8.0),
+        PopupMenuButton(
+          icon: const Icon(Icons.more_vert),
+          color: Colors.white,
+          itemBuilder: (BuildContext context) => options.map((String option) {
+            return PopupMenuItem(
+              value: option,
+              child:Text(option, style: const TextStyle(color: Colors.black)),
+            );
+          }).toList(),
+          onSelected: (String value) async {
+            switch(value) {
+              case 'Bloquear usuario':
+                final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres bloquear a $username?");
+                if(confirm == true) {
+                  //_controladorPresentacion.blockUser(username);
+                }
+                break;
+              case 'Desbloquear usuario':
+                final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres desbloquear a $username?");
+                if(confirm == true) {
+                  //_controladorPresentacion.reportUser(code, username);
+                }
+                break;
+              case 'Reportar usuario':
+                final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres reportar a $username?");
+                if(confirm == true) {
+                  //_controladorPresentacion.unblockUser(username);
+                }
+                break;
+              case 'Eliminar post':
+                _showDeleteOption(context, post, reply);
+                break;
+              case 'Eliminar reply':
+                postIden = await _controladorPresentacion.getPostId(idForo, date);
+                _showDeleteOption(context, post, reply);
+                break;
+            }
+          },
+        ),
+      ],
     );
   }
 

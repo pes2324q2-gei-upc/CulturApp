@@ -29,6 +29,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
   late ScrollController _scrollController;
 
   Color taronjaVermellos = const Color(0xFFF4692A);
+  Color taronjaVermellosFluix = const Color.fromARGB(199, 250, 141, 90);
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
 
   final TextEditingController _controller = TextEditingController();
@@ -173,18 +174,95 @@ class _XatAmicScreen extends State<XatAmicScreen> {
         ),
       ),
       actions: [
-        IconButton(
-          icon: const Icon(
-            Icons.more_vert,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            //ficar dropdown per reportar o el link directe per reportar
+        _buildPopUpMenuNotBlocked(),
+      ],
+    );
+  }
+
+ //Duplicación de código con user_box, revisar como añadirlo a un archivo aparte
+ 
+  Widget _buildPopUpMenuNotBlocked() {
+    return _buildPopupMenu([
+      'Bloquear usuario',
+      'Reportar usuario'
+    ]);
+  }
+
+  Widget _buildPopUpMenuBloqued() {
+    return _buildPopupMenu([
+      'Desbloquear usuario',
+      'Reportar usuario'
+    ]);
+  }
+
+  
+  Future<bool?> confirmPopUp(String dialogContent) async {
+    return await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmación'),
+          content: Text(dialogContent),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: const Text('Aceptar'),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildPopupMenu(List<String> options) {
+    return Row(
+      children: [
+        const SizedBox(width: 8.0),
+        PopupMenuButton(
+          icon: const Icon(Icons.more_vert, color: Colors.white,),
+          color: taronjaVermellosFluix.withOpacity(1),
+          itemBuilder: (BuildContext context) => options.map((String option) {
+            return PopupMenuItem(
+              value: option,
+              child:Text(option, style: const TextStyle(color: Colors.white)),
+            );
+          }).toList(),
+          onSelected: (String value) async {
+            String username = _usuari.nom;
+            switch(value) {
+              case 'Bloquear usuario':
+                final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres bloquear a $username?");
+                if(confirm == true) {
+                  //_controladorPresentacion.blockUser(username);
+                }
+                break;
+              case 'Desbloquear usuario':
+                final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres bloquear a $username?");
+                if(confirm == true) {
+                  //_controladorPresentacion.reportUser(code, username);
+                }
+                break;
+              case 'Reportar usuario':
+                final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres reportar a $username?");
+                if(confirm == true) {
+                  //_controladorPresentacion.unblockUser(username);
+                }
+                break;
+            }
           },
         ),
       ],
     );
   }
+
 
   Widget _buildChatBubble(message) {
     return ChatBubble(

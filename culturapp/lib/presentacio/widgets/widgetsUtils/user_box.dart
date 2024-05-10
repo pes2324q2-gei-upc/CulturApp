@@ -95,6 +95,8 @@ class _userBoxState extends State<userBox> {
                 _buildPopUpMenuReportUser(),
               ] else if(widget.type == 'followerRequestSend') ...[
                 _buildPopUpMenuFollowerRequestSend(),
+              ] else if(widget.type == 'reportUserBlocked') ...[
+                _buildPopUpMenuReportUserBlocked(),
               ],
             ],  
           ),
@@ -116,6 +118,8 @@ class _userBoxState extends State<userBox> {
       //widget.controladorPresentacion.blockUser(text);
     } else if (action == "report") {
       //widget.controladorPresentacion.reportUser(code, text);
+    } else if (action == "unblock") {
+      //widget.controladorPresentacion.unblockUser(text);
     }
 
     setState(() {
@@ -223,6 +227,13 @@ class _userBoxState extends State<userBox> {
     ]);
   }
 
+  Widget _buildPopUpMenuReportUserBlocked() {
+    return _buildPopupMenu([
+      'Desbloquear usuario',
+      'Reportar usuario'
+    ]);
+  }
+
   Future<bool?> confirmPopUp(String dialogContent) async {
     return await showDialog(
       context: context,
@@ -247,7 +258,6 @@ class _userBoxState extends State<userBox> {
         );
       },
     );
-
   }
 
   Widget _buildPopupMenu(List<String> options) {
@@ -298,9 +308,19 @@ class _userBoxState extends State<userBox> {
                     _handleButtonPress("block", widget.text);
                   }
                   break;
+                case 'Desbloquear usuario':
+                  final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres bloquear a ${widget.text}?");
+                  if(confirm == true) {
+                    _action = "Usuario desbloqueado";
+                    _handleButtonPress("unblock", widget.text);
+                  }
+                  break;
                 case 'Reportar usuario':
-                  _action = "Usuario reportado";
-                  _handleButtonPress("report", widget.text);
+                  final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres reportar a ${widget.text}?");
+                  if(confirm == true) {
+                    _action = "Usuario reportado";
+                    _handleButtonPress("report", widget.text);
+                  }
                   break;
               }
             },

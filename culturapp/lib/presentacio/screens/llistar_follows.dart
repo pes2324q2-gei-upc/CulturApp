@@ -24,7 +24,7 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
     users = [];
   }
 
-  void updateUsers() async {
+  Future<void> updateUsers() async {
       late List<String> followers;
       late List<String> followings;
 
@@ -63,10 +63,14 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
     _tabController = TabController(length: 2, vsync: this);
     _tabController.index = widget.follows ? 0 : 1;
     _tabController.addListener(() {
-      setState(() {
-        isFollows = _tabController.index == 0;
-        updateUsers();
-      });
+      doAsyncWork();
+    });
+  }
+
+  void doAsyncWork() async {
+    await updateUsers();
+    setState(() {
+      isFollows = _tabController.index == 0;
     });
   }
 
@@ -154,26 +158,29 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
             ),
             ),
           ),
-          const SizedBox(height: 20),
+        const SizedBox(height: 20),
         Expanded(
-          child: ListView.builder(
-            itemCount: users.length,
-            itemBuilder: (context, index) {
-              return Column(
-                children: [
-                  const SizedBox(height: 10.0),
-                  userBox(
-                    text: users[index], 
-                    recomm: false, 
-                    type: isFollows 
-                      ? (difference.contains(users[index]) ? "followerNotFollowed" : (requests.contains(users[index])) ? "followerRequestSend" : "followerFollowed") 
-                      : "following", 
-                    popUpStyle: "default",
-                    controladorPresentacion: widget.controladorPresentacion,
-                  ),
-                ],
-              );
-            },
+          child: RefreshIndicator(
+            onRefresh: updateUsers,
+            child: ListView.builder(
+              itemCount: users.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  children: [
+                    const SizedBox(height: 10.0),
+                    userBox(
+                      text: users[index], 
+                      recomm: false, 
+                      type: isFollows 
+                        ? (difference.contains(users[index]) ? "followerNotFollowed" : (requests.contains(users[index])) ? "followerRequestSend" : "followerFollowed") 
+                        : "following", 
+                      popUpStyle: "default",
+                      controladorPresentacion: widget.controladorPresentacion,
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ],
