@@ -60,6 +60,7 @@ class _InfoAmicScreen extends State<InfoAmicScreen> {
         'friend_info'.tr(context),
         style: TextStyle(color: Colors.white),
       ),
+      centerTitle: true,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
         onPressed: () {
