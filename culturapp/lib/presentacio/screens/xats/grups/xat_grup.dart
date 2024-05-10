@@ -27,7 +27,8 @@ class _XatGrupScreen extends State<XatGrupScreen> {
   late List<Message> missatges;
   late ScrollController _scrollController;
 
-  Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
+  Color taronjaVermellos = const Color(0xFFF4692A);
+  Color taronjaVermellosFluix = const Color.fromARGB(199, 250, 141, 90);
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
 
   _XatGrupScreen(ControladorPresentacion controladorPresentacion, Grup grup) {
@@ -147,7 +148,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.orange,
+      backgroundColor: taronjaVermellos,
       leading: IconButton(
         icon: const Icon(
           Icons.arrow_back,
@@ -155,42 +156,75 @@ class _XatGrupScreen extends State<XatGrupScreen> {
         ),
         onPressed: () => _controladorPresentacion.mostrarXats(context),
       ),
-      title: Row(
-        children: [
-          const CircleAvatar(
-            backgroundImage: AssetImage('assets/userImage.png'),
-            //AssetImage(_grup.imageGroup),
-          ),
-          const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                _grup.nomGroup,
-                style: const TextStyle(color: Colors.white),
-              ),
-              Text(
-                truncarString(nomParticipants.join(', '), 30),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14.0,
+      title: GestureDetector(
+        onTap: () {
+          _controladorPresentacion.mostrarInfoGrup(context, _grup);
+        },
+        child: Row(
+          children: [
+            const CircleAvatar(
+              backgroundImage: AssetImage('assets/userImage.png'),
+              //AssetImage(_grup.imageGroup),
+            ),
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _grup.nomGroup,
+                  style: const TextStyle(color: Colors.white),
                 ),
-              ),
-            ],
-          ),
-        ],
+                Text(
+                  truncarString(nomParticipants.join(', '), 30),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14.0,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
       actions: [
-        IconButton(
-          icon: const Icon(
-            Icons.more_vert,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            _controladorPresentacion.mostrarInfoGrup(context, _grup);
-          },
+        _showDropdown(),
+      ],
+    );
+  }
+
+  late String itemSelected;
+
+  Widget _showDropdown() {
+    return PopupMenuButton<int>(
+      icon: const Icon(
+        Icons.more_vert,
+        color: Colors.white,
+      ),
+      color: taronjaVermellosFluix.withOpacity(1),
+      onSelected: (value) {
+        // Handle item selection
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: 1,
+          child: _buildItemDropdown("Sortir de grup"),
         ),
       ],
+    );
+  }
+
+  Widget _buildItemDropdown(String text) {
+    return GestureDetector(
+      onTap: () {
+        //llamar a función update quitandome el user 'me' de la lista de members
+      },
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
     );
   }
 
@@ -204,13 +238,14 @@ class _XatGrupScreen extends State<XatGrupScreen> {
 
   Widget _bottomInputField() {
     return IconTheme(
-      data: const IconThemeData(color: Colors.orange),
+      data: IconThemeData(color: taronjaVermellos),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
           children: <Widget>[
             Flexible(
               child: TextField(
+                maxLines: null,
                 controller: _controller,
                 onSubmitted: _sendMessage,
                 decoration: InputDecoration.collapsed(

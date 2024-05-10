@@ -44,6 +44,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   String? postIden = '';
   bool reply = false;
   bool mostraReplies = false;
+  bool organizador = false;
   
   final List<String> catsAMB = ["Residus",
   "territori.espai_public_platges",
@@ -120,10 +121,20 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              PopupMenuItem<String>(
+              const PopupMenuItem<String>(
                 value: 'Enviar solicitud de organizador',
-                child: Text('send_organizer_request'.tr(context)),
+                child: Text('Enviar solicitud de organizador'),
               ),
+              if (!organizador)
+                const PopupMenuItem<String>(
+                  value: 'scan_qr',
+                  child: Text('Escanear QR'),
+                ),
+              if (organizador)
+                const PopupMenuItem<String>(
+                  value: 'view_qr',
+                  child: Text('Ver QR'),
+                ),
             ],
           ),
         ],

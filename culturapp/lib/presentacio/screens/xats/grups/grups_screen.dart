@@ -22,6 +22,8 @@ class _GrupsScreenState extends State<GrupsScreen> {
   String value = '';
 
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
+  Color taronjaVermellos = const Color(0xFFF4692A);
+  Color taronjaVermellosFluix = const Color.fromARGB(199, 250, 141, 90);
 
   _GrupsScreenState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
@@ -92,7 +94,7 @@ class _GrupsScreenState extends State<GrupsScreen> {
         ),
         decoration: InputDecoration(
           filled: true,
-          fillColor: const Color.fromRGBO(240, 186, 132, 1),
+          fillColor: taronjaVermellosFluix,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
             borderSide: BorderSide.none,
@@ -112,7 +114,7 @@ class _GrupsScreenState extends State<GrupsScreen> {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         shape: const CircleBorder(),
-        backgroundColor: const Color.fromRGBO(240, 186, 132, 1),
+        backgroundColor: taronjaVermellosFluix,
         foregroundColor: Colors.white,
       ),
       onPressed: () {
@@ -138,8 +140,8 @@ class _GrupsScreenState extends State<GrupsScreen> {
           height: 50,
         ),
         title: Text(display_list[index].nomGroup,
-            style: const TextStyle(
-              color: const Color(0xFFF4692A),
+            style: TextStyle(
+              color: taronjaVermellos,
               fontWeight: FontWeight.bold,
             )),
         subtitle: Text(display_list[index].lastMessage),

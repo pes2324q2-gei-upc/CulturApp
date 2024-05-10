@@ -8,7 +8,6 @@ import 'package:culturapp/presentacio/screens/llistar_follows.dart';
 import 'package:culturapp/presentacio/screens/llistar_pendents.dart';
 import 'package:culturapp/presentacio/screens/report_bug.dart';
 import 'package:culturapp/presentacio/screens/solicitud_organitzador.dart';
-import 'package:culturapp/presentacio/screens/xats/amics/info_amic.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/configuracio_grup.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/info_grup.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/modificar_participants.dart';
@@ -121,7 +120,6 @@ class ControladorPresentacion {
         bool userExists =
             await controladorDomini.accountExists(userCredential.user);
         _user = userCredential.user;
-        print(userExists);
 
         if (!userExists) {
           mostrarSignup(context);
@@ -414,16 +412,6 @@ class ControladorPresentacion {
       MaterialPageRoute(
         builder: (context) =>
             XatGrupScreen(controladorPresentacion: this, grup: grup),
-      ),
-    );
-  }
-
-  void mostrarInfoAmic(BuildContext context, Usuari usuari) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            InfoAmicScreen(controladorPresentacion: this, usuari: usuari),
       ),
     );
   }
