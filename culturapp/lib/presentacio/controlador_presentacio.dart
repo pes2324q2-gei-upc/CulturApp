@@ -7,6 +7,7 @@ import 'package:culturapp/presentacio/screens/edit_perfil.dart';
 import 'package:culturapp/presentacio/screens/llistar_follows.dart';
 import 'package:culturapp/presentacio/screens/llistar_pendents.dart';
 import 'package:culturapp/presentacio/screens/report_bug.dart';
+import 'package:culturapp/presentacio/screens/report_user.dart';
 import 'package:culturapp/presentacio/screens/solicitud_organitzador.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/configuracio_grup.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/info_grup.dart';
@@ -290,6 +291,10 @@ class ControladorPresentacion {
       String titol, String idActivitat, String motiu) async {
     return await controladorDomini.sendOrganizerApplication(
         titol, idActivitat, motiu);
+  }
+
+  Future<int> sendReportUser(String titol, String userReported, String report) async {
+    return await controladorDomini.sendReportUser(titol, userReported, report);
   }
 
   void mostrarVerActividad(
@@ -684,6 +689,15 @@ class ControladorPresentacion {
           idActivitat: idActivitat,
           titolActivitat: titol,
         ),
+      ),
+    );
+  }
+
+  void mostrarReportUser(BuildContext context, String userReported) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ReportUserScreen(userReported: userReported, controladorPresentacion: this),
       ),
     );
   }

@@ -117,7 +117,7 @@ class _userBoxState extends State<userBox> {
     } else if (action == "block") {
       //widget.controladorPresentacion.blockUser(text);
     } else if (action == "report") {
-      //widget.controladorPresentacion.reportUser(code, text);
+      widget.controladorPresentacion.mostrarReportUser(context, text);
     } else if (action == "unblock") {
       //widget.controladorPresentacion.unblockUser(text);
     }

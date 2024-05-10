@@ -2,22 +2,24 @@ import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/translations/AppLocalizations';
 import 'package:flutter/material.dart';
 
-class ReportScreen extends StatefulWidget {
+class ReportUserScreen extends StatefulWidget {
+  final String userReported;
   final ControladorPresentacion controladorPresentacion;
-  const ReportScreen({super.key, required this.controladorPresentacion});
+  const ReportUserScreen({super.key,  required this.userReported, required this.controladorPresentacion,});
 
   @override
-  _ReportScreenState createState() => _ReportScreenState();
+  _ReportUserScreenState createState() => _ReportUserScreenState();
 }
 
-class _ReportScreenState extends State<ReportScreen> {
+class _ReportUserScreenState extends State<ReportUserScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _reportController = TextEditingController();
 
   Future<void> _sendReport() async {
-    int statusCode = await widget.controladorPresentacion.sendReportBug(
+    int statusCode = await widget.controladorPresentacion.sendReportUser(
       _titleController.text,
+      widget.userReported,
       _reportController.text,
     );
 

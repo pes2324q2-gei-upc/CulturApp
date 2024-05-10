@@ -253,7 +253,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
               case 'Reportar usuario':
                 final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres reportar a $username?");
                 if(confirm == true) {
-                  //_controladorPresentacion.unblockUser(username);
+                  _controladorPresentacion.mostrarReportUser(context, username);
                 }
                 break;
             }

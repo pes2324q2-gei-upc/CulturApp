@@ -869,7 +869,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
               case 'Reportar usuario':
                 final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres reportar a $username?");
                 if(confirm == true) {
-                  //_controladorPresentacion.unblockUser(username);
+                  _controladorPresentacion.mostrarReportUser(context, username);
                 }
                 break;
               case 'Eliminar post':

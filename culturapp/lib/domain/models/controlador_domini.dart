@@ -536,14 +536,39 @@ class ControladorDomini {
           body: jsonEncode(body));
 
       if (response.statusCode == 200) {
-        print('Solicitud enviada exitosamente');
         return 200;
       } else {
-        print('Error al enviar la solicitud: ${response.body}');
         return 500;
       }
     } catch (e) {
-      print(e);
+      return 500;
+    }
+  }
+
+  Future<int> sendReportUser(
+      String titol, String usuariReportat, String report) async {
+    final Map<String, dynamic> body = {
+      'titol': titol,
+      'usuariReportat': usuariReportat,
+      'report': report,
+    };
+
+    try {
+      final response = await http.post(
+          Uri.parse(
+              'https://culturapp-back.onrender.com/tickets/reportUsuari/create'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${userLogged.getToken()}',
+          },
+          body: jsonEncode(body));
+
+      if (response.statusCode == 200) {
+        return 200;
+      } else {
+        return 500;
+      }
+    } catch (e) {
       return 500;
     }
   }
