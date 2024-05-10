@@ -1,4 +1,5 @@
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:culturapp/translations/AppLocalizations';
 import 'package:flutter/material.dart';
 
 class userBox extends StatefulWidget {
@@ -81,22 +82,24 @@ class _userBoxState extends State<userBox> {
           ),
           Row(
             children: [
-              if(widget.type == "pending") ...[
-                _buildPendingButtons(),
-              ] else if(widget.type == "addSomeone") ...[
-                _buildAddSomeoneButton(),
-              ] else if(widget.type == "followerNotFollowed") ...[
-                _buildPopUpMenuFollowerNotFollowed(),  
-              ] else if (widget.type == "followerFollowed") ...[
-                _buildPopUpMenuFollowerFollowed(),
-              ] else if(widget.type == "following") ...[
-                _buildPopUpMenuFollowing(),
-              ] else if (widget.type == "reportUser") ...[
-                _buildPopUpMenuReportUser(),
-              ] else if(widget.type == 'followerRequestSend') ...[
-                _buildPopUpMenuFollowerRequestSend(),
-              ] else if(widget.type == 'reportUserBlocked') ...[
-                _buildPopUpMenuReportUserBlocked(),
+              if (widget.controladorPresentacion.getUsername() != widget.text) ...[
+                if(widget.type == "pending") ...[
+                  _buildPendingButtons(),
+                ] else if(widget.type == "addSomeone") ...[
+                  _buildAddSomeoneButton(),
+                ] else if(widget.type == "followerNotFollowed") ...[
+                  _buildPopUpMenuFollowerNotFollowed(),  
+                ] else if (widget.type == "followerFollowed") ...[
+                  _buildPopUpMenuFollowerFollowed(),
+                ] else if(widget.type == "following") ...[
+                  _buildPopUpMenuFollowing(),
+                ] else if (widget.type == "reportUser") ...[
+                  _buildPopUpMenuReportUser(),
+                ] else if(widget.type == 'followerRequestSend') ...[
+                  _buildPopUpMenuFollowerRequestSend(),
+                ] else if(widget.type == 'reportUserBlocked') ...[
+                  _buildPopUpMenuReportUserBlocked(),
+                ],
               ],
             ],  
           ),
@@ -135,7 +138,7 @@ class _userBoxState extends State<userBox> {
                 width: 50,
                 child: TextButton(
                   onPressed: () {
-                    _action = "Solicitud rechazada";
+                    _action = "request_rejected".tr(context);
                     _handleButtonPress("delete", widget.text);
                   },
                   style: ButtonStyle(
@@ -149,7 +152,7 @@ class _userBoxState extends State<userBox> {
                 width: 50,
                 child: TextButton(
                   onPressed: () {
-                    _action = "Solicitud aceptada";
+                    _action = "request_accepted".tr(context);
                     _handleButtonPress("accept", widget.text);
                   },
                   style: ButtonStyle(
@@ -174,7 +177,7 @@ class _userBoxState extends State<userBox> {
               width: 50,
               child: TextButton(
                 onPressed: () {
-                  _action = "Solicitud enviada";
+                  _action = "request_sent".tr(context);
                   _handleButtonPress("create", widget.text);
                 },
                 style: ButtonStyle(
@@ -192,45 +195,45 @@ class _userBoxState extends State<userBox> {
 
   Widget _buildPopUpMenuFollowerNotFollowed() {
     return _buildPopupMenu([
-      'Añadir a amigos',
-      'Eliminar de seguidores',
-      'Bloquear usuario',
+      "add_to_followings".tr(context),
+      "remove_from_followers".tr(context),
+      "block_user".tr(context),
     ]);
   }
 
   Widget _buildPopUpMenuFollowerRequestSend() {
     return _buildPopupMenu([
-      'Eliminar solicitud de amistad enviada',
-      'Eliminar de seguidores',
-      'Bloquear usuario',
+      "delete_friendship_request_sent".tr(context),
+      "remove_from_followers".tr(context),
+      "block_user".tr(context),
     ]);
   }
 
   Widget _buildPopUpMenuFollowerFollowed() {
     return _buildPopupMenu([
-      'Eliminar de seguidores',
-      'Bloquear usuario',
+      "remove_from_followers".tr(context),
+      "block_user".tr(context),
     ]);
   }
 
   Widget _buildPopUpMenuFollowing() {
     return _buildPopupMenu([
-      'Eliminar de seguidos',
-      'Bloquear usuario',
+      "remove_from_followings".tr(context),
+      "block_user".tr(context),
     ]);
   }
 
   Widget _buildPopUpMenuReportUser() {
     return _buildPopupMenu([
-      'Bloquear usuario',
-      'Reportar usuario'
+      "block_user".tr(context),
+      "report_user".tr(context),
     ]);
   }
 
   Widget _buildPopUpMenuReportUserBlocked() {
     return _buildPopupMenu([
-      'Desbloquear usuario',
-      'Reportar usuario'
+      "unblock_user".tr(context),
+      "report_user".tr(context),
     ]);
   }
 
@@ -239,17 +242,17 @@ class _userBoxState extends State<userBox> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Confirmación'),
+          title: Text("confirmation".tr(context)),
           content: Text(dialogContent),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancelar'),
+              child: Text( "cancel".tr(context)),
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
             ),
             TextButton(
-              child: const Text('Aceptar'),
+              child: Text("ok".tr(context)),
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
@@ -275,53 +278,45 @@ class _userBoxState extends State<userBox> {
               );
             }).toList(),
             onSelected: (String value) async {
-              switch(value) {
-                case 'Añadir a amigos':
-                  _action = "Solicitud enviada";
-                  _handleButtonPress("create", widget.text);
-                  break;
-                case 'Eliminar de seguidores':
-                  final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres eliminar a ${widget.text} de tus seguidores?");
-                  if (confirm == true) {
-                    _action = "Seguidor eliminado";
-                    _handleButtonPress("delete", widget.text);
-                  }
-                  break;
-                case 'Eliminar solicitud de amistad enviada':
-                  final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres eliminar la solicitud de amistad enviada a ${widget.text}?");
-                  if (confirm == true) {
-                    _action = "Solicitud de amistad eliminada";
-                    _handleButtonPress("deleteFollowing", widget.text);
-                  }
-                  break;
-                case 'Eliminar de seguidos':
-                  final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres eliminar a ${widget.text} de tus seguidos?");
-                  if(confirm == true) {
-                    _action = "Seguido eliminado";
-                    _handleButtonPress("deleteFollowing", widget.text);
-                  }
-                  break;
-                case 'Bloquear usuario':
-                  final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres bloquear a ${widget.text}?");
-                  if(confirm == true) {
-                    _action = "Usuario bloqueado";
-                    _handleButtonPress("block", widget.text);
-                  }
-                  break;
-                case 'Desbloquear usuario':
-                  final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres bloquear a ${widget.text}?");
-                  if(confirm == true) {
-                    _action = "Usuario desbloqueado";
-                    _handleButtonPress("unblock", widget.text);
-                  }
-                  break;
-                case 'Reportar usuario':
-                  final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres reportar a ${widget.text}?");
-                  if(confirm == true) {
-                    _action = "Usuario reportado";
-                    _handleButtonPress("report", widget.text);
-                  }
-                  break;
+              if (value == "add_to_followings".tr(context)) {
+                _action = "request_sent".tr(context);
+                _handleButtonPress("follow", widget.text);
+              } else if (value == "remove_from_followers".tr(context)) {
+                final bool? confirm = await confirmPopUp("confirm_delete_follower".trWithArg(context, {"user": widget.text}));
+                if(confirm == true) {
+                  _action = "follower_deleted".tr(context);
+                  _handleButtonPress("unfollow", widget.text);
+                }
+              } else if (value == "remove_from_followings".tr(context)) {
+                final bool? confirm = await confirmPopUp("confirm_delete_following".trWithArg(context, {"user": widget.text}));
+                if(confirm == true) {
+                  _action = "following_deleted".tr(context);
+                  _handleButtonPress("unfollow", widget.text);
+                }
+              } else if (value == "delete_friendship_request_sent".tr(context)) {
+                final bool? confirm = await confirmPopUp("confirm_delete_friendship_request_sent".trWithArg(context, {"user": widget.text}));
+                if(confirm == true) {
+                  _action = "friendship_request_deleted".tr(context);
+                  _handleButtonPress("deleteRequest", widget.text);
+                }
+              } else if (value == "block_user".tr(context)) {
+                final bool? confirm = await confirmPopUp("confirm_block_user".trWithArg(context, {"user": widget.text}));
+                if(confirm == true) {
+                  _action = "user_blocked".tr(context);
+                  _handleButtonPress("block", widget.text);
+                }
+              } else if (value == "unblock_user".tr(context)) {
+                final bool? confirm = await confirmPopUp("confirm_unblock_user".trWithArg(context, {"user": widget.text}));
+                if(confirm == true) {
+                  _action = "user_unblocked".tr(context);
+                  _handleButtonPress("unblock", widget.text);
+                }
+              } else if (value == "report_user".tr(context)) {
+                final bool? confirm = await confirmPopUp("confirm_report_user".trWithArg(context, {"user": widget.text}));
+                if(confirm == true) {
+                  _action = "user_reported".tr(context);
+                  _handleButtonPress("report", widget.text);
+                }
               }
             },
           ),

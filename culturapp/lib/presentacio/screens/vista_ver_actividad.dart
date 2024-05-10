@@ -782,32 +782,30 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
   Widget _buildPopUpMenuNotBlocked(BuildContext context, Post post, bool reply, String username, String date) {
     String owner = _controladorPresentacion.getUsername();
+    String userLogged = _controladorPresentacion.getUsername();
     if(owner == username) {
       return _buildPopupMenu([
-      'Bloquear usuario',
-      'Reportar usuario',
-      (reply) ? 'Eliminar reply' : 'Eliminar post',
+      (reply) ? "delete_reply".tr(context) : "delete_post".tr(context),
     ], context, post, reply, username, date);
     } else {
       return _buildPopupMenu([
-      'Bloquear usuario',
-      'Reportar usuario',
+      "block_user".tr(context),
+      "report_user".tr(context),
     ], context, post, reply, username, date);
     }
   }
 
+  //Lo dejo pero seguramente se tendrá que mover
   Widget _buildPopUpMenuBloqued(BuildContext context, Post post, bool reply, String username, String date) {
     String owner = _controladorPresentacion.getUsername();
     if(owner == username) {
       return _buildPopupMenu([
-      'Desbloquear usuario',
-      'Reportar usuario',
-      (reply) ? 'Eliminar reply' : 'Eliminar post',
+      "report_user".tr(context),
+      (reply) ? "delete_reply".tr(context) : "delete_post".tr(context),
     ], context, post, reply, username, date);
     } else {
       return _buildPopupMenu([
-      'Desbloquear usuario',
-      'Reportar usuario',
+      "report_user".tr(context),
     ], context, post, reply, username, date);
     }
   }
@@ -818,17 +816,17 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Confirmación'),
+          title: Text("confirm".tr(context)),
           content: Text(dialogContent),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancelar'),
+              child: Text("cancel".tr(context)),
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
             ),
             TextButton(
-              child: const Text('Aceptar'),
+              child: Text("ok".tr(context)),
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
@@ -853,32 +851,26 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             );
           }).toList(),
           onSelected: (String value) async {
-            switch(value) {
-              case 'Bloquear usuario':
-                final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres bloquear a $username?");
-                if(confirm == true) {
-                  //_controladorPresentacion.blockUser(username);
-                }
-                break;
-              case 'Desbloquear usuario':
-                final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres desbloquear a $username?");
-                if(confirm == true) {
-                  //_controladorPresentacion.reportUser(code, username);
-                }
-                break;
-              case 'Reportar usuario':
-                final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres reportar a $username?");
-                if(confirm == true) {
-                  _controladorPresentacion.mostrarReportUser(context, username);
-                }
-                break;
-              case 'Eliminar post':
-                _showDeleteOption(context, post, reply);
-                break;
-              case 'Eliminar reply':
-                postIden = await _controladorPresentacion.getPostId(idForo, date);
-                _showDeleteOption(context, post, reply);
-                break;
+            if (value == "block_user".tr(context)) {
+              final bool? confirm = await confirmPopUp("block_user_confirm".trWithArg(context, {"user": username}));
+              if(confirm == true) {
+                //_controladorPresentacion.blockUser(username);
+              }
+            } else if (value == "unblock_user".tr(context)) {
+              final bool? confirm = await confirmPopUp("unblock_user_confirm".trWithArg(context, {"user": username}));
+              if(confirm == true) {
+                //_controladorPresentacion.reportUser(code, username);
+              }
+            } else if (value == "report_user".tr(context)) {
+              final bool? confirm = await confirmPopUp("report_user_confirm".trWithArg(context, {"user": username}));
+              if(confirm == true) {
+                _controladorPresentacion.mostrarReportUser(context, username);
+              }
+            } else if (value == "delete_post".tr(context)) {
+              _showDeleteOption(context, post, reply);
+            } else if (value == "delete_reply".tr(context)) {
+              postIden = await _controladorPresentacion.getPostId(idForo, date);
+              _showDeleteOption(context, post, reply);
             }
           },
         ),

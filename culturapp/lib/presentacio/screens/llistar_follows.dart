@@ -39,9 +39,11 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
       followersSet = followersSet.difference(followingsSet);
       difference = followersSet.difference(requestsSet).toList();
 
-      setState(() {
-        users = isFollows ? followers : followings;
-      });
+      if(mounted) {
+        setState(() {
+          users = isFollows ? followers : followings;
+        });
+      }
   }
 
   List<String> originalUsers = [];

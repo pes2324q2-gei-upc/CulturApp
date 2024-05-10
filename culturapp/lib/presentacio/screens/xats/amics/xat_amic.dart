@@ -183,35 +183,34 @@ class _XatAmicScreen extends State<XatAmicScreen> {
  
   Widget _buildPopUpMenuNotBlocked() {
     return _buildPopupMenu([
-      'Bloquear usuario',
-      'Reportar usuario'
+      'block_user'.tr(context),
+      'report_user'.tr(context)
     ]);
   }
 
   Widget _buildPopUpMenuBloqued() {
     return _buildPopupMenu([
-      'Desbloquear usuario',
-      'Reportar usuario'
+      'unblock_user'.tr(context),
+      'report_user'.tr(context)
     ]);
   }
 
-  
   Future<bool?> confirmPopUp(String dialogContent) async {
     return await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Confirmación'),
+          title: Text('confirmation'.tr(context)),
           content: Text(dialogContent),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancelar'),
+              child: Text('cancel'.tr(context)),
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
             ),
             TextButton(
-              child: const Text('Aceptar'),
+              child: Text('ok'.tr(context)),
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
@@ -237,32 +236,27 @@ class _XatAmicScreen extends State<XatAmicScreen> {
           }).toList(),
           onSelected: (String value) async {
             String username = _usuari.nom;
-            switch(value) {
-              case 'Bloquear usuario':
-                final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres bloquear a $username?");
-                if(confirm == true) {
-                  //_controladorPresentacion.blockUser(username);
-                }
-                break;
-              case 'Desbloquear usuario':
-                final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres bloquear a $username?");
-                if(confirm == true) {
-                  //_controladorPresentacion.reportUser(code, username);
-                }
-                break;
-              case 'Reportar usuario':
-                final bool? confirm = await confirmPopUp("¿Estás seguro de que quieres reportar a $username?");
-                if(confirm == true) {
-                  _controladorPresentacion.mostrarReportUser(context, username);
-                }
-                break;
+            if (value == 'block_user'.tr(context)) {
+              final bool? confirm = await confirmPopUp("block_user_confirm".trWithArg(context, {"user": username}));
+              if(confirm == true) {
+                //_controladorPresentacion.blockUser(username);
+              }
+            } else if (value == 'unblock_user'.tr(context)) {
+              final bool? confirm = await confirmPopUp("unblock_user_confirm".trWithArg(context, {"user": username}));
+              if(confirm == true) {
+                //_controladorPresentacion.unblockUser(username);
+              }
+            } else if (value == 'report_user'.tr(context)) {
+              final bool? confirm = await confirmPopUp("report_user_confirm".trWithArg(context, {"user": username}));
+              if(confirm == true) {
+                _controladorPresentacion.mostrarReportUser(context, username);
+              }
             }
           },
         ),
       ],
     );
   }
-
 
   Widget _buildChatBubble(message) {
     return ChatBubble(
