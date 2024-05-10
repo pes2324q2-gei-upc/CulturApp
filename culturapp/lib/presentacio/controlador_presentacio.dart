@@ -200,6 +200,11 @@ class ControladorPresentacion {
 
   List<Actividad> getActivitatsUser() => activitatsUser;
 
+  Future<List<Actividad>> getActivitatsByUser(Usuari user) async {
+    List<Actividad> llista = await controladorDomini.getUserActivitiesByUser(user);
+    return llista;
+  }
+
   List<Actividad> getActivitats() => activitats;
 
   Future<List<Actividad>> getUserActivities() =>
@@ -319,14 +324,27 @@ class ControladorPresentacion {
     );
   }
 
-  void mostrarPerfil(BuildContext context) {
+  void mostrarPerfil(BuildContext context) async {
+    Usuari usuari = await this.getUserByName(usernameLogged);
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PerfilPage(
             controladorPresentacion: this,
-            username: usernameLogged,
+            user: usuari,
             owner: true),
+      ),
+    );
+  }
+
+  void mostrarAltrePerfil(BuildContext context, Usuari usuari) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PerfilPage(
+            controladorPresentacion: this,
+            user: usuari,
+            owner: false),
       ),
     );
   }

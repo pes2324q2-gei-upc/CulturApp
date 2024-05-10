@@ -152,7 +152,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
       ),
       title: GestureDetector(
         onTap: () {
-          //link a anar pantalla de perfil amic
+          _controladorPresentacion.mostrarAltrePerfil(context, _usuari);
         },
         child: Row(
           children: [
