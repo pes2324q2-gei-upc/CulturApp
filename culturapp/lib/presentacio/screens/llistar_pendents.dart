@@ -32,7 +32,7 @@ class _LlistarPendentsState extends State<LlistarPendents> {
     });
   }
 
-  void updateUsers() async {
+  Future<void> updateUsers() async {
     final pendents = await widget.controladorPresentacion.getFollowUsers(widget.username, 'pending');
     setState(() {
       users = pendents;
@@ -57,7 +57,7 @@ class _LlistarPendentsState extends State<LlistarPendents> {
           color: Colors.white,
           fontSize: 20.0,
         ),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.white, // Cambia el color de la flecha de retroceso
         ),
       ),
@@ -98,20 +98,24 @@ class _LlistarPendentsState extends State<LlistarPendents> {
           ),
           const SizedBox(height: 5.0), 
           Expanded(
-            child: ListView.builder(
-              itemCount: users.length,
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    userBox(
-                      text: users[index], 
-                      recomm: false, 
-                      type: "pending", 
-                      controladorPresentacion: widget.controladorPresentacion),
-                    const SizedBox(height: 5.0), 
-                  ],
-                );
-              },
+            child: RefreshIndicator(
+              onRefresh: updateUsers,
+              child: ListView.builder(
+                itemCount: users.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      userBox(
+                        text: users[index], 
+                        recomm: false, 
+                        type: "pending", 
+                        popUpStyle: "default",
+                        controladorPresentacion: widget.controladorPresentacion),
+                      const SizedBox(height: 5.0), 
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         ],
