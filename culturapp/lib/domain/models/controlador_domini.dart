@@ -1186,4 +1186,23 @@ class ControladorDomini {
       throw Exception('Error de red: $error');
     }
   }
+
+  getUserActivitiesByUser(Usuari user) async {
+    print("Aconseguint activitats de " + user.nom);
+    final respuesta = await http.get(
+      Uri.parse(
+          'https://culturapp-back.onrender.com/users/${user.nom}/activitats'),
+      headers: {
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+    );
+
+    if (respuesta.statusCode == 200) {
+      return _convert_database_to_list(respuesta);
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
 }
+
+
