@@ -71,9 +71,11 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
 
   void doAsyncWork() async {
     await updateUsers();
-    setState(() {
-      isFollows = _tabController.index == 0;
-    });
+    if (mounted) {
+      setState(() {
+        isFollows = _tabController.index == 0;
+      });
+    }
   }
 
   @override

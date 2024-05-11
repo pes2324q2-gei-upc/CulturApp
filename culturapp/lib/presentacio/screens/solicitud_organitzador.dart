@@ -67,16 +67,16 @@ class _SolicitutScreenState extends State<SolicitutScreen> {
             child: Column(
               children: <Widget>[
                 const SizedBox(height: 10),
-                const Text(
-                  'Por favor, tambien añada la siguiente información en la aplicación para solicitar ser organizador:',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Text(
+                  "aplicattion_info".tr(context),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 5),
-                const Align(
+                Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    '- DNI\n- Teléfono\n- Correo\n- Empresa (si representa a alguna)',
-                    style: TextStyle(fontSize: 14),
+                    "aplicattion_info_text".tr(context),
+                    style: const TextStyle(fontSize: 14),
                   ),
                 ),
                 const SizedBox(height: 5),

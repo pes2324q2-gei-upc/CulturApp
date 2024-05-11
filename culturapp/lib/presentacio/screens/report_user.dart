@@ -47,7 +47,7 @@ class _ReportUserScreenState extends State<ReportUserScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
-        title: Text("report_bug_title".tr(context)),
+        title: Text("report_user_title".tr(context)),
         centerTitle: true, // Centrar el título
         toolbarHeight: 50.0,
         titleTextStyle: const TextStyle(

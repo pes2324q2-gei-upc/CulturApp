@@ -1,3 +1,4 @@
+import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/translations/AppLocalizations';
 import 'package:flutter/material.dart';
@@ -35,75 +36,81 @@ class _userBoxState extends State<userBox> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(width: 0.25, color: Colors.grey), top: BorderSide(width: 0.25, color: Colors.grey)),
-        color: Colors.white, 
-      ),
-      child: Row(
-        children: [
-          if (widget.recomm)
-            Column( 
-              children: [
-                Container(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  width: 40,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
+    return GestureDetector(
+      onTap: () async {
+        Usuari usuari = await widget.controladorPresentacion.getUserByName(widget.text);
+        widget.controladorPresentacion.mostrarAltrePerfil(context, usuari);
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16.0),
+        decoration: const BoxDecoration(
+          border: Border(bottom: BorderSide(width: 0.25, color: Colors.grey), top: BorderSide(width: 0.25, color: Colors.grey)),
+          color: Colors.white, 
+        ),
+        child: Row(
+          children: [
+            if (widget.recomm)
+              Column( 
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    width: 40,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                    ),
+                    child: Image.asset(
+                      'assets/categoriarecom.png',
+                      fit: BoxFit.fill,
+                    ), //Imagen para recomendador */
                   ),
-                  child: Image.asset(
-                    'assets/categoriarecom.png',
-                    fit: BoxFit.fill,
-                  ), //Imagen para recomendador */
-                ),
-              ],
-            ),
-          Container(
-            width: 50,
-            height: 50,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.blue,
-            ),
-            child: Image.asset(
-              'assets/userImage.png', 
-              fit: BoxFit.cover, 
-            ),
-          ),
-          const SizedBox(width: 8.0),
-          Expanded(
-            child: Text(
-              widget.text,
-              style: const TextStyle(
-                fontSize: 16.0,
+                ],
+              ),
+            Container(
+              width: 50,
+              height: 50,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.blue,
+              ),
+              child: Image.asset(
+                'assets/userImage.png', 
+                fit: BoxFit.cover, 
               ),
             ),
-          ),
-          Row(
-            children: [
-              if (widget.controladorPresentacion.getUsername() != widget.text) ...[
-                if(widget.type == "pending") ...[
-                  _buildPendingButtons(),
-                ] else if(widget.type == "addSomeone") ...[
-                  _buildAddSomeoneButton(),
-                ] else if(widget.type == "followerNotFollowed") ...[
-                  _buildPopUpMenuFollowerNotFollowed(),  
-                ] else if (widget.type == "followerFollowed") ...[
-                  _buildPopUpMenuFollowerFollowed(),
-                ] else if(widget.type == "following") ...[
-                  _buildPopUpMenuFollowing(),
-                ] else if (widget.type == "reportUser") ...[
-                  _buildPopUpMenuReportUser(),
-                ] else if(widget.type == 'followerRequestSend') ...[
-                  _buildPopUpMenuFollowerRequestSend(),
-                ] else if(widget.type == 'reportUserBlocked') ...[
-                  _buildPopUpMenuReportUserBlocked(),
+            const SizedBox(width: 8.0),
+            Expanded(
+              child: Text(
+                widget.text,
+                style: const TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+            Row(
+              children: [
+                if (widget.controladorPresentacion.getUsername() != widget.text) ...[
+                  if(widget.type == "pending") ...[
+                    _buildPendingButtons(),
+                  ] else if(widget.type == "addSomeone") ...[
+                    _buildAddSomeoneButton(),
+                  ] else if(widget.type == "followerNotFollowed") ...[
+                    _buildPopUpMenuFollowerNotFollowed(),  
+                  ] else if (widget.type == "followerFollowed") ...[
+                    _buildPopUpMenuFollowerFollowed(),
+                  ] else if(widget.type == "following") ...[
+                    _buildPopUpMenuFollowing(),
+                  ] else if (widget.type == "reportUser") ...[
+                    _buildPopUpMenuReportUser(),
+                  ] else if(widget.type == 'followerRequestSend') ...[
+                    _buildPopUpMenuFollowerRequestSend(),
+                  ] else if(widget.type == 'reportUserBlocked') ...[
+                    _buildPopUpMenuReportUserBlocked(),
+                  ],
                 ],
-              ],
-            ],  
-          ),
-        ],
+              ],  
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -280,24 +287,24 @@ class _userBoxState extends State<userBox> {
             onSelected: (String value) async {
               if (value == "add_to_followings".tr(context)) {
                 _action = "request_sent".tr(context);
-                _handleButtonPress("follow", widget.text);
+                _handleButtonPress("create", widget.text);
               } else if (value == "remove_from_followers".tr(context)) {
                 final bool? confirm = await confirmPopUp("confirm_delete_follower".trWithArg(context, {"user": widget.text}));
                 if(confirm == true) {
                   _action = "follower_deleted".tr(context);
-                  _handleButtonPress("unfollow", widget.text);
+                  _handleButtonPress("delete", widget.text);
                 }
               } else if (value == "remove_from_followings".tr(context)) {
                 final bool? confirm = await confirmPopUp("confirm_delete_following".trWithArg(context, {"user": widget.text}));
                 if(confirm == true) {
                   _action = "following_deleted".tr(context);
-                  _handleButtonPress("unfollow", widget.text);
+                  _handleButtonPress("deleteFollowing", widget.text);
                 }
               } else if (value == "delete_friendship_request_sent".tr(context)) {
                 final bool? confirm = await confirmPopUp("confirm_delete_friendship_request_sent".trWithArg(context, {"user": widget.text}));
                 if(confirm == true) {
                   _action = "friendship_request_deleted".tr(context);
-                  _handleButtonPress("deleteRequest", widget.text);
+                  _handleButtonPress("deleteFollowing", widget.text);
                 }
               } else if (value == "block_user".tr(context)) {
                 final bool? confirm = await confirmPopUp("confirm_block_user".trWithArg(context, {"user": widget.text}));

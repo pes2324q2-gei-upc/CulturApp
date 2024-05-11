@@ -32,10 +32,12 @@ class _GrupsScreenState extends State<GrupsScreen> {
 
   void _initialize() async {
     List<Grup> grups = await _controladorPresentacion.getUserGrups();
-    setState(() {
-      llista_grups = grups;
-      display_list = llista_grups;
-    });
+    if(mounted){
+      setState(() {
+        llista_grups = grups;
+        display_list = llista_grups;
+      });
+    }
   }
 
   void updateList(String value) {
