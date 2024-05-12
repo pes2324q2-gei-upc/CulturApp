@@ -385,6 +385,7 @@ void mostrarQR() {
     );
   }
 
+  //Posible duplicaciñon de código
   Image _retornaIcon(String categoria) {
     if (catsAMB.contains(categoria)){
       return Image.asset(
@@ -633,12 +634,15 @@ void mostrarQR() {
                             ),
                             const Spacer(),
                             //fer que nomes el que l'ha creat ho pugui veure
+                            _buildPopUpMenuNotBlocked(context, post, false, post.username, ''),
+                            /*
                             GestureDetector(
                               onTap: () async {
                                 _showDeleteOption(context, post, false);
                               },
                               child: const Icon(Icons.more_vert, size: 20),
                             ),
+                            */
                           ],
                         ),
                         Padding(
@@ -745,6 +749,8 @@ void mostrarQR() {
                             ),
                             const Spacer(),
                             //fer que nomes el que l'ha creat ho pugui veure
+                            _buildPopUpMenuNotBlocked(context, rep, true, rep.username, date)
+                            /*
                             GestureDetector(
                               onTap: () async {
                                 postIden = await _controladorPresentacion.getPostId(idForo, date);
@@ -752,6 +758,7 @@ void mostrarQR() {
                               },
                               child: const Icon(Icons.more_vert, size: 20),
                             ),
+                            */
                           ],
                         ),
                         Padding(
@@ -810,6 +817,110 @@ void mostrarQR() {
           style: const TextStyle(color: Colors.grey,),
         ),
       ),
+    );
+  }
+
+  Widget _buildPopUpMenuNotBlocked(BuildContext context, Post post, bool reply, String username, String date) {
+    String owner = _controladorPresentacion.getUsername();
+    String userLogged = _controladorPresentacion.getUsername();
+    if(owner == username) {
+      return _buildPopupMenu([
+      (reply) ? "delete_reply".tr(context) : "delete_post".tr(context),
+    ], context, post, reply, username, date);
+    } else {
+      return _buildPopupMenu([
+      "block_user".tr(context),
+      "report_user".tr(context),
+    ], context, post, reply, username, date);
+    }
+  }
+
+  //Lo dejo pero seguramente se tendrá que mover
+  Widget _buildPopUpMenuBloqued(BuildContext context, Post post, bool reply, String username, String date) {
+    String owner = _controladorPresentacion.getUsername();
+    if(owner == username) {
+      return _buildPopupMenu([
+      "report_user".tr(context),
+      (reply) ? "delete_reply".tr(context) : "delete_post".tr(context),
+    ], context, post, reply, username, date);
+    } else {
+      return _buildPopupMenu([
+      "report_user".tr(context),
+    ], context, post, reply, username, date);
+    }
+  }
+
+  
+  Future<bool?> confirmPopUp(String dialogContent) async {
+    return await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("confirmation".tr(context)),
+          content: Text(dialogContent),
+          actions: <Widget>[
+            TextButton(
+              child: Text("cancel".tr(context)),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: Text("ok".tr(context)),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildPopupMenu(List<String> options, BuildContext context, Post post, bool reply, String username, String date) {
+    return Row(
+      children: [
+        const SizedBox(width: 8.0),
+        PopupMenuButton(
+          icon: const Icon(Icons.more_vert),
+          color: Colors.white,
+          itemBuilder: (BuildContext context) => options.map((String option) {
+            return PopupMenuItem(
+              value: option,
+              child:Text(option, style: const TextStyle(color: Colors.black)),
+            );
+          }).toList(),
+          onSelected: (String value) async {
+            if (value == "block_user".tr(context)) {
+              final bool? confirm = await confirmPopUp("confirm_block_user".trWithArg(context, {"user": username}));
+              if(confirm == true) {
+                //_controladorPresentacion.blockUser(username);
+              }
+            } else if (value == "unblock_user".tr(context)) {
+              final bool? confirm = await confirmPopUp("confirm_unblock_user".trWithArg(context, {"user": username}));
+              if(confirm == true) {
+                //_controladorPresentacion.reportUser(code, username);
+              }
+            } else if (value == "report_user".tr(context)) {
+              final bool? confirm = await confirmPopUp("confirm_report_user".trWithArg(context, {"user": username}));
+              if(confirm == true) {
+                if(reply){
+                  String? postId = await _controladorPresentacion.getPostId(idForo, date);
+                  _controladorPresentacion.mostrarReportUser(context, username, "forum $idForo $postId");
+                } else{
+                  String? postId = await _controladorPresentacion.getPostId(idForo, post.fecha);
+                  _controladorPresentacion.mostrarReportUser(context, username, "forum $idForo $postId");
+                }
+              }
+            } else if (value == "delete_post".tr(context)) {
+              _showDeleteOption(context, post, reply);
+            } else if (value == "delete_reply".tr(context)) {
+              postIden = await _controladorPresentacion.getPostId(idForo, date);
+              _showDeleteOption(context, post, reply);
+            }
+          },
+        ),
+      ],
     );
   }
 

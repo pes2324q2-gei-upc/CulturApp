@@ -1,4 +1,5 @@
-import 'package:culturapp/domain/models/actividad.dart';
+ import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
 import 'package:culturapp/translations/AppLocalizations';
 import 'package:flutter/material.dart';
@@ -6,38 +7,47 @@ import 'package:culturapp/presentacio/controlador_presentacio.dart';
 
 class UserInfoWidget extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
-  final String username;
+  final Usuari user;
   final bool owner;
 
-  const UserInfoWidget(
-      {Key? key,
-      required this.controladorPresentacion,
-      required this.username,
-      required this.owner})
-      : super(key: key);
+  const UserInfoWidget({
+    Key? key,
+    required this.controladorPresentacion,
+    required this.user,
+    required this.owner,
+  }) : super(key: key);
 
   @override
   _UserInfoWidgetState createState() =>
-      _UserInfoWidgetState(this.controladorPresentacion);
+      _UserInfoWidgetState(this.controladorPresentacion, this.user);
 }
 
 class _UserInfoWidgetState extends State<UserInfoWidget> {
   int _selectedIndex = 0;
   late ControladorPresentacion _controladorPresentacion;
-  late String _usernameFuture;
+  late Usuari _user;
   late List<Actividad> activitats;
   late List<Actividad> display_list;
 
-  _UserInfoWidgetState(ControladorPresentacion controladorPresentacion) {
+  _UserInfoWidgetState(ControladorPresentacion controladorPresentacion, Usuari user) {
     _controladorPresentacion = controladorPresentacion;
+    _user = user;
+    activitats = [];
+    display_list = [];
   }
 
   @override
   void initState() {
     super.initState();
-    _usernameFuture = widget.username;
-    activitats = widget.owner ? _controladorPresentacion.getActivitatsUser() : [];
-    display_list = activitats;
+    _loadActividades();
+  }
+
+  void _loadActividades() async {
+    activitats = await _controladorPresentacion.getActivitatsByUser(_user);
+    print(activitats.toString());
+    setState(() {
+      display_list = activitats;
+    });
   }
 
   void _onTabChange(int index) {
@@ -61,22 +71,16 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: FutureBuilder<String?>(
-          future: Future.value(_usernameFuture),
+        child: FutureBuilder<List<Actividad>>(
+          future: Future.value(activitats),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Container(
-                alignment: Alignment.center,
-                width: 50,
-                height: 50,
-                child: const CircularProgressIndicator(
-                    color: Color(0xFFF4692A)),
-              );
+              return CircularProgressIndicator(color: Color(0xFFF4692A));
             } else if (snapshot.hasError) {
-              return const Text('Error al obtener el nombre de usuario');
+              return Text('Error al obtener el nombre de usuario');
             } else {
               final username = snapshot.data ?? '';
-              return _buildUserInfo(username);
+              return _buildUserInfo(_user, activitats);
             }
           },
         ),
@@ -84,7 +88,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
     );
   }
 
-  Widget _buildUserInfo(String username) {
+  Widget _buildUserInfo(Usuari _user, List<Actividad> activitats) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -93,16 +97,10 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                  height: 100,
-                  width: 100,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    image: DecorationImage(
-                        image: NetworkImage(
-                            _controladorPresentacion.getUser()!.photoURL!),
-                        fit: BoxFit.cover),
-                  )),
+              CircleAvatar(
+                backgroundImage: AssetImage(_user.image),
+                radius: 50,
+              ),
               const SizedBox(width: 20),
               Padding(
                 padding: const EdgeInsets.only(top: 25),
@@ -111,9 +109,8 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      username,
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      _user.nom,
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 5),
                     const Text(
@@ -181,7 +178,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                             SizedBox(
                               height: 450,
                               child: ListaActividadesDisponibles(
-                                actividades: activitats,
+                                actividades: display_list,
                                 controladorPresentacion: _controladorPresentacion,
                               ),
                             ),
