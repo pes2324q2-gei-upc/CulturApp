@@ -249,7 +249,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
             } else if (value == 'report_user'.tr(context)) {
               final bool? confirm = await confirmPopUp("report_user_confirm".trWithArg(context, {"user": username}));
               if(confirm == true) {
-                _controladorPresentacion.mostrarReportUser(context, username);
+                _controladorPresentacion.mostrarReportUser(context, username, "chat chatId");
               }
             }
           },

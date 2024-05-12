@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 
 class ReportUserScreen extends StatefulWidget {
   final String userReported;
+  final String placeReport;
   final ControladorPresentacion controladorPresentacion;
-  const ReportUserScreen({super.key,  required this.userReported, required this.controladorPresentacion,});
+  const ReportUserScreen({super.key,  required this.userReported, required this.placeReport, required this.controladorPresentacion,});
 
   @override
   _ReportUserScreenState createState() => _ReportUserScreenState();
@@ -21,6 +22,7 @@ class _ReportUserScreenState extends State<ReportUserScreen> {
       _titleController.text,
       widget.userReported,
       _reportController.text,
+      widget.placeReport,
     );
 
     if (statusCode == 200) {
@@ -85,11 +87,11 @@ class _ReportUserScreenState extends State<ReportUserScreen> {
                 minLines: 1,
                 maxLines: 5,
                 decoration: InputDecoration(
-                  labelText: "report_bug_description".tr(context),
+                  labelText: "report_user_description".tr(context),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty || value.trim().isEmpty) {
-                    return "report_bug_description_missing".tr(context);
+                    return "report_user_description_missing".tr(context);
                   }
                   return null;
                 },

@@ -315,6 +315,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
                             text: _grup.membres[index],
                             recomm: false,
                             type: "reportUser",
+                            placeReport: "group ${_grup.id}",
                             controladorPresentacion: _controladorPresentacion,
                             popUpStyle: "orange",
                           )

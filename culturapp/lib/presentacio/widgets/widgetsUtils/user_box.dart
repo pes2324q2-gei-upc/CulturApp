@@ -8,8 +8,9 @@ class userBox extends StatefulWidget {
   final bool recomm;
   final String type;
   final String popUpStyle;
+  final String placeReport;
   final ControladorPresentacion controladorPresentacion;
-  const userBox({super.key, required this.text, required this.recomm, required this.type, required this.popUpStyle, required this.controladorPresentacion,});
+  const userBox({super.key, required this.text, required this.recomm, required this.type, required this.popUpStyle, required this.placeReport, required this.controladorPresentacion,});
 
   @override
   State<userBox> createState() => _userBoxState();
@@ -115,7 +116,7 @@ class _userBoxState extends State<userBox> {
     );
   }
 
-  void _handleButtonPress(String action, String text) {
+  void _handleButtonPress(String action, String text, String placeReport) {
     if (action == "accept") {
       widget.controladorPresentacion.acceptFriend(text);
     } else if (action == "delete") {
@@ -127,7 +128,7 @@ class _userBoxState extends State<userBox> {
     } else if (action == "block") {
       //widget.controladorPresentacion.blockUser(text);
     } else if (action == "report") {
-      widget.controladorPresentacion.mostrarReportUser(context, text);
+      widget.controladorPresentacion.mostrarReportUser(context, text, placeReport);
     } else if (action == "unblock") {
       //widget.controladorPresentacion.unblockUser(text);
     }
@@ -146,7 +147,7 @@ class _userBoxState extends State<userBox> {
                 child: TextButton(
                   onPressed: () {
                     _action = "request_rejected".tr(context);
-                    _handleButtonPress("delete", widget.text);
+                    _handleButtonPress("delete", widget.text, "null");
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFFFAA80)),
@@ -160,7 +161,7 @@ class _userBoxState extends State<userBox> {
                 child: TextButton(
                   onPressed: () {
                     _action = "request_accepted".tr(context);
-                    _handleButtonPress("accept", widget.text);
+                    _handleButtonPress("accept", widget.text, "null");
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFF4692A)),
@@ -185,7 +186,7 @@ class _userBoxState extends State<userBox> {
               child: TextButton(
                 onPressed: () {
                   _action = "request_sent".tr(context);
-                  _handleButtonPress("create", widget.text);
+                  _handleButtonPress("create", widget.text, "null");
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFF4692A)),
@@ -287,42 +288,42 @@ class _userBoxState extends State<userBox> {
             onSelected: (String value) async {
               if (value == "add_to_followings".tr(context)) {
                 _action = "request_sent".tr(context);
-                _handleButtonPress("create", widget.text);
+                _handleButtonPress("create", widget.text, "null");
               } else if (value == "remove_from_followers".tr(context)) {
                 final bool? confirm = await confirmPopUp("confirm_delete_follower".trWithArg(context, {"user": widget.text}));
                 if(confirm == true) {
                   _action = "follower_deleted".tr(context);
-                  _handleButtonPress("delete", widget.text);
+                  _handleButtonPress("delete", widget.text, "null");
                 }
               } else if (value == "remove_from_followings".tr(context)) {
                 final bool? confirm = await confirmPopUp("confirm_delete_following".trWithArg(context, {"user": widget.text}));
                 if(confirm == true) {
                   _action = "following_deleted".tr(context);
-                  _handleButtonPress("deleteFollowing", widget.text);
+                  _handleButtonPress("deleteFollowing", widget.text, "null");
                 }
               } else if (value == "delete_friendship_request_sent".tr(context)) {
                 final bool? confirm = await confirmPopUp("confirm_delete_friendship_request_sent".trWithArg(context, {"user": widget.text}));
                 if(confirm == true) {
                   _action = "friendship_request_deleted".tr(context);
-                  _handleButtonPress("deleteFollowing", widget.text);
+                  _handleButtonPress("deleteFollowing", widget.text, "null");
                 }
               } else if (value == "block_user".tr(context)) {
                 final bool? confirm = await confirmPopUp("confirm_block_user".trWithArg(context, {"user": widget.text}));
                 if(confirm == true) {
                   _action = "user_blocked".tr(context);
-                  _handleButtonPress("block", widget.text);
+                  _handleButtonPress("block", widget.text, "null");
                 }
               } else if (value == "unblock_user".tr(context)) {
                 final bool? confirm = await confirmPopUp("confirm_unblock_user".trWithArg(context, {"user": widget.text}));
                 if(confirm == true) {
                   _action = "user_unblocked".tr(context);
-                  _handleButtonPress("unblock", widget.text);
+                  _handleButtonPress("unblock", widget.text, "null");
                 }
               } else if (value == "report_user".tr(context)) {
                 final bool? confirm = await confirmPopUp("confirm_report_user".trWithArg(context, {"user": widget.text}));
                 if(confirm == true) {
                   _action = "user_reported".tr(context);
-                  _handleButtonPress("report", widget.text);
+                  _handleButtonPress("report", widget.text, widget.placeReport);
                 }
               }
             },
