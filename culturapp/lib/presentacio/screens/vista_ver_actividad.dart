@@ -1,8 +1,12 @@
+import 'dart:math';
+
+import 'package:culturapp/domain/models/bateria.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/post.dart';
 import 'package:culturapp/presentacio/widgets/post_widget.dart';
 import 'package:culturapp/presentacio/widgets/reply_widget.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:culturapp/presentacio/widgets/widgetsUtils/bateria_box.dart';
 import 'package:culturapp/translations/AppLocalizations';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,11 +20,12 @@ class VistaVerActividad extends StatefulWidget{
   final ControladorPresentacion controladorPresentacion;
   final Uri uri_actividad;
   final bool esOrganizador;
+  final List<Bateria>bateriasDisp;
 
-  const VistaVerActividad({super.key, required this.info_actividad, required this.uri_actividad, required this.controladorPresentacion, required this.esOrganizador});
+  const VistaVerActividad({super.key, required this.info_actividad, required this.uri_actividad, required this.controladorPresentacion, required this.esOrganizador, required this.bateriasDisp});
 
   @override
-  State<VistaVerActividad> createState() => _VistaVerActividadState(controladorPresentacion ,info_actividad, uri_actividad, esOrganizador);
+  State<VistaVerActividad> createState() => _VistaVerActividadState(controladorPresentacion ,info_actividad, uri_actividad, esOrganizador,bateriasDisp);
 }
 
 class _VistaVerActividadState extends State<VistaVerActividad> {
@@ -46,6 +51,11 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   bool reply = false;
   bool mostraReplies = false;
   bool organizador = true;
+  List<Bateria> bateriasCerca = [];
+  Bateria bat = Bateria();
+  Bateria bat1 = Bateria();
+  Bateria bat2 = Bateria();
+  List<Bateria> bateriasDisponibles = [];
   
   final List<String> catsAMB = ["Residus",
   "territori.espai_public_platges",
@@ -62,57 +72,86 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   "territori.espai_public_rius",
   "Espai públic - Platges"];
   
-  _VistaVerActividadState(ControladorPresentacion controladorPresentacion ,List<String> info_actividad, Uri uri_actividad, bool esOrganizador) {
+  _VistaVerActividadState(ControladorPresentacion controladorPresentacion ,List<String> info_actividad, Uri uri_actividad, bool esOrganizador, List<Bateria> bats) {
     infoActividad = info_actividad;
     uriActividad = uri_actividad;
     _controladorPresentacion = controladorPresentacion;
     controladorDominio = _controladorPresentacion.getControladorDomini();
     organizador = esOrganizador;
+    bateriasDisponibles = bats;
+
   }
 
 
-void mostrarQR() {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                },
+  void mostrarQR() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                  },
+                ),
               ),
-            ),
-            BarcodeWidget( 
-              padding: const EdgeInsets.only(left: 15, right: 15),
-              barcode: Barcode.qrCode(),
-              data: infoActividad[1],
-              width: 250,
-              height: 250,
-            ),
-            const Padding(padding: EdgeInsets.only(top: 30)),
-            Text('Code: ${infoActividad[1]}', style: const TextStyle(
-              fontSize: 22, // Aumenta el tamaño del texto
-              fontWeight: FontWeight.bold,
-            ),),
-            const Padding(padding: EdgeInsets.only(bottom: 10)),
-          ],
-        ),
-      );
-    },
-  );
-}
+              BarcodeWidget( 
+                padding: const EdgeInsets.only(left: 15, right: 15),
+                barcode: Barcode.qrCode(),
+                data: infoActividad[1],
+                width: 250,
+                height: 250,
+              ),
+              const Padding(padding: EdgeInsets.only(top: 30)),
+              Text('Code: ${infoActividad[1]}', style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),),
+              const Padding(padding: EdgeInsets.only(bottom: 10)),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  double calcularDistancia(double lat1, double lon1, double lat2, double lon2) {
+    var p = 0.017453292519943295;
+    var c = cos;
+    var a = 0.5 - c((lat2 - lat1) * p)/2 + 
+            c(lat1 * p) * c(lat2 * p) * 
+            (1 - c((lon2 - lon1) * p))/2;
+    return 12742 * asin(sqrt(a));
+  }
+
+  void calculaBateriasCercanas() {
+    double latitud = double.parse(infoActividad[8]);
+    double longitud = double.parse(infoActividad[9]);
+
+    List<Bateria> bateriasCercanas = [];
+
+    for (var bateria in bateriasDisponibles) {
+      double distancia = calcularDistancia(latitud, longitud, bateria.latitud, bateria.longitud);
+      if (distancia <= 5) {
+        bateria.distancia = distancia;
+        bateriasCercanas.add(bateria);
+      }
+    }
+    bateriasCerca = bateriasCercanas;
+
+  }
 
 
   @override
   void initState(){
     super.initState();
     checkApuntado(_user!.uid, infoActividad);
+    calculaBateriasCercanas();
   } 
 
     void _onTabChange(int index) {
@@ -137,6 +176,83 @@ void mostrarQR() {
         break;
     }
   }
+
+ bool isStreetAddress(String address) {
+  final regex = RegExp(r'[a-zA-Z]+\s+\d');
+  return regex.hasMatch(address);
+}
+
+void mostrarBaterias() {
+
+  bateriasCerca.sort((a, b) {
+  return a.distancia.compareTo(b.distancia);
+  });
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: AlertDialog(
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+                 Align(
+                  alignment: Alignment.topLeft,
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 7.0),
+                        child: Image.asset(
+                          'assets/categoriabateria.png',
+                          height: 50.0,
+                          width: 50.0,
+                        ),
+                      ),
+                      const SizedBox(width: 10.0), 
+                      const Text(
+                        'Carregadors propers:',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                ...bateriasCerca.where((bateria) => isStreetAddress(bateria.address)).map((bateria) => Padding(
+                  padding: const EdgeInsets.only(bottom: 5.0,), // Agrega un espacio en la parte inferior
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.8, // 80% del ancho de la pantalla
+                    child: bateriaBox(
+                      adress: bateria.address,
+                      kw: bateria.kw, 
+                      speed: bateria.speed, 
+                      distancia: bateria.distancia, 
+                      latitud: bateria.latitud, 
+                      longitud: bateria.longitud
+                    ),
+                  ),
+                )).toList(),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -234,20 +350,50 @@ void mostrarQR() {
   }
 
 
-  Widget _imagenActividad(String imagenUrl){
-    return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0), 
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10.0),
-              child: Image.network(
-                imagenUrl,
-                height: 200,
-                width: double.infinity, 
-                fit: BoxFit.cover, 
+Widget _imagenActividad(String imagenUrl){
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0), 
+    child: Stack(
+      children: <Widget>[
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10.0),
+          child: Image.network(
+            imagenUrl,
+            height: 200,
+            width: double.infinity, 
+            fit: BoxFit.cover, 
+          ),
+        ),
+        Positioned(
+          bottom: 10.0,
+          right: 10.0,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: SizedBox(
+              height: 32.5, // Establece la altura del botón
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white, 
+                  backgroundColor: Colors.black, // Color del texto y del icono
+                ),
+                icon: const Icon(Icons.location_on),
+                label: const Text('Como llegar'),
+                onPressed: () async {
+                  final url = Uri.parse('https://www.google.com/maps/search/?api=1&query=${infoActividad[8]},${infoActividad[9]}');
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url);
+                  } else {
+                    throw 'No se pudo abrir $url';
+                  }
+                },
               ),
             ),
-    );
-  }
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
   Widget _tituloBoton(String tituloActividad, String categoriaActividad){
     return Container(
@@ -321,6 +467,7 @@ void mostrarQR() {
         margin: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column( 
           children: [
+            const Padding(padding: EdgeInsets.only(top: 5)),
           _getIconPlusTexto('ubicacion', ubicacion),
           _getIconPlusTexto('calendario', 'DataIni: $dataIni'),
           _getIconPlusTexto('calendario', 'DataFi: $dataFi'),
@@ -344,7 +491,72 @@ void mostrarQR() {
               ),
             ],
           ),
-          _getIconPlusTexto('categoria', categorias)
+          _getIconPlusTexto('categoria', categorias),
+          const Padding(padding: EdgeInsets.only(bottom: 3)),
+          Row(
+            children: [
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.65, 
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white, 
+                        backgroundColor: const Color(0xFFF4692A), // Color de fondo del botón
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), // Forma del botón
+                      ),
+                      onPressed: () {
+                        mostrarBaterias();
+                      },
+                      child: const FittedBox(
+                        child: Row(
+                          children: [
+                            Icon(Icons.battery_charging_full, color: Colors.white), // Icono de un rayo
+                            Text('Ver cargadores cercanos'),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.45,
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white, 
+                        backgroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), 
+                      ),
+                      onPressed: () {
+                        if (organizador){
+                          mostrarQR();
+                        }
+                        else {
+
+                        }
+                      },
+                      child: FittedBox(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.qr_code, color: Colors.white),
+                          const SizedBox(width: 8),
+                          Text(organizador ? 'Mostrar QR' : 'Escanear QR'),
+                        ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+                    const Padding(padding: EdgeInsets.only(bottom: 5)),
           ]
         ),
       ),

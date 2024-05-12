@@ -73,7 +73,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       // Muestra el indicador de carga mientras se verifica el inicio de sesión
-      return MaterialApp(
+      return const MaterialApp(
         home: Scaffold(
           body: Center(
             child: CircularProgressIndicator(),

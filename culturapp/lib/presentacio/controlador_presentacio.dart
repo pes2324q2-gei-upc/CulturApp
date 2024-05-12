@@ -1,4 +1,5 @@
 import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/bateria.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/grup.dart';
 import 'package:culturapp/domain/models/message.dart';
@@ -51,6 +52,7 @@ class ControladorPresentacion {
   late List<Actividad> actividadesVencidas;
   late List<String> actividadesValoradas;
   late List<String> actividadesOrganizadas;
+  late List<Bateria> bateriasDispo;
 
   void funcLogout() async {
     _auth.signOut();
@@ -83,6 +85,7 @@ class ControladorPresentacion {
       usersBD.removeWhere((usuario) => usuario.username == usernameLogged);
       usersRecom = calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
       usersBD.removeWhere((usuario) => friends.contains(usuario.username));
+      bateriasDispo = await controladorDomini.getBateries();
 
     }
   }
@@ -292,7 +295,7 @@ class ControladorPresentacion {
       } else {
         organiza = false;
       }
-
+  print(info_act.length);
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -301,6 +304,7 @@ class ControladorPresentacion {
           uri_actividad: uri_act,
           controladorPresentacion: this,
           esOrganizador: organiza,
+          bateriasDisp: bateriasDispo,
         ),
       ),
     );

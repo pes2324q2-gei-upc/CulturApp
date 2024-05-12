@@ -50,7 +50,9 @@ class _ListaActividadesDisponiblesState extends State<ListaActividadesDisponible
                widget.actividades[index].descripcio,
                widget.actividades[index].dataInici,
                widget.actividades[index].dataFi,
-               widget.actividades[index].ubicacio
+               widget.actividades[index].ubicacio,
+               widget.actividades[index].latitud.toString(),
+               widget.actividades[index].longitud.toString()
             ];
             _controladorPresentacion.mostrarVerActividad(
               context, 

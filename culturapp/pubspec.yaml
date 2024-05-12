@@ -50,6 +50,7 @@ flutter:
   - assets/lang/es.json
   - assets/lang/ca.json
   - assets/lang/en.json
+  - assets/cargador.png
   - assets/pinarte.png
   - assets/pinconfe.png
   - assets/pincarnaval.png

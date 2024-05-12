@@ -614,7 +614,9 @@ double radians(double degrees) {
                               actividad.descripcio,
                               actividad.dataInici,
                               actividad.dataFi,
-                              actividad.ubicacio
+                              actividad.ubicacio,
+                              actividad.latitud.toString(),
+                              actividad.longitud.toString(),
                             ];
                             _controladorPresentacion.mostrarVerActividad(
                                 context, act, actividad.urlEntrades);
