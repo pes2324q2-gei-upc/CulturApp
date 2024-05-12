@@ -180,7 +180,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
 
   Future<List<Actividad>> fetchActivities() async {
     var actividadesaux = <Actividad>[];
-    actividadesaux = await _controladorPresentacion.getUserActivities();
+    actividadesaux = await _controladorPresentacion.getUserActivs();
     return actividadesaux;
   }
 

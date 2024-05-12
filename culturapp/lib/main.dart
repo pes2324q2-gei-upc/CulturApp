@@ -60,8 +60,8 @@ class _MyAppState extends State<MyApp> {
     User? currentUser = _auth.currentUser;
     setState(() {
       _isLoggedIn = currentUser != null;
-      _selectedIndex = _isLoggedIn ? _selectedIndex : 4; // Si no está logueado, selecciona el índice 4
-      _isLoading = false; // Una vez que la verificación de inicio de sesión haya terminado, deja de cargar
+      _selectedIndex = _isLoggedIn ? _selectedIndex : 4;
+      _isLoading = false; 
     });
   }
 

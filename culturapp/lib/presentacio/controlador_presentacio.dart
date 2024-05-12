@@ -77,7 +77,7 @@ class ControladorPresentacion {
       await controladorDomini.setInfoUserLogged(_user!.uid);
       usernameLogged = controladorDomini.userLogged.getUsername();
       activitats = await controladorDomini.getActivitiesAgenda();
-      activitatsUser = await controladorDomini.getUserActivities();
+      activitatsUser = await controladorDomini.getUserActivities(usernameLogged);
       actividadesVencidas = await controladorDomini.getActivitiesVencudes();
       actividadesOrganizadas = await controladorDomini.obteActivitatsOrganitzades(_user!.uid);
       usersBD = await controladorDomini.getUsers();
@@ -213,8 +213,8 @@ class ControladorPresentacion {
 
   List<Actividad> getActivitats() => activitats;
 
-  Future<List<Actividad>> getUserActivities() =>
-      controladorDomini.getUserActivities();
+  Future<List<Actividad>> getUserActivs() =>
+      controladorDomini.getUserActivities(usernameLogged);
 
   List<String> getActivitatsRecomm() {
     recomms = calcularActividadesRecomendadas(categsFav, activitats);
@@ -348,6 +348,7 @@ class ControladorPresentacion {
 
   void mostrarPerfil(BuildContext context) async {
     Usuari usuari = await this.getUserByName(usernameLogged);
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -360,20 +361,22 @@ class ControladorPresentacion {
     );
   }
 
-  void mostrarAltrePerfil(BuildContext context, Usuari usuari) {
+  void mostrarAltrePerfil(BuildContext context, Usuari usuari) async {
+    List<Actividad>activUser = await controladorDomini.getUserActivities(usuari.nom);
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PerfilPage(
             controladorPresentacion: this,
             user: usuari,
-            owner: false),
+            owner: false,
+            activitatsVenc: activUser,),
       ),
     );
   }
 
   Future<void> mostrarMisActividades(BuildContext context) async {
-    getUserActivities().then((actividades) => {
+    getUserActivs().then((actividades) => {
           Navigator.push(
             context,
             MaterialPageRoute(

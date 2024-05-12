@@ -255,10 +255,10 @@ Future<List<Bateria>> getBateries() async {
     }
   }
 
-  Future<List<Actividad>> getUserActivities() async {
+  Future<List<Actividad>> getUserActivities(String username) async {
     final respuesta = await http.get(
       Uri.parse(
-          'https://culturapp-back.onrender.com/users/${userLogged.getUsername()}/activitats'),
+          'https://culturapp-back.onrender.com/users/${username}/activitats'),
       headers: {
         'Authorization': 'Bearer ${userLogged.getToken()}',
       },
