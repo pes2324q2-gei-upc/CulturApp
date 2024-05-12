@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/bateria.dart';
 import 'package:culturapp/domain/models/foro_model.dart';
 import 'package:culturapp/domain/models/post.dart';
 import 'package:culturapp/domain/models/user.dart';
@@ -150,7 +151,7 @@ class ControladorDomini {
 
   Future<List<String>> obteActivitatsOrganitzades(String uid) async {
     final respuesta = await http.get(
-      Uri.parse('http://10.0.2.2:8080/users/${uid}/actividadesorganizadas'),
+      Uri.parse('https://culturapp-back.onrender.com/users/${uid}/actividadesorganizadas'),
       headers: {
         'Authorization': 'Bearer ${userLogged.getToken()}',
         'Content-Type': 'application/json'
@@ -211,6 +212,24 @@ class ControladorDomini {
       throw Exception('Fallo la obtención de datos');
     }
   }
+
+Future<List<Bateria>> getBateries() async {
+  try {
+    final respuesta = await http.get(
+      Uri.parse('http://nattech.fib.upc.edu:40440/api/charging_points/all'),
+    );
+
+    if (respuesta.statusCode == 200) {
+      return _convert_bateria_to_list(respuesta);
+    } else {
+      print('Fallo la obtención de datos');
+      return [];
+    }
+  } catch (e) {
+    print('Error al obtener las baterías: $e');
+    return [];
+  }
+}
 
   Future<List<Usuario>> getUsers() async {
     final respuesta = await http.get(
@@ -591,6 +610,27 @@ class ControladorDomini {
     } catch (e) {
       return 500;
     }
+  }
+
+  List<Bateria> _convert_bateria_to_list(response) {
+    List<Bateria> baterias = <Bateria>[];
+    var bateriasJson = json.decode(response.body);
+
+    if (bateriasJson is List) {
+      bateriasJson.forEach((json) {
+        Bateria bateria = Bateria();
+        bateria.address = json['adreca'] ?? 'No disponible';
+        bateria.latitud = json['latitud'].toDouble();
+        bateria.longitud = json['longitud'].toDouble();
+        bateria.kw = json['kw'] is int ? json['kw'] : -1;
+        bateria.speed = (json['tipus_velocitat'] ?? 'No disponible').split(' ')[0];
+        bateria.connection = json['connexio'] ??  'No disponible';
+
+        baterias.add(bateria);
+      });
+    }
+
+    return baterias;
   }
 
   List<Actividad> _convert_database_to_list(response) {

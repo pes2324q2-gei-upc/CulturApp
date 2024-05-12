@@ -74,6 +74,8 @@ class _MapPageState extends State<MapPage> {
   late LatLng myLatLng;
   String address = 'FIB';
   bool ubicacionCargada = false;
+  double _currentSheetHeight = 0.1;
+  final double _maxHeight = 1.0;
 
   final List<String> catsAMB = [
     "Residus",
@@ -614,7 +616,9 @@ double radians(double degrees) {
                               actividad.descripcio,
                               actividad.dataInici,
                               actividad.dataFi,
-                              actividad.ubicacio
+                              actividad.ubicacio,
+                              actividad.latitud.toString(),
+                              actividad.longitud.toString(),
                             ];
                             _controladorPresentacion.mostrarVerActividad(
                                 context, act, actividad.urlEntrades);
@@ -895,12 +899,10 @@ double radians(double degrees) {
       body: Stack(
         fit: StackFit.expand, // Ajusta esta línea
         children: [
-          // Muestra un indicador de carga si la ubicación aún no se ha cargado
           if (!ubicacionCargada)
             const Center(
               child: CircularProgressIndicator(color: Color(0xFFF4692A),),
             ),
-          // Muestra el mapa una vez que la ubicación esté cargada
           if (ubicacionCargada)
             GoogleMap(
               initialCameraPosition: CameraPosition(target: myLatLng, zoom: 16),
@@ -919,7 +921,7 @@ double radians(double degrees) {
                     color: Colors.grey.withOpacity(0.5),
                     spreadRadius: 3,
                     blurRadius: 7,
-                    offset: const Offset(0, 3), // changes position of shadow
+                    offset: const Offset(0, 3),
                   ),
                 ],
                 color: Colors.white.withOpacity(1),
@@ -946,67 +948,85 @@ double radians(double degrees) {
             ),
           ),
           Positioned(
-              top: 110.0, // Adjust this value as needed
+              top: 110.0,
               left: 0,
               right: 0,
               child: MyCarousel(clickCarouselCat)),
-          Positioned.fill(
-            child: DraggableScrollableSheet(
-              initialChildSize: 0.2,
-              minChildSize: 0.1,
-              maxChildSize: 1,
-              builder:
-                  (BuildContext context, ScrollController scrollController) {
-                return Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(24),
-                      topRight: Radius.circular(24),
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      //Barra gris del botón
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Container(
-                          width: 40,
-                          height: 5,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(10),
+              Positioned.fill(
+                child: DraggableScrollableSheet(
+                  initialChildSize: _currentSheetHeight,
+                  minChildSize: 0.1,
+                  maxChildSize: _maxHeight,
+                  builder: (BuildContext context, ScrollController scrollController) {
+                    return GestureDetector(
+                      onVerticalDragUpdate: (details) {
+                        double delta = details.primaryDelta ?? 0;
+                        
+                        // Calcular la nueva altura del DraggableScrollableSheet
+                        double newHeight = _currentSheetHeight - delta / MediaQuery.of(context).size.height;
+                        if (newHeight > _maxHeight) {
+                          newHeight = _maxHeight;
+                        } else if (newHeight <= 0.1) {
+                          newHeight = 0.1;
+                        }
+                        
+                        setState(() {
+                          _currentSheetHeight = newHeight;
+                        });
+                      },
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(24),
+                            topRight: Radius.circular(24),
                           ),
                         ),
-                      ),
-                      Text(
-                        "available_activities".trWithArg(context, {"number": _actividades.length}),
-                        style: const TextStyle(
-                          color: Color(0xFFF4692A),
-                        ),
-                      ),
-                      Expanded(
-                        child: ListView(
-                          controller: scrollController,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            SizedBox(
-                              height: 750,
-                              child: ListaActividadesDisponibles(
-                                actividades: _actividades,
-                                controladorPresentacion:
-                                    _controladorPresentacion,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Container(
+                                width: 40,
+                                height: 5,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onVerticalDragUpdate: (details) {
+                              },
+                              child: Text(
+                                "available_activities".trWithArg(context, {"number": _actividades.length}),
+                                style: const TextStyle(
+                                  color: Color(0xFFF4692A),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: ListView(
+                                controller: scrollController,
+                                children: [
+                                  SizedBox(
+                                    height: 750,
+                                    child: ListaActividadesDisponibles(
+                                      actividades: _actividades,
+                                      controladorPresentacion: _controladorPresentacion,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
+                    );
+                  },
+                ),
+              ),
         ],
       ),
     );

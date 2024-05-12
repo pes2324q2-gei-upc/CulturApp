@@ -1,3 +1,4 @@
+import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/widgets/user_info.dart';
@@ -9,12 +10,13 @@ class PerfilPage extends StatefulWidget {
   
   final ControladorPresentacion controladorPresentacion;
   final bool owner;
+  final List<Actividad>activitatsVenc;
   final Usuari user;
 
-  const PerfilPage({Key? key, required this.controladorPresentacion, required Usuari this.user, required bool this.owner}) : super(key: key);
+  const PerfilPage({Key? key, required this.controladorPresentacion, required Usuari this.user, required bool this.owner, required this.activitatsVenc}) : super(key: key);
 
   @override
-  State<PerfilPage> createState() => _PerfilPageState(this.controladorPresentacion, this.user, this.owner);
+  State<PerfilPage> createState() => _PerfilPageState(this.controladorPresentacion, this.user, this.owner, this.activitatsVenc);
 }
 
 class _PerfilPageState extends State<PerfilPage> {
@@ -22,11 +24,14 @@ class _PerfilPageState extends State<PerfilPage> {
   late ControladorPresentacion _controladorPresentacion;
   late Usuari _user;
   late bool _owner;
+  late List<Actividad>activitatsVencidas;
   
-  _PerfilPageState(ControladorPresentacion controladorPresentacion, Usuari user, bool owner) {
+
+  _PerfilPageState(ControladorPresentacion controladorPresentacion, Usuari user, bool owner, List<Actividad> vencidas) {
     _controladorPresentacion = controladorPresentacion;
     _user = user;
     _owner = owner;
+    activitatsVencidas = vencidas;
   }
 
   @override
@@ -97,6 +102,7 @@ class _PerfilPageState extends State<PerfilPage> {
         controladorPresentacion: _controladorPresentacion,
         user: _user,
         owner: widget.owner,
+        activitatsVencidas: activitatsVencidas,
       ),
     ),
     );
