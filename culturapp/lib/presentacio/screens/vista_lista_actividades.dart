@@ -172,7 +172,7 @@ class _ListaActividadesDisponiblesState extends State<ListaActividadesDisponible
             List<String> act = [
               widget.actividades[index].name,
               widget.actividades[index].code,
-              widget.actividades[index].categoria[0],
+              widget.actividades[index].categoria.join(', '),
                widget.actividades[index].imageUrl,
                widget.actividades[index].descripcio,
                widget.actividades[index].dataInici,

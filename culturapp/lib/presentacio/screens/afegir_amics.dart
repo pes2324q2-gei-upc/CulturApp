@@ -102,6 +102,8 @@ class _AfegirAmicsState extends State<AfegirAmics> {
                         text: user.username,
                         recomm: true,
                         type: "addSomeone",
+                        popUpStyle: "default",
+                        placeReport: "null",
                         controladorPresentacion:
                             widget.controladorPresentacion),
                   ),
@@ -113,6 +115,8 @@ class _AfegirAmicsState extends State<AfegirAmics> {
                         text: user.username,
                         recomm: false,
                         type: "null",
+                        popUpStyle: "default",
+                        placeReport: "null",
                         controladorPresentacion:
                             widget.controladorPresentacion),
                   ),

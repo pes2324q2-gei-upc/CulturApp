@@ -8,6 +8,7 @@ import 'package:culturapp/presentacio/screens/edit_perfil.dart';
 import 'package:culturapp/presentacio/screens/llistar_follows.dart';
 import 'package:culturapp/presentacio/screens/llistar_pendents.dart';
 import 'package:culturapp/presentacio/screens/report_bug.dart';
+import 'package:culturapp/presentacio/screens/report_user.dart';
 import 'package:culturapp/presentacio/screens/solicitud_organitzador.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/configuracio_grup.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/info_grup.dart';
@@ -205,6 +206,11 @@ class ControladorPresentacion {
 
   List<Actividad> getActivitatsUser() => activitatsUser;
 
+  Future<List<Actividad>> getActivitatsByUser(Usuari user) async {
+    List<Actividad> llista = await controladorDomini.getUserActivitiesByUser(user);
+    return llista;
+  }
+
   List<Actividad> getActivitats() => activitats;
 
   Future<List<Actividad>> getUserActivities() =>
@@ -278,6 +284,10 @@ class ControladorPresentacion {
     await controladorDomini.createFriend(person);
   }
 
+  Future<void> deleteFollowing(String person) async {
+    await controladorDomini.deleteFollowing(person);
+  }
+
   Future<int> sendReportBug(String titol, String report) async {
     return await controladorDomini.sendReportBug(titol, report);
   }
@@ -288,6 +298,11 @@ class ControladorPresentacion {
         titol, idActivitat, motiu);
   }
 
+
+  Future<int> sendReportUser(String titol, String userReported, String report, String placeReport) async {
+    return await controladorDomini.sendReportUser(titol, userReported, report, placeReport);
+  }
+
   void mostrarVerActividad(BuildContext context, List<String> info_act, Uri uri_act) {
       bool organiza;
       if (actividadesOrganizadas.contains(info_act[1])) {
@@ -295,7 +310,6 @@ class ControladorPresentacion {
       } else {
         organiza = false;
       }
-  print(info_act.length);
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -332,15 +346,28 @@ class ControladorPresentacion {
     );
   }
 
-  void mostrarPerfil(BuildContext context) {
+  void mostrarPerfil(BuildContext context) async {
+    Usuari usuari = await this.getUserByName(usernameLogged);
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PerfilPage(
             controladorPresentacion: this,
-            username: usernameLogged,
-            owner: true, 
+            user: usuari,
+            owner: true,
             activitatsVenc: actividadesVencidas,),
+      ),
+    );
+  }
+
+  void mostrarAltrePerfil(BuildContext context, Usuari usuari) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PerfilPage(
+            controladorPresentacion: this,
+            user: usuari,
+            owner: false),
       ),
     );
   }
@@ -676,6 +703,15 @@ class ControladorPresentacion {
           idActivitat: idActivitat,
           titolActivitat: titol,
         ),
+      ),
+    );
+  }
+
+  void mostrarReportUser(BuildContext context, String userReported, String placeReport) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ReportUserScreen(userReported: userReported, placeReport: placeReport, controladorPresentacion: this),
       ),
     );
   }

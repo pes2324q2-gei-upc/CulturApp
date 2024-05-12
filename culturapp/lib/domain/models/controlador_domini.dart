@@ -409,6 +409,20 @@ Future<List<Bateria>> getBateries() async {
       throw Exception('Error al eliminar al usuario');
   }
 
+  Future<void> deleteFollowing(String person) async {
+    final http.Response response = await http.delete(
+      Uri.parse('https://culturapp-back.onrender.com/amics/deleteFollowing/$person'),
+      headers: {
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+    );
+
+    if (response.statusCode != 200)
+      throw Exception('Error al eliminar al usuario');
+  }
+
+
+
   Future<void> createFriend(String person) async {
     final Map<String, dynamic> body = {
       'friend': person,
@@ -424,7 +438,7 @@ Future<List<Bateria>> getBateries() async {
     );
 
     if (response.statusCode != 200)
-      throw Exception('Error al eliminar al usuario');
+      throw Exception('Error al crear la solicitud de amistad');
   }
 
   void signoutFromActivity(String? uid, String code) async {
@@ -560,14 +574,40 @@ Future<List<Bateria>> getBateries() async {
           body: jsonEncode(body));
 
       if (response.statusCode == 200) {
-        print('Solicitud enviada exitosamente');
         return 200;
       } else {
-        print('Error al enviar la solicitud: ${response.body}');
         return 500;
       }
     } catch (e) {
-      print(e);
+      return 500;
+    }
+  }
+
+  Future<int> sendReportUser(
+      String titol, String usuariReportat, String report, String placeReport) async {
+    final Map<String, dynamic> body = {
+      'titol': titol,
+      'usuariReportat': usuariReportat,
+      'report': report,
+      'placeReport': placeReport,
+    };
+
+    try {
+      final response = await http.post(
+          Uri.parse(
+              'https://culturapp-back.onrender.com/tickets/reportUsuari/create'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${userLogged.getToken()}',
+          },
+          body: jsonEncode(body));
+
+      if (response.statusCode == 200) {
+        return 200;
+      } else {
+        return 500;
+      }
+    } catch (e) {
       return 500;
     }
   }
@@ -1245,4 +1285,23 @@ Future<List<Bateria>> getBateries() async {
       throw Exception('Error de red: $error');
     }
   }
+
+  getUserActivitiesByUser(Usuari user) async {
+    print("Aconseguint activitats de " + user.nom);
+    final respuesta = await http.get(
+      Uri.parse(
+          'https://culturapp-back.onrender.com/users/${user.nom}/activitats'),
+      headers: {
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+    );
+
+    if (respuesta.statusCode == 200) {
+      return _convert_database_to_list(respuesta);
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
 }
+
+
