@@ -12,7 +12,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:flutter/material.dart';
 
 
 class MapPage extends StatefulWidget {
@@ -842,7 +841,6 @@ double radians(double degrees) {
   void _onMapCreated(GoogleMapController controller) async {
     _mapController = controller;
     actsvencidas = await _controladorPresentacion.checkNoValoration();
-    print(actsvencidas.length);
     if (actsvencidas.isNotEmpty) mostrarValoracion(context, actsvencidas);
     
     
@@ -921,7 +919,7 @@ double radians(double degrees) {
                     color: Colors.grey.withOpacity(0.5),
                     spreadRadius: 3,
                     blurRadius: 7,
-                    offset: Offset(0, 3), // changes position of shadow
+                    offset: const Offset(0, 3), // changes position of shadow
                   ),
                 ],
                 color: Colors.white.withOpacity(1),

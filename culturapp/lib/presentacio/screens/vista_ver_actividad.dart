@@ -4,10 +4,10 @@ import 'package:culturapp/presentacio/widgets/post_widget.dart';
 import 'package:culturapp/presentacio/widgets/reply_widget.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/translations/AppLocalizations';
-import 'package:culturapp/widgetsUtils/bnav_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:barcode_widget/barcode_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class VistaVerActividad extends StatefulWidget{
@@ -15,11 +15,12 @@ class VistaVerActividad extends StatefulWidget{
   final List<String> info_actividad;
   final ControladorPresentacion controladorPresentacion;
   final Uri uri_actividad;
+  final bool esOrganizador;
 
-  const VistaVerActividad({super.key, required this.info_actividad, required this.uri_actividad, required this.controladorPresentacion});
+  const VistaVerActividad({super.key, required this.info_actividad, required this.uri_actividad, required this.controladorPresentacion, required this.esOrganizador});
 
   @override
-  State<VistaVerActividad> createState() => _VistaVerActividadState(controladorPresentacion ,info_actividad, uri_actividad);
+  State<VistaVerActividad> createState() => _VistaVerActividadState(controladorPresentacion ,info_actividad, uri_actividad, esOrganizador);
 }
 
 class _VistaVerActividadState extends State<VistaVerActividad> {
@@ -44,7 +45,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   String? postIden = '';
   bool reply = false;
   bool mostraReplies = false;
-  bool organizador = false;
+  bool organizador = true;
   
   final List<String> catsAMB = ["Residus",
   "territori.espai_public_platges",
@@ -61,12 +62,52 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   "territori.espai_public_rius",
   "Espai públic - Platges"];
   
-  _VistaVerActividadState(ControladorPresentacion controladorPresentacion ,List<String> info_actividad, Uri uri_actividad) {
+  _VistaVerActividadState(ControladorPresentacion controladorPresentacion ,List<String> info_actividad, Uri uri_actividad, bool esOrganizador) {
     infoActividad = info_actividad;
     uriActividad = uri_actividad;
     _controladorPresentacion = controladorPresentacion;
     controladorDominio = _controladorPresentacion.getControladorDomini();
+    organizador = esOrganizador;
   }
+
+
+void mostrarQR() {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+            BarcodeWidget( 
+              padding: const EdgeInsets.only(left: 15, right: 15),
+              barcode: Barcode.qrCode(),
+              data: infoActividad[1],
+              width: 250,
+              height: 250,
+            ),
+            const Padding(padding: EdgeInsets.only(top: 30)),
+            Text('Code: ${infoActividad[1]}', style: const TextStyle(
+              fontSize: 22, // Aumenta el tamaño del texto
+              fontWeight: FontWeight.bold,
+            ),),
+            const Padding(padding: EdgeInsets.only(bottom: 10)),
+          ],
+        ),
+      );
+    },
+  );
+}
+
 
   @override
   void initState(){
@@ -119,6 +160,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
               if (result == 'Enviar solicitud de organizador') {
                 _controladorPresentacion.mostrarSolicitutOrganitzador(context, infoActividad[0], infoActividad[1]);
               }
+              else if (result == 'view_qr') {
+                mostrarQR();
+              }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               const PopupMenuItem<String>(
@@ -133,15 +177,11 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
               if (organizador)
                 const PopupMenuItem<String>(
                   value: 'view_qr',
-                  child: Text('Ver QR'),
+                  child: Text('Mostrar QR'),
                 ),
             ],
           ),
         ],
-      ),
-       bottomNavigationBar: CustomBottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTabChange: _onTabChange,
       ),
       body: Column(
         children:[ 
