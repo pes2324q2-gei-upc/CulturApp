@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:culturapp/presentacio/screens/vista_mis_actividades.dart';
 import 'package:culturapp/presentacio/widgets/carousel.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
 import 'package:culturapp/translations/AppLocalizations';
@@ -953,80 +954,83 @@ double radians(double degrees) {
               right: 0,
               child: MyCarousel(clickCarouselCat)),
               Positioned.fill(
-                child: DraggableScrollableSheet(
-                  initialChildSize: _currentSheetHeight,
-                  minChildSize: 0.1,
-                  maxChildSize: _maxHeight,
-                  builder: (BuildContext context, ScrollController scrollController) {
-                    return GestureDetector(
-                      onVerticalDragUpdate: (details) {
-                        double delta = details.primaryDelta ?? 0;
-                        
-                        // Calcular la nueva altura del DraggableScrollableSheet
-                        double newHeight = _currentSheetHeight - delta / MediaQuery.of(context).size.height;
-                        if (newHeight > _maxHeight) {
-                          newHeight = _maxHeight;
-                        } else if (newHeight <= 0.1) {
-                          newHeight = 0.1;
-                        }
-                        
-                        setState(() {
-                          _currentSheetHeight = newHeight;
-                        });
-                      },
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(24),
-                            topRight: Radius.circular(24),
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8.0),
-                              child: Container(
-                                width: 40,
-                                height: 5,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[300],
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              onVerticalDragUpdate: (details) {
-                              },
-                              child: Text(
-                                "available_activities".trWithArg(context, {"number": _actividades.length}),
-                                style: const TextStyle(
-                                  color: Color(0xFFF4692A),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: ListView(
-                                controller: scrollController,
-                                children: [
-                                  SizedBox(
-                                    height: 750,
-                                    child: ListaActividadesDisponibles(
-                                      actividades: _actividades,
-                                      controladorPresentacion: _controladorPresentacion,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+  child: DraggableScrollableSheet(
+    initialChildSize: _currentSheetHeight,
+    minChildSize: 0.1,
+    maxChildSize: _maxHeight,
+    builder: (BuildContext context, ScrollController scrollController) {
+      if (_currentSheetHeight > 0.6) {
+                // Si la hoja arrastrable supera el 60% de la pantalla, navega a la nueva vista
+        WidgetsBinding.instance!.addPostFrameCallback((_) {
+          _controladorPresentacion.mostrarMisActividades(context);
+        });
+        return Container();
+      
+      } else {
+        return GestureDetector(
+          onVerticalDragUpdate: (details) {
+            double delta = details.primaryDelta ?? 0;
+            double newHeight = _currentSheetHeight - delta / MediaQuery.of(context).size.height;
+            if (newHeight > _maxHeight) {
+              newHeight = _maxHeight;
+            } else if (newHeight <= 0.1) {
+              newHeight = 0.1;
+            }
+            setState(() {
+              _currentSheetHeight = newHeight;
+            });
+          },
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(24),
+                topRight: Radius.circular(24),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Container(
+                    width: 40,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                Text(
+                  "available_activities".trWithArg(context, {"number": _actividades.length}),
+                  style: const TextStyle(
+                    color: Color(0xFFF4692A),
+                  ),
+                ),
+                Expanded(
+                  child: ListView(
+                    controller: scrollController,
+                    children: [
+                      SizedBox(
+                        height: 750,
+                        child: ListaActividadesDisponibles(
+                          actividades: _actividades,
+                          controladorPresentacion: _controladorPresentacion,
                         ),
                       ),
-                    );
-                  },
+                    ],
+                  ),
                 ),
-              ),
+              ],
+            ),
+          ),
+        );
+      }
+    },
+  ),
+),
+
         ],
       ),
     );
