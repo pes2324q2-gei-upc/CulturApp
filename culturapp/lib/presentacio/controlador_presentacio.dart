@@ -339,7 +339,8 @@ class ControladorPresentacion {
         builder: (context) => PerfilPage(
             controladorPresentacion: this,
             username: usernameLogged,
-            owner: true),
+            owner: true, 
+            activitatsVenc: actividadesVencidas,),
       ),
     );
   }

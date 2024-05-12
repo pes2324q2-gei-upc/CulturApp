@@ -1,6 +1,7 @@
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
 import 'package:culturapp/translations/AppLocalizations';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 
@@ -8,17 +9,19 @@ class UserInfoWidget extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
   final String username;
   final bool owner;
+  final List<Actividad> activitatsVencidas;
 
   const UserInfoWidget(
       {Key? key,
       required this.controladorPresentacion,
       required this.username,
-      required this.owner})
+      required this.owner,
+      required this.activitatsVencidas})
       : super(key: key);
 
   @override
   _UserInfoWidgetState createState() =>
-      _UserInfoWidgetState(this.controladorPresentacion);
+      _UserInfoWidgetState(controladorPresentacion, activitatsVencidas);
 }
 
 class _UserInfoWidgetState extends State<UserInfoWidget> {
@@ -28,8 +31,9 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
   late List<Actividad> activitats;
   late List<Actividad> display_list;
 
-  _UserInfoWidgetState(ControladorPresentacion controladorPresentacion) {
+  _UserInfoWidgetState(ControladorPresentacion controladorPresentacion, List<Actividad> activitatsVenc) {
     _controladorPresentacion = controladorPresentacion;
+    activitats = activitatsVenc;
   }
 
   @override
