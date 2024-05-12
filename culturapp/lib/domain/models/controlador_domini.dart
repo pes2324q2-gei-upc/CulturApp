@@ -546,11 +546,12 @@ class ControladorDomini {
   }
 
   Future<int> sendReportUser(
-      String titol, String usuariReportat, String report) async {
+      String titol, String usuariReportat, String report, String placeReport) async {
     final Map<String, dynamic> body = {
       'titol': titol,
       'usuariReportat': usuariReportat,
       'report': report,
+      'placeReport': placeReport,
     };
 
     try {

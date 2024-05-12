@@ -293,8 +293,8 @@ class ControladorPresentacion {
         titol, idActivitat, motiu);
   }
 
-  Future<int> sendReportUser(String titol, String userReported, String report) async {
-    return await controladorDomini.sendReportUser(titol, userReported, report);
+  Future<int> sendReportUser(String titol, String userReported, String report, String placeReport) async {
+    return await controladorDomini.sendReportUser(titol, userReported, report, placeReport);
   }
 
   void mostrarVerActividad(
@@ -693,11 +693,11 @@ class ControladorPresentacion {
     );
   }
 
-  void mostrarReportUser(BuildContext context, String userReported) {
+  void mostrarReportUser(BuildContext context, String userReported, String placeReport) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ReportUserScreen(userReported: userReported, controladorPresentacion: this),
+        builder: (context) => ReportUserScreen(userReported: userReported, placeReport: placeReport, controladorPresentacion: this),
       ),
     );
   }

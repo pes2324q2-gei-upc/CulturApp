@@ -816,7 +816,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("confirm".tr(context)),
+          title: Text("confirmation".tr(context)),
           content: Text(dialogContent),
           actions: <Widget>[
             TextButton(
@@ -852,19 +852,25 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           }).toList(),
           onSelected: (String value) async {
             if (value == "block_user".tr(context)) {
-              final bool? confirm = await confirmPopUp("block_user_confirm".trWithArg(context, {"user": username}));
+              final bool? confirm = await confirmPopUp("confirm_block_user".trWithArg(context, {"user": username}));
               if(confirm == true) {
                 //_controladorPresentacion.blockUser(username);
               }
             } else if (value == "unblock_user".tr(context)) {
-              final bool? confirm = await confirmPopUp("unblock_user_confirm".trWithArg(context, {"user": username}));
+              final bool? confirm = await confirmPopUp("confirm_unblock_user".trWithArg(context, {"user": username}));
               if(confirm == true) {
                 //_controladorPresentacion.reportUser(code, username);
               }
             } else if (value == "report_user".tr(context)) {
-              final bool? confirm = await confirmPopUp("report_user_confirm".trWithArg(context, {"user": username}));
+              final bool? confirm = await confirmPopUp("confirm_report_user".trWithArg(context, {"user": username}));
               if(confirm == true) {
-                _controladorPresentacion.mostrarReportUser(context, username);
+                if(reply){
+                  String? postId = await _controladorPresentacion.getPostId(idForo, date);
+                  _controladorPresentacion.mostrarReportUser(context, username, "forum $idForo $postId");
+                } else{
+                  String? postId = await _controladorPresentacion.getPostId(idForo, post.fecha);
+                  _controladorPresentacion.mostrarReportUser(context, username, "forum $idForo $postId");
+                }
               }
             } else if (value == "delete_post".tr(context)) {
               _showDeleteOption(context, post, reply);
