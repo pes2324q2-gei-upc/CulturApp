@@ -4,6 +4,7 @@ import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/grup.dart';
 import 'package:culturapp/domain/models/message.dart';
 import 'package:culturapp/domain/models/usuari.dart';
+import 'package:culturapp/presentacio/screens/actividades_disponibles.dart';
 import 'package:culturapp/presentacio/screens/edit_perfil.dart';
 import 'package:culturapp/presentacio/screens/llistar_follows.dart';
 import 'package:culturapp/presentacio/screens/llistar_pendents.dart';
@@ -397,6 +398,19 @@ class ControladorPresentacion {
               builder: (context) => ListaMisActividades(
                 controladorPresentacion: this,
                 user: _user,
+              ),
+            ),
+          )
+        });
+  }
+
+    Future<void> mostrarActividadesDisponibles(BuildContext context, List<Actividad> acts) async {
+    getUserActivs().then((actividades) => {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Actsdisponibles(
+                controladorPresentacion: this, mapActs: acts,
               ),
             ),
           )

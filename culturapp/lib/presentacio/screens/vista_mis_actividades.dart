@@ -625,8 +625,23 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Padding(padding: EdgeInsets.only(bottom: 20)),
+                          Row(
+                          children: [
+                          SizedBox(
+                            height: 32.5,// Reducir el ancho para hacer el botón más pequeño
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: Colors.black,
+                                side: BorderSide(color: Colors.black,),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
                               ),
                               const Padding(
                                   padding: EdgeInsets.only(bottom: 20)),
