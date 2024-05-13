@@ -81,5 +81,7 @@
     "modify_participants": "Modificar participants",
     "select_unselect_participants": "Select or unselect participants to add them",
     "recommendations": "Recommendations:",
-    "send_organizer_request": "Send organizer request"
+    "send_organizer_request": "Send organizer request",
+    "put_post": "Enter a post to continue",
+    "put_reply": "Enter a reply to continue"
 }

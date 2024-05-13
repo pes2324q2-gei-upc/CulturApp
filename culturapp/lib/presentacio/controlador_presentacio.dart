@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/grup.dart';
@@ -566,8 +568,8 @@ class ControladorPresentacion {
   }
 
   void createGrup(
-      String name, String description, String image, List<String> members) {
-    controladorDomini.createGrup(name, description, image, members);
+      String name, String description, Uint8List? fileBytes, List<String> members) {
+    controladorDomini.createGrup(name, description, members, fileBytes);
   }
 
   Future<Grup> getInfoGrup(String grupId) async {

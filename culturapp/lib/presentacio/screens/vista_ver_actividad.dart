@@ -506,7 +506,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}'); // Si hi ha hagut algun error
         } else {
-          List<Post> posts = snapshot.data!;
+          List<Post> posts_future = snapshot.data!;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -516,14 +516,14 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
                     child: Text(
                       //quereis que añada tambien el numero de replies?
-                      'comments'.trWithArg(context, {"num": "${posts.length}"}),
+                      'comments'.trWithArg(context, {"num": "${posts_future.length}"}),
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                   mostrarReplies(),
                 ]
               ),
-              _post(posts)
+              _post(posts_future)
             ],
           );
         }
@@ -531,13 +531,13 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     );
   }
 
-  Widget _post(list_posts) {
+  Widget _post(listPosts) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: list_posts.length,
+      itemCount: listPosts.length,
       itemBuilder: (context, index) {
-        final post = list_posts[index];
+        final post = listPosts[index];
         DateTime dateTime = DateTime.parse(post.fecha);
         String formattedDate = DateFormat('yyyy/MM/dd HH:mm').format(dateTime);
         return ListTile(

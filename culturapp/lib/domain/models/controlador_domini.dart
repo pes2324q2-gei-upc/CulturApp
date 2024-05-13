@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/foro_model.dart';
@@ -913,7 +913,7 @@ class ControladorDomini {
   void addMessage(String? xatId, String time, String text) async {
     try {
       final url =
-          Uri.parse('https://culturapp-back.onrender.com/xats/$xatId/mensajes');
+          Uri.parse('http://${ip}:8080/xats/$xatId/mensajes');
       final response = await http.post(
         url,
         headers: {
@@ -936,7 +936,7 @@ class ControladorDomini {
   Future<List<Message>> getMessages(String? xatId) async {
     try {
       final response = await http.get(Uri.parse(
-          'https://culturapp-back.onrender.com/xats/$xatId/mensajes'));
+          'http://${ip}:8080/xats/$xatId/mensajes'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -960,7 +960,7 @@ class ControladorDomini {
   Future<List<Grup>> getUserGrups() async {
     try {
       final response = await http.get(
-        Uri.parse('https://culturapp-back.onrender.com/grups/users/all'),
+        Uri.parse('http://${ip}:8080/grups/users/all'),
         headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
         },
@@ -1004,24 +1004,33 @@ class ControladorDomini {
   }
 
   //crear grup
-  void createGrup(String name, String description, String image,
-      List<String> members) async {
+  Future<void> createGrup(String name, String description,
+      List<String> members, Uint8List? fileBytes) async {
     try {
-      final Map<String, dynamic> grupata = {
+
+      String membersJson = jsonEncode(members);
+
+      final Map<String, dynamic> grupData = {
         'name': name,
         'descr': description,
-        'imatge': image,
-        'members': members
+        'members':  membersJson
       };
 
-      final respuesta = await http.post(
-        Uri.parse('https://culturapp-back.onrender.com/grups/create'),
-        body: jsonEncode(grupata),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${userLogged.getToken()}'
-        },
-      );
+      var request = http.MultipartRequest('POST', Uri.parse('http://${ip}:8080/grups/create'));
+      request.headers['Authorization'] = 'Bearer ${userLogged.getToken()}';
+
+      // Add each key-value pair from grupData as a form field
+      grupData.forEach((key, value) {
+        request.fields[key] = value.toString();
+      });
+
+      // Add file to the request
+      if (fileBytes != null) {
+        request.files.add(http.MultipartFile.fromBytes('file', fileBytes, filename: 'image-gallery'));
+      }
+
+      var streamedResponse = await request.send();
+      var respuesta = await http.Response.fromStream(streamedResponse);
 
       if (respuesta.statusCode == 201) {
         print('Grup creado exitosamente');
@@ -1064,7 +1073,7 @@ class ControladorDomini {
   void addGrupMessage(String grupId, String time, String text) async {
     try {
       final url = Uri.parse(
-          'https://culturapp-back.onrender.com/grups/$grupId/mensajes');
+          'http://${ip}:8080/grups/$grupId/mensajes');
       final response = await http.post(
         url,
         headers: {
@@ -1088,7 +1097,7 @@ class ControladorDomini {
   Future<List<Message>> getGrupMessages(String grupId) async {
     try {
       final response = await http.get(Uri.parse(
-          'https://culturapp-back.onrender.com/grups/$grupId/mensajes'));
+          'http://${ip}:8080/grups/$grupId/mensajes'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);

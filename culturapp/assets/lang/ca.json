@@ -81,5 +81,7 @@
     "description": "Descripció:",
     "participants": "Participants:",
     "modify_participants": "Modificar participants",
-    "select_unselect_participants": "Selecciona o desselecciona participants per afegir-los"
+    "select_unselect_participants": "Selecciona o desselecciona participants per afegir-los",
+    "put_post": "Introdueix un missatge per continuar",
+    "put_reply": "Introdueix una resposta per continuar"
 }

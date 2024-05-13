@@ -1,6 +1,9 @@
+import "dart:typed_data";
+
 import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:flutter/material.dart";
+import "package:image_picker/image_picker.dart";
 
 class ConfigGrup extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
@@ -30,6 +33,8 @@ class _ConfigGrup extends State<ConfigGrup> {
   List<String> membres = [];
   List<Usuari> _participants = [];
 
+  Uint8List? _image;
+
   Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
 
   _ConfigGrup(ControladorPresentacion controladorPresentacion,
@@ -38,9 +43,24 @@ class _ConfigGrup extends State<ConfigGrup> {
     _participants = participants;
   }
 
-  void assignarImatge(String value) {
+  void assignarImatge() async {
     //de moment no funcional
     //imatgeGrup = value;
+
+    Uint8List img = await pickImage(ImageSource.gallery);
+    setState(() {
+      _image = img;
+    });
+  }
+
+  pickImage(ImageSource source) async {
+    final ImagePicker _imagePicker = ImagePicker();
+    XFile? _file = await _imagePicker.pickImage(source: source);
+    print(_file);
+    if(_file != null) {
+      return await _file.readAsBytes();
+    }
+    print("No Image selected");
   }
 
   void crearGrup() {
@@ -51,7 +71,7 @@ class _ConfigGrup extends State<ConfigGrup> {
 
     //cridar a funcio del back de crear el grup, passant com a parametre la variable nouGrup
     _controladorPresentacion.createGrup(
-        nomGrup, descripcioGrup, imatgeGrup, membres);
+        nomGrup, descripcioGrup, _image, membres);
     _controladorPresentacion.mostrarXats(context);
   }
 
@@ -106,9 +126,9 @@ class _ConfigGrup extends State<ConfigGrup> {
   }
 
   Widget _buildEscollirImatge() {
-    return const Column(
+    return Column(
       children: [
-        Text(
+        const Text(
           'Imatge (opt):',
           style: TextStyle(
             fontSize: 17,
@@ -117,13 +137,28 @@ class _ConfigGrup extends State<ConfigGrup> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.all(14),
-          child: Image(
-            image: AssetImage('assets/userImage.png'),
-            fit: BoxFit.fill,
-            width: 70.0,
-            height: 70.0,
-          ),
+          padding: const EdgeInsets.all(14),
+          child: Stack (
+            children: [
+              _image != null ? 
+                CircleAvatar(
+                  backgroundImage: MemoryImage(_image!),
+                  radius: 65,
+                )
+              : const CircleAvatar(
+                  backgroundImage: AssetImage('assets/userImage.png'),
+                  radius: 65,
+                ),
+              Positioned(
+                bottom: -10,
+                left: 80,
+                child: IconButton(
+                  onPressed: assignarImatge,
+                  icon: const Icon(Icons.add_a_photo),
+                )
+              )
+            ],
+          )
         ),
       ],
     );

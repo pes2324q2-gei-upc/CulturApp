@@ -36,6 +36,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   shared_preferences: ^2.0.8
+  image_picker: ^1.1.1
 
 dev_dependencies:
   flutter_test:
