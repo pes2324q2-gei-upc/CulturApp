@@ -605,7 +605,6 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                         ),
                                       ],
                                     ),
-
                                   ],
                                 ),
                               ),

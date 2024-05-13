@@ -906,7 +906,7 @@ double radians(double degrees) {
         onTabChange: _onTabChange,
       ),
       body: Stack(
-        fit: StackFit.expand, // Ajusta esta línea
+        fit: StackFit.expand,
         children: [
           if (!ubicacionCargada)
             const Center(
