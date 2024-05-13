@@ -42,8 +42,7 @@ class _MyAppState extends State<MyApp> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   int _selectedIndex = 0;
   bool _isLoggedIn = false;
-  bool _isLoading = true; // Nueva variable para controlar la carga
-  late List<Actividad> vencidas;
+  bool _isLoading = true;
 
   _MyAppState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
@@ -53,7 +52,6 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     userLogged();
-    getActividadesVencidas();
   }
 
   void userLogged() async {
@@ -65,14 +63,9 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void getActividadesVencidas() {
-    vencidas =  _controladorPresentacion.getActividadesVencidas();
-  }
-
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      // Muestra el indicador de carga mientras se verifica el inicio de sesión
       return const MaterialApp(
         home: Scaffold(
           body: Center(
@@ -111,7 +104,7 @@ class _MyAppState extends State<MyApp> {
       },
       home: Scaffold(
         body: _isLoggedIn
-            ? MapPage(controladorPresentacion: _controladorPresentacion, vencidas: vencidas,)
+            ? MapPage(controladorPresentacion: _controladorPresentacion, vencidas: _controladorPresentacion.getActividadesVencidas(),)
             : Login(
                 controladorPresentacion: _controladorPresentacion,
               ),
