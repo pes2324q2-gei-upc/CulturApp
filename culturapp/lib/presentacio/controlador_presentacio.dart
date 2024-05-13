@@ -1,4 +1,5 @@
 import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/bateria.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/grup.dart';
 import 'package:culturapp/domain/models/message.dart';
@@ -7,6 +8,7 @@ import 'package:culturapp/presentacio/screens/edit_perfil.dart';
 import 'package:culturapp/presentacio/screens/llistar_follows.dart';
 import 'package:culturapp/presentacio/screens/llistar_pendents.dart';
 import 'package:culturapp/presentacio/screens/report_bug.dart';
+import 'package:culturapp/presentacio/screens/report_user.dart';
 import 'package:culturapp/presentacio/screens/solicitud_organitzador.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/configuracio_grup.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/info_grup.dart';
@@ -50,6 +52,8 @@ class ControladorPresentacion {
   late List<Actividad> activitatsUser;
   late List<Actividad> actividadesVencidas;
   late List<String> actividadesValoradas;
+  late List<String> actividadesOrganizadas;
+  late List<Bateria> bateriasDispo;
 
   void funcLogout() async {
     _auth.signOut();
@@ -73,8 +77,11 @@ class ControladorPresentacion {
       await controladorDomini.setInfoUserLogged(_user!.uid);
       usernameLogged = controladorDomini.userLogged.getUsername();
       activitats = await controladorDomini.getActivitiesAgenda();
-      activitatsUser = await controladorDomini.getUserActivities();
+      activitatsUser =
+          await controladorDomini.getUserActivities(usernameLogged);
       actividadesVencidas = await controladorDomini.getActivitiesVencudes();
+      actividadesOrganizadas =
+          await controladorDomini.obteActivitatsOrganitzades(_user!.uid);
       usersBD = await controladorDomini.getUsers();
       friends = await getFollowingAll(usernameLogged);
       categsFav = await controladorDomini.obteCatsFavs(usernameLogged);
@@ -82,6 +89,7 @@ class ControladorPresentacion {
       usersRecom =
           calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
       usersBD.removeWhere((usuario) => friends.contains(usuario.username));
+      bateriasDispo = await controladorDomini.getBateries();
     }
   }
 
@@ -202,10 +210,16 @@ class ControladorPresentacion {
 
   List<Actividad> getActivitatsUser() => activitatsUser;
 
+  Future<List<Actividad>> getActivitatsByUser(Usuari user) async {
+    List<Actividad> llista =
+        await controladorDomini.getUserActivitiesByUser(user);
+    return llista;
+  }
+
   List<Actividad> getActivitats() => activitats;
 
-  Future<List<Actividad>> getUserActivities() =>
-      controladorDomini.getUserActivities();
+  Future<List<Actividad>> getUserActivs() =>
+      controladorDomini.getUserActivities(usernameLogged);
 
   List<String> getActivitatsRecomm() {
     recomms = calcularActividadesRecomendadas(categsFav, activitats);
@@ -275,6 +289,10 @@ class ControladorPresentacion {
     await controladorDomini.createFriend(person);
   }
 
+  Future<void> deleteFollowing(String person) async {
+    await controladorDomini.deleteFollowing(person);
+  }
+
   Future<int> sendReportBug(String titol, String report) async {
     return await controladorDomini.sendReportBug(titol, report);
   }
@@ -285,8 +303,20 @@ class ControladorPresentacion {
         titol, idActivitat, motiu);
   }
 
+  Future<int> sendReportUser(String titol, String userReported, String report,
+      String placeReport) async {
+    return await controladorDomini.sendReportUser(
+        titol, userReported, report, placeReport);
+  }
+
   void mostrarVerActividad(
       BuildContext context, List<String> info_act, Uri uri_act) {
+    bool organiza;
+    if (actividadesOrganizadas.contains(info_act[1])) {
+      organiza = true;
+    } else {
+      organiza = false;
+    }
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -294,6 +324,8 @@ class ControladorPresentacion {
           info_actividad: info_act,
           uri_actividad: uri_act,
           controladorPresentacion: this,
+          esOrganizador: organiza,
+          bateriasDisp: bateriasDispo,
         ),
       ),
     );
@@ -325,20 +357,40 @@ class ControladorPresentacion {
     );
   }
 
-  void mostrarPerfil(BuildContext context) {
+  void mostrarPerfil(BuildContext context) async {
+    Usuari usuari = await this.getUserByName(usernameLogged);
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PerfilPage(
-            controladorPresentacion: this,
-            username: usernameLogged,
-            owner: true),
+          controladorPresentacion: this,
+          user: usuari,
+          owner: true,
+          activitatsVenc: actividadesVencidas,
+        ),
+      ),
+    );
+  }
+
+  void mostrarAltrePerfil(BuildContext context, Usuari usuari) async {
+    List<Actividad> activUser =
+        await controladorDomini.getUserActivities(usuari.nom);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PerfilPage(
+          controladorPresentacion: this,
+          user: usuari,
+          owner: false,
+          activitatsVenc: activUser,
+        ),
       ),
     );
   }
 
   Future<void> mostrarMisActividades(BuildContext context) async {
-    getUserActivities().then((actividades) => {
+    getUserActivs().then((actividades) => {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -668,6 +720,19 @@ class ControladorPresentacion {
           idActivitat: idActivitat,
           titolActivitat: titol,
         ),
+      ),
+    );
+  }
+
+  void mostrarReportUser(
+      BuildContext context, String userReported, String placeReport) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ReportUserScreen(
+            userReported: userReported,
+            placeReport: placeReport,
+            controladorPresentacion: this),
       ),
     );
   }

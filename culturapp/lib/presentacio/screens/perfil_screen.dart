@@ -1,3 +1,5 @@
+import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/widgets/user_info.dart';
 import 'package:culturapp/translations/AppLocalizations';
@@ -6,32 +8,36 @@ import 'package:flutter/material.dart';
 
 class PerfilPage extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
-  final String username;
   final bool owner;
+  final List<Actividad> activitatsVenc;
+  final Usuari user;
 
   const PerfilPage(
       {Key? key,
       required this.controladorPresentacion,
-      required String this.username,
-      required bool this.owner})
+      required Usuari this.user,
+      required bool this.owner,
+      required this.activitatsVenc})
       : super(key: key);
 
   @override
-  State<PerfilPage> createState() =>
-      _PerfilPageState(this.controladorPresentacion, this.username, this.owner);
+  State<PerfilPage> createState() => _PerfilPageState(
+      this.controladorPresentacion, this.user, this.owner, this.activitatsVenc);
 }
 
 class _PerfilPageState extends State<PerfilPage> {
   int _selectedIndex = 3;
   late ControladorPresentacion _controladorPresentacion;
-  late String _username;
+  late Usuari _user;
   late bool _owner;
+  late List<Actividad> activitatsVencidas;
 
-  _PerfilPageState(ControladorPresentacion controladorPresentacion,
-      String username, bool owner) {
+  _PerfilPageState(ControladorPresentacion controladorPresentacion, Usuari user,
+      bool owner, List<Actividad> vencidas) {
     _controladorPresentacion = controladorPresentacion;
-    _username = username;
+    _user = user;
     _owner = owner;
+    activitatsVencidas = vencidas;
   }
 
   @override
@@ -83,7 +89,7 @@ class _PerfilPageState extends State<PerfilPage> {
                 IconButton(
                   onPressed: () {
                     _controladorPresentacion.mostrarEditPerfil(
-                        this.context, _username);
+                        this.context, _user.nom);
                   },
                   icon: const Icon(Icons.edit, color: Colors.white),
                 ),
@@ -103,8 +109,9 @@ class _PerfilPageState extends State<PerfilPage> {
       body: Expanded(
         child: UserInfoWidget(
           controladorPresentacion: _controladorPresentacion,
-          username: _username,
+          user: _user,
           owner: widget.owner,
+          activitatsVencidas: activitatsVencidas,
         ),
       ),
     );

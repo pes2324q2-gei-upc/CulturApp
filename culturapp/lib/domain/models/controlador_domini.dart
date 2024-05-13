@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/bateria.dart';
 import 'package:culturapp/domain/models/foro_model.dart';
 import 'package:culturapp/domain/models/post.dart';
 import 'package:culturapp/domain/models/user.dart';
@@ -93,8 +94,7 @@ class ControladorDomini {
     return true;
   }
 
-  void editUser(
-      User? user, String username, List<String> selectedCategories) async {
+  void editUser(User? user, String username, List<String> selectedCategories) async {
     try {
       final Map<String, dynamic> userdata = {
         'uid': user?.uid,
@@ -149,6 +149,26 @@ class ControladorDomini {
     return categorias;
   }
 
+  Future<List<String>> obteActivitatsOrganitzades(String uid) async {
+    final respuesta = await http.get(
+      Uri.parse('https://culturapp-back.onrender.com/users/${uid}/actividadesorganizadas'),
+      headers: {
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+        'Content-Type': 'application/json'
+      },
+    );
+
+    List<String> actividadesOrganizadas = [];
+
+    if (respuesta.statusCode == 200) {
+      List<dynamic> jsonResponse = jsonDecode(respuesta.body);
+      print('kfklsfklsdlfsdlfslfsklfs');
+      print(jsonResponse);
+      actividadesOrganizadas = jsonResponse.cast<String>();
+    }
+    return actividadesOrganizadas;
+  }
+
     Future<List<String>> obteActsValoradas(String username) async {
     final respuesta = await http.get(
         Uri.parse(
@@ -193,6 +213,24 @@ class ControladorDomini {
     }
   }
 
+Future<List<Bateria>> getBateries() async {
+  try {
+    final respuesta = await http.get(
+      Uri.parse('http://nattech.fib.upc.edu:40440/api/charging_points/all'),
+    );
+
+    if (respuesta.statusCode == 200) {
+      return _convert_bateria_to_list(respuesta);
+    } else {
+      print('Fallo la obtención de datos');
+      return [];
+    }
+  } catch (e) {
+    print('Error al obtener las baterías: $e');
+    return [];
+  }
+}
+
   Future<List<Usuario>> getUsers() async {
     final respuesta = await http.get(
         Uri.parse('https://culturapp-back.onrender.com/users/read/users'),
@@ -217,10 +255,10 @@ class ControladorDomini {
     }
   }
 
-  Future<List<Actividad>> getUserActivities() async {
+  Future<List<Actividad>> getUserActivities(String username) async {
     final respuesta = await http.get(
       Uri.parse(
-          'https://culturapp-back.onrender.com/users/${userLogged.getUsername()}/activitats'),
+          'https://culturapp-back.onrender.com/users/${username}/activitats'),
       headers: {
         'Authorization': 'Bearer ${userLogged.getToken()}',
       },
@@ -371,6 +409,20 @@ class ControladorDomini {
       throw Exception('Error al eliminar al usuario');
   }
 
+  Future<void> deleteFollowing(String person) async {
+    final http.Response response = await http.delete(
+      Uri.parse('https://culturapp-back.onrender.com/amics/deleteFollowing/$person'),
+      headers: {
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+    );
+
+    if (response.statusCode != 200)
+      throw Exception('Error al eliminar al usuario');
+  }
+
+
+
   Future<void> createFriend(String person) async {
     final Map<String, dynamic> body = {
       'friend': person,
@@ -386,7 +438,7 @@ class ControladorDomini {
     );
 
     if (response.statusCode != 200)
-      throw Exception('Error al eliminar al usuario');
+      throw Exception('Error al crear la solicitud de amistad');
   }
 
   void signoutFromActivity(String? uid, String code) async {
@@ -522,16 +574,63 @@ class ControladorDomini {
           body: jsonEncode(body));
 
       if (response.statusCode == 200) {
-        print('Solicitud enviada exitosamente');
         return 200;
       } else {
-        print('Error al enviar la solicitud: ${response.body}');
         return 500;
       }
     } catch (e) {
-      print(e);
       return 500;
     }
+  }
+
+  Future<int> sendReportUser(
+      String titol, String usuariReportat, String report, String placeReport) async {
+    final Map<String, dynamic> body = {
+      'titol': titol,
+      'usuariReportat': usuariReportat,
+      'report': report,
+      'placeReport': placeReport,
+    };
+
+    try {
+      final response = await http.post(
+          Uri.parse(
+              'https://culturapp-back.onrender.com/tickets/reportUsuari/create'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${userLogged.getToken()}',
+          },
+          body: jsonEncode(body));
+
+      if (response.statusCode == 200) {
+        return 200;
+      } else {
+        return 500;
+      }
+    } catch (e) {
+      return 500;
+    }
+  }
+
+  List<Bateria> _convert_bateria_to_list(response) {
+    List<Bateria> baterias = <Bateria>[];
+    var bateriasJson = json.decode(response.body);
+
+    if (bateriasJson is List) {
+      bateriasJson.forEach((json) {
+        Bateria bateria = Bateria();
+        bateria.address = json['adreca'] ?? 'No disponible';
+        bateria.latitud = json['latitud'].toDouble();
+        bateria.longitud = json['longitud'].toDouble();
+        bateria.kw = json['kw'] is int ? json['kw'] : -1;
+        bateria.speed = (json['tipus_velocitat'] ?? 'No disponible').split(' ')[0];
+        bateria.connection = json['connexio'] ??  'No disponible';
+
+        baterias.add(bateria);
+      });
+    }
+
+    return baterias;
   }
 
   List<Actividad> _convert_database_to_list(response) {
@@ -1186,4 +1285,23 @@ class ControladorDomini {
       throw Exception('Error de red: $error');
     }
   }
+
+  getUserActivitiesByUser(Usuari user) async {
+    print("Aconseguint activitats de " + user.nom);
+    final respuesta = await http.get(
+      Uri.parse(
+          'https://culturapp-back.onrender.com/users/${user.nom}/activitats'),
+      headers: {
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+    );
+
+    if (respuesta.statusCode == 200) {
+      return _convert_database_to_list(respuesta);
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
 }
+
+

@@ -1,5 +1,4 @@
 // ignore_for_file: no_logic_in_create_state, library_private_types_in_public_api
-
 import 'package:culturapp/data/firebase_options.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
@@ -10,7 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter/material.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,8 +60,8 @@ class _MyAppState extends State<MyApp> {
     User? currentUser = _auth.currentUser;
     setState(() {
       _isLoggedIn = currentUser != null;
-      _selectedIndex = _isLoggedIn ? _selectedIndex : 4; // Si no está logueado, selecciona el índice 4
-      _isLoading = false; // Una vez que la verificación de inicio de sesión haya terminado, deja de cargar
+      _selectedIndex = _isLoggedIn ? _selectedIndex : 4;
+      _isLoading = false; 
     });
   }
 
@@ -74,7 +73,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       // Muestra el indicador de carga mientras se verifica el inicio de sesión
-      return MaterialApp(
+      return const MaterialApp(
         home: Scaffold(
           body: Center(
             child: CircularProgressIndicator(),
