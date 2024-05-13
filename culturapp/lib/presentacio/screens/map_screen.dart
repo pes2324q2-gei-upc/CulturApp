@@ -967,7 +967,7 @@ double radians(double degrees) {
                   minChildSize: 0.1,
                   maxChildSize: _maxHeight,
                   builder: (BuildContext context, ScrollController scrollController) {
-                    if (_currentSheetHeight > 0.8) {
+                    if (_currentSheetHeight > 0.75) {
                       _currentSheetHeight = 0.1;
                       WidgetsBinding.instance!.addPostFrameCallback((_) {
                         _controladorPresentacion.mostrarActividadesDisponibles(context, _actividades,);
