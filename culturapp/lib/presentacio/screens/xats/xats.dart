@@ -27,6 +27,7 @@ class Xats extends StatefulWidget {
 class _Xats extends State<Xats> {
   late ControladorPresentacion _controladorPresentacion;
   late int _selectedIndex;
+  late int _selectedIndexNav = 2;
   late List<Usuario> usersRecom;
   late List<Usuario> usersBD;
   late Widget currentContent;
@@ -69,7 +70,7 @@ class _Xats extends State<Xats> {
 
   void _onTabChange(int index) {
     setState(() {
-      _selectedIndex = index;
+      _selectedIndexNav = index;
     });
 
     switch (index) {
@@ -115,7 +116,7 @@ class _Xats extends State<Xats> {
           ),
         ),
         bottomNavigationBar: CustomBottomNavigationBar(
-          currentIndex: _selectedIndex,
+          currentIndex: _selectedIndexNav,
           onTabChange: _onTabChange,
         ),
         body: TabBarView(
