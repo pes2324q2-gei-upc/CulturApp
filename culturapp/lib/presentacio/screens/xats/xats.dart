@@ -45,13 +45,19 @@ class _Xats extends State<Xats> {
   }
 
   void _loadIndex(String pagina) {
-    if (pagina == "Grups") {
-      _selectedIndex = 1;
-    } else if (pagina == "Amics") {
-      _selectedIndex = 2;
-    } else {
-      //Afegir Amics
-      _selectedIndex = 3;
+    switch (pagina) {
+      case 'Amics':
+        _selectedIndex = 0;
+        break;
+      case 'Grups':
+        _selectedIndex = 1;
+        break;
+      case 'add_friends':
+        _selectedIndex = 2;
+        break;
+      default:
+        _selectedIndex = 0;
+        break;
     }
   }
 
@@ -87,6 +93,7 @@ class _Xats extends State<Xats> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
+      initialIndex: _selectedIndex,
       length: 3,
       child: Scaffold(
         appBar: AppBar(
