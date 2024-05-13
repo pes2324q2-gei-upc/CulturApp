@@ -48,19 +48,20 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
         _grup.membres.map((dynamic obj) => obj.toString()).toList());
 
     List<Usuari> llistaFollowers = await convertirStringEnUsuari(llistaNoms);
+    List<Usuari> filteredList = [];
     for (Usuari usuari in llistaFollowers) {
+      bool found = false;
       for (Usuari amic in amics) {
         if (amic.nom == usuari.nom) {
-          llistaFollowers.remove(usuari);
-          if (llistaFollowers.isEmpty) {
-            break;
-          }
+          found = true;
+          break;
         }
       }
-      if (llistaFollowers.isEmpty) {
-        break;
+      if (!found) {
+        filteredList.add(usuari);
       }
     }
+    llistaFollowers = filteredList;
 
     amics.addAll(
         llistaFollowers); //s'uneixen els followers per si vols afegir someone
@@ -96,12 +97,6 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
             .toList();
       },
     );
-  }
-
-  void afegirParticipant(participant) {
-    setState(() {
-      participants.add(participant);
-    });
   }
 
   @override
@@ -271,6 +266,7 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
   }
 
   Widget _buildBotoAfegir(participant, int index) {
+    bool isParticipantAdded = participants.contains(participant.nom);
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         shape: const CircleBorder(),
@@ -279,9 +275,8 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
       ),
       onPressed: () {
         setState(() {
-          participantAfegit[index] = !participantAfegit[index];
-          if (participantAfegit[index]) {
-            afegirParticipant(displayList[index].nom);
+          if (!isParticipantAdded) {
+            participants.add(participant.nom);
           } else {
             // Remove participant if button is toggled off
             participants.remove(displayList[index].nom);
@@ -289,7 +284,7 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
         });
       },
       child: Text(
-        participantAfegit[index] ? '-' : '+',
+        isParticipantAdded ? '-' : '+',
       ),
     );
   }

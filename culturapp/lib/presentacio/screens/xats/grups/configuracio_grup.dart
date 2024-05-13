@@ -53,7 +53,7 @@ class _ConfigGrup extends State<ConfigGrup> {
     //cridar a funcio del back de crear el grup, passant com a parametre la variable nouGrup
     _controladorPresentacion.createGrup(
         nomGrup, descripcioGrup, imatgeGrup, membres);
-    _controladorPresentacion.mostrarXats(context);
+    _controladorPresentacion.mostrarXats(context, "Grups");
   }
 
   @override

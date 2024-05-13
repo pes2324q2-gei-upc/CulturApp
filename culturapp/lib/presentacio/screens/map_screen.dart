@@ -1,4 +1,3 @@
-
 import 'dart:math' as math;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
@@ -13,18 +12,21 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:geolocator/geolocator.dart';
 
-
 class MapPage extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
 
   final List<String>? recomenacions;
-  final List<Actividad>vencidas;
+  final List<Actividad> vencidas;
 
   const MapPage(
-      {Key? key, required this.controladorPresentacion, this.recomenacions, required this.vencidas});
+      {Key? key,
+      required this.controladorPresentacion,
+      this.recomenacions,
+      required this.vencidas});
 
   @override
-  State<MapPage> createState() => _MapPageState(controladorPresentacion, vencidas);
+  State<MapPage> createState() =>
+      _MapPageState(controladorPresentacion, vencidas);
 }
 
 class _MapPageState extends State<MapPage> {
@@ -48,7 +50,8 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
-  _MapPageState(ControladorPresentacion controladorPresentacion, List<Actividad> vencidas) {
+  _MapPageState(ControladorPresentacion controladorPresentacion,
+      List<Actividad> vencidas) {
     _controladorPresentacion = controladorPresentacion;
     actsvencidas = vencidas;
     categoriasFavoritas = _controladorPresentacion.getCategsFav();
@@ -99,137 +102,148 @@ class _MapPageState extends State<MapPage> {
   List<Actividad> _actividades = [];
   GoogleMapController? _mapController;
 
-  void mostrarValoracion(BuildContext context, List<Actividad> actividades_vencidas) {
+  void mostrarValoracion(
+      BuildContext context, List<Actividad> actividades_vencidas) {
     final TextEditingController controller = TextEditingController();
     double rating = 0;
-    Actividad actividad =  actividades_vencidas[0];
+    Actividad actividad = actividades_vencidas[0];
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-      return AlertDialog(
-        titlePadding: EdgeInsets.all(0), // Elimina el padding del título
-        title: Stack(
-          children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () async {
+        return AlertDialog(
+          titlePadding: EdgeInsets.all(0), // Elimina el padding del título
+          title: Stack(
+            children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () async {
                     Navigator.of(context).pop();
-                  _controladorPresentacion.addValorada(actividad.code);
-                  actsvencidas = await _controladorPresentacion.checkNoValoration();
-                },
+                    _controladorPresentacion.addValorada(actividad.code);
+                    actsvencidas =
+                        await _controladorPresentacion.checkNoValoration();
+                  },
+                ),
               ),
-            ),
-            const Padding(
-              padding: EdgeInsets.only(top: 45.0, bottom: 15.0, left: 25.0), // Ajusta este valor para mover el texto hacia abajo
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: Text('¡Nos importa tu opinión!'),
+              const Padding(
+                padding: EdgeInsets.only(
+                    top: 45.0,
+                    bottom: 15.0,
+                    left:
+                        25.0), // Ajusta este valor para mover el texto hacia abajo
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Text('¡Nos importa tu opinión!'),
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        //Imagen
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: SizedBox(
-                            height: 125.0,
-                            width: 125.0,
-                            child: Image.network(
-                              actividad.imageUrl,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                // Widget de error que se mostrará si la imagen no se carga correctamente
-                                return const Center(
-                                  child: Icon(
-                                    Icons.error_outline,
-                                    color: Colors.red,
-                                    size: 24,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
+                Row(
+                  children: <Widget>[
+                    //Imagen
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: SizedBox(
+                        height: 125.0,
+                        width: 125.0,
+                        child: Image.network(
+                          actividad.imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            // Widget de error que se mostrará si la imagen no se carga correctamente
+                            return const Center(
+                              child: Icon(
+                                Icons.error_outline,
+                                color: Colors.red,
+                                size: 24,
+                              ),
+                            );
+                          },
                         ),
-                        const SizedBox(width: 10.0),
-                        Flexible(
-                          // Para que los textos se ajusten bien
-                          child: Column(
+                      ),
+                    ),
+                    const SizedBox(width: 10.0),
+                    Flexible(
+                      // Para que los textos se ajusten bien
+                      child: Column(
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment
+                                .start, // Que los textos empiezen en el ''inicio''
                             children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start, // Que los textos empiezen en el ''inicio''
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      actividad.name,
-                                      style: const TextStyle(
-                                        fontSize: 18.0,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xFFF4692A),
-                                      ),
-                                    ),
+                              Flexible(
+                                child: Text(
+                                  actividad.name,
+                                  style: const TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFFF4692A),
                                   ),
-                                  const Padding(
-                                      padding: EdgeInsets.only(right: 5.0,)),
-                                  Align(
-                                    alignment: Alignment.topCenter,
-                                    child: Transform.translate(
-                                      offset: const Offset(0, -4), // Mueve el icono 2 píxeles hacia arriba
-                                      child: Transform.scale(
-                                        scale: 0.9, // Ajusta este valor para cambiar el tamaño de la imagen
-                                        child: _retornaIcon(actividad.categoria[0]), //Obtener el icono de la categoria
-                                      ),
-                                    ),
+                                ),
+                              ),
+                              const Padding(
+                                  padding: EdgeInsets.only(
+                                right: 5.0,
+                              )),
+                              Align(
+                                alignment: Alignment.topCenter,
+                                child: Transform.translate(
+                                  offset: const Offset(0,
+                                      -4), // Mueve el icono 2 píxeles hacia arriba
+                                  child: Transform.scale(
+                                    scale:
+                                        0.9, // Ajusta este valor para cambiar el tamaño de la imagen
+                                    child: _retornaIcon(actividad.categoria[
+                                        0]), //Obtener el icono de la categoria
                                   ),
-                                ],
-                              ),
-                              Row(
-                                // Atributos - icono + info
-                                children: [
-                                  const Icon(Icons.location_on),
-                                  const Padding(
-                                      padding: EdgeInsets.only(right: 7.5)),
-                                  Expanded(
-                                    child: Text(
-                                      actividad.ubicacio,
-                                      overflow: TextOverflow
-                                          .ellipsis, //Poner puntos suspensivos para evitar pixel overflow
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const Padding(padding: EdgeInsets.only(top: 5.0)),
-                              Row(
-                                children: [
-                                  const Icon(Icons.calendar_month),
-                                  const Padding(
-                                      padding: EdgeInsets.only(right: 7.5)),
-                                  Text(actividad.dataInici),
-                                ],
-                              ),
-                              const Padding(padding: EdgeInsets.only(top: 5.0)),
-                              Row(
-                                children: [
-                                  const Icon(Icons.calendar_month),
-                                  const Padding(
-                                      padding: EdgeInsets.only(right: 7.5)),
-                                  Text(actividad.dataFi),
-                                ],
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                        
-                      ],
+                          Row(
+                            // Atributos - icono + info
+                            children: [
+                              const Icon(Icons.location_on),
+                              const Padding(
+                                  padding: EdgeInsets.only(right: 7.5)),
+                              Expanded(
+                                child: Text(
+                                  actividad.ubicacio,
+                                  overflow: TextOverflow
+                                      .ellipsis, //Poner puntos suspensivos para evitar pixel overflow
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Padding(padding: EdgeInsets.only(top: 5.0)),
+                          Row(
+                            children: [
+                              const Icon(Icons.calendar_month),
+                              const Padding(
+                                  padding: EdgeInsets.only(right: 7.5)),
+                              Text(actividad.dataInici),
+                            ],
+                          ),
+                          const Padding(padding: EdgeInsets.only(top: 5.0)),
+                          Row(
+                            children: [
+                              const Icon(Icons.calendar_month),
+                              const Padding(
+                                  padding: EdgeInsets.only(right: 7.5)),
+                              Text(actividad.dataFi),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                    const Padding(padding: EdgeInsets.only(bottom: 20.0)),
+                  ],
+                ),
+                const Padding(padding: EdgeInsets.only(bottom: 20.0)),
                 RatingBar.builder(
                   initialRating: 0,
                   minRating: 0,
@@ -260,10 +274,11 @@ class _MapPageState extends State<MapPage> {
               onPressed: () async {
                 Navigator.of(context).pop();
                 _controladorPresentacion.addValorada(actividad.code);
-                _controladorPresentacion.createValoracion(actividad.code, controller.text, rating);
-                actsvencidas = await _controladorPresentacion.checkNoValoration();
+                _controladorPresentacion.createValoracion(
+                    actividad.code, controller.text, rating);
+                actsvencidas =
+                    await _controladorPresentacion.checkNoValoration();
                 print('Rating: $rating, Comentario: ${controller.text}');
-                
               },
             ),
           ],
@@ -272,10 +287,9 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-
-double radians(double degrees) {
+  double radians(double degrees) {
     return degrees * (math.pi / 180.0);
-}
+  }
 
 // Formula de Haversine para calcular que actividades entran en el radio del zoom de la pantalla
   double calculateDistance(LatLng from, LatLng to) {
@@ -320,20 +334,20 @@ double radians(double degrees) {
     }
 
     if (permission == LocationPermission.deniedForever) {
-      // Si el usuario ha negado el permiso permanentemente, poner por defecto 
+      // Si el usuario ha negado el permiso permanentemente, poner por defecto
       setState(() {
         myLatLng = const LatLng(41.389376, 2.113236);
         ubicacionCargada = true;
       });
       return;
-    }
-    else {
+    } else {
       //Obtener ubicacion y asignar
       /*Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       LatLng currentLatLng = LatLng(position.latitude, position.longitude);*/
 
       LatLng currentLatLng = const LatLng(41.389376, 2.113236);
 
+      // Actualizar ubicacion
       setState(() {
         myLatLng = currentLatLng;
         lastPosition = myLatLng;
@@ -641,8 +655,8 @@ double radians(double degrees) {
                             });
                           },
                           style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(const Color(0xFFF4692A)),
+                            backgroundColor: MaterialStateProperty.all(
+                                const Color(0xFFF4692A)),
                           ),
                           child: Text(
                             "see_more".tr(context),
@@ -850,13 +864,10 @@ double radians(double degrees) {
     }
   }
 
-
   void _onMapCreated(GoogleMapController controller) async {
     _mapController = controller;
     actsvencidas = await _controladorPresentacion.checkNoValoration();
     if (actsvencidas.isNotEmpty) mostrarValoracion(context, actsvencidas);
-    
-    
   }
 
   var querySearch = '';
@@ -888,7 +899,7 @@ double radians(double degrees) {
         _controladorPresentacion.mostrarActividadesUser(context);
         break;
       case 2:
-        _controladorPresentacion.mostrarXats(context);
+        _controladorPresentacion.mostrarXats(context, "Amics");
         break;
       case 3:
         _controladorPresentacion.mostrarPerfil(context);
@@ -910,7 +921,9 @@ double radians(double degrees) {
         children: [
           if (!ubicacionCargada)
             const Center(
-              child: CircularProgressIndicator(color: Color(0xFFF4692A),),
+              child: CircularProgressIndicator(
+                color: Color(0xFFF4692A),
+              ),
             ),
           if (ubicacionCargada)
             GoogleMap(
@@ -940,15 +953,13 @@ double radians(double degrees) {
                 padding: const EdgeInsets.only(left: 25.0, right: 15.0),
                 child: TextField(
                   decoration: InputDecoration(
-                    hintText: 'search'.tr(context),
-                    border: InputBorder.none,
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        busquedaActivitat(querySearch);
-                      },
-                      icon: const Icon(Icons.search)
-                    )
-                  ),
+                      hintText: 'search'.tr(context),
+                      border: InputBorder.none,
+                      suffixIcon: IconButton(
+                          onPressed: () {
+                            busquedaActivitat(querySearch);
+                          },
+                          icon: const Icon(Icons.search))),
                   onChanged: (value) {
                     querySearch = value;
                   },

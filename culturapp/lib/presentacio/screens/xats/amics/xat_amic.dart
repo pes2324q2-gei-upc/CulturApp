@@ -149,7 +149,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
           Icons.arrow_back,
           color: Colors.white,
         ),
-        onPressed: () => _controladorPresentacion.mostrarXats(context),
+        onPressed: () => _controladorPresentacion.mostrarXats(context, "Amics"),
       ),
       title: GestureDetector(
         onTap: () {

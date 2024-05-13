@@ -154,7 +154,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
           Icons.arrow_back,
           color: Colors.white,
         ),
-        onPressed: () => _controladorPresentacion.mostrarXats(context),
+        onPressed: () => _controladorPresentacion.mostrarXats(context, "Grups"),
       ),
       title: GestureDetector(
         onTap: () {
@@ -207,17 +207,30 @@ class _XatGrupScreen extends State<XatGrupScreen> {
       itemBuilder: (context) => [
         PopupMenuItem(
           value: 1,
-          child: _buildItemDropdown("Sortir de grup"),
+          child: _buildItemDropdown("Sortir del grup"),
         ),
       ],
     );
   }
 
+  void exitGroup() {
+    setState(() {
+      String myUsername = _controladorPresentacion.getUsername();
+      _grup.membres.remove(myUsername);
+      //elimino el meu username del grup
+
+      _controladorPresentacion.updateGrup(_grup.id, _grup.nomGroup,
+          _grup.descripcio, _grup.imageGroup, _grup.membres);
+      _controladorPresentacion.mostrarXats(context, "Grups");
+      //crida a funcio del back per fer un update de _grup amb els nous parametres
+    });
+  }
+
   Widget _buildItemDropdown(String text) {
     return GestureDetector(
-      onTap: () {
-        //llamar a función update quitandome el user 'me' de la lista de members
-      },
+      onTap:
+          //llamar a función update quitandome el user 'me' de la lista de members
+          exitGroup,
       child: Text(
         text,
         style: const TextStyle(
