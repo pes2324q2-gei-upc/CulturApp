@@ -77,21 +77,21 @@ class ControladorPresentacion {
       await controladorDomini.setInfoUserLogged(_user!.uid);
       usernameLogged = controladorDomini.userLogged.getUsername();
       activitats = await controladorDomini.getActivitiesAgenda();
-      activitatsUser = await controladorDomini.getUserActivities(usernameLogged);
+      activitatsUser =
+          await controladorDomini.getUserActivities(usernameLogged);
       actividadesVencidas = await controladorDomini.getActivitiesVencudes();
-      actividadesOrganizadas = await controladorDomini.obteActivitatsOrganitzades(_user!.uid);
+      actividadesOrganizadas =
+          await controladorDomini.obteActivitatsOrganitzades(_user!.uid);
       usersBD = await controladorDomini.getUsers();
       friends = await getFollowingAll(usernameLogged);
       categsFav = await controladorDomini.obteCatsFavs(usernameLogged);
       usersBD.removeWhere((usuario) => usuario.username == usernameLogged);
-      usersRecom = calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
+      usersRecom =
+          calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
       usersBD.removeWhere((usuario) => friends.contains(usuario.username));
       bateriasDispo = await controladorDomini.getBateries();
-
     }
   }
-
-
 
   Future<bool> userLogged() async {
     User? currentUser = _auth.currentUser;
@@ -104,7 +104,8 @@ class ControladorPresentacion {
     }
   }
 
-  Future<void> createValoracion(String id, String comentario, double puntuacion) async {
+  Future<void> createValoracion(
+      String id, String comentario, double puntuacion) async {
     await controladorDomini.addValoracion(id, puntuacion, comentario);
   }
 
@@ -191,9 +192,12 @@ class ControladorPresentacion {
     //Mis Actividades -> Actividades a las que ha ido el usuario
     //Actividades No Valoradas -> Actividades vencidas que estan en Mis Actividades pero no en Valoradas
     List<Actividad> noValoradas = [];
-    actividadesValoradas = await controladorDomini.obteActsValoradas(usernameLogged);
+    actividadesValoradas =
+        await controladorDomini.obteActsValoradas(usernameLogged);
     for (int i = 0; i < activitatsUser.length; i++) {
-      if (actividadesVencidas.any((actividad) => actividad.code == activitatsUser[i].code) && !actividadesValoradas.contains(activitatsUser[i].code) ) {
+      if (actividadesVencidas
+              .any((actividad) => actividad.code == activitatsUser[i].code) &&
+          !actividadesValoradas.contains(activitatsUser[i].code)) {
         noValoradas.add(activitatsUser[i]);
       }
     }
@@ -207,7 +211,8 @@ class ControladorPresentacion {
   List<Actividad> getActivitatsUser() => activitatsUser;
 
   Future<List<Actividad>> getActivitatsByUser(Usuari user) async {
-    List<Actividad> llista = await controladorDomini.getUserActivitiesByUser(user);
+    List<Actividad> llista =
+        await controladorDomini.getUserActivitiesByUser(user);
     return llista;
   }
 
@@ -241,7 +246,7 @@ class ControladorPresentacion {
     return usernameLogged;
   }
 
-  List<Actividad>getActividadesVencidas(){
+  List<Actividad> getActividadesVencidas() {
     return actividadesVencidas;
   }
 
@@ -298,18 +303,20 @@ class ControladorPresentacion {
         titol, idActivitat, motiu);
   }
 
-
-  Future<int> sendReportUser(String titol, String userReported, String report, String placeReport) async {
-    return await controladorDomini.sendReportUser(titol, userReported, report, placeReport);
+  Future<int> sendReportUser(String titol, String userReported, String report,
+      String placeReport) async {
+    return await controladorDomini.sendReportUser(
+        titol, userReported, report, placeReport);
   }
 
-  void mostrarVerActividad(BuildContext context, List<String> info_act, Uri uri_act) {
-      bool organiza;
-      if (actividadesOrganizadas.contains(info_act[1])) {
-        organiza = true;
-      } else {
-        organiza = false;
-      }
+  void mostrarVerActividad(
+      BuildContext context, List<String> info_act, Uri uri_act) {
+    bool organiza;
+    if (actividadesOrganizadas.contains(info_act[1])) {
+      organiza = true;
+    } else {
+      organiza = false;
+    }
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -328,12 +335,15 @@ class ControladorPresentacion {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MapPage(controladorPresentacion: this, vencidas: actividadesVencidas,),
+        builder: (context) => MapPage(
+          controladorPresentacion: this,
+          vencidas: actividadesVencidas,
+        ),
       ),
     );
   }
 
-  void mostrarXats(BuildContext context) {
+  void mostrarXats(BuildContext context, String pagina) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -341,6 +351,7 @@ class ControladorPresentacion {
           controladorPresentacion: this,
           recomms: usersRecom,
           usersBD: usersBD,
+          pagina: pagina,
         ),
       ),
     );
@@ -353,24 +364,27 @@ class ControladorPresentacion {
       context,
       MaterialPageRoute(
         builder: (context) => PerfilPage(
-            controladorPresentacion: this,
-            user: usuari,
-            owner: true,
-            activitatsVenc: actividadesVencidas,),
+          controladorPresentacion: this,
+          user: usuari,
+          owner: true,
+          activitatsVenc: actividadesVencidas,
+        ),
       ),
     );
   }
 
   void mostrarAltrePerfil(BuildContext context, Usuari usuari) async {
-    List<Actividad>activUser = await controladorDomini.getUserActivities(usuari.nom);
+    List<Actividad> activUser =
+        await controladorDomini.getUserActivities(usuari.nom);
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PerfilPage(
-            controladorPresentacion: this,
-            user: usuari,
-            owner: false,
-            activitatsVenc: activUser,),
+          controladorPresentacion: this,
+          user: usuari,
+          owner: false,
+          activitatsVenc: activUser,
+        ),
       ),
     );
   }
@@ -710,11 +724,15 @@ class ControladorPresentacion {
     );
   }
 
-  void mostrarReportUser(BuildContext context, String userReported, String placeReport) {
+  void mostrarReportUser(
+      BuildContext context, String userReported, String placeReport) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ReportUserScreen(userReported: userReported, placeReport: placeReport, controladorPresentacion: this),
+        builder: (context) => ReportUserScreen(
+            userReported: userReported,
+            placeReport: placeReport,
+            controladorPresentacion: this),
       ),
     );
   }

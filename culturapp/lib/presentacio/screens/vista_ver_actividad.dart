@@ -14,33 +14,42 @@ import 'package:intl/intl.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class VistaVerActividad extends StatefulWidget{
-
+class VistaVerActividad extends StatefulWidget {
   final List<String> info_actividad;
   final ControladorPresentacion controladorPresentacion;
   final Uri uri_actividad;
   final bool esOrganizador;
-  final List<Bateria>bateriasDisp;
+  final List<Bateria> bateriasDisp;
 
-  const VistaVerActividad({super.key, required this.info_actividad, required this.uri_actividad, required this.controladorPresentacion, required this.esOrganizador, required this.bateriasDisp});
+  const VistaVerActividad(
+      {super.key,
+      required this.info_actividad,
+      required this.uri_actividad,
+      required this.controladorPresentacion,
+      required this.esOrganizador,
+      required this.bateriasDisp});
 
   @override
-  State<VistaVerActividad> createState() => _VistaVerActividadState(controladorPresentacion ,info_actividad, uri_actividad, esOrganizador,bateriasDisp);
+  State<VistaVerActividad> createState() => _VistaVerActividadState(
+      controladorPresentacion,
+      info_actividad,
+      uri_actividad,
+      esOrganizador,
+      bateriasDisp);
 }
 
 class _VistaVerActividadState extends State<VistaVerActividad> {
-  late ControladorPresentacion _controladorPresentacion; 
+  late ControladorPresentacion _controladorPresentacion;
   late ControladorDomini controladorDominio;
   int _selectedIndex = 0;
 
   late List<String> infoActividad;
   late Uri uriActividad;
 
-
   bool mostrarDescripcionCompleta = false;
-  
+
   bool estaApuntado = false;
-  
+
   final User? _user = FirebaseAuth.instance.currentUser;
 
   Future<List<Post>>? posts;
@@ -56,32 +65,37 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   Bateria bat1 = Bateria();
   Bateria bat2 = Bateria();
   List<Bateria> bateriasDisponibles = [];
-  
-  final List<String> catsAMB = ["Residus",
-  "territori.espai_public_platges",
-  "Sostenibilitat",
-  "Aigua",
-  "territori.espai_public_parcs",
-  "Espai públic - Rius",
-  "Espai públic - Parcs",
-  "Portal de transparència",
-  "Mobilitat sostenible",
-  "Internacional",
-  "Activitat econòmica",
-  "Polítiques socials",
-  "territori.espai_public_rius",
-  "Espai públic - Platges"];
-  
-  _VistaVerActividadState(ControladorPresentacion controladorPresentacion ,List<String> info_actividad, Uri uri_actividad, bool esOrganizador, List<Bateria> bats) {
+
+  final List<String> catsAMB = [
+    "Residus",
+    "territori.espai_public_platges",
+    "Sostenibilitat",
+    "Aigua",
+    "territori.espai_public_parcs",
+    "Espai públic - Rius",
+    "Espai públic - Parcs",
+    "Portal de transparència",
+    "Mobilitat sostenible",
+    "Internacional",
+    "Activitat econòmica",
+    "Polítiques socials",
+    "territori.espai_public_rius",
+    "Espai públic - Platges"
+  ];
+
+  _VistaVerActividadState(
+      ControladorPresentacion controladorPresentacion,
+      List<String> info_actividad,
+      Uri uri_actividad,
+      bool esOrganizador,
+      List<Bateria> bats) {
     infoActividad = info_actividad;
     uriActividad = uri_actividad;
     _controladorPresentacion = controladorPresentacion;
     controladorDominio = _controladorPresentacion.getControladorDomini();
     organizador = esOrganizador;
     bateriasDisponibles = bats;
-
   }
-
 
   void mostrarQR() {
     showDialog(
@@ -100,7 +114,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                   },
                 ),
               ),
-              BarcodeWidget( 
+              BarcodeWidget(
                 padding: const EdgeInsets.only(left: 15, right: 15),
                 barcode: Barcode.qrCode(),
                 data: infoActividad[1],
@@ -108,10 +122,13 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                 height: 250,
               ),
               const Padding(padding: EdgeInsets.only(top: 30)),
-              Text('Code: ${infoActividad[1]}', style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),),
+              Text(
+                'Code: ${infoActividad[1]}',
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const Padding(padding: EdgeInsets.only(bottom: 10)),
             ],
           ),
@@ -123,9 +140,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   double calcularDistancia(double lat1, double lon1, double lat2, double lon2) {
     var p = 0.017453292519943295;
     var c = cos;
-    var a = 0.5 - c((lat2 - lat1) * p)/2 + 
-            c(lat1 * p) * c(lat2 * p) * 
-            (1 - c((lon2 - lon1) * p))/2;
+    var a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     return 12742 * asin(sqrt(a));
   }
 
@@ -136,127 +153,131 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     List<Bateria> bateriasCercanas = [];
 
     for (var bateria in bateriasDisponibles) {
-      double distancia = calcularDistancia(latitud, longitud, bateria.latitud, bateria.longitud);
+      double distancia = calcularDistancia(
+          latitud, longitud, bateria.latitud, bateria.longitud);
       if (distancia <= 5) {
         bateria.distancia = distancia;
         bateriasCercanas.add(bateria);
       }
     }
     bateriasCerca = bateriasCercanas;
-
   }
 
-
   @override
-  void initState(){
+  void initState() {
     super.initState();
     checkApuntado(_user!.uid, infoActividad);
     calculaBateriasCercanas();
-  } 
+  }
 
-    void _onTabChange(int index) {
+  void _onTabChange(int index) {
     setState(() {
       _selectedIndex = index;
     });
-  
+
     switch (index) {
       case 0:
         _controladorPresentacion.mostrarMapa(context);
         break;
       case 1:
-          _controladorPresentacion.mostrarActividadesUser(context);
+        _controladorPresentacion.mostrarActividadesUser(context);
         break;
       case 2:
-        _controladorPresentacion.mostrarXats(context);
+        _controladorPresentacion.mostrarXats(context, "Amics");
         break;
       case 3:
-          _controladorPresentacion.mostrarPerfil(context);
+        _controladorPresentacion.mostrarPerfil(context);
         break;
       default:
         break;
     }
   }
 
- bool isStreetAddress(String address) {
-  final regex = RegExp(r'[a-zA-Z]+\s+\d');
-  return regex.hasMatch(address);
-}
+  bool isStreetAddress(String address) {
+    final regex = RegExp(r'[a-zA-Z]+\s+\d');
+    return regex.hasMatch(address);
+  }
 
-void mostrarBaterias() {
+  void mostrarBaterias() {
+    bateriasCerca.sort((a, b) {
+      return a.distancia.compareTo(b.distancia);
+    });
 
-  bateriasCerca.sort((a, b) {
-  return a.distancia.compareTo(b.distancia);
-  });
-
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: AlertDialog(
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () async {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ),
-                 Align(
-                  alignment: Alignment.topLeft,
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 7.0),
-                        child: Image.asset(
-                          'assets/categoriabateria.png',
-                          height: 50.0,
-                          width: 50.0,
-                        ),
-                      ),
-                      const SizedBox(width: 10.0), 
-                      const Text(
-                        'Carregadors propers:',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                ...bateriasCerca.where((bateria) => isStreetAddress(bateria.address)).map((bateria) => Padding(
-                  padding: const EdgeInsets.only(bottom: 5.0,), // Agrega un espacio en la parte inferior
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.8, // 80% del ancho de la pantalla
-                    child: bateriaBox(
-                      adress: bateria.address,
-                      kw: bateria.kw, 
-                      speed: bateria.speed, 
-                      distancia: bateria.distancia, 
-                      latitud: bateria.latitud, 
-                      longitud: bateria.longitud
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: AlertDialog(
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                      },
                     ),
                   ),
-                )).toList(),
-              ],
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 7.0),
+                          child: Image.asset(
+                            'assets/categoriabateria.png',
+                            height: 50.0,
+                            width: 50.0,
+                          ),
+                        ),
+                        const SizedBox(width: 10.0),
+                        const Text(
+                          'Carregadors propers:',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  ...bateriasCerca
+                      .where((bateria) => isStreetAddress(bateria.address))
+                      .map((bateria) => Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: 5.0,
+                            ), // Agrega un espacio en la parte inferior
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width *
+                                  0.8, // 80% del ancho de la pantalla
+                              child: bateriaBox(
+                                  adress: bateria.address,
+                                  kw: bateria.kw,
+                                  speed: bateria.speed,
+                                  distancia: bateria.distancia,
+                                  latitud: bateria.latitud,
+                                  longitud: bateria.longitud),
+                            ),
+                          ))
+                      .toList(),
+                ],
+              ),
             ),
           ),
-        ),
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    _controladorPresentacion.getForo(infoActividad[1]); //verificar que tenga un foro
+    _controladorPresentacion
+        .getForo(infoActividad[1]); //verificar que tenga un foro
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
@@ -274,9 +295,9 @@ void mostrarBaterias() {
           PopupMenuButton<String>(
             onSelected: (String result) {
               if (result == 'Enviar solicitud de organizador') {
-                _controladorPresentacion.mostrarSolicitutOrganitzador(context, infoActividad[0], infoActividad[1]);
-              }
-              else if (result == 'view_qr') {
+                _controladorPresentacion.mostrarSolicitutOrganitzador(
+                    context, infoActividad[0], infoActividad[1]);
+              } else if (result == 'view_qr') {
                 mostrarQR();
               }
             },
@@ -300,148 +321,163 @@ void mostrarBaterias() {
         ],
       ),
       body: Column(
-        children:[ 
+        children: [
           Expanded(
             child: ListView(
               children: [
                 _imagenActividad(infoActividad[3]), //Accedemos imagenUrl
-                _tituloBoton(infoActividad[0], infoActividad[2]), //Accedemos al nombre de la actividad y su categoria
+                _tituloBoton(
+                    infoActividad[0],
+                    infoActividad[
+                        2]), //Accedemos al nombre de la actividad y su categoria
                 const SizedBox(height: 10),
-                _descripcioActividad(infoActividad[4]), //Accedemos su descripcion
+                _descripcioActividad(
+                    infoActividad[4]), //Accedemos su descripcion
                 _expansionDescripcion(),
-                _infoActividad(infoActividad[7], infoActividad[5], infoActividad[6], infoActividad[2], uriActividad),
+                _infoActividad(infoActividad[7], infoActividad[5],
+                    infoActividad[6], infoActividad[2], uriActividad),
                 _foro(),
               ], //Accedemos ubicación, dataIni, DataFi, uri actividad
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
-            //barra para añadir mensajes
-            child: reply == false
-              ? PostWidget(
-                addPost: (foroId, mensaje, fecha, numeroLikes) async {
-                  await _controladorPresentacion.addPost(foroId, mensaje, fecha, numeroLikes);
+              padding: const EdgeInsets.all(8.0),
+              //barra para añadir mensajes
+              child: reply == false
+                  ? PostWidget(
+                      addPost: (foroId, mensaje, fecha, numeroLikes) async {
+                        await _controladorPresentacion.addPost(
+                            foroId, mensaje, fecha, numeroLikes);
 
-                  // Actualitza el llistat de posts
-                  setState(() {
-                    posts = _controladorPresentacion.getPostsForo(idForo);
-                  });
-                },
-                activitat: infoActividad[1],
-                controladorPresentacion: _controladorPresentacion,
-              )
-              : ReplyWidget(
-                addReply: (foroId, postIden, mensaje, fecha, numeroLikes) async {
-                  await _controladorPresentacion.addReplyPost(foroId, postIden, mensaje, fecha, numeroLikes);
+                        // Actualitza el llistat de posts
+                        setState(() {
+                          posts = _controladorPresentacion.getPostsForo(idForo);
+                        });
+                      },
+                      activitat: infoActividad[1],
+                      controladorPresentacion: _controladorPresentacion,
+                    )
+                  : ReplyWidget(
+                      addReply: (foroId, postIden, mensaje, fecha,
+                          numeroLikes) async {
+                        await _controladorPresentacion.addReplyPost(
+                            foroId, postIden, mensaje, fecha, numeroLikes);
 
-                  // Actualitza el llistat de replies
-                  setState(() {
-                    replies = _controladorPresentacion.getReplyPosts(idForo, postIden);
-                    reply = false;
-                  });
-                },
-                foroId: idForo,
-                postId: postIden,
-              )
-          ),
-        ],  
+                        // Actualitza el llistat de replies
+                        setState(() {
+                          replies = _controladorPresentacion.getReplyPosts(
+                              idForo, postIden);
+                          reply = false;
+                        });
+                      },
+                      foroId: idForo,
+                      postId: postIden,
+                    )),
+        ],
       ),
     );
   }
 
-
-Widget _imagenActividad(String imagenUrl){
-  return Container(
-    margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0), 
-    child: Stack(
-      children: <Widget>[
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10.0),
-          child: Image.network(
-            imagenUrl,
-            height: 200,
-            width: double.infinity, 
-            fit: BoxFit.cover, 
+  Widget _imagenActividad(String imagenUrl) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+      child: Stack(
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10.0),
+            child: Image.network(
+              imagenUrl,
+              height: 200,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        Positioned(
-          bottom: 10.0,
-          right: 10.0,
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: SizedBox(
-              height: 32.5, // Establece la altura del botón
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, 
-                  backgroundColor: Colors.black, // Color del texto y del icono
+          Positioned(
+            bottom: 10.0,
+            right: 10.0,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: SizedBox(
+                height: 32.5, // Establece la altura del botón
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor:
+                        Colors.black, // Color del texto y del icono
+                  ),
+                  icon: const Icon(Icons.location_on),
+                  label: const Text('Como llegar'),
+                  onPressed: () async {
+                    final url = Uri.parse(
+                        'https://www.google.com/maps/search/?api=1&query=${infoActividad[8]},${infoActividad[9]}');
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url);
+                    } else {
+                      throw 'No se pudo abrir $url';
+                    }
+                  },
                 ),
-                icon: const Icon(Icons.location_on),
-                label: const Text('Como llegar'),
-                onPressed: () async {
-                  final url = Uri.parse('https://www.google.com/maps/search/?api=1&query=${infoActividad[8]},${infoActividad[9]}');
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url);
-                  } else {
-                    throw 'No se pudo abrir $url';
-                  }
-                },
               ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
-
-  Widget _tituloBoton(String tituloActividad, String categoriaActividad){
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16.0),
-      child:  Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: _retornaIcon(categoriaActividad), 
-          ),
-          Expanded(
-            child: Text(
-              tituloActividad,
-              style: const TextStyle(color: Color(0xFFF4692A), fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            
-          ),
-          const SizedBox(width: 5),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                manageSignupButton(infoActividad);
-              });
-            },
-            style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(
-            estaApuntado ? Colors.black : const Color(0xFFF4692A),),
-            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),),
-            child: Text(estaApuntado ? 'signout'.tr(context) : 'signin'.tr(context)),
-          ),
         ],
-      )
+      ),
     );
   }
 
-  Widget _descripcioActividad(String descripcionActividad){
+  Widget _tituloBoton(String tituloActividad, String categoriaActividad) {
     return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text(
-            descripcionActividad,
-            style: const TextStyle(fontSize: 16, ),
-            maxLines: mostrarDescripcionCompleta ? null : 2,
-            overflow: mostrarDescripcionCompleta ? null: TextOverflow.ellipsis,
-            textAlign: TextAlign.justify, 
-        ),
-      );
+        margin: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: _retornaIcon(categoriaActividad),
+            ),
+            Expanded(
+              child: Text(
+                tituloActividad,
+                style: const TextStyle(
+                    color: Color(0xFFF4692A),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            const SizedBox(width: 5),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  manageSignupButton(infoActividad);
+                });
+              },
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  estaApuntado ? Colors.black : const Color(0xFFF4692A),
+                ),
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+              ),
+              child: Text(
+                  estaApuntado ? 'signout'.tr(context) : 'signin'.tr(context)),
+            ),
+          ],
+        ));
   }
-  
+
+  Widget _descripcioActividad(String descripcionActividad) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Text(
+        descripcionActividad,
+        style: const TextStyle(
+          fontSize: 16,
+        ),
+        maxLines: mostrarDescripcionCompleta ? null : 2,
+        overflow: mostrarDescripcionCompleta ? null : TextOverflow.ellipsis,
+        textAlign: TextAlign.justify,
+      ),
+    );
+  }
+
   Widget _expansionDescripcion() {
     return GestureDetector(
       onTap: () {
@@ -453,21 +489,25 @@ Widget _imagenActividad(String imagenUrl){
         alignment: Alignment.center,
         margin: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Text(
-          mostrarDescripcionCompleta ? 'see_less'.tr(context) : 'see_more'.tr(context),
-          style: const TextStyle(color: Colors.grey,),
+          mostrarDescripcionCompleta
+              ? 'see_less'.tr(context)
+              : 'see_more'.tr(context),
+          style: const TextStyle(
+            color: Colors.grey,
+          ),
         ),
       ),
     );
   }
-  
-  Widget _infoActividad(String ubicacion, String dataIni, String dataFi, String categorias, Uri urlEntrades) {
+
+  Widget _infoActividad(String ubicacion, String dataIni, String dataFi,
+      String categorias, Uri urlEntrades) {
     return Container(
       color: Colors.grey.shade200,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column( 
-          children: [
-            const Padding(padding: EdgeInsets.only(top: 5)),
+        child: Column(children: [
+          const Padding(padding: EdgeInsets.only(top: 5)),
           _getIconPlusTexto('ubicacion', ubicacion),
           _getIconPlusTexto('calendario', 'DataIni: $dataIni'),
           _getIconPlusTexto('calendario', 'DataFi: $dataFi'),
@@ -478,12 +518,12 @@ Widget _imagenActividad(String imagenUrl){
               Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    launchUrl(urlEntrades); 
+                    launchUrl(urlEntrades);
                   },
                   child: const Text(
                     'Informació Entrades',
                     style: TextStyle(
-                      decoration: TextDecoration.underline, 
+                      decoration: TextDecoration.underline,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -499,12 +539,15 @@ Widget _imagenActividad(String imagenUrl){
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.65, 
+                    width: MediaQuery.of(context).size.width * 0.65,
                     child: TextButton(
                       style: TextButton.styleFrom(
-                        foregroundColor: Colors.white, 
-                        backgroundColor: const Color(0xFFF4692A), // Color de fondo del botón
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), // Forma del botón
+                        foregroundColor: Colors.white,
+                        backgroundColor:
+                            const Color(0xFFF4692A), // Color de fondo del botón
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(5)), // Forma del botón
                       ),
                       onPressed: () {
                         mostrarBaterias();
@@ -512,7 +555,8 @@ Widget _imagenActividad(String imagenUrl){
                       child: const FittedBox(
                         child: Row(
                           children: [
-                            Icon(Icons.battery_charging_full, color: Colors.white), // Icono de un rayo
+                            Icon(Icons.battery_charging_full,
+                                color: Colors.white), // Icono de un rayo
                             Text('Ver cargadores cercanos'),
                           ],
                         ),
@@ -528,26 +572,24 @@ Widget _imagenActividad(String imagenUrl){
                     width: MediaQuery.of(context).size.width * 0.45,
                     child: TextButton(
                       style: TextButton.styleFrom(
-                        foregroundColor: Colors.white, 
+                        foregroundColor: Colors.white,
                         backgroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), 
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5)),
                       ),
                       onPressed: () {
-                        if (organizador){
+                        if (organizador) {
                           mostrarQR();
-                        }
-                        else {
-
-                        }
+                        } else {}
                       },
                       child: FittedBox(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.qr_code, color: Colors.white),
-                          const SizedBox(width: 8),
-                          Text(organizador ? 'Mostrar QR' : 'Escanear QR'),
-                        ],
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.qr_code, color: Colors.white),
+                            const SizedBox(width: 8),
+                            Text(organizador ? 'Mostrar QR' : 'Escanear QR'),
+                          ],
                         ),
                       ),
                     ),
@@ -556,18 +598,16 @@ Widget _imagenActividad(String imagenUrl){
               ),
             ],
           ),
-                    const Padding(padding: EdgeInsets.only(bottom: 5)),
-          ]
-        ),
+          const Padding(padding: EdgeInsets.only(bottom: 5)),
+        ]),
       ),
     );
-  } 
+  }
 
- Widget _getIconPlusTexto(String categoria, String texto){
+  Widget _getIconPlusTexto(String categoria, String texto) {
+    late Icon icono;
 
-    late Icon icono; 
-
-    switch(categoria){
+    switch (categoria) {
       case 'ubicacion':
         icono = const Icon(Icons.location_on);
         break;
@@ -577,35 +617,33 @@ Widget _imagenActividad(String imagenUrl){
       case 'categoria':
         icono = const Icon(Icons.category);
 
-        List<String> listaCategoriasMayusculas = (texto.split(', ')).map((categoria) {
+        List<String> listaCategoriasMayusculas =
+            (texto.split(', ')).map((categoria) {
           return '${categoria[0].toUpperCase()}${categoria.substring(1)}';
         }).toList();
 
         texto = listaCategoriasMayusculas.join(', ');
-        
+
         break;
     }
 
-    return  Row(
+    return Row(
       children: [
         icono,
         const Padding(padding: EdgeInsets.only(right: 7.5)),
-        Text(
-          texto,
-          style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text(texto, style: const TextStyle(fontWeight: FontWeight.bold)),
       ],
     );
   }
 
   //Posible duplicaciñon de código
   Image _retornaIcon(String categoria) {
-    if (catsAMB.contains(categoria)){
+    if (catsAMB.contains(categoria)) {
       return Image.asset(
-            'assets/categoriareciclar.png',
-            width: 45.0,
-          );
-    }
-    else {
+        'assets/categoriareciclar.png',
+        width: 45.0,
+      );
+    } else {
       switch (categoria) {
         case 'carnavals':
           return Image.asset(
@@ -722,12 +760,13 @@ Widget _imagenActividad(String imagenUrl){
             ),
             TextButton(
               onPressed: () async {
-                if(!reply) {
-                  String? postId = await _controladorPresentacion.getPostId(idForo, post.fecha);
+                if (!reply) {
+                  String? postId = await _controladorPresentacion.getPostId(
+                      idForo, post.fecha);
                   _deletePost(post, postId);
-                }
-                else {
-                  String? replyId = await _controladorPresentacion.getReplyId(idForo, postIden, post.fecha);
+                } else {
+                  String? replyId = await _controladorPresentacion.getReplyId(
+                      idForo, postIden, post.fecha);
                   _deleteReply(post, postIden, replyId);
                 }
                 Navigator.of(context).pop(); // Cierra el dialog
@@ -740,8 +779,7 @@ Widget _imagenActividad(String imagenUrl){
     );
   }
 
-  Future<void> _deletePost(Post post, String? postId) async{
-
+  Future<void> _deletePost(Post post, String? postId) async {
     _controladorPresentacion.deletePost(idForo, postId);
 
     setState(() {
@@ -749,8 +787,7 @@ Widget _imagenActividad(String imagenUrl){
     });
   }
 
-  Future<void> _deleteReply(Post reply, String? postId, String? replyId) async{
-
+  Future<void> _deleteReply(Post reply, String? postId, String? replyId) async {
     _controladorPresentacion.deleteReply(idForo, postId, replyId);
 
     setState(() {
@@ -763,10 +800,11 @@ Widget _imagenActividad(String imagenUrl){
     String? foroId = await _controladorPresentacion.getForoId(infoActividad[1]);
     if (foroId != null) {
       idForo = foroId;
-      List<Post> fetchedPosts = await _controladorPresentacion.getPostsForo(foroId);
+      List<Post> fetchedPosts =
+          await _controladorPresentacion.getPostsForo(foroId);
       return fetchedPosts;
     }
-    return[];
+    return [];
   }
 
   //conseguir replies del foro
@@ -774,7 +812,8 @@ Widget _imagenActividad(String imagenUrl){
     String? postId = await _controladorPresentacion.getPostId(idForo, data);
     if (postId != null) {
       idPost = postId;
-      List<Post> fetchedReply = await _controladorPresentacion.getReplyPosts(idForo, postId);
+      List<Post> fetchedReply =
+          await _controladorPresentacion.getReplyPosts(idForo, postId);
       return fetchedReply;
     }
     return [];
@@ -783,15 +822,15 @@ Widget _imagenActividad(String imagenUrl){
   //funcion que lista todos los posts del foro de la actividad
   Widget _foro() {
     return FutureBuilder<List<Post>>(
-      future: getPosts(), 
+      future: getPosts(),
       builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
-       if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const CircularProgressIndicator(), 
-                const SizedBox(height: 10), 
+                const CircularProgressIndicator(),
+                const SizedBox(height: 10),
                 Text('loading'.tr(context)),
               ],
             ),
@@ -803,19 +842,18 @@ Widget _imagenActividad(String imagenUrl){
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-                    child: Text(
-                      //quereis que añada tambien el numero de replies?
-                      'comments'.trWithArg(context, {"num": "${posts.length}"}),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
+              Row(children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 10.0),
+                  child: Text(
+                    //quereis que añada tambien el numero de replies?
+                    'comments'.trWithArg(context, {"num": "${posts.length}"}),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  mostrarReplies(),
-                ]
-              ),
+                ),
+                mostrarReplies(),
+              ]),
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -823,7 +861,8 @@ Widget _imagenActividad(String imagenUrl){
                 itemBuilder: (context, index) {
                   final post = posts[index];
                   DateTime dateTime = DateTime.parse(post.fecha);
-                  String formattedDate = DateFormat('yyyy/MM/dd HH:mm').format(dateTime);
+                  String formattedDate =
+                      DateFormat('yyyy/MM/dd HH:mm').format(dateTime);
                   return ListTile(
                     title: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -831,7 +870,8 @@ Widget _imagenActividad(String imagenUrl){
                         Row(
                           children: [
                             //se tendra que modificar por la imagen del usuario
-                            const Icon(Icons.account_circle, size: 45), // Icono de usuario
+                            const Icon(Icons.account_circle,
+                                size: 45), // Icono de usuario
                             const SizedBox(width: 5),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -846,7 +886,8 @@ Widget _imagenActividad(String imagenUrl){
                             ),
                             const Spacer(),
                             //fer que nomes el que l'ha creat ho pugui veure
-                            _buildPopUpMenuNotBlocked(context, post, false, post.username, ''),
+                            _buildPopUpMenuNotBlocked(
+                                context, post, false, post.username, ''),
                             /*
                             GestureDetector(
                               onTap: () async {
@@ -868,45 +909,51 @@ Widget _imagenActividad(String imagenUrl){
                           padding: const EdgeInsets.only(left: 30),
                           child: Row(
                             children: [
-                            IconButton(
-                              icon: Icon(
-                                post.numeroLikes > 0 ? Icons.favorite : Icons.favorite_border, 
-                                color: post.numeroLikes > 0 ? Colors.red : null, 
+                              IconButton(
+                                icon: Icon(
+                                  post.numeroLikes > 0
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color:
+                                      post.numeroLikes > 0 ? Colors.red : null,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    if (post.numeroLikes > 0) {
+                                      post.numeroLikes =
+                                          0; // Si ya hay likes, los elimina
+                                    } else {
+                                      post.numeroLikes =
+                                          1; // Si no hay likes, añade uno
+                                    }
+                                  });
+                                },
                               ),
-                              onPressed: () {
-                                setState(() {
-                                  if (post.numeroLikes > 0) {
-                                    post.numeroLikes = 0; // Si ya hay likes, los elimina
-                                  } else {
-                                    post.numeroLikes = 1; // Si no hay likes, añade uno
-                                  }
-                                });
-                              },
-                            ),
                               Text('me_gusta'.tr(context)),
                               const SizedBox(width: 20),
                               //respuesta
                               IconButton(
-                                icon: const Icon(Icons.reply), // Icono de responder
+                                icon: const Icon(
+                                    Icons.reply), // Icono de responder
                                 onPressed: () async {
-                                  postIden = await _controladorPresentacion.getPostId(idForo, post.fecha);
+                                  postIden = await _controladorPresentacion
+                                      .getPostId(idForo, post.fecha);
                                   setState(() {
-                                     reply = true;
+                                    reply = true;
                                   });
                                 },
-                              ), 
+                              ),
                               const SizedBox(width: 5),
                               Text('reply'.tr(context)),
                               const SizedBox(width: 20),
                             ],
                           ),
                         ),
-                        if (mostraReplies) 
+                        if (mostraReplies)
                           Padding(
-                            padding: const EdgeInsets.only(left: 20),
-                            child: infoReply(post.fecha)
-                          )
-                      ], 
+                              padding: const EdgeInsets.only(left: 20),
+                              child: infoReply(post.fecha))
+                      ],
                     ),
                   );
                 },
@@ -920,49 +967,55 @@ Widget _imagenActividad(String imagenUrl){
 
   Widget infoReply(date) {
     return FutureBuilder<List<Post>>(
-      future: getReplies(date), 
-      builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator(); // Mentres no acaba el future
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}'); // Si hi ha hagut algun error
-        } else {
-          List<Post> reps = snapshot.data!;
-          return Column( 
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: reps.length,
-                itemBuilder: (context, index) {
-                  final rep = reps[index];
-                  DateTime dateTime = DateTime.parse(rep.fecha);
-                  String formattedDate = DateFormat('yyyy/MM/dd HH:mm').format(dateTime);
-                  return ListTile(
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            //se tendra que modificar por la imagen del usuario
-                            const Icon(Icons.account_circle, size: 45), // Icono de usuario
-                            const SizedBox(width: 5),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(rep.username), // Nombre de usuario
-                                const SizedBox(width: 5),
-                                Text(
-                                  formattedDate,
-                                  style: const TextStyle(color: Colors.grey),
-                                ),
-                              ],
-                            ),
-                            const Spacer(),
-                            //fer que nomes el que l'ha creat ho pugui veure
-                            _buildPopUpMenuNotBlocked(context, rep, true, rep.username, date)
-                            /*
+        future: getReplies(date),
+        builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator(); // Mentres no acaba el future
+          } else if (snapshot.hasError) {
+            return Text(
+                'Error: ${snapshot.error}'); // Si hi ha hagut algun error
+          } else {
+            List<Post> reps = snapshot.data!;
+            return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: reps.length,
+                      itemBuilder: (context, index) {
+                        final rep = reps[index];
+                        DateTime dateTime = DateTime.parse(rep.fecha);
+                        String formattedDate =
+                            DateFormat('yyyy/MM/dd HH:mm').format(dateTime);
+                        return ListTile(
+                            title: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                              Row(
+                                children: [
+                                  //se tendra que modificar por la imagen del usuario
+                                  const Icon(Icons.account_circle,
+                                      size: 45), // Icono de usuario
+                                  const SizedBox(width: 5),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(rep.username), // Nombre de usuario
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        formattedDate,
+                                        style:
+                                            const TextStyle(color: Colors.grey),
+                                      ),
+                                    ],
+                                  ),
+                                  const Spacer(),
+                                  //fer que nomes el que l'ha creat ho pugui veure
+                                  _buildPopUpMenuNotBlocked(
+                                      context, rep, true, rep.username, date)
+                                  /*
                             GestureDetector(
                               onTap: () async {
                                 postIden = await _controladorPresentacion.getPostId(idForo, date);
@@ -971,98 +1024,97 @@ Widget _imagenActividad(String imagenUrl){
                               child: const Icon(Icons.more_vert, size: 20),
                             ),
                             */
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 50),
-                          child: Text(
-                            rep.mensaje, // Mensaje del post
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 30),
-                          child: Row(
-                            children: [
-                              IconButton(
-                                icon: Icon(
-                                  rep.numeroLikes > 0 ? Icons.favorite : Icons.favorite_border, 
-                                  color: rep.numeroLikes > 0 ? Colors.red : null, 
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    if (rep.numeroLikes > 0) {
-                                      rep.numeroLikes = 0; 
-                                    } else {
-                                      rep.numeroLikes = 1; 
-                                    }
-                                  });
-                                },
+                                ],
                               ),
-                              Text('me_gusta'.tr(context))
-                            ]
-                          )
-                        )
-                      ]
-                    )
-                  );
-                }
-              )
-            ]
-          );
-        }
-      }
-    );
+                              Padding(
+                                padding: const EdgeInsets.only(left: 50),
+                                child: Text(
+                                  rep.mensaje, // Mensaje del post
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ),
+                              Padding(
+                                  padding: const EdgeInsets.only(left: 30),
+                                  child: Row(children: [
+                                    IconButton(
+                                      icon: Icon(
+                                        rep.numeroLikes > 0
+                                            ? Icons.favorite
+                                            : Icons.favorite_border,
+                                        color: rep.numeroLikes > 0
+                                            ? Colors.red
+                                            : null,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          if (rep.numeroLikes > 0) {
+                                            rep.numeroLikes = 0;
+                                          } else {
+                                            rep.numeroLikes = 1;
+                                          }
+                                        });
+                                      },
+                                    ),
+                                    Text('me_gusta'.tr(context))
+                                  ]))
+                            ]));
+                      })
+                ]);
+          }
+        });
   }
 
-  Widget mostrarReplies(){
+  Widget mostrarReplies() {
     return GestureDetector(
       onTap: () {
         setState(() {
           mostraReplies = !mostraReplies;
         });
       },
-      child: Padding(        
+      child: Padding(
         padding: const EdgeInsets.only(left: 180),
         child: Text(
           mostraReplies ? 'no_reply'.tr(context) : 'see_reply'.tr(context),
-          style: const TextStyle(color: Colors.grey,),
+          style: const TextStyle(
+            color: Colors.grey,
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildPopUpMenuNotBlocked(BuildContext context, Post post, bool reply, String username, String date) {
+  Widget _buildPopUpMenuNotBlocked(BuildContext context, Post post, bool reply,
+      String username, String date) {
     String owner = _controladorPresentacion.getUsername();
     String userLogged = _controladorPresentacion.getUsername();
-    if(owner == username) {
+    if (owner == username) {
       return _buildPopupMenu([
-      (reply) ? "delete_reply".tr(context) : "delete_post".tr(context),
-    ], context, post, reply, username, date);
+        (reply) ? "delete_reply".tr(context) : "delete_post".tr(context),
+      ], context, post, reply, username, date);
     } else {
       return _buildPopupMenu([
-      "block_user".tr(context),
-      "report_user".tr(context),
-    ], context, post, reply, username, date);
+        "block_user".tr(context),
+        "report_user".tr(context),
+      ], context, post, reply, username, date);
     }
   }
 
   //Lo dejo pero seguramente se tendrá que mover
-  Widget _buildPopUpMenuBloqued(BuildContext context, Post post, bool reply, String username, String date) {
+  Widget _buildPopUpMenuBloqued(BuildContext context, Post post, bool reply,
+      String username, String date) {
     String owner = _controladorPresentacion.getUsername();
-    if(owner == username) {
+    if (owner == username) {
       return _buildPopupMenu([
-      "report_user".tr(context),
-      (reply) ? "delete_reply".tr(context) : "delete_post".tr(context),
-    ], context, post, reply, username, date);
+        "report_user".tr(context),
+        (reply) ? "delete_reply".tr(context) : "delete_post".tr(context),
+      ], context, post, reply, username, date);
     } else {
       return _buildPopupMenu([
-      "report_user".tr(context),
-    ], context, post, reply, username, date);
+        "report_user".tr(context),
+      ], context, post, reply, username, date);
     }
   }
 
-  
   Future<bool?> confirmPopUp(String dialogContent) async {
     return await showDialog(
       context: context,
@@ -1089,7 +1141,8 @@ Widget _imagenActividad(String imagenUrl){
     );
   }
 
-  Widget _buildPopupMenu(List<String> options, BuildContext context, Post post, bool reply, String username, String date) {
+  Widget _buildPopupMenu(List<String> options, BuildContext context, Post post,
+      bool reply, String username, String date) {
     return Row(
       children: [
         const SizedBox(width: 8.0),
@@ -1099,29 +1152,36 @@ Widget _imagenActividad(String imagenUrl){
           itemBuilder: (BuildContext context) => options.map((String option) {
             return PopupMenuItem(
               value: option,
-              child:Text(option, style: const TextStyle(color: Colors.black)),
+              child: Text(option, style: const TextStyle(color: Colors.black)),
             );
           }).toList(),
           onSelected: (String value) async {
             if (value == "block_user".tr(context)) {
-              final bool? confirm = await confirmPopUp("confirm_block_user".trWithArg(context, {"user": username}));
-              if(confirm == true) {
+              final bool? confirm = await confirmPopUp(
+                  "confirm_block_user".trWithArg(context, {"user": username}));
+              if (confirm == true) {
                 //_controladorPresentacion.blockUser(username);
               }
             } else if (value == "unblock_user".tr(context)) {
-              final bool? confirm = await confirmPopUp("confirm_unblock_user".trWithArg(context, {"user": username}));
-              if(confirm == true) {
+              final bool? confirm = await confirmPopUp("confirm_unblock_user"
+                  .trWithArg(context, {"user": username}));
+              if (confirm == true) {
                 //_controladorPresentacion.reportUser(code, username);
               }
             } else if (value == "report_user".tr(context)) {
-              final bool? confirm = await confirmPopUp("confirm_report_user".trWithArg(context, {"user": username}));
-              if(confirm == true) {
-                if(reply){
-                  String? postId = await _controladorPresentacion.getPostId(idForo, date);
-                  _controladorPresentacion.mostrarReportUser(context, username, "forum $idForo $postId");
-                } else{
-                  String? postId = await _controladorPresentacion.getPostId(idForo, post.fecha);
-                  _controladorPresentacion.mostrarReportUser(context, username, "forum $idForo $postId");
+              final bool? confirm = await confirmPopUp(
+                  "confirm_report_user".trWithArg(context, {"user": username}));
+              if (confirm == true) {
+                if (reply) {
+                  String? postId =
+                      await _controladorPresentacion.getPostId(idForo, date);
+                  _controladorPresentacion.mostrarReportUser(
+                      context, username, "forum $idForo $postId");
+                } else {
+                  String? postId = await _controladorPresentacion.getPostId(
+                      idForo, post.fecha);
+                  _controladorPresentacion.mostrarReportUser(
+                      context, username, "forum $idForo $postId");
                 }
               }
             } else if (value == "delete_post".tr(context)) {
@@ -1142,8 +1202,7 @@ Widget _imagenActividad(String imagenUrl){
         if (estaApuntado) {
           controladorDominio.signoutFromActivity(_user?.uid, infoActividad[1]);
           estaApuntado = false;
-        }
-        else {
+        } else {
           controladorDominio.signupInActivity(_user?.uid, infoActividad[1]);
           estaApuntado = true;
         }
@@ -1152,13 +1211,12 @@ Widget _imagenActividad(String imagenUrl){
   }
 
   void checkApuntado(String uid, List<String> infoactividad) async {
-    bool apuntado = await controladorDominio.isUserInActivity(uid, infoactividad[1]);
+    bool apuntado =
+        await controladorDominio.isUserInActivity(uid, infoactividad[1]);
     if (mounted) {
       setState(() {
         estaApuntado = apuntado;
       });
     }
   }
-  
 }
-
