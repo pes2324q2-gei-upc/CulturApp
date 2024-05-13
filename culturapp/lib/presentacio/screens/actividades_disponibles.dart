@@ -179,7 +179,7 @@ class _Actsdisponibles extends State<Actsdisponibles> {
         _controladorPresentacion.mostrarActividadesUser(context);
         break;
       case 2:
-        _controladorPresentacion.mostrarXats(context);
+        _controladorPresentacion.mostrarXats(context, 'Amics');
         break;
       case 3:
         _controladorPresentacion.mostrarPerfil(context);
