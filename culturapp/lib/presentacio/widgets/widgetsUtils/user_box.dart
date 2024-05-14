@@ -106,6 +106,10 @@ class _userBoxState extends State<userBox> {
                     _buildPopUpMenuFollowerRequestSend(),
                   ] else if(widget.type == 'reportUserBlocked') ...[
                     _buildPopUpMenuReportUserBlocked(),
+                  ] else if(widget.type == 'requested') ...[
+                    Row(
+                      children: [Text(_action = "request_sent".tr(context)),]
+                    ),
                   ],
                 ],
               ],  

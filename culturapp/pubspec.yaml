@@ -106,6 +106,7 @@ flutter:
   - assets/userImage.png
   - assets/loginpicture.png
   - assets/calendar.png
+  - assets/logo.png
   
   uses-material-design: true
 

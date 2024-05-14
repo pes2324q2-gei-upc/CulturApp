@@ -9,11 +9,12 @@ class AfegirAmics extends StatefulWidget {
   final List<Usuario> recomms;
   final List<Usuario> usersBD;
   final ControladorPresentacion controladorPresentacion;
+
   const AfegirAmics(
       {super.key,
       required this.recomms,
       required this.controladorPresentacion,
-      required this.usersBD});
+      required this.usersBD,});
 
   @override
   State<StatefulWidget> createState() => _AfegirAmicsState(recomms, usersBD);
@@ -22,7 +23,10 @@ class AfegirAmics extends StatefulWidget {
 class _AfegirAmicsState extends State<AfegirAmics> {
   late List<Usuario> usersRecom;
   late List<Usuario> usersBD;
-  _AfegirAmicsState(List<Usuario> recomms, List<Usuario> usBD) {
+  late  List<String>requests;
+  bool isLoading = true;
+
+  _AfegirAmicsState(List<Usuario> recomms, List<Usuario> usBD)  {
     usersRecom = recomms;
     usersBD = usBD;
   }
@@ -43,8 +47,26 @@ class _AfegirAmicsState extends State<AfegirAmics> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    updateUsers().then((_) {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    });
+  }
+
+  Future<void> updateUsers() async {
+    requests = await widget.controladorPresentacion.getRequestsUser();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Column(
+      return isLoading 
+        ? const Center(heightFactor: 12,child: CircularProgressIndicator(color: Color(0xFFF4692A),),) 
+        : Column(
       children: [
         SizedBox(
           height: 45.0,
@@ -96,6 +118,7 @@ class _AfegirAmicsState extends State<AfegirAmics> {
                 ),
                 const Padding(padding: EdgeInsets.all(10.0)),
                 for (var user in usersRecom)
+                if (!requests.contains(user.username)) ...[
                   Padding(
                     padding: const EdgeInsets.only(top: 5.0),
                     child: userBox(
@@ -107,19 +130,34 @@ class _AfegirAmicsState extends State<AfegirAmics> {
                         controladorPresentacion:
                             widget.controladorPresentacion),
                   ),
-              ] else ...[
-                for (var user in usersBD)
+                ] else ...[
                   Padding(
                     padding: const EdgeInsets.only(top: 5.0),
                     child: userBox(
                         text: user.username,
-                        recomm: false,
-                        type: "null",
+                        recomm: true,
+                        type: "requested",
                         popUpStyle: "default",
                         placeReport: "null",
                         controladorPresentacion:
                             widget.controladorPresentacion),
                   ),
+                ],
+              ] else ...[
+                for (var user in usersBD)
+                 if (!requests.contains(user.username)) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5.0),
+                    child: userBox(
+                        text: user.username,
+                        recomm: false,
+                        type: "addSomeone",
+                        popUpStyle: "default",
+                        placeReport: "null",
+                        controladorPresentacion:
+                            widget.controladorPresentacion),
+                  ),
+                 ],
               ]
             ],
           ),
