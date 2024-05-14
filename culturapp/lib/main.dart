@@ -44,10 +44,11 @@ class MyApp extends StatelessWidget {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center, // Añade esta línea
                     children: [
+                      const Padding(padding: EdgeInsets.only(top: 250),),
                       const SizedBox(
                         child: CircularProgressIndicator(color: Color(0xFFF4692A)),
                       ),
-                      const Padding(padding: EdgeInsets.only(bottom: 200.0),),
+                      const Padding(padding: EdgeInsets.only(bottom: 225.0),),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center, 
                         children: [
