@@ -1,4 +1,5 @@
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:culturapp/presentacio/screens/categorias.dart';
 import 'package:culturapp/translations/AppLocalizations';
 import 'package:flutter/material.dart';
 import "package:firebase_auth/firebase_auth.dart";
@@ -184,31 +185,23 @@ class _EditPerfil extends State<EditPerfil> {
     }
   }
 
-  void _showMultiSelect() async {
-    await showDialog(
-      context: context,
-      builder: (contex) {
-        List<String> valoresSeleccionados = _categories.where((categoria) => selectedCategories.contains(categoria)).toList();
-        return  MultiSelectDialog(
-          title: Text("select".tr(context)),
-          confirmText: Text("ok".tr(context)),
-          cancelText: Text("cancel".tr(context)),
-          items: _categories
-                .map((categoria) => MultiSelectItem<String>(categoria.toLowerCase(), categoria.toLowerCase()))
-                .toList(),
-          listType: MultiSelectListType.CHIP,
-          initialValue: valoresSeleccionados,
-          onConfirm: (values) {
-             selectedCategories = values.take(3).toList();
-             valoresSeleccionados = _categories.where((categoria) => selectedCategories.contains(categoria)).toList();
-          },
-          selectedColor: const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
-          checkColor: const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
-          unselectedColor: Colors.white,
-        );
-      },
-    );
+void _showMultiSelect() async {
+  final result = await showDialog<List<String>>(
+    context: context,
+    builder: (context) {
+      return Dialog(
+        child: Categorias(selected: selectedCategories),
+      );
+    },
+  );
+
+  if (result != null) {
+    setState(() {
+      selectedCategories = result;
+      print(selectedCategories);
+    });
   }
+}
   
   Future<bool> sameName() async {
     String? name = _username;

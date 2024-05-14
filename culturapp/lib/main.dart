@@ -1,6 +1,5 @@
 // ignore_for_file: no_logic_in_create_state, library_private_types_in_public_api
 import 'package:culturapp/data/firebase_options.dart';
-import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
