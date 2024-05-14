@@ -333,7 +333,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                 const SizedBox(height: 10),
                 _descripcioActividad(
                     infoActividad[4]), //Accedemos su descripcion
+                    const Padding(padding: EdgeInsets.only(bottom: 5.0),),
                 _expansionDescripcion(),
+                const Padding(padding: EdgeInsets.only(top: 5.0),),
                 _infoActividad(infoActividad[7], infoActividad[5],
                     infoActividad[6], infoActividad[2], uriActividad),
                 _foro(),
@@ -432,7 +434,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
-              child: _retornaIcon(categoriaActividad),
+              child: _retornaIcon(categoriaActividad.split(',')[0]),
             ),
             Expanded(
               child: Text(
@@ -469,9 +471,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       child: Text(
         descripcionActividad,
         style: const TextStyle(
-          fontSize: 16,
+          fontSize: 14,
         ),
-        maxLines: mostrarDescripcionCompleta ? null : 2,
+        maxLines: mostrarDescripcionCompleta ? null : 4,
         overflow: mostrarDescripcionCompleta ? null : TextOverflow.ellipsis,
         textAlign: TextAlign.justify,
       ),
@@ -488,11 +490,12 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       child: Container(
         alignment: Alignment.center,
         margin: const EdgeInsets.symmetric(horizontal: 16.0),
+        padding: const EdgeInsets.only(bottom: 5.0),
         child: Text(
           mostrarDescripcionCompleta
               ? 'see_less'.tr(context)
               : 'see_more'.tr(context),
-          style: const TextStyle(
+          style:  const TextStyle(
             color: Colors.grey,
           ),
         ),
@@ -504,13 +507,15 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       String categorias, Uri urlEntrades) {
     return Container(
       color: Colors.grey.shade200,
+     padding: const EdgeInsets.only(top: 10.0),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(children: [
           const Padding(padding: EdgeInsets.only(top: 5)),
           _getIconPlusTexto('ubicacion', ubicacion),
-          _getIconPlusTexto('calendario', 'DataIni: $dataIni'),
-          _getIconPlusTexto('calendario', 'DataFi: $dataFi'),
+          _getIconPlusTexto('calendario', '$dataIni'),
+          if (dataIni != dataFi) _getIconPlusTexto('calendario', '$dataFi'),
+          _getIconPlusTexto('categoria', categorias),
           Row(
             children: [
               const Icon(Icons.local_atm),
@@ -524,15 +529,14 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                     'Informació Entrades',
                     style: TextStyle(
                       decoration: TextDecoration.underline,
-                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
                     ),
                   ),
                 ),
               ),
             ],
           ),
-          _getIconPlusTexto('categoria', categorias),
-          const Padding(padding: EdgeInsets.only(bottom: 3)),
+          const Padding(padding: EdgeInsets.only(bottom: 2)),
           Row(
             children: [
               Expanded(
@@ -598,7 +602,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
               ),
             ],
           ),
-          const Padding(padding: EdgeInsets.only(bottom: 5)),
+          const Padding(padding: EdgeInsets.only(bottom: 7.5)),
         ]),
       ),
     );
@@ -621,9 +625,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             (texto.split(', ')).map((categoria) {
           return '${categoria[0].toUpperCase()}${categoria.substring(1)}';
         }).toList();
-
         texto = listaCategoriasMayusculas.join(', ');
-
         break;
     }
 
@@ -631,7 +633,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       children: [
         icono,
         const Padding(padding: EdgeInsets.only(right: 7.5)),
-        Text(texto, style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text(texto,  style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),),
       ],
     );
   }
