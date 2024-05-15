@@ -171,7 +171,8 @@ class _XatGrupScreen extends State<XatGrupScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _grup.nomGroup,
+                  truncarString(_grup.nomGroup, 19),
+                  //pq no hi hagi overflow de pixels si es molt llarg
                   style: const TextStyle(color: Colors.white),
                 ),
                 Text(
