@@ -12,6 +12,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:barcode_widget/barcode_widget.dart';
+import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class VistaVerActividad extends StatefulWidget {
@@ -65,6 +66,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   Bateria bat1 = Bateria();
   Bateria bat2 = Bateria();
   List<Bateria> bateriasDisponibles = [];
+  bool _isLoading = false;
 
   final List<String> catsAMB = [
     "Residus",
@@ -146,7 +148,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     return 12742 * asin(sqrt(a));
   }
 
-  void calculaBateriasCercanas() {
+  Future<void> calculaBateriasCercanas() async {
     double latitud = double.parse(infoActividad[8]);
     double longitud = double.parse(infoActividad[9]);
 
@@ -206,69 +208,80 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: AlertDialog(
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () async {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Row(
+        return FutureBuilder(
+          future: calculaBateriasCercanas(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              return SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: AlertDialog(
+                  content: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 7.0),
-                          child: Image.asset(
-                            'assets/categoriabateria.png',
-                            height: 50.0,
-                            width: 50.0,
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                            },
                           ),
                         ),
-                        const SizedBox(width: 10.0),
-                        const Text(
-                          'Carregadors propers:',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 7.0),
+                                child: Image.asset(
+                                  'assets/categoriabateria.png',
+                                  height: 50.0,
+                                  width: 50.0,
+                                ),
+                              ),
+                              const SizedBox(width: 10.0),
+                              const Text(
+                                'Carregadors propers:',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
+                        ...bateriasCerca
+                            .where((bateria) => isStreetAddress(bateria.address))
+                            .map((bateria) => Padding(
+                                  padding: const EdgeInsets.only(
+                                    bottom: 5.0,
+                                  ), // Agrega un espacio en la parte inferior
+                                  child: SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.8, // 80% del ancho de la pantalla
+                                    child: bateriaBox(
+                                        adress: bateria.address,
+                                        kw: bateria.kw,
+                                        speed: bateria.speed,
+                                        distancia: bateria.distancia,
+                                        latitud: bateria.latitud,
+                                        longitud: bateria.longitud),
+                                  ),
+                                ))
+                            .toList(),
                       ],
                     ),
                   ),
-                  ...bateriasCerca
-                      .where((bateria) => isStreetAddress(bateria.address))
-                      .map((bateria) => Padding(
-                            padding: const EdgeInsets.only(
-                              bottom: 5.0,
-                            ), // Agrega un espacio en la parte inferior
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width *
-                                  0.8, // 80% del ancho de la pantalla
-                              child: bateriaBox(
-                                  adress: bateria.address,
-                                  kw: bateria.kw,
-                                  speed: bateria.speed,
-                                  distancia: bateria.distancia,
-                                  latitud: bateria.latitud,
-                                  longitud: bateria.longitud),
-                            ),
-                          ))
-                      .toList(),
-                ],
-              ),
-            ),
-          ),
+                ),
+              );
+            }
+          },
         );
       },
     );
@@ -278,7 +291,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   Widget build(BuildContext context) {
     _controladorPresentacion
         .getForo(infoActividad[1]); //verificar que tenga un foro
-    return Scaffold(
+    return _isLoading
+      ? Center(child: CircularProgressIndicator(color: const Color(0xFFF4692A), backgroundColor: Colors.white,)
+      ): Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
         title: Text("Activity".tr(context)),
@@ -297,8 +312,17 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
               if (result == 'Enviar solicitud de organizador') {
                 _controladorPresentacion.mostrarSolicitutOrganitzador(
                     context, infoActividad[0], infoActividad[1]);
-              } else if (result == 'view_qr') {
-                mostrarQR();
+              } else if (result == 'share_act') {
+                if (infoActividad[5] == infoActividad[6] && infoActividad[7] != 'No disponible') {
+                  Share.share(' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} el dia ${infoActividad[5]} en ${infoActividad[7]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ');
+                } else if (infoActividad[5] != infoActividad[6] && infoActividad[7] != 'No disponible') {
+                  Share.share(' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} del dia ${infoActividad[5]} hasta el dia ${infoActividad[6]} en ${infoActividad[7]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ');
+                } else if (infoActividad[5] != infoActividad[6] && infoActividad[7] == 'No disponible') {
+                  Share.share(' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} del dia ${infoActividad[5]} hasta el dia ${infoActividad[6]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ');
+                } else if (infoActividad[5] == infoActividad[6] && infoActividad[7] == 'No disponible') {
+                  Share.share(' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} el dia ${infoActividad[5]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ');
+                }
+                
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -306,16 +330,10 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                 value: 'Enviar solicitud de organizador',
                 child: Text('Enviar solicitud de organizador'),
               ),
-              if (!organizador)
-                const PopupMenuItem<String>(
-                  value: 'scan_qr',
-                  child: Text('Escanear QR'),
-                ),
-              if (organizador)
-                const PopupMenuItem<String>(
-                  value: 'view_qr',
-                  child: Text('Mostrar QR'),
-                ),
+              const PopupMenuItem<String>(
+                value: 'share_act',
+                child: Text('Compartir'),
+              ),
             ],
           ),
         ],
@@ -1212,12 +1230,16 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     }
   }
 
-  void checkApuntado(String uid, List<String> infoactividad) async {
+void checkApuntado(String uid, List<String> infoactividad) async {
+    setState(() {
+      _isLoading = true;
+    });
     bool apuntado =
         await controladorDominio.isUserInActivity(uid, infoactividad[1]);
     if (mounted) {
       setState(() {
         estaApuntado = apuntado;
+        _isLoading = false;
       });
     }
   }
