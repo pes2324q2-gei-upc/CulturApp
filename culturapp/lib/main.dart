@@ -1,4 +1,5 @@
 // ignore_for_file: no_logic_in_create_state, library_private_types_in_public_api
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:culturapp/data/firebase_options.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
@@ -10,28 +11,46 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Inicializa Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   final controladorPresentacion = ControladorPresentacion();
   //controladorPresentacion.funcLogout();
   User? currentUser = FirebaseAuth.instance.currentUser;
-   await controladorPresentacion.initialice2();
+  await controladorPresentacion.initialice2();
   if (currentUser != null) {
     await controladorPresentacion.initialice();
   }
-  
+
+  AwesomeNotifications().initialize(
+    null, //'assets/logoCulturApp.png',
+    [
+      NotificationChannel(
+          channelGroupKey: 'basic_channel_group',
+          channelKey: 'basic_channel',
+          channelName: 'Basic notifications',
+          channelDescription: 'Notification channel for basic tests',
+          defaultColor: Color(0xFF9D50DD),
+          ledColor: Colors.white)
+    ],
+    channelGroups: [
+      NotificationChannelGroup(
+          channelGroupKey: 'basic_channel_group',
+          channelGroupName: 'Basic group')
+    ],
+    debug: true,
+  );
   runApp(MyApp(controladorPresentacion: controladorPresentacion));
 }
 
 class MyApp extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
 
-  const MyApp({Key? key, required this.controladorPresentacion}) : super(key: key);
+  const MyApp({Key? key, required this.controladorPresentacion})
+      : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState(controladorPresentacion);
@@ -61,12 +80,12 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _isLoggedIn = currentUser != null;
       _selectedIndex = _isLoggedIn ? _selectedIndex : 4;
-      _isLoading = false; 
+      _isLoading = false;
     });
   }
 
   void getActividadesVencidas() {
-    vencidas =  _controladorPresentacion.getActividadesVencidas();
+    vencidas = _controladorPresentacion.getActividadesVencidas();
   }
 
   @override
@@ -103,7 +122,8 @@ class _MyAppState extends State<MyApp> {
           return _controladorPresentacion.language;
         }
         for (var locale in supportedLocales) {
-          if (deviceLocale != null && deviceLocale.languageCode == locale.languageCode) {
+          if (deviceLocale != null &&
+              deviceLocale.languageCode == locale.languageCode) {
             return deviceLocale;
           }
         }
@@ -111,7 +131,10 @@ class _MyAppState extends State<MyApp> {
       },
       home: Scaffold(
         body: _isLoggedIn
-            ? MapPage(controladorPresentacion: _controladorPresentacion, vencidas: vencidas,)
+            ? MapPage(
+                controladorPresentacion: _controladorPresentacion,
+                vencidas: vencidas,
+              )
             : Login(
                 controladorPresentacion: _controladorPresentacion,
               ),

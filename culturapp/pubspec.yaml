@@ -100,5 +100,6 @@ flutter:
   - assets/userImage.png
   - assets/loginpicture.png
   - assets/calendar.png
+  - assets/logoCulturApp.png
   
   uses-material-design: true
