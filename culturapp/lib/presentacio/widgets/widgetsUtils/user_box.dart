@@ -141,9 +141,11 @@ class _userBoxState extends State<userBox> {
       widget.controladorPresentacion.removeBlockedUser(text);
     }
 
-    setState(() {
-      _showButtons = false;
-    });
+    if(action != "report") {
+      setState(() {
+        _showButtons = false;
+      });
+    }
   }
 
   Widget _buildPendingButtons() {
@@ -330,7 +332,6 @@ class _userBoxState extends State<userBox> {
               } else if (value == "report_user".tr(context)) {
                 final bool? confirm = await confirmPopUp("confirm_report_user".trWithArg(context, {"user": widget.text}));
                 if(confirm == true) {
-                  _action = "user_reported".tr(context);
                   _handleButtonPress("report", widget.text, widget.placeReport);
                 }
               }
