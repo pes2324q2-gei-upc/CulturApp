@@ -201,7 +201,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
       itemBuilder: (context) => [
         PopupMenuItem(
           value: 1,
-          child: _buildItemDropdown("Sortir del grup"),
+          child: _buildItemDropdown('exit_group'.tr(context)),
         ),
       ],
     );

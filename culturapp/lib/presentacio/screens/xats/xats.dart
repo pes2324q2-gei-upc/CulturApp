@@ -99,9 +99,9 @@ class _Xats extends State<Xats> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: const Color(0xFFF4692A),
-          title: const Text(
-            'Comunidad',
-            style: TextStyle(color: Colors.white),
+          title: Text(
+            'community'.tr(context),
+            style: const TextStyle(color: Colors.white),
           ),
           bottom: TabBar(
             labelColor: Colors.white,

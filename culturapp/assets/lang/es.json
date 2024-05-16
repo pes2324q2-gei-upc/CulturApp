@@ -114,6 +114,8 @@
     "confirm_report_user": "¿Estás seguro de que quieres reportar a {user}?",  
     "delete_reply": "Eliminar respuesta",
     "delete_post": "Eliminar post",
+    "exit_group": "Salir de grupo",
+    "community": "Comunidad",
 
     "aplicattion_info": "Por favor, tambien añada la siguiente información en la aplicación para solicitar ser organizador",
     "aplicattion_info_text": "- DNI\n- Teléfono\n- Correo\n- Empresa (si representa a alguna)"

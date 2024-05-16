@@ -114,6 +114,8 @@
     "confirm_report_user": "Are you sure that you want to report {user}?",
     "delete_reply": "Delete reply",
     "delete_post": "Delete post",
+    "exit_group": "Exit group",
+    "community": "Community",
 
     "aplicattion_info": "Please, also add the following information in the application to request to be an organizer",
     "aplicattion_info_text": "- DNI\n- Phone\n- Email\n- Company (if representing one)"
