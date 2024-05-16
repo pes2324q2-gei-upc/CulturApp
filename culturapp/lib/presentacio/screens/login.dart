@@ -23,6 +23,7 @@ class _Login extends State<Login> {
   late ControladorPresentacion _controladorPresentacion;
 
   late final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool _isLoading = false;
 
   _Login(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
@@ -72,17 +73,68 @@ class _Login extends State<Login> {
 
   //Botó de login
   Widget _googleSignInButton() {
-    return Center(child: SizedBox(
-      height: 50,
-      child: SignInButton(
-        Buttons.google,
-        onPressed: () {
-          _controladorPresentacion.handleGoogleSignIn(context);
-        },
-        text: "google_access".tr(context),
-        padding: const EdgeInsets.all(10.0),
-      )
-    ));
+    return Center(
+      child: SizedBox(
+        height: 50,
+        child: _isLoading
+            ? Center(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: <Widget>[
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Padding(padding: EdgeInsets.only(top: 250)),
+                        const SizedBox(
+                          child: CircularProgressIndicator(color: Color(0xFFF4692A)),
+                        ),
+                        const Padding(padding: EdgeInsets.only(bottom: 225.0)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset('assets/logo.png', width: 20, height: 20),
+                            const SizedBox(width: 10),
+                            Text('CulturApp',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey.shade700,
+                                    fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            : SignInButton(
+                Buttons.google,
+                onPressed: () {
+                  _handleGoogleSignIn();
+                },
+                text: "google_access".tr(context),
+                padding: const EdgeInsets.all(10.0),
+              ),
+      ),
+    );
+  }
+
+  Future<void> iniciaApp() async {
+
+    print('ACCEDO');
+    setState(() {
+      _isLoading = true;
+    });
+
+    // Inicialización y retraso artificial de 2 segundos
+    Future.delayed(const Duration(seconds: 2), () async {
+      await _controladorPresentacion.initialice2();
+      await _controladorPresentacion.initialice();
+    });
+
+    print('ME VOY');
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   //Inici de sessio
@@ -99,7 +151,7 @@ class _Login extends State<Login> {
     UserCredential userCredential = await _auth.signInWithCredential(credential);
 
     if (userCredential.user != null) {
-      _controladorPresentacion.initialice();
+      await iniciaApp();
       _controladorPresentacion.mostrarMapa(context);
     }
 

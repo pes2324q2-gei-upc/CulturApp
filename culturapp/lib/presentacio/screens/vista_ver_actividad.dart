@@ -314,13 +314,13 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                     context, infoActividad[0], infoActividad[1]);
               } else if (result == 'share_act') {
                 if (infoActividad[5] == infoActividad[6] && infoActividad[7] != 'No disponible') {
-                  Share.share(' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} el dia ${infoActividad[5]} en ${infoActividad[7]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ');
+                  Share.share(' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} el dia ${infoActividad[5]} en ${infoActividad[7]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ',  subject: 'Actividad cultural: ${infoActividad[0]}',);
                 } else if (infoActividad[5] != infoActividad[6] && infoActividad[7] != 'No disponible') {
-                  Share.share(' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} del dia ${infoActividad[5]} hasta el dia ${infoActividad[6]} en ${infoActividad[7]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ');
+                  Share.share(' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} del dia ${infoActividad[5]} hasta el dia ${infoActividad[6]} en ${infoActividad[7]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ',  subject: 'Actividad cultural: ${infoActividad[0]}',);
                 } else if (infoActividad[5] != infoActividad[6] && infoActividad[7] == 'No disponible') {
-                  Share.share(' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} del dia ${infoActividad[5]} hasta el dia ${infoActividad[6]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ');
+                  Share.share(' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} del dia ${infoActividad[5]} hasta el dia ${infoActividad[6]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ', subject: 'Actividad cultural: ${infoActividad[0]}',);
                 } else if (infoActividad[5] == infoActividad[6] && infoActividad[7] == 'No disponible') {
-                  Share.share(' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} el dia ${infoActividad[5]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ');
+                  Share.share(' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} el dia ${infoActividad[5]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ', subject: 'Actividad cultural: ${infoActividad[0]}',);
                 }
                 
               }

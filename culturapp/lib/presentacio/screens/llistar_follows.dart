@@ -19,12 +19,17 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
   late List<String> difference;
   late bool isFollows;
   late TabController _tabController;
+  bool _isLoading = false;
 
   _LlistarFollowsState() {
     users = [];
   }
 
   Future<void> updateUsers() async {
+
+    setState(() {
+      _isLoading = true;
+    });
       late List<String> followers;
       late List<String> followings;
 
@@ -42,6 +47,7 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
       if(mounted) {
         setState(() {
           users = isFollows ? followers : followings;
+          _isLoading = false;
         });
       }
   }
@@ -86,7 +92,9 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return _isLoading
+      ? Center(child: CircularProgressIndicator(color: const Color(0xFFF4692A), backgroundColor: Colors.white,)
+      ):Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
         title: Text("friends_title".tr(context)),
