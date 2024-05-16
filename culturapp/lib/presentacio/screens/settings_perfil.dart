@@ -92,6 +92,13 @@ class _SettingsPerfil extends State<SettingsPerfil> {
             },
           ),
           const Divider(height: 0),
+          ListTile(
+            title: const Text('Ver a los usuarios bloqueados'),
+            leading: const Icon(Icons.block),
+            onTap: () {
+              widget.controladorPresentacion.mostrarBlockedUsers(context);
+            },
+          ),
         ],
       ),
     );

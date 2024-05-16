@@ -6,6 +6,7 @@ import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/grup.dart';
 import 'package:culturapp/domain/models/message.dart';
 import 'package:culturapp/domain/models/usuari.dart';
+import 'package:culturapp/presentacio/llistar_bloqued.dart';
 import 'package:culturapp/presentacio/screens/actividades_disponibles.dart';
 import 'package:culturapp/presentacio/screens/edit_perfil.dart';
 import 'package:culturapp/presentacio/screens/llistar_follows.dart';
@@ -784,6 +785,15 @@ class ControladorPresentacion {
             userReported: userReported,
             placeReport: placeReport,
             controladorPresentacion: this),
+      ),
+    );
+  }
+
+  void mostrarBlockedUsers(BuildContext context) {
+      Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LlistarBlocked(controladorPresentacion: this),
       ),
     );
   }

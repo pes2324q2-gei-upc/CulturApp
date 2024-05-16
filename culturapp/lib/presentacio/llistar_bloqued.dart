@@ -3,22 +3,17 @@ import 'package:culturapp/translations/AppLocalizations';
 import 'package:flutter/material.dart';
 import 'package:culturapp/presentacio/widgets/widgetsUtils/user_box.dart';
 
-class LlistarPendents extends StatefulWidget {
-  final String username;
+class LlistarBlocked extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
-  const LlistarPendents({super.key, required this.controladorPresentacion, required this.username});
+  const LlistarBlocked({super.key, required this.controladorPresentacion});
 
   @override
-  _LlistarPendentsState createState() => _LlistarPendentsState();
+  _LlistarBlockedState createState() => _LlistarBlockedState();
 }
 
-class _LlistarPendentsState extends State<LlistarPendents> {
+class _LlistarBlockedState extends State<LlistarBlocked> {
   late List<String> users;
   bool _isLoading = false;
-
-  _LlistarPendentsState() {
-    users = [];
-  }
 
   List<String> originalUsers = [];
   
@@ -35,9 +30,9 @@ class _LlistarPendentsState extends State<LlistarPendents> {
     setState(() {
       _isLoading = true;
     });
-    final pendents = await widget.controladorPresentacion.getFollowUsers(widget.username, 'pending');
+    final blocked = widget.controladorPresentacion.getBlockedUsers();
     setState(() {
-      users = pendents;
+      users = blocked;
       _isLoading = false;
     });
   }
@@ -56,7 +51,7 @@ class _LlistarPendentsState extends State<LlistarPendents> {
       ) : Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
-        title: Text("friendship_requests_title".tr(context)),
+        title: const Text("Usuarios bloqeuados"),
         centerTitle: true, // Centrar el título
         toolbarHeight: 50.0,
         titleTextStyle: const TextStyle(
@@ -114,7 +109,7 @@ class _LlistarPendentsState extends State<LlistarPendents> {
                       userBox(
                         text: users[index], 
                         recomm: false, 
-                        type: "pending", 
+                        type: "reportUserBlocked", 
                         popUpStyle: "default",
                         placeReport: "null",
                         controladorPresentacion: widget.controladorPresentacion),
