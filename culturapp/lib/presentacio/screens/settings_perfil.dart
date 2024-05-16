@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 
@@ -15,10 +16,17 @@ class SettingsPerfil extends StatefulWidget {
 class _SettingsPerfil extends State<SettingsPerfil> {
   late ControladorPresentacion _controladorPresentacion;
   bool privat = false;
+  final User? _user = FirebaseAuth.instance.currentUser;
 
   _SettingsPerfil(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
   }
+
+  @override
+  void initState(){
+    super.initState();
+    checkPrivacy(_user!.uid);
+  } 
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +50,7 @@ class _SettingsPerfil extends State<SettingsPerfil> {
             onChanged: (bool value) {
               setState(() {
                 privat = value;
+                _controladorPresentacion.changePrivacy(_user!.uid, privat);
               });
             },
             secondary: const Icon(Icons.lock),
@@ -137,5 +146,13 @@ class _SettingsPerfil extends State<SettingsPerfil> {
     );
   }
 
+  void checkPrivacy(String uid) async {
+    bool privateStatus = await _controladorPresentacion.checkPrivacy(uid);
+    if (mounted) {
+      setState(() {
+        privat = privateStatus;
+      });
+    }
+  }
 
 }

@@ -699,6 +699,14 @@ class ControladorPresentacion {
     _loadLanguage();
   }
 
+  Future<bool> checkPrivacy(String uid) async {
+    return controladorDomini.checkPrivacy(uid);
+  }
+
+  void changePrivacy(String uid, bool privat) {
+    controladorDomini.changePrivacy(uid, privat);
+  }
+
   /*Future<List<String>> obteAmics() async {
     return await controladorDomini.obteFollows(usernameLogged);
   }*/

@@ -1203,6 +1203,48 @@ class ControladorDomini {
       throw Exception('Fallo la obtención de datos');
     }
   }
+
+  Future<bool> checkPrivacy(String uid) async {
+    final respuesta = await http.get(
+        Uri.parse(
+            'https://culturapp-back.onrender.com/users/$uid/privacy'),
+        headers: {
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+        });
+
+    if (respuesta.statusCode == 200) {
+      return (respuesta.body == "true");
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
+
+  Future<void> changePrivacy(String uid, bool privat) async {
+    try {
+      final Map<String, dynamic> requestData = {
+        'uid': uid,
+        'privacyStatus': privat,
+      };
+
+      final respuesta = await http.post(
+        Uri.parse(
+            'https://culturapp-back.onrender.com/users/changePrivacy'),
+        body: jsonEncode(requestData),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+        },
+      );
+
+      if (respuesta.statusCode == 200) {
+        print('Datos enviados exitosamente');
+      } else {
+        print('Error al enviar los datos: ${respuesta.statusCode}');
+      }
+    } catch (error) {
+      print('Error de red: $error');
+    }
+  }
 }
 
 
