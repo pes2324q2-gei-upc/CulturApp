@@ -33,7 +33,6 @@ class _Login extends State<Login> {
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      //Comprovar si ja hi ha una sessio iniciada
       _controladorPresentacion.checkLoggedInUser(context);
       _controladorPresentacion.handleGoogleSignIn(context);
     });
@@ -120,7 +119,6 @@ class _Login extends State<Login> {
 
   Future<void> iniciaApp() async {
 
-    print('ACCEDO');
     setState(() {
       _isLoading = true;
     });
@@ -131,7 +129,6 @@ class _Login extends State<Login> {
       await _controladorPresentacion.initialice();
     });
 
-    print('ME VOY');
     setState(() {
       _isLoading = false;
     });
