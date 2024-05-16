@@ -1245,34 +1245,17 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   }
 
   Widget _buildPopUpMenuNotBlocked(BuildContext context, Post post, bool reply,
-      String username, String date) {
-    String owner = _controladorPresentacion.getUsername();
+      String owner, String date) {
     String userLogged = _controladorPresentacion.getUsername();
-    if (owner == username) {
+    if (owner == userLogged) {
       return _buildPopupMenu([
         (reply) ? "delete_reply".tr(context) : "delete_post".tr(context),
-      ], context, post, reply, username, date);
+      ], context, post, reply, owner, date);
     } else {
       return _buildPopupMenu([
         "block_user".tr(context),
         "report_user".tr(context),
-      ], context, post, reply, username, date);
-    }
-  }
-
-  //Lo dejo pero seguramente se tendrá que mover
-  Widget _buildPopUpMenuBloqued(BuildContext context, Post post, bool reply,
-      String username, String date) {
-    String owner = _controladorPresentacion.getUsername();
-    if (owner == username) {
-      return _buildPopupMenu([
-        "report_user".tr(context),
-        (reply) ? "delete_reply".tr(context) : "delete_post".tr(context),
-      ], context, post, reply, username, date);
-    } else {
-      return _buildPopupMenu([
-        "report_user".tr(context),
-      ], context, post, reply, username, date);
+      ], context, post, reply, owner, date);
     }
   }
 
@@ -1321,13 +1304,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
               final bool? confirm = await confirmPopUp(
                   "confirm_block_user".trWithArg(context, {"user": username}));
               if (confirm == true) {
-                //_controladorPresentacion.blockUser(username);
-              }
-            } else if (value == "unblock_user".tr(context)) {
-              final bool? confirm = await confirmPopUp("confirm_unblock_user"
-                  .trWithArg(context, {"user": username}));
-              if (confirm == true) {
-                //_controladorPresentacion.reportUser(code, username);
+                _controladorPresentacion.blockUser(username);
               }
             } else if (value == "report_user".tr(context)) {
               final bool? confirm = await confirmPopUp(

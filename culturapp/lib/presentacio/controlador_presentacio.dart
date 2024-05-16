@@ -330,10 +330,14 @@ class ControladorPresentacion {
 
   Future<void> blockUser(String user) async {
     await controladorDomini.blockUser(user);
+    addBlockedUser(user);
+    deleteFriend(user);
+    deleteFollowing(user);
   }
 
   Future<void> unblockUser(String user) async {
-    controladorDomini.unblockUser(user);
+    await controladorDomini.unblockUser(user);
+    removeBlockedUser(user);
   }
 
   void mostrarVerActividad(
