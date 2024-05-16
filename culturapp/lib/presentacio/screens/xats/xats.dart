@@ -1,7 +1,6 @@
-//import "package:culturapp/presentacio/routes/routes.dart";
 import "package:culturapp/domain/models/user.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
-import "package:culturapp/presentacio/screens/afegir_amics.dart";
+import "package:culturapp/presentacio/screens/xats/afegir_amics.dart";
 import "package:culturapp/presentacio/screens/xats/amics/amics_screen.dart";
 import "package:culturapp/presentacio/screens/xats/grups/grups_screen.dart";
 import "package:culturapp/translations/AppLocalizations";
