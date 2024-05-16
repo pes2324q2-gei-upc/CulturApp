@@ -1,5 +1,6 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:culturapp/domain/converters/convert_date_format.dart";
+import "package:culturapp/domain/converters/truncar_string.dart";
 import "package:culturapp/domain/models/grup.dart";
 import "package:culturapp/domain/models/message.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
@@ -70,14 +71,6 @@ class _XatGrupScreen extends State<XatGrupScreen> {
     for (int i = 0; i < participants.length; ++i) {
       //s'haurien de conseguir el noms del users
       nomParticipants.add(_grup.membres[i]);
-    }
-  }
-
-  String truncarString(String noms, int maxLength) {
-    if (noms.length <= maxLength) {
-      return noms; // Return the original string if it's not longer than maxLength
-    } else {
-      return '${noms.substring(0, maxLength - 3)}...'; // Truncate and add '...'
     }
   }
 
