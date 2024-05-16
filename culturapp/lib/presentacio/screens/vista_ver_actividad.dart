@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:culturapp/domain/models/bateria.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/post.dart';
@@ -12,6 +13,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:barcode_widget/barcode_widget.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -138,6 +140,116 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       },
     );
   }
+
+  Future<void> requestCameraPermission() async {
+    var status = await Permission.camera.status;
+    if (!status.isGranted) {
+      await Permission.camera.request();
+    }
+  }
+
+  void mostrarEscaneoQR() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(20),
+          content: Container(
+            width: MediaQuery.of(context).size.width * 0.625, // 80% del ancho de la pantalla
+            height: MediaQuery.of(context).size.height * 0.55,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+                const Text(
+                  'Por favor, escanea el código QR que proporciona el organizador para participar en la actividad ' 
+                  'y así obtener ¡recompensas exclusivas!',
+                  textAlign: TextAlign.justify,
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.qr_code_scanner, color: Colors.white),
+                  label: const Text('Escanear QR'),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white, backgroundColor: Colors.deepPurpleAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(32),
+                    ),
+                    minimumSize: const Size(double.infinity, 36),
+                  ),
+                  onPressed: () async {
+                    await requestCameraPermission();
+                    ScanResult qrResult = await BarcodeScanner.scan();
+                    String qrResultString = qrResult.rawContent;
+                    if (qrResultString.toString() == infoActividad[1]) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('¡Gracias por participar!'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                      Navigator.of(context).pop();
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('QR no escaneado o no coincidente con la actividad, revisa si el QR pertenece a la actividad, y por favor vuelvelo a intentar. '
+                                        'Si el problema persiste, contacta con el organizador de la actividad.', textAlign: TextAlign.justify,), 
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                    Navigator.of(context).pop();
+                  },
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'También puedes introducir el código aportado por el organizador para participar en la actividad.',
+                  textAlign: TextAlign.justify,
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  onSubmitted: (value) {
+                    if (value == infoActividad[1]) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('¡Gracias por participar!'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('El código no es coincidente con la actividad, por favor revisa el código y vuelvelo a intentar. '
+                                        'Si el problema persiste, contacta con el organizador de la actividad.', textAlign: TextAlign.justify,),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                    Navigator.of(context).pop();
+                  },
+                  decoration: const InputDecoration(
+                    labelText: 'Introduce el código',
+                  ),
+                ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+  
 
   double calcularDistancia(double lat1, double lon1, double lat2, double lon2) {
     var p = 0.017453292519943295;
@@ -602,7 +714,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                       onPressed: () {
                         if (organizador) {
                           mostrarQR();
-                        } else {}
+                        } else {
+                          mostrarEscaneoQR();
+                        }
                       },
                       child: FittedBox(
                         child: Row(
@@ -610,7 +724,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                           children: [
                             const Icon(Icons.qr_code, color: Colors.white),
                             const SizedBox(width: 8),
-                            Text(organizador ? 'Mostrar QR' : 'Escanear QR'),
+                            Text(organizador ? 'Mostrar QR' : 'Participar en la actividad'),
                           ],
                         ),
                       ),
