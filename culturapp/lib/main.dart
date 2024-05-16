@@ -1,4 +1,5 @@
 // ignore_for_file: no_logic_in_create_state, library_private_types_in_public_api
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:culturapp/data/firebase_options.dart';
 import 'package:culturapp/domain/models/actividad.dart';
@@ -29,12 +30,11 @@ void main() async {
     null, //'assets/logoCulturApp.png',
     [
       NotificationChannel(
-          channelGroupKey: 'basic_channel_group',
-          channelKey: 'basic_channel',
-          channelName: 'Basic notifications',
-          channelDescription: 'Notification channel for basic tests',
-          defaultColor: Color(0xFF9D50DD),
-          ledColor: Colors.white)
+        channelGroupKey: 'basic_channel_group',
+        channelKey: 'basic_channel',
+        channelName: 'Basic notifications',
+        channelDescription: 'Notification channel for basic tests',
+      )
     ],
     channelGroups: [
       NotificationChannelGroup(
@@ -43,6 +43,7 @@ void main() async {
     ],
     debug: true,
   );
+  await AndroidAlarmManager.initialize();
   runApp(MyApp(controladorPresentacion: controladorPresentacion));
 }
 
