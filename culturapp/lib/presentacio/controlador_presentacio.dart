@@ -55,6 +55,7 @@ class ControladorPresentacion {
   late List<String> actividadesValoradas;
   late List<String> actividadesOrganizadas;
   late List<Bateria> bateriasDispo;
+  late List<String> blockedUsers;
 
   void funcLogout() async {
     _auth.signOut();
@@ -91,6 +92,7 @@ class ControladorPresentacion {
           calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
       usersBD.removeWhere((usuario) => friends.contains(usuario.username));
       bateriasDispo = await controladorDomini.getBateries();
+      blockedUsers = await controladorDomini.getBlockedUsers();
     }
   }
 
@@ -278,6 +280,18 @@ class ControladorPresentacion {
     return await controladorDomini.getRequestsUser();
   }
 
+  List<String> getBlockedUsers() {
+    return blockedUsers;
+  }
+
+  void addBlockedUser(String user) {
+    blockedUsers.add(user);
+  }
+
+  void removeBlockedUser(String user) {
+    blockedUsers.remove(user);
+  }
+
   Future<void> acceptFriend(String person) async {
     await controladorDomini.acceptFriend(person);
   }
@@ -308,6 +322,18 @@ class ControladorPresentacion {
       String placeReport) async {
     return await controladorDomini.sendReportUser(
         titol, userReported, report, placeReport);
+  }
+
+  Future<void> addParticipant(String idActivity) async {
+    await controladorDomini.addParticipant(idActivity);
+  }
+
+  Future<void> blockUser(String user) async {
+    await controladorDomini.blockUser(user);
+  }
+
+  Future<void> unblockUser(String user) async {
+    controladorDomini.unblockUser(user);
   }
 
   void mostrarVerActividad(

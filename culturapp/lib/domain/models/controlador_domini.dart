@@ -385,6 +385,25 @@ Future<List<Bateria>> getBateries() async {
     }
   }
 
+  Future<List<String>> getBlockedUsers() async {
+    final respuesta = await http.get(
+      Uri.parse('https://culturapp-back.onrender.com/users/${userLogged.getUsername()}/blockedUsers'),
+      headers: {
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+    );
+    if (respuesta.statusCode == 200) {
+      final body = respuesta.body;
+      final List<dynamic> data = json.decode(body);
+      final List<String> users =
+          data.map((user) => user['blockedUser'].toString()).toList();
+      return users;
+    } else {
+      throw Exception(
+          'Fallo la obtención de datos');
+    }
+  }
+
   Future<void> acceptFriend(String person) async {
     final http.Response response = await http.put(
       Uri.parse('https://culturapp-back.onrender.com/amics/accept/$person'),
@@ -406,7 +425,7 @@ Future<List<Bateria>> getBateries() async {
     );
 
     if (response.statusCode != 200)
-      throw Exception('Error al eliminar al usuario');
+      print('Error al eliminar al usuario');
   }
 
   Future<void> deleteFollowing(String person) async {
@@ -418,7 +437,7 @@ Future<List<Bateria>> getBateries() async {
     );
 
     if (response.statusCode != 200)
-      throw Exception('Error al eliminar al usuario');
+      print('Error al eliminar al usuario');
   }
 
 
@@ -609,6 +628,63 @@ Future<List<Bateria>> getBateries() async {
       }
     } catch (e) {
       return 500;
+    }
+  }
+
+  Future<void> addParticipant(String idActivity) async {
+    final Map<String, dynamic> body = {
+      'activitatID': idActivity,
+    };
+
+    final response = await http.put(Uri.parse(
+              'https://culturapp-back.onrender.com/users/escanearQR'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${userLogged.getToken()}',
+          },
+          body: jsonEncode(body));
+
+    if (response.statusCode != 200) {
+      print(response.body);
+    }
+
+  }
+
+  Future<void> blockUser(String user) async {
+    final Map<String, dynamic> body = {
+      'blockedUser': user,
+    };
+
+    final response = await http.put(
+      Uri.parse('https://culturapp-back.onrender.com/users/${userLogged.getUsername()}/blockuser'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode != 200) {
+      print(response.body);
+    }
+  }
+
+  Future<void> unblockUser(String user) async {
+    final Map<String, dynamic> body = {
+      'blockedUser': user,
+    };
+
+    final response = await http.put(
+      Uri.parse('https://culturapp-back.onrender.com/users/${userLogged.getUsername()}/unblockuser'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode != 200) {
+      print(response.body);
     }
   }
 

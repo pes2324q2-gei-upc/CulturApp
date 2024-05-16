@@ -130,11 +130,15 @@ class _userBoxState extends State<userBox> {
     } else if (action == "deleteFollowing") {
       widget.controladorPresentacion.deleteFollowing(text);
     } else if (action == "block") {
-      //widget.controladorPresentacion.blockUser(text);
+      widget.controladorPresentacion.blockUser(text);
+      widget.controladorPresentacion.addBlockedUser(text);
+      widget.controladorPresentacion.deleteFriend(text);
+      widget.controladorPresentacion.deleteFollowing(text);
     } else if (action == "report") {
       widget.controladorPresentacion.mostrarReportUser(context, text, placeReport);
     } else if (action == "unblock") {
-      //widget.controladorPresentacion.unblockUser(text);
+      widget.controladorPresentacion.unblockUser(text);
+      widget.controladorPresentacion.removeBlockedUser(text);
     }
 
     setState(() {

@@ -46,8 +46,11 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   late ControladorDomini controladorDominio;
   int _selectedIndex = 0;
 
+
   late List<String> infoActividad;
   late Uri uriActividad;
+  final _formKey = GlobalKey<FormState>();
+  final _codeControler = TextEditingController();
 
   bool mostrarDescripcionCompleta = false;
 
@@ -154,8 +157,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       builder: (BuildContext context) {
         return AlertDialog(
           contentPadding: const EdgeInsets.all(20),
-          content: Container(
-            width: MediaQuery.of(context).size.width * 0.625, // 80% del ancho de la pantalla
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.625, 
             height: MediaQuery.of(context).size.height * 0.55,
             child: SingleChildScrollView(
               child: Column(
@@ -170,8 +173,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                   ),
                 ),
                 const Text(
-                  'Por favor, escanea el código QR que proporciona el organizador para participar en la actividad ' 
-                  'y así obtener ¡recompensas exclusivas!',
+                  'Participa en la actividad y obten recompensas exclusivas!',
                   textAlign: TextAlign.justify,
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
@@ -197,48 +199,51 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                           backgroundColor: Colors.green,
                         ),
                       );
-                      Navigator.of(context).pop();
+                      _controladorPresentacion.addParticipant(infoActividad[1]);
+                      setState(() {
+                        estaApuntado = true;
+                      });
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('QR no escaneado o no coincidente con la actividad, revisa si el QR pertenece a la actividad, y por favor vuelvelo a intentar. '
-                                        'Si el problema persiste, contacta con el organizador de la actividad.', textAlign: TextAlign.justify,), 
+                          content: Text('QR no escaneado o no coincidente con la actividad.'
+                                        , textAlign: TextAlign.justify,), 
                           backgroundColor: Colors.red,
                         ),
                       );
+                      Navigator.of(context).pop();
                     }
-                    Navigator.of(context).pop();
                   },
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  'También puedes introducir el código aportado por el organizador para participar en la actividad.',
+                  'También puedes introducir el código de la actividad manualmente:',
                   textAlign: TextAlign.justify,
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
-                TextField(
-                  onSubmitted: (value) {
-                    if (value == infoActividad[1]) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('¡Gracias por participar!'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('El código no es coincidente con la actividad, por favor revisa el código y vuelvelo a intentar. '
-                                        'Si el problema persiste, contacta con el organizador de la actividad.', textAlign: TextAlign.justify,),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                    }
-                    Navigator.of(context).pop();
-                  },
+                Form(
+                  key: _formKey,
+                  child: TextFormField(
+                  controller: _codeControler,
+                  minLines: 1,
+                  maxLines: 1,
                   decoration: const InputDecoration(
-                    labelText: 'Introduce el código',
+                    labelText: "Introduce el código",
+                  ),
+                  validator: (value) => value!.isEmpty ? 'Por favor, introduce un código' : null,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+                        _participar();
+                      }
+                    },
+                    child: Text("send".tr(context)),
                   ),
                 ),
                 ],
@@ -250,6 +255,28 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     );
   }
   
+  void _participar(){
+    if (_codeControler.text == infoActividad[1]) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('¡Gracias por participar!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      _controladorPresentacion.addParticipant(infoActividad[1]);
+      setState(() {
+        estaApuntado = true;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('El código no es coincidente con la actividad.', textAlign: TextAlign.justify,),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+    Navigator.of(context).pop();
+  }
 
   double calcularDistancia(double lat1, double lon1, double lat2, double lon2) {
     var p = 0.017453292519943295;
