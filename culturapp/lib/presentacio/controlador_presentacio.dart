@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/bateria.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
@@ -290,6 +292,10 @@ class ControladorPresentacion {
 
   void removeBlockedUser(String user) {
     blockedUsers.remove(user);
+  }
+
+  bool isBlockedUser(String user) {
+    return blockedUsers.contains(user);
   }
 
   Future<void> acceptFriend(String person) async {

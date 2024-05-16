@@ -394,10 +394,8 @@ Future<List<Bateria>> getBateries() async {
     );
     if (respuesta.statusCode == 200) {
       final body = respuesta.body;
-      final List<dynamic> data = json.decode(body);
-      final List<String> users =
-          data.map((user) => user['blockedUser'].toString()).toList();
-      return users;
+      final List<String> blockedUsers = List<String>.from(json.decode(body));
+      return blockedUsers;
     } else {
       throw Exception(
           'Fallo la obtención de datos');
