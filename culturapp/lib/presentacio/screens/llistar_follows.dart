@@ -92,9 +92,7 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    return _isLoading
-      ? Center(child: CircularProgressIndicator(color: const Color(0xFFF4692A), backgroundColor: Colors.white,)
-      ):Scaffold(
+  return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
         title: Text("friends_title".tr(context)),
@@ -135,7 +133,9 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
   }
 
   Widget _buildFollowView() {
-    return Column(
+        return _isLoading
+      ? const Center(child: CircularProgressIndicator(color: Color(0xFFF4692A), backgroundColor: Colors.white,)
+      ) :Column(
       children: [
         const SizedBox(height: 10.0),
         SizedBox(
