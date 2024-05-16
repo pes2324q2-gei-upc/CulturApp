@@ -704,6 +704,7 @@ class ControladorPresentacion {
   }
 
   void mostrarPendents(BuildContext context) {
+    List<String>users;
     Navigator.push(
       context,
       MaterialPageRoute(

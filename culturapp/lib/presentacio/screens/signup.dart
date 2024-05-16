@@ -35,6 +35,7 @@ class _SignupState extends State<Signup> {
   ];
   
   late ControladorPresentacion _controladorPresentacion;
+  bool _isLoading = false;
 
   late User? user;
 
@@ -139,6 +140,7 @@ class _SignupState extends State<Signup> {
                   child: ElevatedButton(
                     onPressed: () {
                       createUser();
+                      _controladorPresentacion.mostrarMapa(context);
                     },
                     style: ElevatedButton.styleFrom(
                       shape: const StadiumBorder(),
@@ -158,6 +160,9 @@ class _SignupState extends State<Signup> {
   }
 
   Future<void> createUser() async {
+    setState(() {
+      _isLoading = true;
+    });
     if (selectedCategories.length < 3) {
       final scaffoldMessenger = ScaffoldMessenger.of(context);
       scaffoldMessenger.showSnackBar(
@@ -174,7 +179,9 @@ class _SignupState extends State<Signup> {
       await _controladorPresentacion.initialice2();
       await _controladorPresentacion.initialice();
 
-      _controladorPresentacion.mostrarMapa(context);
+      setState(() {
+        _isLoading = false;
+      });
     }
     else {
       final scaffoldMessenger = ScaffoldMessenger.of(context);
@@ -185,6 +192,10 @@ class _SignupState extends State<Signup> {
         ),
       );
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
 void _showMultiSelect() async {

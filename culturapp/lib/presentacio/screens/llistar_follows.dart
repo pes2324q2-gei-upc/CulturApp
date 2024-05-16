@@ -135,7 +135,7 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
   Widget _buildFollowView() {
         return _isLoading
       ? const Center(child: CircularProgressIndicator(color: Color(0xFFF4692A), backgroundColor: Colors.white,)
-      ) :Column(
+      ) : Column(
       children: [
         const SizedBox(height: 10.0),
         SizedBox(
