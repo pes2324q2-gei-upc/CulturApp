@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 //anar apuntant diferents formats necessaris
 
 DateTime convertStringToDateTime(String originalDate) {
-  DateFormat dateFormat = DateFormat("dd-MM-yyyy");
+  DateFormat dateFormat = DateFormat("yyyy-MM-dd");
   return dateFormat.parse(originalDate); // Outputs: 2024-05-15 00:00:00.000
 }
 

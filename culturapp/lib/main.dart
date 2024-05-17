@@ -2,8 +2,6 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:culturapp/data/firebase_options.dart';
 import 'package:culturapp/domain/converters/alarma.dart';
-import 'package:culturapp/domain/converters/convert_date_format.dart';
-import 'package:culturapp/domain/converters/notificacions.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/login.dart';

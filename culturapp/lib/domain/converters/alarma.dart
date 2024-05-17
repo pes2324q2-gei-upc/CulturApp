@@ -14,6 +14,7 @@ void initializeNotifications(ControladorPresentacion controladorPresentacion) {
     "mirarDataAcivitat",
     frequency: const Duration(days: 1),
   );
+  checkAndScheduleNotifications();
 }
 
 void callbackDispatcher() {
@@ -31,9 +32,9 @@ Future<void> checkAndScheduleNotifications() async {
     // Format: 2024-05-15 00:00:00.000
 
     DateTime currentDate = DateTime.now();
-    Duration difference = activityDate.difference(currentDate);
+    int difference = activityDate.day - currentDate.day;
 
-    if (difference.inDays == 1 && activityDate.day > currentDate.day) {
+    if (difference == 1) {
       triggerNotificationsActivityDayBefore(myActivity.name);
     }
   }
