@@ -1,7 +1,9 @@
 // ignore_for_file: no_logic_in_create_state, library_private_types_in_public_api
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:culturapp/data/firebase_options.dart';
+import 'package:culturapp/domain/converters/alarma.dart';
+import 'package:culturapp/domain/converters/convert_date_format.dart';
+import 'package:culturapp/domain/converters/notificacions.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
@@ -43,7 +45,9 @@ void main() async {
     ],
     debug: true,
   );
-  await AndroidAlarmManager.initialize();
+
+  initializeNotifications(controladorPresentacion);
+
   runApp(MyApp(controladorPresentacion: controladorPresentacion));
 }
 
