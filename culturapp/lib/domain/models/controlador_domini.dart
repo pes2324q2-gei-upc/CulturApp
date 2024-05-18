@@ -824,7 +824,7 @@ class ControladorDomini {
     try {
       final respuesta = await http.get(
         Uri.parse(
-            'http://${ip}:8080/xats/exists?receiverId=$receiverName'),
+            'http://${ip}:8080/xats/exists?receiver=$receiverName'),
         headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
         },
@@ -835,10 +835,11 @@ class ControladorDomini {
         if (data['exists']) {
           //El xat existe, devuelve sus detalles
           return xatAmic(
-              lastMessage: data['data']['last_msg'],
-              timeLastMessage: data['data']['last_time'],
-              recieverId: data['data']['receiverId'],
-              senderId: data['data']['senderId']);
+            id: data['data']['id'],
+            lastMessage: data['data']['last_msg'],
+            timeLastMessage: data['data']['last_time'],
+            recieverId: data['data']['receiverId'],
+            senderId: data['data']['senderId']);
         } else {
           return null; //El xat no existe
         }
@@ -875,38 +876,6 @@ class ControladorDomini {
     } catch (error) {
       print('Error de red: $error');
       return false;
-    }
-  }
-
-  Future<String?> getXatId(String receiver, String sender) async {
-    try {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('xats')
-          .where('receiverId', isEqualTo: receiver)
-          .where('senderId', isEqualTo: sender)
-          .limit(1)
-          .get();
-
-      if (querySnapshot.docs.isNotEmpty) {
-        return querySnapshot
-            .docs.first.id; // Devuelve el ID del primer documento
-      } else {
-        QuerySnapshot xatSnapshot = await FirebaseFirestore.instance
-          .collection('xats')
-          .where('receiverId', isEqualTo: sender)
-          .where('senderId', isEqualTo: receiver)
-          .limit(1)
-          .get();
-        
-        if (xatSnapshot.docs.isNotEmpty) {
-          return xatSnapshot
-              .docs.first.id; // Devuelve el ID del primer documento
-        } else {
-          return null; // Si no se encontró ningún documento
-        }
-      }
-    } catch (error) {
-      return null; // Si ocurre algún error al obtener el ID del xat
     }
   }
 
