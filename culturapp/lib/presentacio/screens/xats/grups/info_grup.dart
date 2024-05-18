@@ -126,7 +126,16 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
   }
 
   Widget _imatgeNoEditant() {
-    return const Image(
+    return _grup.imageGroup.isNotEmpty
+    ? ClipOval(
+        child: Image(
+          image: NetworkImage(_grup.imageGroup),
+              fit: BoxFit.cover,
+              width: 70.0,
+              height: 70.0,
+        )
+      )
+    : const Image(
       image: AssetImage(
           'assets/userImage.png'), //quan s'implementi les imatges ja es tocarà
       fit: BoxFit.fill,
@@ -137,8 +146,18 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
 
   Widget _imatgeEditant() {
     //ns com es faria pero s'ha de poder canviar l'imatge amb una foto del movil
-    return const Image(
-      image: AssetImage('assets/userImage.png'),
+    return _grup.imageGroup.isNotEmpty
+    ? ClipOval(
+        child: Image(
+          image: NetworkImage(_grup.imageGroup),
+              fit: BoxFit.cover,
+              width: 70.0,
+              height: 70.0,
+        )
+      )
+    : const Image(
+      image: AssetImage(
+          'assets/userImage.png'), //quan s'implementi les imatges ja es tocarà
       fit: BoxFit.fill,
       width: 70.0,
       height: 70.0,

@@ -56,11 +56,9 @@ class _ConfigGrup extends State<ConfigGrup> {
   pickImage(ImageSource source) async {
     final ImagePicker _imagePicker = ImagePicker();
     XFile? _file = await _imagePicker.pickImage(source: source);
-    print(_file);
     if(_file != null) {
       return await _file.readAsBytes();
     }
-    print("No Image selected");
   }
 
   void crearGrup() {

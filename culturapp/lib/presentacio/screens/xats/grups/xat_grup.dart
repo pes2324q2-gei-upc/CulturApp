@@ -157,10 +157,14 @@ class _XatGrupScreen extends State<XatGrupScreen> {
       ),
       title: Row(
         children: [
-          const CircleAvatar(
-            backgroundImage: AssetImage('assets/userImage.png'),
-            //AssetImage(_grup.imageGroup),
-          ),
+          if (_grup.imageGroup.isNotEmpty)
+            CircleAvatar(
+              backgroundImage: NetworkImage(_grup.imageGroup),
+            )
+          else
+            const CircleAvatar(
+              backgroundImage: AssetImage('assets/userImage.png'),
+            ),
           const SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

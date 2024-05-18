@@ -970,6 +970,14 @@ class ControladorDomini {
         final List<dynamic> data = json.decode(response.body);
         List<Grup> reply = data.map((json) => Grup.fromJson(json)).toList();
         reply.sort((b, a) => a.timeLastMessage.compareTo(b.timeLastMessage));
+        for(Grup g in reply) {
+          //funcio per agafar la imatge
+          if (g.imageGroup.isNotEmpty) {
+            String image = g.imageGroup.substring(6);
+            //mirar esto del access token 
+            g.imageGroup = "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/grups%2F" + image + "?alt=media";
+          }
+        }
         return reply;
       } else if (response.statusCode == 404) {
         return [];
