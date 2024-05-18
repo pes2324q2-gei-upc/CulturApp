@@ -10,16 +10,16 @@ void initializeNotifications(ControladorPresentacion controladorPresentacion) {
   _controladorPresentacion = controladorPresentacion;
   Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
   Workmanager().registerPeriodicTask(
-    "1",
-    "mirarDataAcivitat",
-    frequency: const Duration(days: 1),
+    "dailyCheckTask",
+    "dailyCheckAndScheduleNotifications",
+    //frequency: const Duration(hours: 24),
+    frequency: const Duration(seconds: 5),
   );
-  checkAndScheduleNotifications();
 }
 
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
-    checkAndScheduleNotifications();
+    await checkAndScheduleNotifications();
     return Future.value(true);
   });
 }
@@ -29,10 +29,10 @@ Future<void> checkAndScheduleNotifications() async {
 
   for (Actividad myActivity in myActivities) {
     DateTime activityDate = convertStringToDateTime(myActivity.dataInici);
-    // Format: 2024-05-15 00:00:00.000
 
     DateTime currentDate = DateTime.now();
     int difference = activityDate.day - currentDate.day;
+    //fet d'aquesta manera pq si s'utilitza difference podria ser que la activitat hagues passat ahir
 
     if (difference == 1) {
       triggerNotificationsActivityDayBefore(myActivity.name);
