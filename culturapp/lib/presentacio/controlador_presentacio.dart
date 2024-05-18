@@ -540,6 +540,11 @@ class ControladorPresentacion {
     }
   }
 
+  Future<String> getXatId(String receiverName) async {
+    xatAmic? xat = await controladorDomini.xatExists(receiverName);
+    return xat!.id;
+  }
+
   Future<String> lastMsg(String receiverId) async {
     xatAmic? xat = await controladorDomini.xatExists(receiverId);
     return xat!.lastMessage;
@@ -552,14 +557,12 @@ class ControladorPresentacion {
 
   Future<void> addXatMessage(
     String senderId, String receiverId, String time, String text) async {
-    //String? xatId = await controladorDomini.getXatId(receiverId, senderId);
     xatAmic? xat = await controladorDomini.xatExists(receiverId);
     String xatId = xat!.id;
     controladorDomini.addMessage(xatId, time, text);
   }
 
   Future<List<Message>> getXatMessages(String sender, String receiver) async {
-    //String? xatId = await controladorDomini.getXatId(receiver, sender);
     xatAmic? xat = await controladorDomini.xatExists(receiver);
     String xatId = xat!.id;
     List<Message> missatges = await controladorDomini.getMessages(xatId);
