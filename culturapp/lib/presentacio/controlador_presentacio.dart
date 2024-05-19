@@ -584,10 +584,9 @@ class ControladorPresentacion {
     return info;
   }
 
-  void updateGrup(String grupId, String name, String description, String image,
+  void updateGrup(String grupId, String name, String description, Uint8List? fileBytes,
       List<dynamic> members) {
-    //es necesari afegir el meu user al llistat de membres?
-    controladorDomini.updateGrup(grupId, name, description, image, members);
+    controladorDomini.updateGrup(grupId, name, description, fileBytes, members);
   }
 
   //el grupId esta afegit com a parametre dels grups

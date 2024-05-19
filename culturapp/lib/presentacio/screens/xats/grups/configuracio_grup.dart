@@ -1,5 +1,4 @@
 import "dart:typed_data";
-
 import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:flutter/material.dart";

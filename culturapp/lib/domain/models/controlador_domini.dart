@@ -943,7 +943,6 @@ class ControladorDomini {
           //funcio per agafar la imatge
           if (g.imageGroup.isNotEmpty) {
             String image = g.imageGroup.substring(6);
-            //mirar esto del access token 
             g.imageGroup = "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/grups%2F" + image + "?alt=media";
           }
         }
@@ -963,11 +962,14 @@ class ControladorDomini {
   Future<Grup> getInfoGrup(String grupId) async {
     try {
       final response = await http
-          .get(Uri.parse('https://culturapp-back.onrender.com/grups/$grupId'));
+          .get(Uri.parse('http://${ip}:8080/grups/$grupId'));
 
       if (response.statusCode == 200) {
         final dynamic data = json.decode(response.body);
-        Grup reply = data.map((json) => Grup.fromJson(json)).toList();
+        Grup reply = Grup.fromJson(data);  // Directly parse the JSON into Grup
+        //Grup reply = data.map((json) => Grup.fromJson(json)).toList();
+        String image = reply.imageGroup.substring(6);
+        reply.imageGroup = "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/grups%2F" + image + "?alt=media";
         return reply;
       } else if (response.statusCode == 404) {
         throw Exception('grup no existeix');
@@ -1020,23 +1022,34 @@ class ControladorDomini {
   }
 
   //actualitzar info grup
-  void updateGrup(String grupId, String name, String description, String image,
+  Future<void> updateGrup(String grupId, String name, String description, Uint8List? fileBytes,
       List<dynamic> members) async {
     try {
-      final Map<String, dynamic> grupata = {
+
+      String membersJson = jsonEncode(members);
+
+      final Map<String, dynamic> grupData = {
         'name': name,
         'descr': description,
-        'imatge': image,
-        'members': members
+        'imatge': '',
+        'members': membersJson
       };
 
-      final respuesta = await http.put(
-        Uri.parse('https://culturapp-back.onrender.com/grups/$grupId/update'),
-        body: jsonEncode(grupata),
-        headers: {'Content-Type': 'application/json'},
-      );
+      var request = http.MultipartRequest('PUT', Uri.parse('http://${ip}:8080/grups/$grupId/update'));
 
-      if (respuesta.statusCode == 201) {
+      // Add each key-value pair from grupData as a form field
+      grupData.forEach((key, value) {
+        request.fields[key] = value.toString();
+      });
+
+       if (fileBytes != null) {
+        request.files.add(http.MultipartFile.fromBytes('file', fileBytes, filename: 'update-image-gallery'));
+      }
+
+      var streamedResponse = await request.send();
+      var respuesta = await http.Response.fromStream(streamedResponse);
+
+      if (respuesta.statusCode == 200) {
         print('Grup actualizado exitosamente');
       } else {
         print('Error al actualizar grup: ${respuesta.statusCode}');
