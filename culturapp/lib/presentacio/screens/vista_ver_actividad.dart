@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:culturapp/domain/converters/alarma.dart';
 import 'package:culturapp/domain/models/bateria.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/post.dart';
@@ -1196,7 +1197,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     );
   }
 
-  void manageSignupButton(List<String> infoactividad) {
+  void manageSignupButton(List<String> infoActividad) {
     if (mounted) {
       setState(() {
         if (estaApuntado) {
@@ -1204,6 +1205,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           estaApuntado = false;
         } else {
           controladorDominio.signupInActivity(_user?.uid, infoActividad[1]);
+          scheduleNotificationsActivityDayBefore(
+              infoActividad[1], infoActividad[0]);
           estaApuntado = true;
         }
       });

@@ -1,10 +1,11 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:culturapp/domain/converters/convert_date_format.dart';
 import 'package:culturapp/domain/converters/notificacions.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:workmanager/workmanager.dart';
 
-late ControladorPresentacion _controladorPresentacion;
+/*late ControladorPresentacion _controladorPresentacion;
 
 void initializeNotifications(ControladorPresentacion controladorPresentacion) {
   _controladorPresentacion = controladorPresentacion;
@@ -38,4 +39,26 @@ Future<void> checkAndScheduleNotifications() async {
       triggerNotificationsActivityDayBefore(myActivity.name);
     }
   }
+}*/
+
+void scheduleNotificationsActivityDayBefore(
+    String activityCode, String activityName) {
+  AwesomeNotifications().createNotification(
+    content: NotificationContent(
+      id: int.parse(activityCode),
+      channelKey: 'basic_channel',
+      title: 'Pròxima Activitat!',
+      body: 'Demà té lloc la activitat $activityName que tens guardada',
+    ),
+    schedule: NotificationCalendar(
+      year: 2024,
+      month: 5,
+      day: 19,
+      hour: 13,
+      minute: 2,
+      second: 0,
+      millisecond: 0,
+      repeats: false,
+    ),
+  );
 }

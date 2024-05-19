@@ -44,7 +44,13 @@ void main() async {
     debug: true,
   );
 
-  initializeNotifications(controladorPresentacion);
+  AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+    if (!isAllowed) {
+      AwesomeNotifications().requestPermissionToSendNotifications();
+    }
+  });
+
+  //initializeNotifications(controladorPresentacion);
 
   runApp(MyApp(controladorPresentacion: controladorPresentacion));
 }
