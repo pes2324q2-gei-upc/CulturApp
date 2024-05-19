@@ -179,18 +179,10 @@ class _XatAmicScreen extends State<XatAmicScreen> {
     );
   }
 
- //Duplicación de código con user_box, revisar como añadirlo a un archivo aparte
  
   Widget _buildPopUpMenuNotBlocked() {
     return _buildPopupMenu([
       'block_user'.tr(context),
-      'report_user'.tr(context)
-    ]);
-  }
-
-  Widget _buildPopUpMenuBloqued() {
-    return _buildPopupMenu([
-      'unblock_user'.tr(context),
       'report_user'.tr(context)
     ]);
   }
@@ -239,12 +231,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
             if (value == 'block_user'.tr(context)) {
               final bool? confirm = await confirmPopUp("block_user_confirm".trWithArg(context, {"user": username}));
               if(confirm == true) {
-                //_controladorPresentacion.blockUser(username);
-              }
-            } else if (value == 'unblock_user'.tr(context)) {
-              final bool? confirm = await confirmPopUp("unblock_user_confirm".trWithArg(context, {"user": username}));
-              if(confirm == true) {
-                //_controladorPresentacion.unblockUser(username);
+              _controladorPresentacion.blockUser(username);
               }
             } else if (value == 'report_user'.tr(context)) {
               final bool? confirm = await confirmPopUp("report_user_confirm".trWithArg(context, {"user": username}));

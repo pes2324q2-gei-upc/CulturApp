@@ -1,10 +1,14 @@
  import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/badge_category.dart';
 import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
 import 'package:culturapp/translations/AppLocalizations';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
+import 'package:flutter/widgets.dart';
+import 'package:culturapp/domain/models/badge_category.dart';
 
 class UserInfoWidget extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
@@ -32,6 +36,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
   late Usuari _user;
   late List<Actividad> activitats;
   late List<Actividad> display_list;
+  late List<BadgeCategory> badgeCategories;
 
   _UserInfoWidgetState(ControladorPresentacion controladorPresentacion, Usuari user, List<Actividad> activitatsVenc) {
     _controladorPresentacion = controladorPresentacion;
@@ -44,13 +49,21 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
   void initState() {
     super.initState();
     _loadActividades();
+    _loadBadgesCategories();
   }
 
-  void _loadActividades() async {
+  Future<void> _loadActividades() async {
     activitats = await _controladorPresentacion.getActivitatsByUser(_user);
     print(activitats.toString());
     setState(() {
       display_list = activitats;
+    });
+  }
+
+  void _loadBadgesCategories() async {
+    List<BadgeCategory> getBadges = await _controladorPresentacion.getBadgeCategories(_user.nom);
+    setState(() {
+      badgeCategories = getBadges;
     });
   }
 
@@ -79,9 +92,9 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
           future: Future.value(activitats),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator(color: Color(0xFFF4692A));
+              return const CircularProgressIndicator(color: Color(0xFFF4692A));
             } else if (snapshot.hasError) {
-              return Text('Error al obtener el nombre de usuario');
+              return const Text('Error al obtener el nombre de usuario');
             } else {
               final username = snapshot.data ?? '';
               return _buildUserInfo(_user, activitats);
@@ -114,7 +127,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                   children: [
                     Text(
                       _user.nom,
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 5),
                     const Text(
@@ -189,7 +202,9 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                           ],
                         ),
                       ),
-                      const Text("Insignias"),
+                      Expanded(
+                        child: _buildBadgeCategorys(badgeCategories),
+                      ),
                     ],
                   ),
                 ),
@@ -224,4 +239,94 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
       ),
     );
   }
+
+  Widget _buildBadgeCategorys (List<BadgeCategory> badgeCategories) {
+    return ListView.builder(
+        itemCount: badgeCategories.length,
+        itemBuilder: (context, index) {
+          return Container(
+            padding: const EdgeInsets.all(5.0),
+            child: Card(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: 16.0,
+                  bottom: 24.0,
+                  right: 16.0,
+                  left: 16.0,
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: <Widget>[
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: SizedBox(
+                            height: 70.0,
+                            width: 70.0,
+                            child: Image.asset(
+                              badgeCategories[index].image,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Center(
+                                  child: Icon(
+                                    Icons.error_outline,
+                                    color: Colors.red,
+                                    size: 48,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 30.0),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: SizedBox(
+                            width: 250,  
+                            child: Stack(
+                              children: [
+                                LinearProgressIndicator(
+                                  value: badgeCategories[index].progress,
+                                  backgroundColor: Colors.grey[400],
+                                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+                                  minHeight: 30,  
+                                ),
+                                Positioned.fill(
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      '${badgeCategories[index].actualActivities}/${badgeCategories[index].totalActivities} actividades ', 
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+    );
+  }
+
 }
+
+
+
+
+
+
+
+
+
+

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/badge_category.dart';
 import 'package:culturapp/domain/models/bateria.dart';
 import 'package:culturapp/domain/models/foro_model.dart';
 import 'package:culturapp/domain/models/post.dart';
@@ -11,6 +12,7 @@ import 'package:culturapp/domain/models/message.dart';
 import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/domain/models/xat_amic.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class UserLogged {
@@ -362,6 +364,7 @@ Future<List<Bateria>> getBateries() async {
       final List<dynamic> data = json.decode(body);
       return data;
     } else {
+      print(respuesta.body);
       throw Exception('Fallo la obtención de datos');
     }
   }
@@ -401,6 +404,20 @@ Future<List<Bateria>> getBateries() async {
           'Fallo la obtención de datos');
     }
   }
+
+  Future<List<BadgeCategory>> getBadgeCategories(String username) async {
+    /*final respuesta = await http.get(
+      Uri.parse('https://culturapp-back.onrender.com/badges/categories'),
+      headers: {
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+
+    );*/
+
+    return [BadgeCategory('circ', 53, 26, 'b')];
+  }
+
+
 
   Future<void> acceptFriend(String person) async {
     final http.Response response = await http.put(
