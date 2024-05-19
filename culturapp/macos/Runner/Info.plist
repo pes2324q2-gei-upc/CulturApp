@@ -28,5 +28,23 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+
+	<!--per notificacions en background-->
+	<key>UIBackgroundModes</key>
+    <array>
+        <string>fetch</string>
+        <string>processing</string>
+    </array>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Your location is used to provide notifications even when the app is closed.</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>Your location is used to provide notifications even when the app is closed.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Your location is used to provide notifications while the app is in use.</string>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
 </dict>
 </plist>

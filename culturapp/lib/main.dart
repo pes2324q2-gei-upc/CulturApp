@@ -1,7 +1,6 @@
 // ignore_for_file: no_logic_in_create_state, library_private_types_in_public_api
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:culturapp/data/firebase_options.dart';
-import 'package:culturapp/domain/converters/alarma.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
@@ -49,8 +48,6 @@ void main() async {
       AwesomeNotifications().requestPermissionToSendNotifications();
     }
   });
-
-  //initializeNotifications(controladorPresentacion);
 
   runApp(MyApp(controladorPresentacion: controladorPresentacion));
 }

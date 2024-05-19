@@ -41,7 +41,6 @@ dependencies:
   barcode_widget: ^2.0.4
   awesome_notifications: ^0.7.4+1
   flutter_local_notifications: ^17.1.2
-  workmanager: ^0.5.2
 
 dev_dependencies:
   flutter_test:
