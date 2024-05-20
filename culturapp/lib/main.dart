@@ -32,7 +32,7 @@ void main() async {
         channelGroupKey: 'basic_channel_group',
         channelKey: 'basic_channel',
         channelName: 'Basic notifications',
-        channelDescription: 'Notification channel for basic tests',
+        channelDescription: 'Notification channel for everything',
       )
     ],
     channelGroups: [
