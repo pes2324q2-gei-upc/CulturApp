@@ -1,4 +1,5 @@
 import "package:culturapp/domain/converters/convert_date_format.dart";
+import "package:culturapp/domain/converters/truncar_string.dart";
 import "package:culturapp/domain/models/grup.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/translations/AppLocalizations";
@@ -32,7 +33,7 @@ class _GrupsScreenState extends State<GrupsScreen> {
 
   void _initialize() async {
     List<Grup> grups = await _controladorPresentacion.getUserGrups();
-    if(mounted){
+    if (mounted) {
       setState(() {
         llista_grups = grups;
         display_list = llista_grups;
@@ -141,12 +142,12 @@ class _GrupsScreenState extends State<GrupsScreen> {
           width: 50,
           height: 50,
         ),
-        title: Text(display_list[index].nomGroup,
+        title: Text(truncarString(display_list[index].nomGroup, 22),
             style: TextStyle(
               color: taronjaVermellos,
               fontWeight: FontWeight.bold,
             )),
-        subtitle: Text(display_list[index].lastMessage),
+        subtitle: Text(truncarString(display_list[index].lastMessage, 24)),
         trailing: Text(convertTimeFormat(display_list[index].timeLastMessage)),
       ),
     );

@@ -180,26 +180,34 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
   }
 
   Widget _nomGrupEditant() {
-    return TextField(
-      cursorColor: Colors.white,
-      cursorHeight: 20,
-      style: const TextStyle(
-        color: Colors.white,
-        fontWeight: FontWeight.normal,
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: Colors.blueGrey, // Set the background color
+        borderRadius: BorderRadius.circular(10), // Set the border radius
       ),
-      onChanged: (value) {
-        _grup.nomGroup = value;
-      },
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.blueGrey,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide.none,
-        ),
-        hintText: _grup.nomGroup,
-        hintStyle: const TextStyle(
+      child: TextField(
+        cursorColor: Colors.white,
+        cursorHeight: 20,
+        style: const TextStyle(
           color: Colors.white,
+          fontWeight: FontWeight.normal,
+        ),
+        onChanged: (value) {
+          _grup.nomGroup = value;
+        },
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.blueGrey,
+          contentPadding: EdgeInsets.zero,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide.none,
+          ),
+          hintText: _grup.nomGroup,
+          hintStyle: const TextStyle(
+            color: Colors.white,
+          ),
         ),
       ),
     );

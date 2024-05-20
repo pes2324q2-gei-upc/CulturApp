@@ -114,6 +114,8 @@
     "confirm_report_user": "Estas segur de que vols reportar a {user}?",
     "delete_reply": "Eliminar resposta",
     "delete_post": "Eliminar post",
+    "exit_group": "Sortir de grup",
+    "community": "Comunitat",
 
     "aplicattion_info": "Si us plau, també afegeixi la següent informació en l'aplicació per a sol·licitar ser organitzador",
     "aplicattion_info_text": "- DNI\n- Telèfon\n- Correu\n- Empresa (si representa a alguna)",

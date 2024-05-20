@@ -1,4 +1,5 @@
 // ignore_for_file: no_logic_in_create_state, library_private_types_in_public_api
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:culturapp/data/firebase_options.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
@@ -9,59 +10,105 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Inicializa Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   final controladorPresentacion = ControladorPresentacion();
   //controladorPresentacion.funcLogout();
   User? currentUser = FirebaseAuth.instance.currentUser;
-  
-  runApp(MyApp(controladorPresentacion: controladorPresentacion, currentUser: currentUser));
+  await controladorPresentacion.initialice2();
+  if (currentUser != null) {
+    await controladorPresentacion.initialice();
+  }
+
+  AwesomeNotifications().initialize(
+    null, //'assets/logoCulturApp.png',
+    [
+      NotificationChannel(
+        channelGroupKey: 'basic_channel_group',
+        channelKey: 'basic_channel',
+        channelName: 'Basic notifications',
+        channelDescription: 'Notification channel for everything',
+      )
+    ],
+    channelGroups: [
+      NotificationChannelGroup(
+          channelGroupKey: 'basic_channel_group',
+          channelGroupName: 'Basic group')
+    ],
+    debug: true,
+  );
+
+  AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+    if (!isAllowed) {
+      AwesomeNotifications().requestPermissionToSendNotifications();
+    }
+  });
+
+  runApp(MyApp(
+      controladorPresentacion: controladorPresentacion,
+      currentUser: currentUser));
 }
 
 class MyApp extends StatelessWidget {
   final ControladorPresentacion controladorPresentacion;
   final User? currentUser;
 
-  const MyApp({Key? key, required this.controladorPresentacion, required this.currentUser}) : super(key: key);
+  const MyApp(
+      {Key? key,
+      required this.controladorPresentacion,
+      required this.currentUser})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: currentUser != null ? controladorPresentacion.initialice2() : controladorPresentacion.initialice(),
+      future: currentUser != null
+          ? controladorPresentacion.initialice2()
+          : controladorPresentacion.initialice(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return  MaterialApp(
+          return MaterialApp(
             debugShowCheckedModeBanner: false,
             home: Scaffold(
               body: Center(
-                child:  Stack(
-                alignment: Alignment.center,
-                children: <Widget>[
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center, // Añade esta línea
-                    children: [
-                      const Padding(padding: EdgeInsets.only(top: 250),),
-                      const SizedBox(
-                        child: CircularProgressIndicator(color: Color(0xFFF4692A)),
-                      ),
-                      const Padding(padding: EdgeInsets.only(bottom: 225.0),),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center, 
-                        children: [
-                          Image.asset('assets/logo.png', width: 20, height: 20), 
-                          const SizedBox(width: 10),
-                          Text('CulturApp', style: TextStyle(fontSize: 16, color: Colors.grey.shade700, fontWeight: FontWeight.w500)),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: <Widget>[
+                    Column(
+                      mainAxisAlignment:
+                          MainAxisAlignment.center, // Añade esta línea
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(top: 250),
+                        ),
+                        const SizedBox(
+                          child: CircularProgressIndicator(
+                              color: Color(0xFFF4692A)),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 225.0),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset('assets/logo.png',
+                                width: 20, height: 20),
+                            const SizedBox(width: 10),
+                            Text('CulturApp',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey.shade700,
+                                    fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -76,7 +123,8 @@ class MyApp extends StatelessWidget {
 class _MyAppState extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
 
-  const _MyAppState({Key? key, required this.controladorPresentacion}) : super(key: key);
+  const _MyAppState({Key? key, required this.controladorPresentacion})
+      : super(key: key);
 
   @override
   __MyAppStateState createState() => __MyAppStateState(controladorPresentacion);
@@ -100,7 +148,7 @@ class __MyAppStateState extends State<_MyAppState> {
     800: Color(0xFFF4692A),
     900: Color(0xFFF4692A),
   });
-  
+
   bool _isLoading = true;
 
   __MyAppStateState(ControladorPresentacion controladorPresentacion) {
@@ -118,42 +166,45 @@ class __MyAppStateState extends State<_MyAppState> {
     setState(() {
       _isLoggedIn = currentUser != null;
       _selectedIndex = _isLoggedIn ? _selectedIndex : 4;
-      _isLoading = false; 
+      _isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-    return  MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Center(
-          child: Stack(
-            alignment: Alignment.center,
-            children: <Widget>[
-              Column(
-                children: [
-                  const SizedBox(
-                    child: CircularProgressIndicator(color: Color(0xFFF4692A)),
-                  ),
-                  const Padding(padding: EdgeInsets.only(bottom: 10.0),),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center, 
-                    children: [
-                      Image.asset('assets/logo.png', width: 50, height: 50), 
-                      const SizedBox(width: 10),
-                      const Text('CulturApp', style: TextStyle(fontSize: 20)),
-                    ],
-                  ),
-                ],
-              ),
-            ],
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          body: Center(
+            child: Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                Column(
+                  children: [
+                    const SizedBox(
+                      child:
+                          CircularProgressIndicator(color: Color(0xFFF4692A)),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 10.0),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset('assets/logo.png', width: 50, height: 50),
+                        const SizedBox(width: 10),
+                        const Text('CulturApp', style: TextStyle(fontSize: 20)),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
-  }
+      );
+    }
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -176,7 +227,8 @@ class __MyAppStateState extends State<_MyAppState> {
           return _controladorPresentacion.language;
         }
         for (var locale in supportedLocales) {
-          if (deviceLocale != null && deviceLocale.languageCode == locale.languageCode) {
+          if (deviceLocale != null &&
+              deviceLocale.languageCode == locale.languageCode) {
             return deviceLocale;
           }
         }
@@ -184,7 +236,10 @@ class __MyAppStateState extends State<_MyAppState> {
       },
       home: Scaffold(
         body: _isLoggedIn
-            ? MapPage(controladorPresentacion: _controladorPresentacion, vencidas: _controladorPresentacion.getActividadesVencidas(),)
+            ? MapPage(
+                controladorPresentacion: _controladorPresentacion,
+                vencidas: _controladorPresentacion.getActividadesVencidas(),
+              )
             : Login(
                 controladorPresentacion: _controladorPresentacion,
               ),
