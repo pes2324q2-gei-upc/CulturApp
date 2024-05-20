@@ -116,5 +116,6 @@
     "delete_post": "Eliminar post",
 
     "aplicattion_info": "Por favor, tambien añada la siguiente información en la aplicación para solicitar ser organizador",
-    "aplicattion_info_text": "- DNI\n- Teléfono\n- Correo\n- Empresa (si representa a alguna)"
+    "aplicattion_info_text": "- DNI\n- Teléfono\n- Correo\n- Empresa (si representa a alguna)",
+    "private_account": "Esta cuenta es privada"
 }

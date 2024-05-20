@@ -73,14 +73,16 @@ class _PerfilPageState extends State<PerfilPage> {
   }
 
   Future<void> updateUsers() async {
-    setState(() {
-      _isLoading = true;
-    });
-    final pendents = await widget.controladorPresentacion.getFollowUsers(_user.nom, 'pending');
-    setState(() {
-      users = pendents;
-      _isLoading = false;
-    });
+    if (_owner) {
+      setState(() {
+        _isLoading = true;
+      });
+      final pendents = await widget.controladorPresentacion.getFollowUsers(_user.nom, 'pending');
+      setState(() {
+        users = pendents;
+        _isLoading = false;
+      });
+    }
   }
 
   @override

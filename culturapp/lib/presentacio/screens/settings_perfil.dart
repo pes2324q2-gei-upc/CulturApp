@@ -47,6 +47,7 @@ class _SettingsPerfil extends State<SettingsPerfil> {
             title: Text("privacy".tr(context)),
             subtitle: Text("privacy_explanation".tr(context)),
             value: privat,
+            activeColor: Color(0xFFF4692A),
             onChanged: (bool value) {
               setState(() {
                 privat = value;
