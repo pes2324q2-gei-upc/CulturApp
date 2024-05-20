@@ -821,6 +821,10 @@ class ControladorPresentacion {
     controladorDomini.changePrivacy(uid, privat);
   }
 
+  Future<bool> isFriend(String nom) {
+    return controladorDomini.isFriend(nom);
+  }
+
   /*Future<List<String>> obteAmics() async {
     return await controladorDomini.obteFollows(usernameLogged);
   }*/

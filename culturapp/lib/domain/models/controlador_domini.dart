@@ -1418,6 +1418,21 @@ Future<List<Bateria>> getBateries() async {
       print('Error de red: $error');
     }
   }
+
+  Future<bool> isFriend(String username) async {
+    final respuesta = await http.get(
+        Uri.parse(
+            'https://culturapp-back.onrender.com/amics/user/$username/isFriend'),
+        headers: {
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+        });
+
+    if (respuesta.statusCode == 200) {
+      return (respuesta.body == "true");
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
 }
 
 
