@@ -30,7 +30,10 @@ class _PerfilPageState extends State<PerfilPage> {
   late ControladorPresentacion _controladorPresentacion;
   late Usuari _user;
   late bool _owner;
+  List<String> originalUsers = [];
+  List<String>users = [];
   late List<Actividad> activitatsVencidas;
+  bool _isLoading = false;
 
   _PerfilPageState(ControladorPresentacion controladorPresentacion, Usuari user,
       bool owner, List<Actividad> vencidas) {
@@ -43,6 +46,7 @@ class _PerfilPageState extends State<PerfilPage> {
   @override
   void initState() {
     super.initState();
+    updateUsers();
   }
 
   void _onTabChange(int index) {
@@ -68,24 +72,48 @@ class _PerfilPageState extends State<PerfilPage> {
     }
   }
 
+  Future<void> updateUsers() async {
+    if (_owner) {
+      setState(() {
+        _isLoading = true;
+      });
+      final pendents = await widget.controladorPresentacion.getFollowUsers(_user.nom, 'pending');
+      setState(() {
+        users = pendents;
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return _isLoading
+      ? const Center(child: CircularProgressIndicator(color: Color(0xFFF4692A), backgroundColor: Colors.white,)
+      ) : Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: const Color(0xFFF4692A),
         title: Text(
           'profile'.tr(context),
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
         actions: _owner
             ? [
-                IconButton(
-                  onPressed: () {
-                    _controladorPresentacion.mostrarPendents(context);
-                  },
-                  icon: const Icon(Icons.notifications, color: Colors.white),
+              IconButton(
+                onPressed: () {
+                  _controladorPresentacion.mostrarPendents(context);
+                },
+                icon: Stack(
+                  children: <Widget>[
+                    const Icon(Icons.notifications, color: Colors.white),
+                    if (users.isNotEmpty) const Positioned(  // draw a red circle as a badge
+                      top: -1.0,
+                      right: -1.0,
+                      child: Icon(Icons.brightness_1, size: 12.0, color: Colors.blueAccent),
+                    ),
+                  ],
                 ),
+              ),
                 IconButton(
                   onPressed: () {
                     _controladorPresentacion.mostrarEditPerfil(

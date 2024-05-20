@@ -106,6 +106,10 @@ class _userBoxState extends State<userBox> {
                     _buildPopUpMenuFollowerRequestSend(),
                   ] else if(widget.type == 'reportUserBlocked') ...[
                     _buildPopUpMenuReportUserBlocked(),
+                  ] else if(widget.type == 'requested') ...[
+                    Row(
+                      children: [Text(_action = "request_sent".tr(context)),]
+                    ),
                   ],
                 ],
               ],  
@@ -126,16 +130,18 @@ class _userBoxState extends State<userBox> {
     } else if (action == "deleteFollowing") {
       widget.controladorPresentacion.deleteFollowing(text);
     } else if (action == "block") {
-      //widget.controladorPresentacion.blockUser(text);
+      widget.controladorPresentacion.blockUser(text);
     } else if (action == "report") {
       widget.controladorPresentacion.mostrarReportUser(context, text, placeReport);
     } else if (action == "unblock") {
-      //widget.controladorPresentacion.unblockUser(text);
+      widget.controladorPresentacion.unblockUser(text);
     }
 
-    setState(() {
-      _showButtons = false;
-    });
+    if(action != "report") {
+      setState(() {
+        _showButtons = false;
+      });
+    }
   }
 
   Widget _buildPendingButtons() {
@@ -322,7 +328,6 @@ class _userBoxState extends State<userBox> {
               } else if (value == "report_user".tr(context)) {
                 final bool? confirm = await confirmPopUp("confirm_report_user".trWithArg(context, {"user": widget.text}));
                 if(confirm == true) {
-                  _action = "user_reported".tr(context);
                   _handleButtonPress("report", widget.text, widget.placeReport);
                 }
               }

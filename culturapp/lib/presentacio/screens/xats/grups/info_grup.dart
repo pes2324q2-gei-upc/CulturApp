@@ -319,14 +319,25 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
                     itemBuilder: (context, index) {
                       return Column(
                         children: [
-                          userBox(
-                            text: _grup.membres[index],
-                            recomm: false,
-                            type: "reportUser",
-                            placeReport: "group ${_grup.id}",
-                            controladorPresentacion: _controladorPresentacion,
-                            popUpStyle: "orange",
-                          )
+                          if(_controladorPresentacion.isBlockedUser(_grup.membres[index])) ...[
+                            userBox(
+                              text: _grup.membres[index],
+                              recomm: false,
+                              type: "reportUserBlocked",
+                              placeReport: "group ${_grup.id}",
+                              controladorPresentacion: _controladorPresentacion,
+                              popUpStyle: "orange",
+                            ),
+                          ] else ...[
+                            userBox(
+                              text: _grup.membres[index],
+                              recomm: false,
+                              type: "reportUser",
+                              placeReport: "group ${_grup.id}",
+                              controladorPresentacion: _controladorPresentacion,
+                              popUpStyle: "orange",
+                            )
+                          ],
                         ],
                       );
                     }),

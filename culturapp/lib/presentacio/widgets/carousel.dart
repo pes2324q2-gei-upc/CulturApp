@@ -18,7 +18,7 @@ class _MyCarouselState extends State<MyCarousel> {
       _buildCarouselItem(context, 'Festa', 'festes', 0),
       _buildCarouselItem(context, 'Infantil', 'infantil', 1),
       _buildCarouselItem(context, 'Circ', 'circ', 2),
-      _buildCarouselItem(context, 'Commemoracio', 'commemoracions', 3),
+      _buildCarouselItem(context, 'Commemoració', 'commemoracions', 3),
       _buildCarouselItem(context, 'Art', 'exposicions', 4),
       _buildCarouselItem(context, 'Carnaval', 'carnavals', 6),
       _buildCarouselItem(context, 'Concerts', 'concerts', 7),
@@ -32,8 +32,8 @@ class _MyCarouselState extends State<MyCarousel> {
     return Row(
       children: [ 
         Expanded(child: Center(
-            child: Container(
-              height: 60, // specify the height you want here
+            child: SizedBox(
+              height: 50, // specify the height you want here
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: carouselItems.length,
@@ -183,7 +183,7 @@ Image _retornaIcon(String categoria) {
 
 Widget _buildCarouselItem(BuildContext context, String label, String iconName, int index) {
   return Padding(
-    padding: EdgeInsets.only(left: 5.0, right: 5.0, top: 7.0, bottom: 7.0), // Agregar padding entre elementos
+    padding: const EdgeInsets.only(left: 5.0, right: 5.0, top: 7.0, bottom: 7.0), // Agregar padding entre elementos
     child: GestureDetector(
       onTap: () {
         setState(() {
@@ -197,7 +197,6 @@ Widget _buildCarouselItem(BuildContext context, String label, String iconName, i
       },
       child: IntrinsicWidth(
         child: Container(
-          margin: EdgeInsets.symmetric(horizontal: .0),
           decoration: BoxDecoration(
                 color: selectedIndices.contains(index) ? Colors.orange.withOpacity(1) : Colors.white.withOpacity(1),
                 boxShadow: [
@@ -205,7 +204,7 @@ Widget _buildCarouselItem(BuildContext context, String label, String iconName, i
                     color: Colors.grey.withOpacity(0.1),
                     spreadRadius: 3,
                     blurRadius: 7,
-                    offset: Offset(0, 3), // changes position of shadow
+                    offset: const Offset(0, 3), // changes position of shadow
                   ),
                 ],
                 borderRadius: BorderRadius.circular(25.0),
@@ -218,18 +217,18 @@ Widget _buildCarouselItem(BuildContext context, String label, String iconName, i
                 crossAxisAlignment: CrossAxisAlignment.center, // Ajustar la alineación vertical
                 children: [
                   Column(
-                    children: [SizedBox(height: 4), _retornaIcon(iconName),],
-                    mainAxisAlignment: MainAxisAlignment.center,),
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [Padding(padding: EdgeInsets.only(top: 2),), const SizedBox(height: 4), _retornaIcon(iconName),],),
                     
-                  SizedBox(width: 8), // Ajustar el espacio entre el icono y el texto según sea necesario
+                  const SizedBox(width: 4), // Ajustar el espacio entre el icono y el texto según sea necesario
                   Flexible(
                     child: Text(
                       label,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 18.0, color: selectedIndices.contains(index) ? Colors.white : Color(0xFF333333)),
+                      style: TextStyle(fontSize: 16.0, color: selectedIndices.contains(index) ? Colors.white : const Color(0xFF333333)),
                     ),
                   ),
-                  const SizedBox(width: 8,)
+                  const SizedBox(width: 4,)
                 ],
               ),
             ),

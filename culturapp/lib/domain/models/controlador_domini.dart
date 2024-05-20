@@ -385,6 +385,23 @@ Future<List<Bateria>> getBateries() async {
     }
   }
 
+  Future<List<String>> getBlockedUsers() async {
+    final respuesta = await http.get(
+      Uri.parse('https://culturapp-back.onrender.com/users/${userLogged.getUsername()}/blockedUsers'),
+      headers: {
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+    );
+    if (respuesta.statusCode == 200) {
+      final body = respuesta.body;
+      final List<String> blockedUsers = List<String>.from(json.decode(body));
+      return blockedUsers;
+    } else {
+      throw Exception(
+          'Fallo la obtención de datos');
+    }
+  }
+
   Future<void> acceptFriend(String person) async {
     final http.Response response = await http.put(
       Uri.parse('https://culturapp-back.onrender.com/amics/accept/$person'),
@@ -406,7 +423,7 @@ Future<List<Bateria>> getBateries() async {
     );
 
     if (response.statusCode != 200)
-      throw Exception('Error al eliminar al usuario');
+      print('Error al eliminar al usuario');
   }
 
   Future<void> deleteFollowing(String person) async {
@@ -418,7 +435,7 @@ Future<List<Bateria>> getBateries() async {
     );
 
     if (response.statusCode != 200)
-      throw Exception('Error al eliminar al usuario');
+      print('Error al eliminar al usuario');
   }
 
 
@@ -609,6 +626,63 @@ Future<List<Bateria>> getBateries() async {
       }
     } catch (e) {
       return 500;
+    }
+  }
+
+  Future<void> addParticipant(String idActivity) async {
+    final Map<String, dynamic> body = {
+      'activitatID': idActivity,
+    };
+
+    final response = await http.put(Uri.parse(
+              'https://culturapp-back.onrender.com/users/escanearQR'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${userLogged.getToken()}',
+          },
+          body: jsonEncode(body));
+
+    if (response.statusCode != 200) {
+      print(response.body);
+    }
+
+  }
+
+  Future<void> blockUser(String user) async {
+    final Map<String, dynamic> body = {
+      'blockedUser': user,
+    };
+
+    final response = await http.put(
+      Uri.parse('https://culturapp-back.onrender.com/users/${userLogged.getUsername()}/blockuser'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode != 200) {
+      print(response.body);
+    }
+  }
+
+  Future<void> unblockUser(String user) async {
+    final Map<String, dynamic> body = {
+      'blockedUser': user,
+    };
+
+    final response = await http.put(
+      Uri.parse('https://culturapp-back.onrender.com/users/${userLogged.getUsername()}/unblockuser'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode != 200) {
+      print(response.body);
     }
   }
 
@@ -1298,6 +1372,63 @@ Future<List<Bateria>> getBateries() async {
 
     if (respuesta.statusCode == 200) {
       return _convert_database_to_list(respuesta);
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
+
+  Future<bool> checkPrivacy(String uid) async {
+    final respuesta = await http.get(
+        Uri.parse(
+            'https://culturapp-back.onrender.com/users/$uid/privacy'),
+        headers: {
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+        });
+
+    if (respuesta.statusCode == 200) {
+      return (respuesta.body == "true");
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
+
+  Future<void> changePrivacy(String uid, bool privat) async {
+    try {
+      final Map<String, dynamic> requestData = {
+        'uid': uid,
+        'privacyStatus': privat,
+      };
+
+      final respuesta = await http.post(
+        Uri.parse(
+            'https://culturapp-back.onrender.com/users/changePrivacy'),
+        body: jsonEncode(requestData),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+        },
+      );
+
+      if (respuesta.statusCode == 200) {
+        print('Datos enviados exitosamente');
+      } else {
+        print('Error al enviar los datos: ${respuesta.statusCode}');
+      }
+    } catch (error) {
+      print('Error de red: $error');
+    }
+  }
+
+  Future<bool> isFriend(String username) async {
+    final respuesta = await http.get(
+        Uri.parse(
+            'https://culturapp-back.onrender.com/amics/user/$username/isFriend'),
+        headers: {
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+        });
+
+    if (respuesta.statusCode == 200) {
+      return (respuesta.body == "true");
     } else {
       throw Exception('Fallo la obtención de datos');
     }

@@ -14,11 +14,10 @@ class LlistarPendents extends StatefulWidget {
 
 class _LlistarPendentsState extends State<LlistarPendents> {
   late List<String> users;
-  late bool isFollows;
+  bool _isLoading = false;
 
   _LlistarPendentsState() {
     users = [];
-    isFollows = true;
   }
 
   List<String> originalUsers = [];
@@ -33,9 +32,13 @@ class _LlistarPendentsState extends State<LlistarPendents> {
   }
 
   Future<void> updateUsers() async {
+    setState(() {
+      _isLoading = true;
+    });
     final pendents = await widget.controladorPresentacion.getFollowUsers(widget.username, 'pending');
     setState(() {
       users = pendents;
+      _isLoading = false;
     });
   }
 
@@ -46,8 +49,11 @@ class _LlistarPendentsState extends State<LlistarPendents> {
   }
 
   @override
+   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return _isLoading
+      ? const Center(child: CircularProgressIndicator(color: Color(0xFFF4692A), backgroundColor: Colors.white,)
+      ) : Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
         title: Text("friendship_requests_title".tr(context)),

@@ -14,19 +14,19 @@ import 'package:googleapis_auth/auth_io.dart' as auth;
 import 'package:googleapis/calendar/v3.dart' as calendar;
 import 'package:http/http.dart' as http;
 
+
 class ListaMisActividades extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
   final User? user;
-
+  
   ListaMisActividades({
     Key? key,
-    required this.controladorPresentacion,
-    required this.user,
+    required this.controladorPresentacion, required this.user,
   }) : super(key: key);
 
   @override
-  State<ListaMisActividades> createState() =>
-      _ListaMisActividadesState(controladorPresentacion, user);
+  State<ListaMisActividades> createState() => _ListaMisActividadesState(
+        controladorPresentacion, user);
 }
 
 class _ListaMisActividadesState extends State<ListaMisActividades> {
@@ -61,7 +61,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     'exposicions'
   ];
 
-  final List<String> catsAMB = [
+    final List<String> catsAMB = [
     "Residus",
     "territori.espai_public_platges",
     "Sostenibilitat",
@@ -78,8 +78,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     "Espai públic - Platges"
   ];
 
-  _ListaMisActividadesState(
-      ControladorPresentacion controladorPresentacion, User? user) {
+  _ListaMisActividadesState(ControladorPresentacion controladorPresentacion, User? user) {
     _controladorPresentacion = controladorPresentacion;
     squery = '';
     _selectedCategory = '-totes-';
@@ -99,7 +98,8 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     });
   }
 
-  Future<void> agregarEventoGoogleCalendar(String nameAct, String date) async {
+
+ Future<void> agregarEventoGoogleCalendar(String nameAct, String date) async {
     final FirebaseAuth authFirebase = FirebaseAuth.instance;
     final User? user = authFirebase.currentUser;
     final idTokenResult = await user!.getIdTokenResult();
@@ -115,10 +115,10 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     final GoogleSignInAuthentication googleAuth;
     if (googleUser == null) {
       try {
-        googleUser = await googleSignIn.signIn();
+        googleUser = await googleSignIn.signIn();  
       } catch (e) {
         print('Error al iniciar sesión: $e');
-        return;
+        return; 
       }
       if (googleUser != null) {
         googleAuth = (await googleUser.authentication)!;
@@ -127,7 +127,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
           idToken: googleAuth.idToken,
         );
       } else {
-        return;
+        return; 
       }
     } else {
       googleAuth = await googleUser.authentication;
@@ -146,7 +146,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
           [calendar.CalendarApi.calendarScope],
         ),
       );
-
+        
       final calendarApi = calendar.CalendarApi(authClient);
 
       DateFormat formatter = DateFormat("yyyy-MM-dd");
@@ -172,6 +172,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
           duration: Duration(seconds: 3),
         ),
       );
+
     } else {
       print('No se pudo obtener el token de acceso');
     }
@@ -277,7 +278,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
         _controladorPresentacion.mostrarActividadesUser(context);
         break;
       case 2:
-        _controladorPresentacion.mostrarXats(context, "Amics");
+        _controladorPresentacion.mostrarXats(context, 'Amics');
         break;
       case 3:
         _controladorPresentacion.mostrarPerfil(context);
@@ -399,10 +400,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
-        title: Text("my_activities".tr(context),
-            style: TextStyle(
-              color: Colors.white,
-            )),
+        title: Text("my_activities".tr(context), style: TextStyle(color: Colors.white,)),
         automaticallyImplyLeading: false,
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
@@ -411,21 +409,21 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
       ),
       body: Column(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 3,
-                  blurRadius: 5,
-                  offset: Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 3,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
                 children: [
                   const SizedBox(
                     height: 10.0,
@@ -474,8 +472,9 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                         activitat.ubicacio,
                         activitat.latitud.toString(),
                         activitat.longitud.toString(),
+    
                       ];
-
+                      
                       _controladorPresentacion.mostrarVerActividad(
                           context, act, activitat.urlEntrades);
                       DocumentReference docRef = _firestore
@@ -506,194 +505,168 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                             right: 16.0,
                             left: 16.0,
                           ),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: <Widget>[
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(20),
-                                    child: SizedBox(
-                                      height: activitat.dataInici !=
-                                              activitat.dataFi
-                                          ? 150.0
-                                          : 120.0,
-                                      width: activitat.dataInici !=
-                                              activitat.dataFi
-                                          ? 150.0
-                                          : 120.0,
-                                      child: Image.network(
-                                        activitat.imageUrl,
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (context, error, stackTrace) {
-                                          return const Center(
-                                            child: Icon(
-                                              Icons.error_outline,
-                                              color: Colors.red,
-                                              size: 48,
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
+                          child: Column(children: [
+                          Row(
+                            children: <Widget>[
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: SizedBox(
+                                  height: activitat.dataInici != activitat.dataFi ? 150.0 : 120.0,
+                                  width: activitat.dataInici != activitat.dataFi ? 150.0 : 120.0, 
+                                  child: Image.network(
+                                    activitat.imageUrl,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Center(
+                                        child: Icon(
+                                          Icons.error_outline,
+                                          color: Colors.red,
+                                          size: 48,
+                                        ),
+                                      );
+                                    },
                                   ),
-                                  const SizedBox(width: 10.0),
-                                  Flexible(
-                                    child: Column(
+                                ),
+                              ),
+                              const SizedBox(width: 10.0),
+                              Flexible(
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .start,
                                       children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Flexible(
-                                              child: Text(
-                                                activitat.name,
-                                                style: const TextStyle(
-                                                  fontSize: 18.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Color(0xFFF4692A),
-                                                ),
-                                              ),
+                                        Flexible(
+                                          child: Text(
+                                            activitat.name,
+                                            style: const TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xFFF4692A),
                                             ),
-                                            const Padding(
-                                                padding: EdgeInsets.only(
-                                                    right: 5.0)),
-                                            _retornaIcon(
-                                                activitat.categoria[0]),
-                                          ],
+                                          ),
                                         ),
                                         const Padding(
-                                            padding: EdgeInsets.only(top: 7.5)),
-                                        Row(
-                                          children: [
-                                            const Icon(Icons.location_on),
-                                            const Padding(
-                                                padding: EdgeInsets.only(
-                                                    right: 7.5)),
-                                            Expanded(
-                                              child: Text(
-                                                activitat.ubicacio,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Icon(Icons.calendar_month),
-                                            const Padding(
-                                                padding: EdgeInsets.only(
-                                                    right: 7.5)),
-                                            Text(activitat.dataInici),
-                                          ],
-                                        ),
-                                        activitat.dataInici != activitat.dataFi
-                                            ? Row(
-                                                children: [
-                                                  const Icon(
-                                                      Icons.calendar_month),
-                                                  const Padding(
-                                                      padding: EdgeInsets.only(
-                                                          right: 7.5)),
-                                                  Text(activitat.dataFi),
-                                                ],
-                                              )
-                                            : Container(),
-                                        Row(
-                                          children: [
-                                            const Icon(Icons.local_atm),
-                                            const Padding(
-                                                padding: EdgeInsets.only(
-                                                    right: 7.5)),
-                                            Expanded(
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  launchUrl(
-                                                      activitat.urlEntrades);
-                                                },
-                                                child: Text(
-                                                  'tickets_info'.tr(context),
-                                                  style: const TextStyle(
-                                                    decoration: TextDecoration
-                                                        .underline,
-                                                    color: Colors.blue,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                                            padding: EdgeInsets.only(right: 5.0)),
+                                        _retornaIcon(activitat.categoria[
+                                            0]),
+                                      ],
+                                    ),
+                                    const Padding(padding: EdgeInsets.only(top: 7.5)),
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.location_on),
+                                        const Padding(
+                                            padding: EdgeInsets.only(right: 7.5)),
+                                        Expanded(
+                                          child: Text(
+                                            activitat.ubicacio,
+                                            overflow: TextOverflow
+                                                .ellipsis, 
+                                          ),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const Padding(
-                                  padding: EdgeInsets.only(bottom: 20)),
                               Row(
                                 children: [
-                                  SizedBox(
-                                    height:
-                                        32.5, // Reducir el ancho para hacer el botón más pequeño
-                                    child: OutlinedButton(
-                                      style: OutlinedButton.styleFrom(
-                                        foregroundColor: Colors.black,
-                                        side: BorderSide(
-                                          color: Colors.black,
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        agregarEventoGoogleCalendar(
-                                            activitat.name,
-                                            activitat.dataInici);
-                                      },
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment
-                                            .center, // Centrar los elementos en la fila
-                                        children: [
-                                          Text(
-                                            'add_calendar'.tr(context),
-                                          ),
-                                          const Padding(
-                                              padding:
-                                                  EdgeInsets.only(right: 5)),
-                                          const Icon(Icons.calendar_month),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  const Padding(
-                                      padding: EdgeInsets.only(right: 10)),
-                                  SizedBox(
-                                    height:
-                                        32.5, // Establece la altura del botón
-                                    child: ElevatedButton.icon(
-                                      style: ElevatedButton.styleFrom(
-                                        foregroundColor: Colors.white,
-                                        backgroundColor: Colors
-                                            .black, // Color del texto y del icono
-                                      ),
-                                      icon: const Icon(Icons.location_on),
-                                      label: const Text('Como llegar'),
-                                      onPressed: () async {
-                                        final url = Uri.parse(
-                                            'https://www.google.com/maps/search/?api=1&query=${activitat.latitud},${activitat.longitud}');
-                                        if (await canLaunchUrl(url)) {
-                                          await launchUrl(url);
-                                        } else {
-                                          throw 'No se pudo abrir $url';
-                                        }
-                                      },
-                                    ),
-                                  ),
+                                  const Icon(Icons.calendar_month),
+                                  const Padding(padding: EdgeInsets.only(right: 7.5)),
+                                  Text(activitat.dataInici),
                                 ],
+                              ),
+                              activitat.dataInici != activitat.dataFi
+                                  ? Row(
+                                      children: [
+                                        const Icon(Icons.calendar_month),
+                                        const Padding(padding: EdgeInsets.only(right: 7.5)),
+                                        Text(activitat.dataFi),
+                                      ],
+                                    )
+                                  : Container(),
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.local_atm),
+                                        const Padding(
+                                            padding: EdgeInsets.only(right: 7.5)),
+                                        Expanded(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              launchUrl(activitat
+                                                  .urlEntrades);
+                                            },
+                                            child: Text(
+                                              'tickets_info'.tr(context),
+                                              style: const TextStyle(
+                                                decoration: TextDecoration
+                                                    .underline, color: Colors.blue,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
+                          const Padding(padding: EdgeInsets.only(bottom: 20)),
+                          Row(
+                          children: [
+                          SizedBox(
+                            height: 32.5,// Reducir el ancho para hacer el botón más pequeño
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: Colors.black,
+                                side: BorderSide(color: Colors.black,),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                              onPressed: () {
+                                agregarEventoGoogleCalendar(activitat.name, activitat.dataInici);
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center, 
+                                children: [
+                                  Text(
+                                    'add_calendar'.tr(context), 
+                                  ),
+                                  const Padding(padding: EdgeInsets.only(right: 5)),
+                                  const Icon(Icons.calendar_month),
+                                ],
+                              ),
+                            ),
+                          ),
+                           const Padding(padding: EdgeInsets.only(right: 10)),
+                            Align( 
+                              alignment: Alignment.bottomRight,
+                              child: SizedBox(
+                                height: 32.5,
+                                child: ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    foregroundColor: Colors.white, 
+                                    backgroundColor: Colors.black,
+                                  ),
+                                  icon: const Icon(Icons.location_on),
+                                  label: Text( 
+                                    'Como llegar',
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                  onPressed: () async {
+                                    final url = Uri.parse('https://www.google.com/maps/search/?api=1&query=${activitat.latitud},${activitat.longitud}');
+                                    if (await canLaunchUrl(url)) {
+                                      await launchUrl(url);
+                                    } else {
+                                      throw 'No se pudo abrir $url';
+                                    }
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                          ],),
                         ),
                       ),
                     ),
@@ -729,12 +702,11 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
           hintText: "search".tr(context),
           hintStyle: const TextStyle(
             color: Color(0xFF333333),
+            
           ),
           contentPadding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
           suffixIcon: Padding(
-            padding: const EdgeInsets.only(
-                right:
-                    8.0), // Ajusta el padding a la derecha según sea necesario
+            padding: const EdgeInsets.only(right: 8.0), // Ajusta el padding a la derecha según sea necesario
             child: IconButton(
               onPressed: () {
                 searchMyActivities(squery);
@@ -777,7 +749,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                 });
               },
               borderRadius: BorderRadius.circular(10),
-              dropdownColor: const Color.fromRGBO(255, 229, 204, 0.815),
+              dropdownColor:const Color.fromRGBO(255, 229, 204, 0.815),
               icon: const Icon(
                 Icons.arrow_drop_down,
                 color: Color(0xFF333333),
@@ -796,43 +768,43 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   }
 
   Widget _buildFiltreData() {
-    return Container(
-      height: 35.0,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey, width: 1.5),
-      ),
-      child: Align(
-        alignment: Alignment.center,
-        child: Container(
-          width: 500.0,
-          child: TextField(
-            style: const TextStyle(
-              fontSize: 14,
+  return Container(
+    height: 35.0,
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(color: Colors.grey, width: 1.5),
+    ),
+    child: Align(
+      alignment: Alignment.center,
+      child: Container(
+        width: 500.0,
+        child: TextField(
+          style: const TextStyle(
+            fontSize: 14,
+            color: Color(0xFF333333),
+          ),
+          controller: _dateController,
+          decoration: InputDecoration(
+            labelText: _dateController.text.isNotEmpty ? '' : 'date'.tr(context),
+            border: InputBorder.none,
+            fillColor: Colors.white,
+            prefixIcon: const Icon(
+              Icons.calendar_today,
+              size: 18,
               color: Color(0xFF333333),
             ),
-            controller: _dateController,
-            decoration: InputDecoration(
-              labelText:
-                  _dateController.text.isNotEmpty ? '' : 'date'.tr(context),
-              border: InputBorder.none,
-              fillColor: Colors.white,
-              prefixIcon: const Icon(
-                Icons.calendar_today,
-                size: 18,
-                color: Color(0xFF333333),
-              ),
-            ),
-            readOnly: true,
-            onTap: () {
-              _selectDate();
-            },
           ),
+          readOnly: true,
+          onTap: () {
+            _selectDate();
+          },
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Future<void> _selectDate() async {
     DateTime? picked = await showDatePicker(

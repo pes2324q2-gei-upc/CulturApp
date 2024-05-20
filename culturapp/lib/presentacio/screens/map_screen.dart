@@ -85,10 +85,12 @@ class _MapPageState extends State<MapPage> {
   BitmapDescriptor iconoAMB = BitmapDescriptor.defaultMarker;
   IconData iconoCategoria = Icons.category;
   late LatLng myLatLng;
+  late LatLng lastPosition;
   String address = 'FIB';
   bool ubicacionCargada = false;
   double _currentSheetHeight = 0.1;
   final double _maxHeight = 1.0;
+  
 
   final List<String> catsAMB = [
     "Residus",
@@ -151,106 +153,88 @@ class _MapPageState extends State<MapPage> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    //Imagen
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: SizedBox(
-                        height: 125.0,
-                        width: 125.0,
-                        child: Image.network(
-                          actividad.imageUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            // Widget de error que se mostrará si la imagen no se carga correctamente
-                            return const Center(
-                              child: Icon(
-                                Icons.error_outline,
-                                color: Colors.red,
-                                size: 24,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10.0),
-                    Flexible(
-                      // Para que los textos se ajusten bien
-                      child: Column(
-                        children: [
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment
-                                .start, // Que los textos empiezen en el ''inicio''
-                            children: [
+                            children: <Widget>[
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: SizedBox(
+                                  height:  actividad.dataInici !=  actividad.dataFi ? 125.0 : 100.0,
+                                  width:  actividad.dataInici !=  actividad.dataFi ? 125.0 : 100.0, 
+                                  child: Image.network(
+                                     actividad.imageUrl,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Center(
+                                        child: Icon(
+                                          Icons.error_outline,
+                                          color: Colors.red,
+                                          size: 48,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10.0),
                               Flexible(
-                                child: Text(
-                                  actividad.name,
-                                  style: const TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFFF4692A),
-                                  ),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .start,
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                             actividad.name,
+                                            style: const TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xFFF4692A),
+                                            ),
+                                          ),
+                                        ),
+                                        const Padding(
+                                            padding: EdgeInsets.only(right: 5.0)),
+                                        _retornaIcon( actividad.categoria[
+                                            0]),
+                                      ],
+                                    ),
+                                    const Padding(padding: EdgeInsets.only(top: 3.5)),
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.location_on),
+                                        const Padding(
+                                            padding: EdgeInsets.only(right: 7.5)),
+                                        Expanded(
+                                          child: Text(
+                                             actividad.ubicacio,
+                                            overflow: TextOverflow
+                                                .ellipsis, 
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                              Row(
+                                children: [
+                                  const Icon(Icons.calendar_month),
+                                  const Padding(padding: EdgeInsets.only(right: 7.5)),
+                                  Text( actividad.dataInici),
+                                ],
+                              ),
+                               actividad.dataInici !=  actividad.dataFi
+                                  ? Row(
+                                      children: [
+                                        const Icon(Icons.calendar_month),
+                                        const Padding(padding: EdgeInsets.only(right: 7.5)),
+                                        Text( actividad.dataFi),
+                                      ],
+                                    )
+                                  : Container(),
+                                  ],
                                 ),
                               ),
-                              const Padding(
-                                  padding: EdgeInsets.only(
-                                right: 5.0,
-                              )),
-                              Align(
-                                alignment: Alignment.topCenter,
-                                child: Transform.translate(
-                                  offset: const Offset(0,
-                                      -4), // Mueve el icono 2 píxeles hacia arriba
-                                  child: Transform.scale(
-                                    scale:
-                                        0.9, // Ajusta este valor para cambiar el tamaño de la imagen
-                                    child: _retornaIcon(actividad.categoria[
-                                        0]), //Obtener el icono de la categoria
-                                  ),
-                                ),
-                              ),
                             ],
                           ),
-                          Row(
-                            // Atributos - icono + info
-                            children: [
-                              const Icon(Icons.location_on),
-                              const Padding(
-                                  padding: EdgeInsets.only(right: 7.5)),
-                              Expanded(
-                                child: Text(
-                                  actividad.ubicacio,
-                                  overflow: TextOverflow
-                                      .ellipsis, //Poner puntos suspensivos para evitar pixel overflow
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Padding(padding: EdgeInsets.only(top: 5.0)),
-                          Row(
-                            children: [
-                              const Icon(Icons.calendar_month),
-                              const Padding(
-                                  padding: EdgeInsets.only(right: 7.5)),
-                              Text(actividad.dataInici),
-                            ],
-                          ),
-                          const Padding(padding: EdgeInsets.only(top: 5.0)),
-                          Row(
-                            children: [
-                              const Icon(Icons.calendar_month),
-                              const Padding(
-                                  padding: EdgeInsets.only(right: 7.5)),
-                              Text(actividad.dataFi),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
                 const Padding(padding: EdgeInsets.only(bottom: 20.0)),
                 RatingBar.builder(
                   initialRating: 0,
@@ -354,9 +338,11 @@ class _MapPageState extends State<MapPage> {
       LatLng currentLatLng = LatLng(position.latitude, position.longitude);*/
 
       LatLng currentLatLng = const LatLng(41.389376, 2.113236);
+
       // Actualizar ubicacion
       setState(() {
         myLatLng = currentLatLng;
+        lastPosition = myLatLng;
         ubicacionCargada = true;
       });
     }
@@ -504,7 +490,6 @@ class _MapPageState extends State<MapPage> {
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              //Columna y dentro de ella filas, 1 para foto + atributos con mas filas dentro, y la descripcion y boton separados.
               child: Column(
                 children: <Widget>[
                   Row(
@@ -519,7 +504,6 @@ class _MapPageState extends State<MapPage> {
                             actividad.imageUrl,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
-                              // Widget de error que se mostrará si la imagen no se carga correctamente
                               return const Center(
                                 child: Icon(
                                   Icons.error_outline,
@@ -533,12 +517,11 @@ class _MapPageState extends State<MapPage> {
                       ),
                       const SizedBox(width: 10.0),
                       Flexible(
-                        // Para que los textos se ajusten bien
                         child: Column(
                           children: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment
-                                  .start, // Que los textos empiezen en el ''inicio''
+                                  .start,
                               children: [
                                 Flexible(
                                   child: Text(
@@ -553,12 +536,11 @@ class _MapPageState extends State<MapPage> {
                                 const Padding(
                                     padding: EdgeInsets.only(right: 5.0)),
                                 _retornaIcon(actividad.categoria[
-                                    0]), //Obtener el icono de la categoria
+                                    0]),
                               ],
                             ),
                             const Padding(padding: EdgeInsets.only(top: 7.5)),
                             Row(
-                              // Atributos - icono + info
                               children: [
                                 const Icon(Icons.location_on),
                                 const Padding(
@@ -851,6 +833,15 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
+  
+  void updateActivities(LatLng position, double zoom) async {
+    fetchActivities(position, zoom).then((value) {
+      setState(() {
+        _actividades = value;
+      });
+    });
+  }
+
   //Cuando la pantalla se mueve se recalcula la posicon y el zoom para volver a calcular las actividades que tocan
   void _onCameraMove(CameraPosition position) {
     if (_mapController != null) {
@@ -858,6 +849,7 @@ class _MapPageState extends State<MapPage> {
         fetchActivities(position.target, zoom).then((value) {
           setState(() {
             _actividades = value;
+            lastPosition = position.target;
           });
         });
       });
@@ -917,7 +909,7 @@ class _MapPageState extends State<MapPage> {
         onTabChange: _onTabChange,
       ),
       body: Stack(
-        fit: StackFit.expand, // Ajusta esta línea
+        fit: StackFit.expand,
         children: [
           if (!ubicacionCargada)
             const Center(
@@ -972,81 +964,80 @@ class _MapPageState extends State<MapPage> {
               left: 0,
               right: 0,
               child: MyCarousel(clickCarouselCat)),
-          Positioned.fill(
-            child: DraggableScrollableSheet(
-              initialChildSize: _currentSheetHeight,
-              minChildSize: 0.1,
-              maxChildSize: _maxHeight,
-              builder:
-                  (BuildContext context, ScrollController scrollController) {
-                return GestureDetector(
-                  onVerticalDragUpdate: (details) {
-                    double delta = details.primaryDelta ?? 0;
-
-                    // Calcular la nueva altura del DraggableScrollableSheet
-                    double newHeight = _currentSheetHeight -
-                        delta / MediaQuery.of(context).size.height;
-                    if (newHeight > _maxHeight) {
-                      newHeight = _maxHeight;
-                    } else if (newHeight <= 0.1) {
-                      newHeight = 0.1;
-                    }
-
-                    setState(() {
-                      _currentSheetHeight = newHeight;
-                    });
-                  },
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(24),
-                        topRight: Radius.circular(24),
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Container(
-                            width: 40,
-                            height: 5,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(10),
+              Positioned.fill(
+                child: DraggableScrollableSheet(
+                  initialChildSize: _currentSheetHeight,
+                  minChildSize: 0.1,
+                  maxChildSize: _maxHeight,
+                  builder: (BuildContext context, ScrollController scrollController) {
+                    if (_currentSheetHeight > 0.75) {
+                      _currentSheetHeight = 0.1;
+                      WidgetsBinding.instance!.addPostFrameCallback((_) {
+                        _controladorPresentacion.mostrarActividadesDisponibles(context, _actividades,);
+                        updateActivities(lastPosition, 16);
+                      });
+                      return Container();
+                    } else {
+                      return GestureDetector(
+                        onVerticalDragUpdate: (details) {
+                          double delta = details.primaryDelta ?? 0;
+                          double newHeight = _currentSheetHeight - delta / MediaQuery.of(context).size.height;
+                          if (newHeight > _maxHeight) {
+                            newHeight = _maxHeight;
+                          } else if (newHeight <= 0.1) {
+                            newHeight = 0.1;
+                          }
+                          setState(() {
+                            _currentSheetHeight = newHeight;
+                          });
+                        },
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(24),
+                              topRight: Radius.circular(24),
                             ),
                           ),
-                        ),
-                        GestureDetector(
-                          onVerticalDragUpdate: (details) {},
-                          child: Text(
-                            "available_activities".trWithArg(
-                                context, {"number": _actividades.length}),
-                            style: const TextStyle(
-                              color: Color(0xFFF4692A),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: ListView(
-                            controller: scrollController,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              SizedBox(
-                                height: 750,
-                                child: ListaActividadesDisponibles(
-                                  actividades: _actividades,
-                                  controladorPresentacion:
-                                      _controladorPresentacion,
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Container(
+                                  width: 40,
+                                  height: 5,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[300],
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                "available_activities".trWithArg(context, {"number": _actividades.length}),
+                                style: const TextStyle(
+                                  color: Color(0xFFF4692A),
+                                ),
+                              ),
+                              Expanded(
+                                child: ListView(
+                                  controller: scrollController,
+                                  children: [
+                                    SizedBox(
+                                      height: 750,
+                                      child: ListaActividadesDisponibles(
+                                        actividades: _actividades,
+                                        controladorPresentacion: _controladorPresentacion,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
+                      ),
+                  );
+                }
               },
             ),
           ),

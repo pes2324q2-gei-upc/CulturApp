@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:culturapp/domain/converters/notificacions.dart';
 import 'package:culturapp/domain/models/bateria.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
@@ -13,6 +14,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:barcode_widget/barcode_widget.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class VistaVerActividad extends StatefulWidget {
@@ -46,6 +49,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
   late List<String> infoActividad;
   late Uri uriActividad;
+  final _formKey = GlobalKey<FormState>();
+  final _codeControler = TextEditingController();
 
   bool mostrarDescripcionCompleta = false;
 
@@ -66,6 +71,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   Bateria bat1 = Bateria();
   Bateria bat2 = Bateria();
   List<Bateria> bateriasDisponibles = [];
+  bool _isLoading = false;
 
   final List<String> catsAMB = [
     "Residus",
@@ -138,6 +144,151 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     );
   }
 
+  Future<void> requestCameraPermission() async {
+    var status = await Permission.camera.status;
+    if (!status.isGranted) {
+      await Permission.camera.request();
+    }
+  }
+
+  void mostrarEscaneoQR() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(20),
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.625,
+            height: MediaQuery.of(context).size.height * 0.55,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                  const Text(
+                    'Participa en la actividad y obten recompensas exclusivas!',
+                    textAlign: TextAlign.justify,
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    icon:
+                        const Icon(Icons.qr_code_scanner, color: Colors.white),
+                    label: const Text('Escanear QR'),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.deepPurpleAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(32),
+                      ),
+                      minimumSize: const Size(double.infinity, 36),
+                    ),
+                    onPressed: () async {
+                      await requestCameraPermission();
+                      ScanResult qrResult = await BarcodeScanner.scan();
+                      String qrResultString = qrResult.rawContent;
+                      if (qrResultString.toString() == infoActividad[1]) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('¡Gracias por participar!'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                        _controladorPresentacion
+                            .addParticipant(infoActividad[1]);
+                        setState(() {
+                          estaApuntado = true;
+                        });
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'QR no escaneado o no coincidente con la actividad.',
+                              textAlign: TextAlign.justify,
+                            ),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        Navigator.of(context).pop();
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'También puedes introducir el código de la actividad manualmente:',
+                    textAlign: TextAlign.justify,
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  Form(
+                    key: _formKey,
+                    child: TextFormField(
+                      controller: _codeControler,
+                      minLines: 1,
+                      maxLines: 1,
+                      decoration: const InputDecoration(
+                        labelText: "Introduce el código",
+                      ),
+                      validator: (value) => value!.isEmpty
+                          ? 'Por favor, introduce un código'
+                          : null,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState != null &&
+                            _formKey.currentState!.validate()) {
+                          _participar();
+                        }
+                      },
+                      child: Text("send".tr(context)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _participar() {
+    if (_codeControler.text == infoActividad[1]) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('¡Gracias por participar!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      _controladorPresentacion.addParticipant(infoActividad[1]);
+      setState(() {
+        estaApuntado = true;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'El código no es coincidente con la actividad.',
+            textAlign: TextAlign.justify,
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+    Navigator.of(context).pop();
+  }
+
   double calcularDistancia(double lat1, double lon1, double lat2, double lon2) {
     var p = 0.017453292519943295;
     var c = cos;
@@ -147,7 +298,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     return 12742 * asin(sqrt(a));
   }
 
-  void calculaBateriasCercanas() {
+  Future<void> calculaBateriasCercanas() async {
     double latitud = double.parse(infoActividad[8]);
     double longitud = double.parse(infoActividad[9]);
 
@@ -207,69 +358,81 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: AlertDialog(
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () async {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Row(
+        return FutureBuilder(
+          future: calculaBateriasCercanas(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              return SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: AlertDialog(
+                  content: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 7.0),
-                          child: Image.asset(
-                            'assets/categoriabateria.png',
-                            height: 50.0,
-                            width: 50.0,
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                            },
                           ),
                         ),
-                        const SizedBox(width: 10.0),
-                        const Text(
-                          'Carregadors propers:',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 7.0),
+                                child: Image.asset(
+                                  'assets/categoriabateria.png',
+                                  height: 50.0,
+                                  width: 50.0,
+                                ),
+                              ),
+                              const SizedBox(width: 10.0),
+                              const Text(
+                                'Carregadors propers:',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
+                        ...bateriasCerca
+                            .where(
+                                (bateria) => isStreetAddress(bateria.address))
+                            .map((bateria) => Padding(
+                                  padding: const EdgeInsets.only(
+                                    bottom: 5.0,
+                                  ), // Agrega un espacio en la parte inferior
+                                  child: SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.8, // 80% del ancho de la pantalla
+                                    child: bateriaBox(
+                                        adress: bateria.address,
+                                        kw: bateria.kw,
+                                        speed: bateria.speed,
+                                        distancia: bateria.distancia,
+                                        latitud: bateria.latitud,
+                                        longitud: bateria.longitud),
+                                  ),
+                                ))
+                            .toList(),
                       ],
                     ),
                   ),
-                  ...bateriasCerca
-                      .where((bateria) => isStreetAddress(bateria.address))
-                      .map((bateria) => Padding(
-                            padding: const EdgeInsets.only(
-                              bottom: 5.0,
-                            ), // Agrega un espacio en la parte inferior
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width *
-                                  0.8, // 80% del ancho de la pantalla
-                              child: bateriaBox(
-                                  adress: bateria.address,
-                                  kw: bateria.kw,
-                                  speed: bateria.speed,
-                                  distancia: bateria.distancia,
-                                  latitud: bateria.latitud,
-                                  longitud: bateria.longitud),
-                            ),
-                          ))
-                      .toList(),
-                ],
-              ),
-            ),
-          ),
+                ),
+              );
+            }
+          },
         );
       },
     );
@@ -279,104 +442,142 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   Widget build(BuildContext context) {
     _controladorPresentacion
         .getForo(infoActividad[1]); //verificar que tenga un foro
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF4692A),
-        title: Text("Activity".tr(context)),
-        centerTitle: true, // Centrar el título
-        toolbarHeight: 50.0,
-        titleTextStyle: const TextStyle(
-          color: Colors.white,
-          fontSize: 20.0,
-        ),
-        iconTheme: const IconThemeData(
-          color: Colors.white, // Cambia el color de la flecha de retroceso
-        ),
-        actions: <Widget>[
-          PopupMenuButton<String>(
-            onSelected: (String result) {
-              if (result == 'Enviar solicitud de organizador') {
-                _controladorPresentacion.mostrarSolicitutOrganitzador(
-                    context, infoActividad[0], infoActividad[1]);
-              } else if (result == 'view_qr') {
-                mostrarQR();
-              }
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
-                value: 'Enviar solicitud de organizador',
-                child: Text('Enviar solicitud de organizador'),
+    return _isLoading
+        ? Center(
+            child: CircularProgressIndicator(
+            color: const Color(0xFFF4692A),
+            backgroundColor: Colors.white,
+          ))
+        : Scaffold(
+            appBar: AppBar(
+              backgroundColor: const Color(0xFFF4692A),
+              title: Text("Activity".tr(context)),
+              centerTitle: true, // Centrar el título
+              toolbarHeight: 50.0,
+              titleTextStyle: const TextStyle(
+                color: Colors.white,
+                fontSize: 20.0,
               ),
-              if (!organizador)
-                const PopupMenuItem<String>(
-                  value: 'scan_qr',
-                  child: Text('Escanear QR'),
+              iconTheme: const IconThemeData(
+                color:
+                    Colors.white, // Cambia el color de la flecha de retroceso
+              ),
+              actions: <Widget>[
+                PopupMenuButton<String>(
+                  onSelected: (String result) {
+                    if (result == 'Enviar solicitud de organizador') {
+                      _controladorPresentacion.mostrarSolicitutOrganitzador(
+                          context, infoActividad[0], infoActividad[1]);
+                    } else if (result == 'share_act') {
+                      if (infoActividad[5] == infoActividad[6] &&
+                          infoActividad[7] != 'No disponible') {
+                        Share.share(
+                          ' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} el dia ${infoActividad[5]} en ${infoActividad[7]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ',
+                          subject: 'Actividad cultural: ${infoActividad[0]}',
+                        );
+                      } else if (infoActividad[5] != infoActividad[6] &&
+                          infoActividad[7] != 'No disponible') {
+                        Share.share(
+                          ' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} del dia ${infoActividad[5]} hasta el dia ${infoActividad[6]} en ${infoActividad[7]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ',
+                          subject: 'Actividad cultural: ${infoActividad[0]}',
+                        );
+                      } else if (infoActividad[5] != infoActividad[6] &&
+                          infoActividad[7] == 'No disponible') {
+                        Share.share(
+                          ' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} del dia ${infoActividad[5]} hasta el dia ${infoActividad[6]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ',
+                          subject: 'Actividad cultural: ${infoActividad[0]}',
+                        );
+                      } else if (infoActividad[5] == infoActividad[6] &&
+                          infoActividad[7] == 'No disponible') {
+                        Share.share(
+                          ' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} el dia ${infoActividad[5]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ',
+                          subject: 'Actividad cultural: ${infoActividad[0]}',
+                        );
+                      }
+                    }
+                  },
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<String>>[
+                    const PopupMenuItem<String>(
+                      value: 'Enviar solicitud de organizador',
+                      child: Text('Enviar solicitud de organizador'),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: 'share_act',
+                      child: Text('Compartir'),
+                    ),
+                  ],
                 ),
-              if (organizador)
-                const PopupMenuItem<String>(
-                  value: 'view_qr',
-                  child: Text('Mostrar QR'),
-                ),
-            ],
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              children: [
-                _imagenActividad(infoActividad[3]), //Accedemos imagenUrl
-                _tituloBoton(
-                    infoActividad[0],
-                    infoActividad[
-                        2]), //Accedemos al nombre de la actividad y su categoria
-                const SizedBox(height: 10),
-                _descripcioActividad(
-                    infoActividad[4]), //Accedemos su descripcion
-                _expansionDescripcion(),
-                _infoActividad(infoActividad[7], infoActividad[5],
-                    infoActividad[6], infoActividad[2], uriActividad),
-                _foro(),
-              ], //Accedemos ubicación, dataIni, DataFi, uri actividad
+              ],
             ),
-          ),
-          Padding(
-              padding: const EdgeInsets.all(8.0),
-              //barra para añadir mensajes
-              child: reply == false
-                  ? PostWidget(
-                      addPost: (foroId, mensaje, fecha, numeroLikes) async {
-                        await _controladorPresentacion.addPost(
-                            foroId, mensaje, fecha, numeroLikes);
+            body: Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    children: [
+                      _imagenActividad(infoActividad[3]), //Accedemos imagenUrl
+                      _tituloBoton(
+                          infoActividad[0],
+                          infoActividad[
+                              2]), //Accedemos al nombre de la actividad y su categoria
+                      const SizedBox(height: 10),
+                      _descripcioActividad(
+                          infoActividad[4]), //Accedemos su descripcion
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 5.0),
+                      ),
+                      _expansionDescripcion(),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 5.0),
+                      ),
+                      _infoActividad(infoActividad[7], infoActividad[5],
+                          infoActividad[6], infoActividad[2], uriActividad),
+                      _foro(),
+                    ], //Accedemos ubicación, dataIni, DataFi, uri actividad
+                  ),
+                ),
+                Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    //barra para añadir mensajes
+                    child: reply == false
+                        ? PostWidget(
+                            addPost:
+                                (foroId, mensaje, fecha, numeroLikes) async {
+                              await _controladorPresentacion.addPost(
+                                  foroId, mensaje, fecha, numeroLikes);
 
-                        // Actualitza el llistat de posts
-                        setState(() {
-                          posts = _controladorPresentacion.getPostsForo(idForo);
-                        });
-                      },
-                      activitat: infoActividad[1],
-                      controladorPresentacion: _controladorPresentacion,
-                    )
-                  : ReplyWidget(
-                      addReply: (foroId, postIden, mensaje, fecha,
-                          numeroLikes) async {
-                        await _controladorPresentacion.addReplyPost(
-                            foroId, postIden, mensaje, fecha, numeroLikes);
+                              // Actualitza el llistat de posts
+                              setState(() {
+                                posts = _controladorPresentacion
+                                    .getPostsForo(idForo);
+                              });
+                            },
+                            activitat: infoActividad[1],
+                            controladorPresentacion: _controladorPresentacion,
+                          )
+                        : ReplyWidget(
+                            addReply: (foroId, postIden, mensaje, fecha,
+                                numeroLikes) async {
+                              await _controladorPresentacion.addReplyPost(
+                                  foroId,
+                                  postIden,
+                                  mensaje,
+                                  fecha,
+                                  numeroLikes);
 
-                        // Actualitza el llistat de replies
-                        setState(() {
-                          replies = _controladorPresentacion.getReplyPosts(
-                              idForo, postIden);
-                          reply = false;
-                        });
-                      },
-                      foroId: idForo,
-                      postId: postIden,
-                    )),
-        ],
-      ),
-    );
+                              // Actualitza el llistat de replies
+                              setState(() {
+                                replies = _controladorPresentacion
+                                    .getReplyPosts(idForo, postIden);
+                                reply = false;
+                              });
+                            },
+                            foroId: idForo,
+                            postId: postIden,
+                          )),
+              ],
+            ),
+          );
   }
 
   Widget _imagenActividad(String imagenUrl) {
@@ -433,7 +634,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
-              child: _retornaIcon(categoriaActividad),
+              child: _retornaIcon(categoriaActividad.split(',')[0]),
             ),
             Expanded(
               child: Text(
@@ -470,9 +671,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       child: Text(
         descripcionActividad,
         style: const TextStyle(
-          fontSize: 16,
+          fontSize: 14,
         ),
-        maxLines: mostrarDescripcionCompleta ? null : 2,
+        maxLines: mostrarDescripcionCompleta ? null : 4,
         overflow: mostrarDescripcionCompleta ? null : TextOverflow.ellipsis,
         textAlign: TextAlign.justify,
       ),
@@ -489,6 +690,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       child: Container(
         alignment: Alignment.center,
         margin: const EdgeInsets.symmetric(horizontal: 16.0),
+        padding: const EdgeInsets.only(bottom: 5.0),
         child: Text(
           mostrarDescripcionCompleta
               ? 'see_less'.tr(context)
@@ -505,13 +707,15 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       String categorias, Uri urlEntrades) {
     return Container(
       color: Colors.grey.shade200,
+      padding: const EdgeInsets.only(top: 10.0),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(children: [
           const Padding(padding: EdgeInsets.only(top: 5)),
           _getIconPlusTexto('ubicacion', ubicacion),
-          _getIconPlusTexto('calendario', 'DataIni: $dataIni'),
-          _getIconPlusTexto('calendario', 'DataFi: $dataFi'),
+          _getIconPlusTexto('calendario', '$dataIni'),
+          if (dataIni != dataFi) _getIconPlusTexto('calendario', '$dataFi'),
+          _getIconPlusTexto('categoria', categorias),
           Row(
             children: [
               const Icon(Icons.local_atm),
@@ -525,15 +729,14 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                     'Informació Entrades',
                     style: TextStyle(
                       decoration: TextDecoration.underline,
-                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
                     ),
                   ),
                 ),
               ),
             ],
           ),
-          _getIconPlusTexto('categoria', categorias),
-          const Padding(padding: EdgeInsets.only(bottom: 3)),
+          const Padding(padding: EdgeInsets.only(bottom: 2)),
           Row(
             children: [
               Expanded(
@@ -581,7 +784,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                       onPressed: () {
                         if (organizador) {
                           mostrarQR();
-                        } else {}
+                        } else {
+                          mostrarEscaneoQR();
+                        }
                       },
                       child: FittedBox(
                         child: Row(
@@ -589,7 +794,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                           children: [
                             const Icon(Icons.qr_code, color: Colors.white),
                             const SizedBox(width: 8),
-                            Text(organizador ? 'Mostrar QR' : 'Escanear QR'),
+                            Text(organizador
+                                ? 'Mostrar QR'
+                                : 'Participar en la actividad'),
                           ],
                         ),
                       ),
@@ -599,7 +806,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
               ),
             ],
           ),
-          const Padding(padding: EdgeInsets.only(bottom: 5)),
+          const Padding(padding: EdgeInsets.only(bottom: 7.5)),
         ]),
       ),
     );
@@ -622,9 +829,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             (texto.split(', ')).map((categoria) {
           return '${categoria[0].toUpperCase()}${categoria.substring(1)}';
         }).toList();
-
         texto = listaCategoriasMayusculas.join(', ');
-
         break;
     }
 
@@ -632,7 +837,10 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       children: [
         icono,
         const Padding(padding: EdgeInsets.only(right: 7.5)),
-        Text(texto, style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text(
+          texto,
+          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+        ),
       ],
     );
   }
@@ -1084,35 +1292,18 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     );
   }
 
-  Widget _buildPopUpMenuNotBlocked(BuildContext context, Post post, bool reply,
-      String username, String date) {
-    String owner = _controladorPresentacion.getUsername();
+  Widget _buildPopUpMenuNotBlocked(
+      BuildContext context, Post post, bool reply, String owner, String date) {
     String userLogged = _controladorPresentacion.getUsername();
-    if (owner == username) {
+    if (owner == userLogged) {
       return _buildPopupMenu([
         (reply) ? "delete_reply".tr(context) : "delete_post".tr(context),
-      ], context, post, reply, username, date);
+      ], context, post, reply, owner, date);
     } else {
       return _buildPopupMenu([
         "block_user".tr(context),
         "report_user".tr(context),
-      ], context, post, reply, username, date);
-    }
-  }
-
-  //Lo dejo pero seguramente se tendrá que mover
-  Widget _buildPopUpMenuBloqued(BuildContext context, Post post, bool reply,
-      String username, String date) {
-    String owner = _controladorPresentacion.getUsername();
-    if (owner == username) {
-      return _buildPopupMenu([
-        "report_user".tr(context),
-        (reply) ? "delete_reply".tr(context) : "delete_post".tr(context),
-      ], context, post, reply, username, date);
-    } else {
-      return _buildPopupMenu([
-        "report_user".tr(context),
-      ], context, post, reply, username, date);
+      ], context, post, reply, owner, date);
     }
   }
 
@@ -1161,13 +1352,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
               final bool? confirm = await confirmPopUp(
                   "confirm_block_user".trWithArg(context, {"user": username}));
               if (confirm == true) {
-                //_controladorPresentacion.blockUser(username);
-              }
-            } else if (value == "unblock_user".tr(context)) {
-              final bool? confirm = await confirmPopUp("confirm_unblock_user"
-                  .trWithArg(context, {"user": username}));
-              if (confirm == true) {
-                //_controladorPresentacion.reportUser(code, username);
+                _controladorPresentacion.blockUser(username);
               }
             } else if (value == "report_user".tr(context)) {
               final bool? confirm = await confirmPopUp(
@@ -1214,11 +1399,15 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   }
 
   void checkApuntado(String uid, List<String> infoactividad) async {
+    setState(() {
+      _isLoading = true;
+    });
     bool apuntado =
         await controladorDominio.isUserInActivity(uid, infoactividad[1]);
     if (mounted) {
       setState(() {
         estaApuntado = apuntado;
+        _isLoading = false;
       });
     }
   }

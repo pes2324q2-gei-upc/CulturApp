@@ -1,9 +1,13 @@
+import 'dart:ffi';
+
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/bateria.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/grup.dart';
 import 'package:culturapp/domain/models/message.dart';
 import 'package:culturapp/domain/models/usuari.dart';
+import 'package:culturapp/presentacio/llistar_bloqued.dart';
+import 'package:culturapp/presentacio/screens/actividades_disponibles.dart';
 import 'package:culturapp/presentacio/screens/edit_perfil.dart';
 import 'package:culturapp/presentacio/screens/llistar_follows.dart';
 import 'package:culturapp/presentacio/screens/llistar_pendents.dart';
@@ -54,6 +58,7 @@ class ControladorPresentacion {
   late List<String> actividadesValoradas;
   late List<String> actividadesOrganizadas;
   late List<Bateria> bateriasDispo;
+  late List<String> blockedUsers;
 
   void funcLogout() async {
     _auth.signOut();
@@ -90,6 +95,7 @@ class ControladorPresentacion {
           calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
       usersBD.removeWhere((usuario) => friends.contains(usuario.username));
       bateriasDispo = await controladorDomini.getBateries();
+      blockedUsers = await controladorDomini.getBlockedUsers();
     }
   }
 
@@ -277,6 +283,22 @@ class ControladorPresentacion {
     return await controladorDomini.getRequestsUser();
   }
 
+  List<String> getBlockedUsers() {
+    return blockedUsers;
+  }
+
+  void addBlockedUser(String user) {
+    blockedUsers.add(user);
+  }
+
+  void removeBlockedUser(String user) {
+    blockedUsers.remove(user);
+  }
+
+  bool isBlockedUser(String user) {
+    return blockedUsers.contains(user);
+  }
+
   Future<void> acceptFriend(String person) async {
     await controladorDomini.acceptFriend(person);
   }
@@ -307,6 +329,22 @@ class ControladorPresentacion {
       String placeReport) async {
     return await controladorDomini.sendReportUser(
         titol, userReported, report, placeReport);
+  }
+
+  Future<void> addParticipant(String idActivity) async {
+    await controladorDomini.addParticipant(idActivity);
+  }
+
+  Future<void> blockUser(String user) async {
+    await controladorDomini.blockUser(user);
+    addBlockedUser(user);
+    deleteFriend(user);
+    deleteFollowing(user);
+  }
+
+  Future<void> unblockUser(String user) async {
+    await controladorDomini.unblockUser(user);
+    removeBlockedUser(user);
   }
 
   void mostrarVerActividad(
@@ -397,6 +435,19 @@ class ControladorPresentacion {
               builder: (context) => ListaMisActividades(
                 controladorPresentacion: this,
                 user: _user,
+              ),
+            ),
+          )
+        });
+  }
+
+    Future<void> mostrarActividadesDisponibles(BuildContext context, List<Actividad> acts) async {
+    getUserActivs().then((actividades) => {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Actsdisponibles(
+                controladorPresentacion: this, mapActs: acts,
               ),
             ),
           )
@@ -690,6 +741,7 @@ class ControladorPresentacion {
   }
 
   void mostrarPendents(BuildContext context) {
+    List<String>users;
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -737,6 +789,15 @@ class ControladorPresentacion {
     );
   }
 
+  void mostrarBlockedUsers(BuildContext context) {
+      Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LlistarBlocked(controladorPresentacion: this),
+      ),
+    );
+  }
+
   Future<void> _loadLanguage() async {
     final prefs = await SharedPreferences.getInstance();
     final languageCode = prefs.getString('languageCode');
@@ -750,6 +811,18 @@ class ControladorPresentacion {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('languageCode', lang!.languageCode);
     _loadLanguage();
+  }
+
+  Future<bool> checkPrivacy(String uid) async {
+    return controladorDomini.checkPrivacy(uid);
+  }
+
+  void changePrivacy(String uid, bool privat) {
+    controladorDomini.changePrivacy(uid, privat);
+  }
+
+  Future<bool> isFriend(String nom) {
+    return controladorDomini.isFriend(nom);
   }
 
   /*Future<List<String>> obteAmics() async {
