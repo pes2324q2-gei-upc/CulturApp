@@ -17,7 +17,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   final controladorPresentacion = ControladorPresentacion();
-  //controladorPresentacion.funcLogout();
+
   User? currentUser = FirebaseAuth.instance.currentUser;
   await controladorPresentacion.initialice2();
   if (currentUser != null) {
@@ -60,15 +60,18 @@ class MyApp extends StatelessWidget {
   const MyApp(
       {Key? key,
       required this.controladorPresentacion,
-      required this.currentUser})
+      this.currentUser})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: currentUser != null
-          ? controladorPresentacion.initialice2()
-          : controladorPresentacion.initialice(),
+          ? Future.wait([
+              controladorPresentacion.initialice(),
+              controladorPresentacion.initialice2(),
+            ])
+          : controladorPresentacion.initialice2(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return MaterialApp(

@@ -138,10 +138,11 @@ class _SignupState extends State<Signup> {
               Container(
                   padding: const EdgeInsets.only(top: 3, left: 3),
                   child: ElevatedButton(
-                    onPressed: () {
-                      createUser();
+                  onPressed: () {
+                    createUser().then((_) {
                       _controladorPresentacion.mostrarMapa(context);
-                    },
+                    });
+                  },
                     style: ElevatedButton.styleFrom(
                       shape: const StadiumBorder(),
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -175,13 +176,12 @@ class _SignupState extends State<Signup> {
     }
 
     if (await _controladorPresentacion.usernameUnique(usernameController.text)) {
-      await _controladorPresentacion.createUser(usernameController.text, selectedCategories, context);
-      await _controladorPresentacion.initialice2();
-      await _controladorPresentacion.initialice();
-
       setState(() {
         _isLoading = false;
       });
+      await _controladorPresentacion.createUser(usernameController.text, selectedCategories, context);
+      await _controladorPresentacion.initialice2();
+      await _controladorPresentacion.initialice();
     }
     else {
       final scaffoldMessenger = ScaffoldMessenger.of(context);

@@ -60,7 +60,7 @@ class ControladorPresentacion {
   late List<Bateria> bateriasDispo;
   late List<String> blockedUsers;
 
-  void funcLogout() async {
+  Future<void> funcLogout() async {
     _auth.signOut();
     final GoogleSignIn googleSignIn = GoogleSignIn();
     await googleSignIn.signOut();
@@ -84,7 +84,7 @@ class ControladorPresentacion {
       activitats = await controladorDomini.getActivitiesAgenda();
       activitatsUser =
           await controladorDomini.getUserActivities(usernameLogged);
-      actividadesVencidas = await controladorDomini.getActivitiesVencudes();
+      actividadesVencidas = await controladorDomini.getActivitiesVencudes() ?? [];
       actividadesOrganizadas =
           await controladorDomini.obteActivitatsOrganitzades(_user!.uid);
       usersBD = await controladorDomini.getUsers();
