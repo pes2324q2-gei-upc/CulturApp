@@ -48,9 +48,11 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
     });
   }
 
-  void actualitzarInfoGrup() async {
+  Future<void> actualitzarInfoGrup() async {
     Grup g = await _controladorPresentacion.getInfoGrup(_grup.id);
-    _grup.imageGroup = g.imageGroup;
+    setState(() {
+      _grup.imageGroup = g.imageGroup;
+    });
   }
 
   void assignarImatge() async {
@@ -149,22 +151,27 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
   }
 
   Widget _imatgeNoEditant() {
-    return _grup.imageGroup.isNotEmpty
-    ? ClipOval(
-        child: Image(
-          image: NetworkImage(_grup.imageGroup),
-              fit: BoxFit.cover,
-              width: 70.0,
-              height: 70.0,
+    return _image != null 
+      ? CircleAvatar(
+          backgroundImage: MemoryImage(_image!),
+          radius: 40,
         )
-      )
-    : const Image(
-      image: AssetImage(
-          'assets/userImage.png'), 
-      fit: BoxFit.fill,
-      width: 70.0,
-      height: 70.0,
-    );
+        : _grup.imageGroup.isNotEmpty
+          ? ClipOval(
+            child: Image(
+              image: NetworkImage(_grup.imageGroup),
+                  fit: BoxFit.cover,
+                  width: 70.0,
+                  height: 70.0,
+            )
+          )
+          : const Image(
+            image: AssetImage(
+                'assets/userImage.png'), 
+            fit: BoxFit.fill,
+            width: 70.0,
+            height: 70.0,
+          );
   }
 
   Widget _imatgeEditant() {
@@ -404,7 +411,6 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
       ),
       onPressed: () {
         canviarEstat();
-        actualitzarInfoGrup();
       },
       child: Icon(estaEditant ? Icons.check : Icons.format_paint_rounded),
     );
