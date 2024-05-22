@@ -48,11 +48,11 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
     });
   }
 
-  Future<void> actualitzarInfoGrup() async {
-    Grup g = await _controladorPresentacion.getInfoGrup(_grup.id);
-    setState(() {
-      _grup.imageGroup = g.imageGroup;
-    });
+  void actualitzarInfoGrup() async {
+    //Grup g = await _controladorPresentacion.getInfoGrup(_grup.id);
+    //setState(() {
+      //_grup.imageGroup = g.imageGroup;
+    //});
   }
 
   void assignarImatge() async {
@@ -131,7 +131,6 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
   }
 
   Widget _buildImatge() {
-    actualitzarInfoGrup();
     return Column(
       children: [
         Text(
@@ -151,6 +150,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
   }
 
   Widget _imatgeNoEditant() {
+    //actualitzarInfoGrup();
     return _image != null 
       ? CircleAvatar(
           backgroundImage: MemoryImage(_image!),

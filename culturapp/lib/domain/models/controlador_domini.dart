@@ -882,7 +882,7 @@ class ControladorDomini {
   void addMessage(String? xatId, String time, String text) async {
     try {
       final url =
-          Uri.parse('http://${ip}:8080/xats/$xatId/mensajes');
+          Uri.parse('https://culturapp-back.onrender.com/xats/$xatId/mensajes');
       final response = await http.post(
         url,
         headers: {
@@ -905,7 +905,7 @@ class ControladorDomini {
   Future<List<Message>> getMessages(String? xatId) async {
     try {
       final response = await http.get(Uri.parse(
-          'http://${ip}:8080/xats/$xatId/mensajes'));
+          'https://culturapp-back.onrender.com/xats/$xatId/mensajes'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -929,7 +929,7 @@ class ControladorDomini {
   Future<List<Grup>> getUserGrups() async {
     try {
       final response = await http.get(
-        Uri.parse('http://${ip}:8080/grups/users/all'),
+        Uri.parse('https://culturapp-back.onrender.com/grups/users/all'),
         headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
         },
@@ -962,7 +962,7 @@ class ControladorDomini {
   Future<Grup> getInfoGrup(String grupId) async {
     try {
       final response = await http
-          .get(Uri.parse('http://${ip}:8080/grups/$grupId'));
+          .get(Uri.parse('https://culturapp-back.onrender.com/grups/$grupId'));
 
       if (response.statusCode == 200) {
         final dynamic data = json.decode(response.body);
@@ -995,7 +995,7 @@ class ControladorDomini {
         'members':  membersJson
       };
 
-      var request = http.MultipartRequest('POST', Uri.parse('http://${ip}:8080/grups/create'));
+      var request = http.MultipartRequest('POST', Uri.parse('https://culturapp-back.onrender.com/grups/create'));
       request.headers['Authorization'] = 'Bearer ${userLogged.getToken()}';
 
       // Add each key-value pair from grupData as a form field
@@ -1035,7 +1035,7 @@ class ControladorDomini {
         'members': membersJson
       };
 
-      var request = http.MultipartRequest('PUT', Uri.parse('http://${ip}:8080/grups/$grupId/update'));
+      var request = http.MultipartRequest('PUT', Uri.parse('https://culturapp-back.onrender.com/grups/$grupId/update'));
 
       // Add each key-value pair from grupData as a form field
       grupData.forEach((key, value) {
@@ -1063,7 +1063,7 @@ class ControladorDomini {
   void addGrupMessage(String grupId, String time, String text) async {
     try {
       final url = Uri.parse(
-          'http://${ip}:8080/grups/$grupId/mensajes');
+          'https://culturapp-back.onrender.com/grups/$grupId/mensajes');
       final response = await http.post(
         url,
         headers: {
@@ -1087,7 +1087,7 @@ class ControladorDomini {
   Future<List<Message>> getGrupMessages(String grupId) async {
     try {
       final response = await http.get(Uri.parse(
-          'http://${ip}:8080/grups/$grupId/mensajes'));
+          'https://culturapp-back.onrender.com/grups/$grupId/mensajes'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
