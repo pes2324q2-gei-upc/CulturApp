@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/bateria.dart';
@@ -1088,7 +1088,7 @@ Future<List<Bateria>> getBateries() async {
     try {
       final respuesta = await http.get(
         Uri.parse(
-            'https://culturapp-back.onrender.com/xats/exists?receiverId=$receiverName'),
+            'http://${ip}:8080/xats/exists?receiver=$receiverName'),
         headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
         },
@@ -1099,10 +1099,11 @@ Future<List<Bateria>> getBateries() async {
         if (data['exists']) {
           //El xat existe, devuelve sus detalles
           return xatAmic(
-              lastMessage: data['data']['last_msg'],
-              timeLastMessage: data['data']['last_time'],
-              recieverId: data['data']['receiverId'],
-              senderId: data['data']['senderId']);
+            id: data['data']['id'],
+            lastMessage: data['data']['last_msg'],
+            timeLastMessage: data['data']['last_time'],
+            recieverId: data['data']['receiverId'],
+            senderId: data['data']['senderId']);
         } else {
           return null; //El xat no existe
         }
@@ -1139,26 +1140,6 @@ Future<List<Bateria>> getBateries() async {
     } catch (error) {
       print('Error de red: $error');
       return false;
-    }
-  }
-
-  Future<String?> getXatId(String receiver, String sender) async {
-    try {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('xats')
-          .where('receiverId', isEqualTo: receiver)
-          .where('senderId', isEqualTo: sender)
-          .limit(1)
-          .get();
-
-      if (querySnapshot.docs.isNotEmpty) {
-        return querySnapshot
-            .docs.first.id; // Devuelve el ID del primer documento
-      } else {
-        return null; // Si no se encontró ningún documento
-      }
-    } catch (error) {
-      return null; // Si ocurre algún error al obtener el ID del xat
     }
   }
 
@@ -1222,6 +1203,13 @@ Future<List<Bateria>> getBateries() async {
         final List<dynamic> data = json.decode(response.body);
         List<Grup> reply = data.map((json) => Grup.fromJson(json)).toList();
         reply.sort((b, a) => a.timeLastMessage.compareTo(b.timeLastMessage));
+        for(Grup g in reply) {
+          //funcio per agafar la imatge
+          if (g.imageGroup.isNotEmpty) {
+            String image = g.imageGroup.substring(6);
+            g.imageGroup = "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/grups%2F" + image + "?alt=media";
+          }
+        }
         return reply;
       } else if (response.statusCode == 404) {
         return [];
@@ -1242,7 +1230,10 @@ Future<List<Bateria>> getBateries() async {
 
       if (response.statusCode == 200) {
         final dynamic data = json.decode(response.body);
-        Grup reply = data.map((json) => Grup.fromJson(json)).toList();
+        Grup reply = Grup.fromJson(data);  // Directly parse the JSON into Grup
+        //Grup reply = data.map((json) => Grup.fromJson(json)).toList();
+        String image = reply.imageGroup.substring(6);
+        reply.imageGroup = "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/grups%2F" + image + "?alt=media";
         return reply;
       } else if (response.statusCode == 404) {
         throw Exception('grup no existeix');
@@ -1256,24 +1247,33 @@ Future<List<Bateria>> getBateries() async {
   }
 
   //crear grup
-  void createGrup(String name, String description, String image,
-      List<String> members) async {
+  Future<void> createGrup(String name, String description,
+      List<String> members, Uint8List? fileBytes) async {
     try {
-      final Map<String, dynamic> grupata = {
+
+      String membersJson = jsonEncode(members);
+
+      final Map<String, dynamic> grupData = {
         'name': name,
         'descr': description,
-        'imatge': image,
-        'members': members
+        'members':  membersJson
       };
 
-      final respuesta = await http.post(
-        Uri.parse('https://culturapp-back.onrender.com/grups/create'),
-        body: jsonEncode(grupata),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${userLogged.getToken()}'
-        },
-      );
+      var request = http.MultipartRequest('POST', Uri.parse('https://culturapp-back.onrender.com/grups/create'));
+      request.headers['Authorization'] = 'Bearer ${userLogged.getToken()}';
+
+      // Add each key-value pair from grupData as a form field
+      grupData.forEach((key, value) {
+        request.fields[key] = value.toString();
+      });
+
+      // Add file to the request
+      if (fileBytes != null) {
+        request.files.add(http.MultipartFile.fromBytes('file', fileBytes, filename: 'image-gallery'));
+      }
+
+      var streamedResponse = await request.send();
+      var respuesta = await http.Response.fromStream(streamedResponse);
 
       if (respuesta.statusCode == 201) {
         print('Grup creado exitosamente');
@@ -1286,23 +1286,34 @@ Future<List<Bateria>> getBateries() async {
   }
 
   //actualitzar info grup
-  void updateGrup(String grupId, String name, String description, String image,
+  Future<void> updateGrup(String grupId, String name, String description, Uint8List? fileBytes,
       List<dynamic> members) async {
     try {
-      final Map<String, dynamic> grupata = {
+
+      String membersJson = jsonEncode(members);
+
+      final Map<String, dynamic> grupData = {
         'name': name,
         'descr': description,
-        'imatge': image,
-        'members': members
+        'imatge': '',
+        'members': membersJson
       };
 
-      final respuesta = await http.put(
-        Uri.parse('https://culturapp-back.onrender.com/grups/$grupId/update'),
-        body: jsonEncode(grupata),
-        headers: {'Content-Type': 'application/json'},
-      );
+      var request = http.MultipartRequest('PUT', Uri.parse('https://culturapp-back.onrender.com/grups/$grupId/update'));
 
-      if (respuesta.statusCode == 201) {
+      // Add each key-value pair from grupData as a form field
+      grupData.forEach((key, value) {
+        request.fields[key] = value.toString();
+      });
+
+       if (fileBytes != null) {
+        request.files.add(http.MultipartFile.fromBytes('file', fileBytes, filename: 'update-image-gallery'));
+      }
+
+      var streamedResponse = await request.send();
+      var respuesta = await http.Response.fromStream(streamedResponse);
+
+      if (respuesta.statusCode == 200) {
         print('Grup actualizado exitosamente');
       } else {
         print('Error al actualizar grup: ${respuesta.statusCode}');

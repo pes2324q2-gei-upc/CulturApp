@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:ffi';
 
 import 'package:culturapp/domain/models/actividad.dart';
@@ -666,6 +667,11 @@ class ControladorPresentacion {
     }
   }
 
+  Future<String> getXatId(String receiverName) async {
+    xatAmic? xat = await controladorDomini.xatExists(receiverName);
+    return xat!.id;
+  }
+
   Future<String> lastMsg(String receiverId) async {
     xatAmic? xat = await controladorDomini.xatExists(receiverId);
     return xat!.lastMessage;
@@ -677,13 +683,15 @@ class ControladorPresentacion {
   }
 
   Future<void> addXatMessage(
-      String senderId, String receiverId, String time, String text) async {
-    String? xatId = await controladorDomini.getXatId(receiverId, senderId);
+    String senderId, String receiverId, String time, String text) async {
+    xatAmic? xat = await controladorDomini.xatExists(receiverId);
+    String xatId = xat!.id;
     controladorDomini.addMessage(xatId, time, text);
   }
 
   Future<List<Message>> getXatMessages(String sender, String receiver) async {
-    String? xatId = await controladorDomini.getXatId(receiver, sender);
+    xatAmic? xat = await controladorDomini.xatExists(receiver);
+    String xatId = xat!.id;
     List<Message> missatges = await controladorDomini.getMessages(xatId);
     return missatges;
   }
@@ -694,8 +702,8 @@ class ControladorPresentacion {
   }
 
   void createGrup(
-      String name, String description, String image, List<String> members) {
-    controladorDomini.createGrup(name, description, image, members);
+      String name, String description, Uint8List? fileBytes, List<String> members) {
+    controladorDomini.createGrup(name, description, members, fileBytes);
   }
 
   Future<Grup> getInfoGrup(String grupId) async {
@@ -703,10 +711,9 @@ class ControladorPresentacion {
     return info;
   }
 
-  void updateGrup(String grupId, String name, String description, String image,
+  void updateGrup(String grupId, String name, String description, Uint8List? fileBytes,
       List<dynamic> members) {
-    //es necesari afegir el meu user al llistat de membres?
-    controladorDomini.updateGrup(grupId, name, description, image, members);
+    controladorDomini.updateGrup(grupId, name, description, fileBytes, members);
   }
 
   //el grupId esta afegit com a parametre dels grups
