@@ -712,8 +712,12 @@ class ControladorPresentacion {
   }
 
   void updateGrup(String grupId, String name, String description, Uint8List? fileBytes,
-      List<dynamic> members) {
-    controladorDomini.updateGrup(grupId, name, description, fileBytes, members);
+      List<dynamic> members, String img) {
+    controladorDomini.updateGrup(grupId, name, description, fileBytes, members, img);
+  }
+
+  void updateMembersGrup(String grupId, List<dynamic> members, ) {
+    controladorDomini.updateMembersGrup(grupId, members);
   }
 
   //el grupId esta afegit com a parametre dels grups

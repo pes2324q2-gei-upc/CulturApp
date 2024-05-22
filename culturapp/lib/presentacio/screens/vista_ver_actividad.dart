@@ -1085,7 +1085,6 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                   //fer que nomes el que l'ha creat ho pugui veure
                   _buildPopUpMenuNotBlocked(
                                 context, post, false, post.username, ''),
-                  ),
                 ],
               ),
               Padding(

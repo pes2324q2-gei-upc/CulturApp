@@ -645,7 +645,6 @@ Future<List<Bateria>> getBateries() async {
     if (response.statusCode != 200) {
       print(response.body);
     }
-
   }
 
   Future<void> blockUser(String user) async {
@@ -1287,15 +1286,20 @@ Future<List<Bateria>> getBateries() async {
 
   //actualitzar info grup
   Future<void> updateGrup(String grupId, String name, String description, Uint8List? fileBytes,
-      List<dynamic> members) async {
+      List<dynamic> members, String img) async {
     try {
 
       String membersJson = jsonEncode(members);
 
+      List<String> parts = img.split('/');
+      String image = parts.last.split('?').first;
+      image = image.substring(8);
+      image = "grups/" + image;
+
       final Map<String, dynamic> grupData = {
         'name': name,
         'descr': description,
-        'imatge': '',
+        'imatge': image,
         'members': membersJson
       };
 
@@ -1321,6 +1325,22 @@ Future<List<Bateria>> getBateries() async {
     } catch (error) {
       print('Error de red: $error');
     }
+  }
+
+  Future<void> updateMembersGrup(String grupId, List<dynamic> members) async {
+
+    final Map<String, dynamic> grupData = {
+      'members': members
+    };
+
+    final response = await http.put( Uri.parse('http://$ip:8080/grups/$grupId/members'),
+          headers: {
+                'Content-Type': 'application/json',
+              },
+          body: jsonEncode(grupData)
+    );
+
+    if (response.statusCode != 200) throw Exception('Error al actualitzar el membres del grup');
   }
 
   //afegir missatge al grup

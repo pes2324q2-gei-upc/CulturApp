@@ -42,7 +42,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
       //si passa de editar a no editar es cridaria la funció de update grup per modificar-lo
       if (estaEditant) {
         _controladorPresentacion.updateGrup(_grup.id, _grup.nomGroup,
-            _grup.descripcio, _image, _grup.membres);
+            _grup.descripcio, _image, _grup.membres, _grup.imageGroup);
         //crida a funcio del back per fer un update de _grup amb els nous parametres
       } 
       estaEditant = !estaEditant;
