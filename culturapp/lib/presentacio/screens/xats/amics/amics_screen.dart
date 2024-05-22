@@ -1,4 +1,5 @@
 import "package:culturapp/domain/converters/convert_date_format.dart";
+import "package:culturapp/domain/converters/truncar_string.dart";
 import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/translations/AppLocalizations";
@@ -17,33 +18,37 @@ class AmicsScreen extends StatefulWidget {
 
 class _AmicsScreenState extends State<AmicsScreen> {
   late ControladorPresentacion _controladorPresentacion;
-  late List<Usuari> llista_amics;
-  late List<Usuari> display_list;
+  late List<Usuari> llista_amics = [];
+  late List<Usuari> displayList = [];
+  bool _isDisposed = false;
 
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
+  Color taronjaVermellos = const Color(0xFFF4692A);
+  Color taronjaVermellosFluix = const Color.fromARGB(199, 250, 141, 90);
 
   String mockImage = 'assets/userImage.png';
 
   _AmicsScreenState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
-    llista_amics = [];
+
     _loadFriends();
     //crida a backend per agafar tots els amics de l'usuari
-    display_list = List.from(llista_amics);
   }
 
   String value = '';
 
   void updateList(String value) {
     //funcio on es filtrarà la nostra llista(cercador)
-    setState(
-      () {
-        display_list = llista_amics
-            .where((element) =>
-                element.nom.toLowerCase().contains(value.toLowerCase()))
-            .toList();
-      },
-    );
+    if (!_isDisposed) {
+      setState(
+        () {
+          displayList = llista_amics
+              .where((element) =>
+                  element.nom.toLowerCase().contains(value.toLowerCase()))
+              .toList();
+        },
+      );
+    }
   }
 
   Future<List<Usuari>> convertirStringEnUsuari(List<String> llistaNoms) async {
@@ -64,19 +69,26 @@ class _AmicsScreenState extends State<AmicsScreen> {
 
     llista_amics = await convertirStringEnUsuari(llistaNoms);
 
-    setState(() {
-      display_list = List.from(llista_amics);
-    });
+    if (!_isDisposed) {
+      setState(() {
+        displayList = List.from(llista_amics);
+      });
+    }
   }
 
   Future<String> agafarLastMessage(Usuari amic) async {
-    String msg = await _controladorPresentacion.lastMsg(amic.nom);
-    return msg;
+    return await _controladorPresentacion.lastMsg(amic.nom);
   }
 
   Future<String> agafarTimeLastMessage(Usuari amic) async {
     String time = await _controladorPresentacion.lasTime(amic.nom);
     return convertTimeFormat(time);
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
   }
 
   @override
@@ -93,7 +105,7 @@ class _AmicsScreenState extends State<AmicsScreen> {
         color: grisFluix,
         height: 470.0,
         child: ListView.builder(
-          itemCount: display_list.length,
+          itemCount: displayList.length,
           itemBuilder: (context, index) => _buildAmic(context, index),
         ),
       )
@@ -110,7 +122,7 @@ class _AmicsScreenState extends State<AmicsScreen> {
       ),
       decoration: InputDecoration(
         filled: true,
-        fillColor: const Color.fromRGBO(240, 186, 132, 1),
+        fillColor: taronjaVermellosFluix,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
           borderSide: BorderSide.none,
@@ -125,15 +137,6 @@ class _AmicsScreenState extends State<AmicsScreen> {
     );
   }
 
-  Future<String>? convertToNullableFutureString(String? inputString) {
-    if (inputString != null) {
-      // Simulate an asynchronous operation with a delay of 0 milliseconds
-      return Future.delayed(Duration.zero, () => inputString);
-    } else {
-      return null;
-    }
-  }
-
   Widget _buildAmic(context, index) {
     //crida per getUsuari
 
@@ -141,37 +144,37 @@ class _AmicsScreenState extends State<AmicsScreen> {
       onTap: () {
         //anar cap a la pantalla de un xat amb l'usuari
         //crida al backend per agafar el xat del amic en concret
-        _controladorPresentacion.getXat(display_list[index].nom);
-        _controladorPresentacion.mostrarXatAmic(context, display_list[index]);
+        _controladorPresentacion.getXat(displayList[index].nom);
+        _controladorPresentacion.mostrarXatAmic(context, displayList[index]);
       },
       child: ListTile(
         contentPadding: const EdgeInsets.all(8.0),
         leading: Image(
-          //image: AssetImage(display_list[index].image),
+          //image: AssetImage(displayList[index].image),
           image: AssetImage(mockImage),
           fit: BoxFit.cover,
           width: 50,
           height: 50,
         ),
-        title: Text(display_list[index].nom,
-            style: const TextStyle(
-              color: Colors.orange,
+        title: Text(displayList[index].nom,
+            style: TextStyle(
+              color: taronjaVermellos,
               fontWeight: FontWeight.bold,
             )),
         subtitle: FutureBuilder<String>(
-          future: agafarLastMessage(display_list[index]),
+          future: agafarLastMessage(displayList[index]),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Text('Loading...');
             } else if (snapshot.hasError) {
               return const Text('');
             } else {
-              return Text(snapshot.data ?? '');
+              return Text(truncarString(snapshot.data ?? '', 24));
             }
           },
         ),
         trailing: FutureBuilder<String>(
-          future: agafarTimeLastMessage(display_list[index]),
+          future: agafarTimeLastMessage(displayList[index]),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Text('Loading...');

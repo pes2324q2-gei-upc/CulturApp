@@ -1,4 +1,5 @@
 import "package:culturapp/domain/converters/convert_date_format.dart";
+import "package:culturapp/domain/converters/truncar_string.dart";
 import "package:culturapp/domain/models/grup.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/translations/AppLocalizations";
@@ -22,6 +23,8 @@ class _GrupsScreenState extends State<GrupsScreen> {
   String value = '';
 
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
+  Color taronjaVermellos = const Color(0xFFF4692A);
+  Color taronjaVermellosFluix = const Color.fromARGB(199, 250, 141, 90);
 
   _GrupsScreenState(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
@@ -30,10 +33,12 @@ class _GrupsScreenState extends State<GrupsScreen> {
 
   void _initialize() async {
     List<Grup> grups = await _controladorPresentacion.getUserGrups();
-    setState(() {
-      llista_grups = grups;
-      display_list = llista_grups;
-    });
+    if (mounted) {
+      setState(() {
+        llista_grups = grups;
+        display_list = llista_grups;
+      });
+    }
   }
 
   void updateList(String value) {
@@ -92,7 +97,7 @@ class _GrupsScreenState extends State<GrupsScreen> {
         ),
         decoration: InputDecoration(
           filled: true,
-          fillColor: const Color.fromRGBO(240, 186, 132, 1),
+          fillColor: taronjaVermellosFluix,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
             borderSide: BorderSide.none,
@@ -112,7 +117,7 @@ class _GrupsScreenState extends State<GrupsScreen> {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         shape: const CircleBorder(),
-        backgroundColor: const Color.fromRGBO(240, 186, 132, 1),
+        backgroundColor: taronjaVermellosFluix,
         foregroundColor: Colors.white,
       ),
       onPressed: () {
@@ -144,12 +149,12 @@ class _GrupsScreenState extends State<GrupsScreen> {
               image: AssetImage('assets/userImage.png'),
             ), // Placeholder widget to show if there's no image
         ),
-        title: Text(display_list[index].nomGroup,
-            style: const TextStyle(
-              color:  Color(0xFFF4692A),
+        title: Text(truncarString(display_list[index].nomGroup, 22),
+            style: TextStyle(
+              color: taronjaVermellos,
               fontWeight: FontWeight.bold,
             )),
-        subtitle: Text(display_list[index].lastMessage),
+        subtitle: Text(truncarString(display_list[index].lastMessage, 24)),
         trailing: Text(convertTimeFormat(display_list[index].timeLastMessage)),
       ),
     );

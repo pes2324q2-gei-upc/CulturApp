@@ -25,7 +25,8 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
   late Grup _grup;
   late List<String> participants;
 
-  Color taronja_fluix = const Color.fromRGBO(240, 186, 132, 1);
+  Color taronjaVermellos = const Color(0xFFF4692A);
+  Color taronjaVermellosFluix = const Color.fromARGB(199, 250, 141, 90);
 
   _ModificarParticipantsScreen(
       ControladorPresentacion controladorPresentacion, Grup grup) {
@@ -47,19 +48,20 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
         _grup.membres.map((dynamic obj) => obj.toString()).toList());
 
     List<Usuari> llistaFollowers = await convertirStringEnUsuari(llistaNoms);
+    List<Usuari> filteredList = [];
     for (Usuari usuari in llistaFollowers) {
+      bool found = false;
       for (Usuari amic in amics) {
         if (amic.nom == usuari.nom) {
-          llistaFollowers.remove(usuari);
-          if (llistaFollowers.isEmpty) {
-            break;
-          }
+          found = true;
+          break;
         }
       }
-      if (llistaFollowers.isEmpty) {
-        break;
+      if (!found) {
+        filteredList.add(usuari);
       }
     }
+    llistaFollowers = filteredList;
 
     amics.addAll(
         llistaFollowers); //s'uneixen els followers per si vols afegir someone
@@ -97,18 +99,12 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
     );
   }
 
-  void afegirParticipant(participant) {
-    setState(() {
-      participants.add(participant);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: taronjaVermellos,
         title: Text(
           'modify_participants'.tr(context),
           style: const TextStyle(color: Colors.white),
@@ -177,7 +173,7 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
           ),
           decoration: InputDecoration(
             filled: true,
-            fillColor: taronja_fluix,
+            fillColor: taronjaVermellosFluix,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
               borderSide: BorderSide.none,
@@ -232,7 +228,7 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
                 borderRadius:
                     BorderRadius.circular(8.0), // Adjust the radius as needed
                 child: Container(
-                  color: taronja_fluix.withOpacity(0.90),
+                  color: taronjaVermellosFluix,
                   padding:
                       const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                   child: Text(
@@ -261,8 +257,8 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
         height: 50.0,
       ),
       title: Text(displayList[index].nom,
-          style: const TextStyle(
-            color: Colors.orange,
+          style: TextStyle(
+            color: taronjaVermellos,
             fontWeight: FontWeight.bold,
           )),
       trailing: _buildBotoAfegir(displayList[index], index),
@@ -270,17 +266,17 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
   }
 
   Widget _buildBotoAfegir(participant, int index) {
+    bool isParticipantAdded = participants.contains(participant.nom);
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         shape: const CircleBorder(),
-        backgroundColor: const Color.fromRGBO(240, 186, 132, 1),
+        backgroundColor: taronjaVermellosFluix,
         foregroundColor: Colors.white,
       ),
       onPressed: () {
         setState(() {
-          participantAfegit[index] = !participantAfegit[index];
-          if (participantAfegit[index]) {
-            afegirParticipant(displayList[index].nom);
+          if (!isParticipantAdded) {
+            participants.add(participant.nom);
           } else {
             // Remove participant if button is toggled off
             participants.remove(displayList[index].nom);
@@ -288,7 +284,7 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
         });
       },
       child: Text(
-        participantAfegit[index] ? '-' : '+',
+        isParticipantAdded ? '-' : '+',
       ),
     );
   }
@@ -296,7 +292,7 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
   Widget _buildConfirmButton() {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color.fromRGBO(240, 186, 132, 1),
+        backgroundColor: taronjaVermellos,
         foregroundColor: Colors.white,
       ),
       child: const Icon(Icons.check),

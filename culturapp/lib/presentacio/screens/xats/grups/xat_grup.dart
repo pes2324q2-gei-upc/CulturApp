@@ -1,5 +1,6 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:culturapp/domain/converters/convert_date_format.dart";
+import "package:culturapp/domain/converters/truncar_string.dart";
 import "package:culturapp/domain/models/grup.dart";
 import "package:culturapp/domain/models/message.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
@@ -27,7 +28,8 @@ class _XatGrupScreen extends State<XatGrupScreen> {
   late List<Message> missatges;
   late ScrollController _scrollController;
 
-  Color taronjaFluix = const Color.fromRGBO(240, 186, 132, 1);
+  Color taronjaVermellos = const Color(0xFFF4692A);
+  Color taronjaVermellosFluix = const Color.fromARGB(199, 250, 141, 90);
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
 
   _XatGrupScreen(ControladorPresentacion controladorPresentacion, Grup grup) {
@@ -69,14 +71,6 @@ class _XatGrupScreen extends State<XatGrupScreen> {
     for (int i = 0; i < participants.length; ++i) {
       //s'haurien de conseguir el noms del users
       nomParticipants.add(_grup.membres[i]);
-    }
-  }
-
-  String truncarString(String noms, int maxLength) {
-    if (noms.length <= maxLength) {
-      return noms; // Return the original string if it's not longer than maxLength
-    } else {
-      return '${noms.substring(0, maxLength - 3)}...'; // Truncate and add '...'
     }
   }
 
@@ -147,54 +141,101 @@ class _XatGrupScreen extends State<XatGrupScreen> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.orange,
+      backgroundColor: taronjaVermellos,
       leading: IconButton(
         icon: const Icon(
           Icons.arrow_back,
           color: Colors.white,
         ),
-        onPressed: () => _controladorPresentacion.mostrarXats(context),
+        onPressed: () => _controladorPresentacion.mostrarXats(context, "Grups"),
       ),
-      title: Row(
-        children: [
-          if (_grup.imageGroup.isNotEmpty)
-            CircleAvatar(
-              backgroundImage: NetworkImage(_grup.imageGroup),
-            )
-          else
-            const CircleAvatar(
-              backgroundImage: AssetImage('assets/userImage.png'),
-            ),
-          const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                _grup.nomGroup,
-                style: const TextStyle(color: Colors.white),
+      title: GestureDetector(
+        onTap: () {
+          _controladorPresentacion.mostrarInfoGrup(context, _grup);
+        },
+        child: Row(
+          children: [
+            if (_grup.imageGroup.isNotEmpty)
+              CircleAvatar(
+                backgroundImage: NetworkImage(_grup.imageGroup),
+              )
+            else
+              const CircleAvatar(
+                backgroundImage: AssetImage('assets/userImage.png'),
               ),
-              Text(
-                truncarString(nomParticipants.join(', '), 30),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14.0,
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  truncarString(_grup.nomGroup, 19),
+                  //pq no hi hagi overflow de pixels si es molt llarg
+                  style: const TextStyle(color: Colors.white),
                 ),
-              ),
-            ],
-          ),
-        ],
+                Text(
+                  truncarString(nomParticipants.join(', '), 30),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14.0,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
       actions: [
-        IconButton(
-          icon: const Icon(
-            Icons.more_vert,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            _controladorPresentacion.mostrarInfoGrup(context, _grup);
-          },
+        _showDropdown(),
+      ],
+    );
+  }
+
+  late String itemSelected;
+
+  Widget _showDropdown() {
+    return PopupMenuButton<int>(
+      icon: const Icon(
+        Icons.more_vert,
+        color: Colors.white,
+      ),
+      color: taronjaVermellosFluix.withOpacity(1),
+      onSelected: (value) {
+        // Handle item selection
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: 1,
+          child: _buildItemDropdown('exit_group'.tr(context)),
         ),
       ],
+    );
+  }
+
+  void exitGroup() {
+    setState(() {
+      String myUsername = _controladorPresentacion.getUsername();
+      _grup.membres.remove(myUsername);
+      //elimino el meu username del grup
+
+      _controladorPresentacion.updateGrup(_grup.id, _grup.nomGroup,
+          _grup.descripcio, _grup.imageGroup, _grup.membres);
+      _controladorPresentacion.mostrarXats(context, "Grups");
+      //crida a funcio del back per fer un update de _grup amb els nous parametres
+    });
+  }
+
+  Widget _buildItemDropdown(String text) {
+    return GestureDetector(
+      onTap:
+          //llamar a función update quitandome el user 'me' de la lista de members
+          exitGroup,
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
     );
   }
 
@@ -208,13 +249,14 @@ class _XatGrupScreen extends State<XatGrupScreen> {
 
   Widget _bottomInputField() {
     return IconTheme(
-      data: const IconThemeData(color: Colors.orange),
+      data: IconThemeData(color: taronjaVermellos),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
           children: <Widget>[
             Flexible(
               child: TextField(
+                maxLines: null,
                 controller: _controller,
                 onSubmitted: _sendMessage,
                 decoration: InputDecoration.collapsed(

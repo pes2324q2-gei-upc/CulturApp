@@ -15,18 +15,23 @@ class LlistarFollows extends StatefulWidget {
 
 class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProviderStateMixin {
   late List<String> users;
+  late List<String> requests;
   late List<String> difference;
   late bool isFollows;
   late TabController _tabController;
+  bool _isLoading = false;
 
   _LlistarFollowsState() {
     users = [];
   }
 
-  void updateUsers() async {
+  Future<void> updateUsers() async {
+
+    setState(() {
+      _isLoading = true;
+    });
       late List<String> followers;
       late List<String> followings;
-      late List<String> requests;
 
       followers = await widget.controladorPresentacion.getFollowUsers(widget.username, "followers"); 
       followings = await widget.controladorPresentacion.getFollowUsers(widget.username, "following"); 
@@ -39,9 +44,12 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
       followersSet = followersSet.difference(followingsSet);
       difference = followersSet.difference(requestsSet).toList();
 
-      setState(() {
-        users = isFollows ? followers : followings;
-      });
+      if(mounted) {
+        setState(() {
+          users = isFollows ? followers : followings;
+          _isLoading = false;
+        });
+      }
   }
 
   List<String> originalUsers = [];
@@ -58,16 +66,22 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-    isFollows = true;
+    isFollows = widget.follows;
     updateUsers();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.index = widget.follows ? 0 : 1;
     _tabController.addListener(() {
+      doAsyncWork();
+    });
+  }
+
+  void doAsyncWork() async {
+    await updateUsers();
+    if (mounted) {
       setState(() {
         isFollows = _tabController.index == 0;
-        updateUsers();
       });
-    });
+    }
   }
 
   @override
@@ -78,7 +92,7 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+  return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
         title: Text("friends_title".tr(context)),
@@ -87,7 +101,9 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
         titleTextStyle: const TextStyle(
           color: Colors.white,
           fontSize: 20.0,
-          fontWeight: FontWeight.bold
+        ),
+        iconTheme: const IconThemeData(
+          color: Colors.white, // Cambia el color de la flecha de retroceso
         ),
       ),
       body: Column(
@@ -117,58 +133,67 @@ class _LlistarFollowsState extends State<LlistarFollows> with SingleTickerProvid
   }
 
   Widget _buildFollowView() {
-    return Column(
+        return _isLoading
+      ? const Center(child: CircularProgressIndicator(color: Color(0xFFF4692A), backgroundColor: Colors.white,)
+      ) : Column(
       children: [
         const SizedBox(height: 10.0),
         SizedBox(
-          height: 45.0,
-          child: Padding(
-            padding: const EdgeInsets.only(right: 20.0, left: 20.0),
-            child: TextField(
-              onChanged: (value) {
-                updateList(value);
-              },
-              cursorColor: Colors.white,
-              cursorHeight: 20,
-              style: const TextStyle(
-                color: Colors.white,
-              ),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: const Color(0xFFFFAA80),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: BorderSide.none,
-                ),
-                hintText: "search".tr(context),
-                hintStyle: const TextStyle(
-                  color: Colors.white,
-                ),
-                suffixIcon: const Icon(Icons.search),
-                suffixIconColor: Colors.white,
-                contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: users.length,
-            itemBuilder: (context, index) {
-              return Column(
-                children: [
-                  const SizedBox(height: 10.0),
-                  userBox(
-                    text: users[index], 
-                    recomm: false, 
-                    type: isFollows 
-                      ? (difference.contains(users[index]) ? "addSomeone" : "null") 
-                      : "null", 
-                    controladorPresentacion: widget.controladorPresentacion,
+            height: 45.0,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 20.0, left: 20.0),
+              child: Container(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 2,
+                    blurRadius: 7,
+                    offset: const Offset(0, 3), 
                   ),
                 ],
-              );
-            },
+                color: Colors.white.withOpacity(1),
+                borderRadius: BorderRadius.circular(25.0),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 25.0, right: 15.0),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'search'.tr(context),
+                    border: InputBorder.none,
+                  ),
+                  onChanged: (value) {
+                    updateList(value);
+                  },
+                ),
+              ),
+            ),
+            ),
+          ),
+        const SizedBox(height: 20),
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: updateUsers,
+            child: ListView.builder(
+              itemCount: users.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  children: [
+                    const SizedBox(height: 10.0),
+                    userBox(
+                      text: users[index], 
+                      recomm: false, 
+                      type: isFollows 
+                        ? (difference.contains(users[index]) ? "followerNotFollowed" : (requests.contains(users[index])) ? "followerRequestSend" : "followerFollowed") 
+                        : "following", 
+                      popUpStyle: "default",
+                      placeReport: "null",
+                      controladorPresentacion: widget.controladorPresentacion,
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ],

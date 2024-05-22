@@ -1,16 +1,20 @@
 import 'dart:typed_data';
+import 'dart:ffi';
 
 import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/bateria.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/grup.dart';
 import 'package:culturapp/domain/models/message.dart';
 import 'package:culturapp/domain/models/usuari.dart';
+import 'package:culturapp/presentacio/llistar_bloqued.dart';
+import 'package:culturapp/presentacio/screens/actividades_disponibles.dart';
 import 'package:culturapp/presentacio/screens/edit_perfil.dart';
 import 'package:culturapp/presentacio/screens/llistar_follows.dart';
 import 'package:culturapp/presentacio/screens/llistar_pendents.dart';
 import 'package:culturapp/presentacio/screens/report_bug.dart';
+import 'package:culturapp/presentacio/screens/report_user.dart';
 import 'package:culturapp/presentacio/screens/solicitud_organitzador.dart';
-import 'package:culturapp/presentacio/screens/xats/amics/info_amic.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/configuracio_grup.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/info_grup.dart';
 import 'package:culturapp/presentacio/screens/xats/grups/modificar_participants.dart';
@@ -51,8 +55,13 @@ class ControladorPresentacion {
   late List<String> friends;
   late String usernameLogged;
   late List<Actividad> activitatsUser;
+  late List<Actividad> actividadesVencidas;
+  late List<String> actividadesValoradas;
+  late List<String> actividadesOrganizadas;
+  late List<Bateria> bateriasDispo;
+  late List<String> blockedUsers;
 
-  void funcLogout() async {
+  Future<void> funcLogout() async {
     _auth.signOut();
     final GoogleSignIn googleSignIn = GoogleSignIn();
     await googleSignIn.signOut();
@@ -73,9 +82,12 @@ class ControladorPresentacion {
     if (await userLogged()) {
       await controladorDomini.setInfoUserLogged(_user!.uid);
       usernameLogged = controladorDomini.userLogged.getUsername();
-
       activitats = await controladorDomini.getActivitiesAgenda();
-      activitatsUser = await controladorDomini.getUserActivities();
+      activitatsUser =
+          await controladorDomini.getUserActivities(usernameLogged);
+      actividadesVencidas = await controladorDomini.getActivitiesVencudes() ?? [];
+      actividadesOrganizadas =
+          await controladorDomini.obteActivitatsOrganitzades(_user!.uid);
       usersBD = await controladorDomini.getUsers();
       friends = await getFollowingAll(usernameLogged);
       categsFav = await controladorDomini.obteCatsFavs(usernameLogged);
@@ -83,6 +95,8 @@ class ControladorPresentacion {
       usersRecom =
           calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
       usersBD.removeWhere((usuario) => friends.contains(usuario.username));
+      bateriasDispo = await controladorDomini.getBateries();
+      blockedUsers = await controladorDomini.getBlockedUsers();
     }
   }
 
@@ -95,6 +109,11 @@ class ControladorPresentacion {
     } else {
       return false;
     }
+  }
+
+  Future<void> createValoracion(
+      String id, String comentario, double puntuacion) async {
+    await controladorDomini.addValoracion(id, puntuacion, comentario);
   }
 
   Future<void> handleGoogleSignIn(BuildContext context) async {
@@ -115,7 +134,6 @@ class ControladorPresentacion {
         bool userExists =
             await controladorDomini.accountExists(userCredential.user);
         _user = userCredential.user;
-        print(userExists);
 
         if (!userExists) {
           mostrarSignup(context);
@@ -175,12 +193,40 @@ class ControladorPresentacion {
     return categsFav;
   }
 
+  Future<List<Actividad>> checkNoValoration() async {
+    //Valoradas -> Actividades que ha valorado el usuario
+    //Vencidas -> Actividades que han pasado de fecha
+    //Mis Actividades -> Actividades a las que ha ido el usuario
+    //Actividades No Valoradas -> Actividades vencidas que estan en Mis Actividades pero no en Valoradas
+    List<Actividad> noValoradas = [];
+    actividadesValoradas =
+        await controladorDomini.obteActsValoradas(usernameLogged);
+    for (int i = 0; i < activitatsUser.length; i++) {
+      if (actividadesVencidas
+              .any((actividad) => actividad.code == activitatsUser[i].code) &&
+          !actividadesValoradas.contains(activitatsUser[i].code)) {
+        noValoradas.add(activitatsUser[i]);
+      }
+    }
+    return noValoradas;
+  }
+
+  void addValorada(String code) async {
+    await controladorDomini.addValorada(_user!.uid, code);
+  }
+
   List<Actividad> getActivitatsUser() => activitatsUser;
+
+  Future<List<Actividad>> getActivitatsByUser(Usuari user) async {
+    List<Actividad> llista =
+        await controladorDomini.getUserActivitiesByUser(user);
+    return llista;
+  }
 
   List<Actividad> getActivitats() => activitats;
 
-  Future<List<Actividad>> getUserActivities() =>
-      controladorDomini.getUserActivities();
+  Future<List<Actividad>> getUserActivs() =>
+      controladorDomini.getUserActivities(usernameLogged);
 
   List<String> getActivitatsRecomm() {
     recomms = calcularActividadesRecomendadas(categsFav, activitats);
@@ -205,6 +251,10 @@ class ControladorPresentacion {
 
   String getUsername() {
     return usernameLogged;
+  }
+
+  List<Actividad> getActividadesVencidas() {
+    return actividadesVencidas;
   }
 
   Future<List<String>> getFollowingAll(String username) async {
@@ -234,6 +284,22 @@ class ControladorPresentacion {
     return await controladorDomini.getRequestsUser();
   }
 
+  List<String> getBlockedUsers() {
+    return blockedUsers;
+  }
+
+  void addBlockedUser(String user) {
+    blockedUsers.add(user);
+  }
+
+  void removeBlockedUser(String user) {
+    blockedUsers.remove(user);
+  }
+
+  bool isBlockedUser(String user) {
+    return blockedUsers.contains(user);
+  }
+
   Future<void> acceptFriend(String person) async {
     await controladorDomini.acceptFriend(person);
   }
@@ -246,6 +312,10 @@ class ControladorPresentacion {
     await controladorDomini.createFriend(person);
   }
 
+  Future<void> deleteFollowing(String person) async {
+    await controladorDomini.deleteFollowing(person);
+  }
+
   Future<int> sendReportBug(String titol, String report) async {
     return await controladorDomini.sendReportBug(titol, report);
   }
@@ -256,8 +326,36 @@ class ControladorPresentacion {
         titol, idActivitat, motiu);
   }
 
+  Future<int> sendReportUser(String titol, String userReported, String report,
+      String placeReport) async {
+    return await controladorDomini.sendReportUser(
+        titol, userReported, report, placeReport);
+  }
+
+  Future<void> addParticipant(String idActivity) async {
+    await controladorDomini.addParticipant(idActivity);
+  }
+
+  Future<void> blockUser(String user) async {
+    await controladorDomini.blockUser(user);
+    addBlockedUser(user);
+    deleteFriend(user);
+    deleteFollowing(user);
+  }
+
+  Future<void> unblockUser(String user) async {
+    await controladorDomini.unblockUser(user);
+    removeBlockedUser(user);
+  }
+
   void mostrarVerActividad(
       BuildContext context, List<String> info_act, Uri uri_act) {
+    bool organiza;
+    if (actividadesOrganizadas.contains(info_act[1])) {
+      organiza = true;
+    } else {
+      organiza = false;
+    }
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -265,6 +363,8 @@ class ControladorPresentacion {
           info_actividad: info_act,
           uri_actividad: uri_act,
           controladorPresentacion: this,
+          esOrganizador: organiza,
+          bateriasDisp: bateriasDispo,
         ),
       ),
     );
@@ -274,12 +374,15 @@ class ControladorPresentacion {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MapPage(controladorPresentacion: this),
+        builder: (context) => MapPage(
+          controladorPresentacion: this,
+          vencidas: actividadesVencidas,
+        ),
       ),
     );
   }
 
-  void mostrarXats(BuildContext context) {
+  void mostrarXats(BuildContext context, String pagina) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -287,31 +390,65 @@ class ControladorPresentacion {
           controladorPresentacion: this,
           recomms: usersRecom,
           usersBD: usersBD,
+          pagina: pagina,
         ),
       ),
     );
   }
 
-  void mostrarPerfil(BuildContext context) {
+  void mostrarPerfil(BuildContext context) async {
+    Usuari usuari = await this.getUserByName(usernameLogged);
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PerfilPage(
-            controladorPresentacion: this,
-            username: usernameLogged,
-            owner: true),
+          controladorPresentacion: this,
+          user: usuari,
+          owner: true,
+          activitatsVenc: actividadesVencidas,
+        ),
+      ),
+    );
+  }
+
+  void mostrarAltrePerfil(BuildContext context, Usuari usuari) async {
+    List<Actividad> activUser =
+        await controladorDomini.getUserActivities(usuari.nom);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PerfilPage(
+          controladorPresentacion: this,
+          user: usuari,
+          owner: false,
+          activitatsVenc: activUser,
+        ),
       ),
     );
   }
 
   Future<void> mostrarMisActividades(BuildContext context) async {
-    getUserActivities().then((actividades) => {
+    getUserActivs().then((actividades) => {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => ListaMisActividades(
                 controladorPresentacion: this,
                 user: _user,
+              ),
+            ),
+          )
+        });
+  }
+
+    Future<void> mostrarActividadesDisponibles(BuildContext context, List<Actividad> acts) async {
+    getUserActivs().then((actividades) => {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Actsdisponibles(
+                controladorPresentacion: this, mapActs: acts,
               ),
             ),
           )
@@ -385,16 +522,6 @@ class ControladorPresentacion {
       MaterialPageRoute(
         builder: (context) =>
             XatGrupScreen(controladorPresentacion: this, grup: grup),
-      ),
-    );
-  }
-
-  void mostrarInfoAmic(BuildContext context, Usuari usuari) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            InfoAmicScreen(controladorPresentacion: this, usuari: usuari),
       ),
     );
   }
@@ -621,6 +748,7 @@ class ControladorPresentacion {
   }
 
   void mostrarPendents(BuildContext context) {
+    List<String>users;
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -655,6 +783,28 @@ class ControladorPresentacion {
     );
   }
 
+  void mostrarReportUser(
+      BuildContext context, String userReported, String placeReport) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ReportUserScreen(
+            userReported: userReported,
+            placeReport: placeReport,
+            controladorPresentacion: this),
+      ),
+    );
+  }
+
+  void mostrarBlockedUsers(BuildContext context) {
+      Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LlistarBlocked(controladorPresentacion: this),
+      ),
+    );
+  }
+
   Future<void> _loadLanguage() async {
     final prefs = await SharedPreferences.getInstance();
     final languageCode = prefs.getString('languageCode');
@@ -668,6 +818,18 @@ class ControladorPresentacion {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('languageCode', lang!.languageCode);
     _loadLanguage();
+  }
+
+  Future<bool> checkPrivacy(String uid) async {
+    return controladorDomini.checkPrivacy(uid);
+  }
+
+  void changePrivacy(String uid, bool privat) {
+    controladorDomini.changePrivacy(uid, privat);
+  }
+
+  Future<bool> isFriend(String nom) {
+    return controladorDomini.isFriend(nom);
   }
 
   /*Future<List<String>> obteAmics() async {

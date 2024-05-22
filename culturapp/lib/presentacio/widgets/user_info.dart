@@ -1,36 +1,82 @@
-import 'package:culturapp/domain/models/actividad.dart';
+ import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
 import 'package:culturapp/translations/AppLocalizations';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 
 class UserInfoWidget extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
-  final String username;
+  final Usuari user;
   final bool owner;
-  const UserInfoWidget({Key? key, required this.controladorPresentacion, required this.username, required this.owner}) : super(key: key);
+  final List<Actividad> activitatsVencidas;
+
+
+  const UserInfoWidget({
+    Key? key,
+    required this.controladorPresentacion,
+    required this.user,
+    required this.owner,
+    required this.activitatsVencidas
+  }) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
-  _UserInfoWidgetState createState() => _UserInfoWidgetState(this.controladorPresentacion);
+  _UserInfoWidgetState createState() =>
+      _UserInfoWidgetState(this.controladorPresentacion, this.user, this.activitatsVencidas, this.owner);
 }
 
 class _UserInfoWidgetState extends State<UserInfoWidget> {
   int _selectedIndex = 0;
   late ControladorPresentacion _controladorPresentacion;
-  late String _usernameFuture;
-  late List<Actividad> activitats = widget.owner ? _controladorPresentacion.getActivitatsUser() : [];
+  late Usuari _user;
+  late List<Actividad> activitats;
   late List<Actividad> display_list;
-  
-  _UserInfoWidgetState(ControladorPresentacion controladorPresentacion) {
+  late bool show;
+  late bool _owner;
+
+  _UserInfoWidgetState(ControladorPresentacion controladorPresentacion, Usuari user, List<Actividad> activitatsVenc, bool owner) {
     _controladorPresentacion = controladorPresentacion;
+    _user = user;
+    activitats = [];
+    display_list = [];
+    show = false;
+    _owner = owner;
   }
 
   @override
   void initState() {
     super.initState();
-    _usernameFuture = widget.username;
-    display_list = activitats;
+    _loadContent();
+  }
+
+  void _loadContent() async {
+    if (_owner) {
+      _loadActividades(); 
+      show = true;
+    }
+    else {
+      bool isFriend = await _controladorPresentacion.isFriend(_user.nom);
+      if (isFriend) {
+        _loadActividades();
+        show = true;
+      }
+      else {
+        bool isPrivate = await _controladorPresentacion.checkPrivacy(_user.id);
+        if (!isPrivate) {
+          _loadActividades();
+          show = true;
+        }
+      }
+    }
+  }
+
+  void _loadActividades() async {
+    activitats = await _controladorPresentacion.getActivitatsByUser(_user);
+    print(activitats.toString());
+    setState(() {
+      display_list = activitats;
+    });
   }
 
   void _onTabChange(int index) {
@@ -39,7 +85,6 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
     });
   }
 
-  //texto que aparece al apretar uno de los botones
   String _getLabelText(int index) {
     switch (index) {
       case 0:
@@ -55,49 +100,35 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: FutureBuilder<String?>(
-      future: Future.value(_usernameFuture),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          // Muestra un indicador de carga mientras se obtiene el nombre de usuario
-          return Container(
-            alignment: Alignment.center,
-            // Asigna un tamaño específico al contenedor
-            width: 50, // Por ejemplo, puedes ajustar el ancho según tus necesidades
-            height: 50, // También puedes ajustar la altura según tus necesidades
-            child: const CircularProgressIndicator(color:  Color(0xFFF4692A)),
-          );
-        } else if (snapshot.hasError) {
-          // Muestra un mensaje de error si falla la obtención del nombre de usuario
-          return const Text('Error al obtener el nombre de usuario');
-        } else {
-          // Muestra el nombre de usuario obtenido
-          final username = snapshot.data ?? '';
-          return _buildUserInfo(username);
-        }
-      },
-    ),
-      ));
+        child: FutureBuilder<List<Actividad>>(
+          future: Future.value(activitats),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator(color: Color(0xFFF4692A));
+            } else if (snapshot.hasError) {
+              return Text('Error al obtener el nombre de usuario');
+            } else {
+              final username = snapshot.data ?? '';
+              return _buildUserInfo(_user, activitats);
+            }
+          },
+        ),
+      ),
+    );
   }
 
-  Widget _buildUserInfo(String username) {
-    //faltaria adaptar el padding en % per a cualsevol dispositiu
-    //columna para la parte del username, xp i imagen perfil
+  Widget _buildUserInfo(Usuari _user, List<Actividad> activitats) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 16, top: 25, bottom:20),
+          padding: const EdgeInsets.only(left: 16, top: 25, bottom: 20),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
-            //imagen
             children: [
-              Container(
-                  height: 100,
-                  width: 100,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    image: DecorationImage(image: NetworkImage(_controladorPresentacion.getUser()!.photoURL!), fit: BoxFit.cover),)
+              CircleAvatar(
+                backgroundImage: AssetImage(_user.image),
+                radius: 50,
               ),
               const SizedBox(width: 20),
               Padding(
@@ -106,13 +137,11 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    //username
                     Text(
-                      username,
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      _user.nom,
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 5),
-                    //XP
                     const Text(
                       '1500 XP',
                       style: TextStyle(fontSize: 14),
@@ -123,47 +152,40 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
             ],
           ),
         ),
+        const SizedBox(height: 10.0),
         Container(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: MediaQuery.of(context).size.width / 4, 
-                child:_buildInfoColumn("assisted_events".tr(context), '1'),
+                width: MediaQuery.of(context).size.width / 4,
+                child: _buildInfoColumn("assisted_events".tr(context), '1'),
               ),
               Container(
-                width: MediaQuery.of(context).size.width / 4, 
+                width: MediaQuery.of(context).size.width / 4,
                 child: GestureDetector(
                   onTap: () {
-                    widget.controladorPresentacion.mostrarFollows(context, true); 
+                    if (show)
+                      widget.controladorPresentacion.mostrarFollows(context, true);
                   },
                   child: _buildInfoColumn('followers'.tr(context), '12'),
                 ),
               ),
               Container(
-                width: MediaQuery.of(context).size.width / 4, 
+                width: MediaQuery.of(context).size.width / 4,
                 child: GestureDetector(
                   onTap: () {
-                    widget.controladorPresentacion.mostrarFollows(context, false); 
+                    if (show)
+                      widget.controladorPresentacion.mostrarFollows(context, false);
                   },
                   child: _buildInfoColumn('following'.tr(context), '40'),
                 ),
               ),
-              if (widget.owner) ...[
-                Container(
-                  width: MediaQuery.of(context).size.width / 4, 
-                  child: GestureDetector(
-                    onTap: () {
-                      widget.controladorPresentacion.mostrarPendents(context); 
-                    },
-                    child: _buildInfoColumn("friendship_requests_title".tr(context), '40'),
-                  ),
-                ),
-              ],
             ],
           ),
         ),
+        const SizedBox(height: 10.0),
         Expanded(
           child: DefaultTabController(
             length: 2,
@@ -176,23 +198,49 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                   ],
                   indicatorColor: const Color(0xFFF4692A),
                   labelColor: const Color(0xFFF4692A),
-
                 ),
                 Expanded(
                   child: TabBarView(
                     children: [
-                      Expanded(
-                        child: ListView(
-                          controller: ScrollController(),
-                          children: [
-                            SizedBox(
-                              height: 350,
-                              child: ListaActividadesDisponibles(actividades: activitats, controladorPresentacion: _controladorPresentacion,),
-                            ),
-                          ],
+                      if (show) 
+                        Expanded(
+                          child: ListView(
+                            controller: ScrollController(),
+                            children: [
+                              SizedBox(
+                                height: 450,
+                                child: ListaActividadesDisponibles(
+                                  actividades: display_list,
+                                  controladorPresentacion: _controladorPresentacion,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      else
+                      Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.lock, size: 50, color: Colors.grey),
+                              SizedBox(height: 20,),
+                              Text("private_account".tr(context), style: TextStyle(fontSize: 24)),
+                            ],
+                          ),
                         ),
-                      ),
-                      const Text("Insignias"),
+                      if (show)
+                        const Text("Insignias")
+                      else
+                        Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.lock, size: 50, color: Colors.grey),
+                                SizedBox(height: 20,),
+                                Text("private_account".tr(context), style: TextStyle(fontSize: 24)),
+                              ],
+                            ),
+                          ),
                     ],
                   ),
                 ),
@@ -201,36 +249,6 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
           ),
         ),
       ],
-    );
-  }
-  
-  //NavItem de historico o insignias
-  Widget _buildNavItem(IconData icon, String label, int index) {
-    bool isSelected = index == _selectedIndex;
-    return GestureDetector(
-      onTap: () {
-        _onTabChange(index);
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: isSelected ? const Color(0xFFF4692A) : Colors.white),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? const Color(0xFFF4692A) : Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -242,7 +260,10 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
         children: [
           Text(
             value,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold,),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
@@ -250,8 +271,8 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
             style: const TextStyle(fontSize: 16),
             textAlign: TextAlign.center,
           ),
-      ],
-    ),
+        ],
+      ),
     );
   }
 }

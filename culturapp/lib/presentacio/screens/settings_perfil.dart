@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 
@@ -15,10 +16,17 @@ class SettingsPerfil extends StatefulWidget {
 class _SettingsPerfil extends State<SettingsPerfil> {
   late ControladorPresentacion _controladorPresentacion;
   bool privat = false;
+  final User? _user = FirebaseAuth.instance.currentUser;
 
   _SettingsPerfil(ControladorPresentacion controladorPresentacion) {
     _controladorPresentacion = controladorPresentacion;
   }
+
+  @override
+  void initState(){
+    super.initState();
+    checkPrivacy(_user!.uid);
+  } 
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +37,9 @@ class _SettingsPerfil extends State<SettingsPerfil> {
           'settings'.tr(context),
           style: TextStyle(color: Colors.white),
         ),
+        iconTheme: IconThemeData(
+          color: Colors.white, // Cambia el color de la flecha de retroceso
+        ),
       ),
       body: Column(
         children: [
@@ -36,9 +47,11 @@ class _SettingsPerfil extends State<SettingsPerfil> {
             title: Text("privacy".tr(context)),
             subtitle: Text("privacy_explanation".tr(context)),
             value: privat,
+            activeColor: Color(0xFFF4692A),
             onChanged: (bool value) {
               setState(() {
                 privat = value;
+                _controladorPresentacion.changePrivacy(_user!.uid, privat);
               });
             },
             secondary: const Icon(Icons.lock),
@@ -80,6 +93,13 @@ class _SettingsPerfil extends State<SettingsPerfil> {
             },
           ),
           const Divider(height: 0),
+          ListTile(
+            title: const Text('Ver a los usuarios bloqueados'),
+            leading: const Icon(Icons.block),
+            onTap: () {
+              widget.controladorPresentacion.mostrarBlockedUsers(context);
+            },
+          ),
         ],
       ),
     );
@@ -111,9 +131,9 @@ class _SettingsPerfil extends State<SettingsPerfil> {
   Widget _buildLanguageOption(BuildContext context, Locale locale) {
     final languageCode = locale.languageCode;
     String languageName;
-    if (languageCode == 'en') languageName = 'English';
-    else if (languageCode == 'ca') languageName = 'Catalan';
-    else languageName = 'Spanish';
+    if (languageCode == 'en') languageName = 'english'.tr(context);
+    else if (languageCode == 'ca') languageName = 'catalan'.tr(context);
+    else languageName = 'spanish'.tr(context);
     return ListTile(
       title: Text(languageName),
       onTap: () {
@@ -134,5 +154,13 @@ class _SettingsPerfil extends State<SettingsPerfil> {
     );
   }
 
+  void checkPrivacy(String uid) async {
+    bool privateStatus = await _controladorPresentacion.checkPrivacy(uid);
+    if (mounted) {
+      setState(() {
+        privat = privateStatus;
+      });
+    }
+  }
 
 }

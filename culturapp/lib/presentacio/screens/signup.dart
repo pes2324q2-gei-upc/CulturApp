@@ -1,3 +1,4 @@
+import 'package:culturapp/presentacio/screens/categorias.dart';
 import 'package:culturapp/translations/AppLocalizations';
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
@@ -34,6 +35,7 @@ class _SignupState extends State<Signup> {
   ];
   
   late ControladorPresentacion _controladorPresentacion;
+  bool _isLoading = false;
 
   late User? user;
 
@@ -136,9 +138,11 @@ class _SignupState extends State<Signup> {
               Container(
                   padding: const EdgeInsets.only(top: 3, left: 3),
                   child: ElevatedButton(
-                    onPressed: () {
-                      createUser();
-                    },
+                  onPressed: () {
+                    createUser().then((_) {
+                      _controladorPresentacion.mostrarMapa(context);
+                    });
+                  },
                     style: ElevatedButton.styleFrom(
                       shape: const StadiumBorder(),
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -157,12 +161,27 @@ class _SignupState extends State<Signup> {
   }
 
   Future<void> createUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+    if (selectedCategories.length < 3) {
+      final scaffoldMessenger = ScaffoldMessenger.of(context);
+      scaffoldMessenger.showSnackBar(
+        const SnackBar(
+          content: Text('Por favor, selecciona al menos 3 categorías'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     if (await _controladorPresentacion.usernameUnique(usernameController.text)) {
+      setState(() {
+        _isLoading = false;
+      });
       await _controladorPresentacion.createUser(usernameController.text, selectedCategories, context);
       await _controladorPresentacion.initialice2();
       await _controladorPresentacion.initialice();
-
-      _controladorPresentacion.mostrarMapa(context);
     }
     else {
       final scaffoldMessenger = ScaffoldMessenger.of(context);
@@ -173,28 +192,30 @@ class _SignupState extends State<Signup> {
         ),
       );
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
-  void _showMultiSelect() async {
-    await showDialog(
-      context: context,
-      builder: (contex) {
-        return  MultiSelectDialog(
-          items: _categories
-                .map((categoria) => MultiSelectItem<String>(categoria, categoria))
-                .toList(),
-          listType: MultiSelectListType.CHIP,
-          initialValue: selectedCategories,
-          onConfirm: (values) {
-            selectedCategories = values.take(3).toList();
-          },
-          selectedColor: const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
-          checkColor: const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
-          unselectedColor: Colors.white,
-        );
-      },
-    );
+void _showMultiSelect() async {
+  final result = await showDialog<List<String>>(
+    context: context,
+    builder: (context) {
+      return Dialog(
+        child: Categorias(selected: selectedCategories),
+      );
+    },
+  );
+
+  if (result != null) {
+    setState(() {
+      selectedCategories = result;
+      print(selectedCategories);
+    });
   }
+}
+
 
   @override
   void dispose() {

@@ -14,11 +14,10 @@ class LlistarPendents extends StatefulWidget {
 
 class _LlistarPendentsState extends State<LlistarPendents> {
   late List<String> users;
-  late bool isFollows;
+  bool _isLoading = false;
 
   _LlistarPendentsState() {
     users = [];
-    isFollows = true;
   }
 
   List<String> originalUsers = [];
@@ -32,10 +31,14 @@ class _LlistarPendentsState extends State<LlistarPendents> {
     });
   }
 
-  void updateUsers() async {
+  Future<void> updateUsers() async {
+    setState(() {
+      _isLoading = true;
+    });
     final pendents = await widget.controladorPresentacion.getFollowUsers(widget.username, 'pending');
     setState(() {
       users = pendents;
+      _isLoading = false;
     });
   }
 
@@ -46,8 +49,11 @@ class _LlistarPendentsState extends State<LlistarPendents> {
   }
 
   @override
+   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return _isLoading
+      ? const Center(child: CircularProgressIndicator(color: Color(0xFFF4692A), backgroundColor: Colors.white,)
+      ) : Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
         title: Text("friendship_requests_title".tr(context)),
@@ -56,7 +62,9 @@ class _LlistarPendentsState extends State<LlistarPendents> {
         titleTextStyle: const TextStyle(
           color: Colors.white,
           fontSize: 20.0,
-          fontWeight: FontWeight.bold
+        ),
+        iconTheme: const IconThemeData(
+          color: Colors.white, // Cambia el color de la flecha de retroceso
         ),
       ),
       body: Column(
@@ -66,49 +74,55 @@ class _LlistarPendentsState extends State<LlistarPendents> {
             height: 45.0,
             child: Padding(
               padding: const EdgeInsets.only(right: 20.0, left: 20.0),
-              child: TextField(
-                onChanged: (value) {
-                  updateList(value);
-                },
-                cursorColor: Colors.white,
-                cursorHeight: 20,
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: const Color(0xFFFFAA80),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide.none,
+              child: Container(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 2,
+                    blurRadius: 7,
+                    offset: Offset(0, 3), // changes position of shadow
                   ),
-                  hintText: "search".tr(context),
-                  hintStyle: const TextStyle(
-                    color: Colors.white,
+                ],
+                color: Colors.white.withOpacity(1),
+                borderRadius: BorderRadius.circular(25.0),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 25.0, right: 15.0),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'search'.tr(context),
+                    border: InputBorder.none,
                   ),
-                  suffixIcon: const Icon(Icons.search),
-                  suffixIconColor: Colors.white,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
+                  onChanged: (value) {
+                    updateList(value);
+                  },
                 ),
               ),
+            ),
             ),
           ),
           const SizedBox(height: 5.0), 
           Expanded(
-            child: ListView.builder(
-              itemCount: users.length,
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    userBox(
-                      text: users[index], 
-                      recomm: false, 
-                      type: "pending", 
-                      controladorPresentacion: widget.controladorPresentacion),
-                    const SizedBox(height: 5.0), 
-                  ],
-                );
-              },
+            child: RefreshIndicator(
+              onRefresh: updateUsers,
+              child: ListView.builder(
+                itemCount: users.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      userBox(
+                        text: users[index], 
+                        recomm: false, 
+                        type: "pending", 
+                        popUpStyle: "default",
+                        placeReport: "null",
+                        controladorPresentacion: widget.controladorPresentacion),
+                      const SizedBox(height: 5.0), 
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         ],

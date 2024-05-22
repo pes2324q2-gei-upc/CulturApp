@@ -23,7 +23,9 @@ class _ReportScreenState extends State<ReportScreen> {
 
     if (statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("correct_report_msg".tr(context))),
+        SnackBar(
+         content: Text("correct_report_msg".tr(context)),
+         backgroundColor: Colors.green,),
       );
       _titleController.clear();
       _reportController.clear();

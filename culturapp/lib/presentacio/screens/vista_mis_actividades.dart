@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:culturapp/translations/AppLocalizations';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -57,6 +59,23 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     'festivals-i-mostres',
     'activitats-virtuals',
     'exposicions'
+  ];
+
+    final List<String> catsAMB = [
+    "Residus",
+    "territori.espai_public_platges",
+    "Sostenibilitat",
+    "Aigua",
+    "territori.espai_public_parcs",
+    "Espai públic - Rius",
+    "Espai públic - Parcs",
+    "Portal de transparència",
+    "Mobilitat sostenible",
+    "Internacional",
+    "Activitat econòmica",
+    "Polítiques socials",
+    "territori.espai_public_rius",
+    "Espai públic - Platges"
   ];
 
   _ListaMisActividadesState(ControladorPresentacion controladorPresentacion, User? user) {
@@ -146,6 +165,14 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
       var addedEvent = await request;
 
       print('Evento añadido: ${addedEvent.id}');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Actividad añadida a Google Calendar'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+
     } else {
       print('No se pudo obtener el token de acceso');
     }
@@ -153,7 +180,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
 
   Future<List<Actividad>> fetchActivities() async {
     var actividadesaux = <Actividad>[];
-    actividadesaux = await _controladorPresentacion.getUserActivities();
+    actividadesaux = await _controladorPresentacion.getUserActivs();
     return actividadesaux;
   }
 
@@ -251,7 +278,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
         _controladorPresentacion.mostrarActividadesUser(context);
         break;
       case 2:
-        _controladorPresentacion.mostrarXats(context);
+        _controladorPresentacion.mostrarXats(context, 'Amics');
         break;
       case 3:
         _controladorPresentacion.mostrarPerfil(context);
@@ -261,8 +288,111 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     }
   }
 
-  void addActivityToCalendar(Actividad act){
-
+  Image _retornaIcon(String categoria) {
+    if (catsAMB.contains(categoria)) {
+      return Image.asset(
+        'assets/categoriareciclar.png',
+        width: 45.0,
+      );
+    } else {
+      switch (categoria) {
+        case 'carnavals':
+          return Image.asset(
+            'assets/categoriacarnaval.png',
+            width: 45.0,
+          );
+        case 'teatre':
+          return Image.asset(
+            'assets/categoriateatre.png',
+            width: 45.0,
+          );
+        case 'concerts':
+          return Image.asset(
+            'assets/categoriaconcert.png',
+            width: 45.0,
+          );
+        case 'circ':
+          return Image.asset(
+            'assets/categoriacirc.png',
+            width: 45.0,
+          );
+        case 'exposicions':
+          return Image.asset(
+            'assets/categoriaarte.png',
+            width: 45.0,
+          );
+        case 'conferencies':
+          return Image.asset(
+            'assets/categoriaconfe.png',
+            width: 45.0,
+          );
+        case 'commemoracions':
+          return Image.asset(
+            'assets/categoriacommemoracio.png',
+            width: 45.0,
+          );
+        case 'rutes-i-visites':
+          return Image.asset(
+            'assets/categoriaruta.png',
+            width: 45.0,
+          );
+        case 'cursos':
+          return Image.asset(
+            'assets/categoriaexpo.png',
+            width: 45.0,
+          );
+        case 'activitats-virtuals':
+          return Image.asset(
+            'assets/categoriavirtual.png',
+            width: 45.0,
+          );
+        case 'infantil':
+          return Image.asset(
+            'assets/categoriainfantil.png',
+            width: 45.0,
+          );
+        case 'festes':
+          return Image.asset(
+            'assets/categoriafesta.png',
+            width: 45.0,
+          );
+        case 'festivals-i-mostres':
+          return Image.asset(
+            'assets/categoriafesta.png',
+            width: 45.0,
+          );
+        case 'dansa':
+          return Image.asset(
+            'assets/categoriafesta.png',
+            width: 45.0,
+          );
+        case 'cicles':
+          return Image.asset(
+            'assets/categoriaexpo.png',
+            width: 45.0,
+          );
+        case 'cultura-digital':
+          return Image.asset(
+            'assets/categoriavirtual.png',
+            width: 45.0,
+          );
+        case 'fires-i-mercats':
+          return Image.asset(
+            'assets/categoriainfantil.png',
+            width: 45.0,
+          );
+        case 'gegants':
+          return Image.asset(
+            'assets/categoriafesta.png',
+            width: 45.0,
+          );
+        default:
+          return Image.asset(
+            'assets/categoriarecom.png',
+            width: 45.0,
+          );
+      }
+    }
   }
 
   @override
@@ -270,7 +400,8 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
-        title: Text("my_activities".tr(context)),
+        title: Text("my_activities".tr(context), style: TextStyle(color: Colors.white,)),
+        automaticallyImplyLeading: false,
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -278,24 +409,47 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                _buildCercador(),
-                const SizedBox(
-                  height: 10.0,
-                ),
-                Row(
-                  children: [
-                    _buildFiltreCategoria(),
-                    const SizedBox(
-                      width: 10.0,
-                    ),
-                    _buildFiltreData(),
-                  ],
-                ),
-              ],
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 3,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                children: [
+                  const SizedBox(
+                    height: 10.0,
+                  ),
+                  _buildCercador(),
+                  const SizedBox(
+                    height: 10.0,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildFiltreCategoria(),
+                      ),
+                      const SizedBox(
+                        width: 10.0,
+                      ),
+                      Expanded(
+                        child: _buildFiltreData(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 15.0,
+                  ),
+                ],
+              ),
             ),
           ),
           Expanded(
@@ -310,13 +464,17 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                       List<String> act = [
                         activitat.name,
                         activitat.code,
-                        activitat.categoria[0],
+                        activitat.categoria.join(', '),
                         activitat.imageUrl,
                         activitat.descripcio,
                         activitat.dataInici,
                         activitat.dataFi,
-                        activitat.ubicacio
+                        activitat.ubicacio,
+                        activitat.latitud.toString(),
+                        activitat.longitud.toString(),
+    
                       ];
+                      
                       _controladorPresentacion.mostrarVerActividad(
                           context, act, activitat.urlEntrades);
                       DocumentReference docRef = _firestore
@@ -347,158 +505,168 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                             right: 16.0,
                             left: 16.0,
                           ),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 20),
-                                      child: Text(
-                                        activitat.name,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFFF4692A),
+                          child: Column(children: [
+                          Row(
+                            children: <Widget>[
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: SizedBox(
+                                  height: activitat.dataInici != activitat.dataFi ? 150.0 : 120.0,
+                                  width: activitat.dataInici != activitat.dataFi ? 150.0 : 120.0, 
+                                  child: Image.network(
+                                    activitat.imageUrl,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Center(
+                                        child: Icon(
+                                          Icons.error_outline,
+                                          color: Colors.red,
+                                          size: 48,
                                         ),
-                                      ),
-                                    ),
+                                      );
+                                    },
                                   ),
-                                ],
+                                ),
                               ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    flex: 2,
-                                    child: Column(
+                              const SizedBox(width: 10.0),
+                              Flexible(
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .start,
                                       children: [
-                                        SizedBox(
-                                          height: 150,
-                                          child: Image.network(
-                                            activitat.imageUrl,
-                                            fit: BoxFit.cover,
+                                        Flexible(
+                                          child: Text(
+                                            activitat.name,
+                                            style: const TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xFFF4692A),
+                                            ),
+                                          ),
+                                        ),
+                                        const Padding(
+                                            padding: EdgeInsets.only(right: 5.0)),
+                                        _retornaIcon(activitat.categoria[
+                                            0]),
+                                      ],
+                                    ),
+                                    const Padding(padding: EdgeInsets.only(top: 7.5)),
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.location_on),
+                                        const Padding(
+                                            padding: EdgeInsets.only(right: 7.5)),
+                                        Expanded(
+                                          child: Text(
+                                            activitat.ubicacio,
+                                            overflow: TextOverflow
+                                                .ellipsis, 
                                           ),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                  Expanded(
-                                    flex: 3,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 8),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const Icon(Icons.location_on),
-                                              Expanded(
-                                                child: Text(
-                                                  "  ${activitat.ubicacio}",
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            children: [
-                                              const Icon(Icons.calendar_month),
-                                              Text(
-                                                "  Inicio: ${() {
-                                                  try {
-                                                    return DateFormat(
-                                                            'yyyy-MM-dd')
-                                                        .format(DateTime.parse(
-                                                            activitat
-                                                                .dataInici));
-                                                  } catch (e) {
-                                                    return 'Unknown';
-                                                  }
-                                                }()}",
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            children: [
-                                              const Icon(Icons.calendar_month),
-                                              Text(
-                                                "  Fin: ${() {
-                                                  try {
-                                                    return DateFormat(
-                                                            'yyyy-MM-dd')
-                                                        .format(DateTime.parse(
-                                                            activitat.dataFi));
-                                                  } catch (e) {
-                                                    return 'Unknown';
-                                                  }
-                                                }()}",
-                                              ),
-                                            ],
-                                          ),
-                                      Row(
-                                        children: [
-                                          const Icon(Icons.local_atm),
-                                          const Padding(
-                                              padding: EdgeInsets.only(right: 7.5)),
-                                          Expanded(
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                launchUrl(activitat
-                                                    .urlEntrades); // abrir la url de la actividad para ir a su pagina
-                                              },
-                                              child: Text(
-                                                'buy_here'.tr(context),
-                                                style: const TextStyle(
-                                                  decoration: TextDecoration
-                                                      .none,
-                                                      color: Colors.blueAccent // Subrayar para que se entienda que es un enlace
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const Padding(padding: EdgeInsets.only(top: 8)),
-                                        Row(
-                                          children: [
-                                            SizedBox(
-                                              width: 180,
-                                              child: Flexible(
-                                                child: TextButton(
-                                                  onPressed: () {
-                                                    agregarEventoGoogleCalendar(activitat.name, activitat.dataInici);
-                                                  },
-                                                  child: Row(
-                                                    children: [
-                                                      Flexible(
-                                                        child: Text('add_calendar'.tr(context), style: const TextStyle(color: Color.fromARGB(255, 255, 196, 0)),),
-                                                      ),
-                                                      const Padding(padding: EdgeInsets.only(right: 5)),
-                                                      Image.asset('assets/calendar.png', height: 30,),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),],
-                                      ),
-                                    ),
-                                  ),
+                              Row(
+                                children: [
+                                  const Icon(Icons.calendar_month),
+                                  const Padding(padding: EdgeInsets.only(right: 7.5)),
+                                  Text(activitat.dataInici),
                                 ],
+                              ),
+                              activitat.dataInici != activitat.dataFi
+                                  ? Row(
+                                      children: [
+                                        const Icon(Icons.calendar_month),
+                                        const Padding(padding: EdgeInsets.only(right: 7.5)),
+                                        Text(activitat.dataFi),
+                                      ],
+                                    )
+                                  : Container(),
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.local_atm),
+                                        const Padding(
+                                            padding: EdgeInsets.only(right: 7.5)),
+                                        Expanded(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              launchUrl(activitat
+                                                  .urlEntrades);
+                                            },
+                                            child: Text(
+                                              'tickets_info'.tr(context),
+                                              style: const TextStyle(
+                                                decoration: TextDecoration
+                                                    .underline, color: Colors.blue,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
+                          const Padding(padding: EdgeInsets.only(bottom: 20)),
+                          Row(
+                          children: [
+                          SizedBox(
+                            height: 32.5,// Reducir el ancho para hacer el botón más pequeño
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: Colors.black,
+                                side: BorderSide(color: Colors.black,),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                              onPressed: () {
+                                agregarEventoGoogleCalendar(activitat.name, activitat.dataInici);
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center, 
+                                children: [
+                                  Text(
+                                    'add_calendar'.tr(context), 
+                                  ),
+                                  const Padding(padding: EdgeInsets.only(right: 5)),
+                                  const Icon(Icons.calendar_month),
+                                ],
+                              ),
+                            ),
+                          ),
+                           const Padding(padding: EdgeInsets.only(right: 10)),
+                            Align( 
+                              alignment: Alignment.bottomRight,
+                              child: SizedBox(
+                                height: 32.5,
+                                child: ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    foregroundColor: Colors.white, 
+                                    backgroundColor: Colors.black,
+                                  ),
+                                  icon: const Icon(Icons.location_on),
+                                  label: Text( 
+                                    'Como llegar',
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                  onPressed: () async {
+                                    final url = Uri.parse('https://www.google.com/maps/search/?api=1&query=${activitat.latitud},${activitat.longitud}');
+                                    if (await canLaunchUrl(url)) {
+                                      await launchUrl(url);
+                                    } else {
+                                      throw 'No se pudo abrir $url';
+                                    }
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                          ],),
                         ),
                       ),
                     ),
@@ -516,56 +684,54 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
 
   Widget _buildCercador() {
     return SizedBox(
-      height: 40.0,
+      height: 50.0,
       child: TextField(
         controller: _searchController,
         onChanged: (text) => changeSquery(text),
-        cursorColor: const Color(0xFFF4692A),
+        cursorColor: Color(0xFF333333),
         style: const TextStyle(
-          color: Color(0xFFF4692A),
+          color: Color(0xFF333333),
         ),
         decoration: InputDecoration(
           filled: true,
-          fillColor: const Color.fromRGBO(255, 229, 204, 0.815),
+          fillColor: Colors.white,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide.none,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: const BorderSide(
-              color: Color(0xFFF4692A),
-            ),
+            borderRadius: BorderRadius.circular(25.0),
+            borderSide: BorderSide(color: Colors.grey),
           ),
           hintText: "search".tr(context),
           hintStyle: const TextStyle(
-            color: Color(0xFFF4692A),
-            fontWeight: FontWeight.bold,
+            color: Color(0xFF333333),
+            
           ),
-          suffixIcon: IconButton(
-            onPressed: () {
-              searchMyActivities(squery);
-            },
-            icon: const Icon(Icons.search),
+          contentPadding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
+          suffixIcon: Padding(
+            padding: const EdgeInsets.only(right: 8.0), // Ajusta el padding a la derecha según sea necesario
+            child: IconButton(
+              onPressed: () {
+                searchMyActivities(squery);
+              },
+              icon: const Icon(Icons.search),
+            ),
           ),
-          suffixIconColor: const Color(0xFFF4692A),
+          suffixIconColor: Color(0xFF333333),
         ),
       ),
     );
   }
 
   Widget _buildFiltreCategoria() {
-    return SizedBox(
-      height: 30.0,
-      width: 200.0,
+    return Container(
+      height: 35.0,
       child: Align(
         alignment: Alignment.centerLeft,
         child: Container(
           width: 200,
-          height: 30,
+          height: 35,
           decoration: BoxDecoration(
-            color: const Color.fromRGBO(255, 229, 204, 0.815),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey, width: 1.5),
           ),
           child: Center(
             child: DropdownButton<String>(
@@ -586,13 +752,12 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
               dropdownColor:const Color.fromRGBO(255, 229, 204, 0.815),
               icon: const Icon(
                 Icons.arrow_drop_down,
-                color: Color(0xFFF4692A),
+                color: Color(0xFF333333),
               ),
               iconSize: 20,
               style: const TextStyle(
                 fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFFF4692A),
+                color: Color(0xFF333333),
               ),
               underline: Container(),
             ),
@@ -603,51 +768,43 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
   }
 
   Widget _buildFiltreData() {
-    return SizedBox(
-      height: 30.0,
-      width: 150.0,
-      child: Align(
-        alignment: Alignment.center,
-        child: Container(
-          width: 500.0,
-          child: TextField(
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFFF4692A),
-              fontWeight: FontWeight.bold,
-            ),
-            controller: _dateController,
-            decoration: InputDecoration(
-              labelText: 'date'.tr(context),
-              labelStyle: const TextStyle(
-                color: Color(0xFFF4692A),
-                fontWeight: FontWeight.bold,
-              ),
-              filled: true,
-              fillColor: const Color.fromRGBO(255, 229, 204, 0.815),
-              prefixIcon: const Icon(
-                Icons.calendar_today,
-                size: 18,
-                color: Color(0xFFF4692A),
-              ),
-              enabledBorder: const OutlineInputBorder(
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Color(0xFFF4692A),
-                ),
-              ),
-            ),
-            readOnly: true,
-            onTap: () {
-              _selectDate();
-            },
+  return Container(
+    height: 35.0,
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(color: Colors.grey, width: 1.5),
+    ),
+    child: Align(
+      alignment: Alignment.center,
+      child: Container(
+        width: 500.0,
+        child: TextField(
+          style: const TextStyle(
+            fontSize: 14,
+            color: Color(0xFF333333),
           ),
+          controller: _dateController,
+          decoration: InputDecoration(
+            labelText: _dateController.text.isNotEmpty ? '' : 'date'.tr(context),
+            border: InputBorder.none,
+            fillColor: Colors.white,
+            prefixIcon: const Icon(
+              Icons.calendar_today,
+              size: 18,
+              color: Color(0xFF333333),
+            ),
+          ),
+          readOnly: true,
+          onTap: () {
+            _selectDate();
+          },
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Future<void> _selectDate() async {
     DateTime? picked = await showDatePicker(
