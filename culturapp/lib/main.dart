@@ -1,12 +1,15 @@
 // ignore_for_file: no_logic_in_create_state, library_private_types_in_public_api
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:culturapp/data/firebase_options.dart';
+import 'package:culturapp/domain/converters/notificacions.dart';
+import 'package:culturapp/domain/models/message_arguments.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
 import 'package:culturapp/translations/AppLocalizations';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -24,24 +27,8 @@ void main() async {
     await controladorPresentacion.initialice();
   }
 
-  AwesomeNotifications().initialize(
-    null, //'assets/logoCulturApp.png',
-    [
-      NotificationChannel(
-        channelGroupKey: 'basic_channel_group',
-        channelKey: 'basic_channel',
-        channelName: 'Basic notifications',
-        channelDescription: 'Notification channel for everything',
-      )
-    ],
-    channelGroups: [
-      NotificationChannelGroup(
-          channelGroupKey: 'basic_channel_group',
-          channelGroupName: 'Basic group')
-    ],
-    debug: true,
-  );
-
+  //inicilitzar notificacions i demanar permisos
+  initializeAwesomeNotifications();
   AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
     if (!isAllowed) {
       AwesomeNotifications().requestPermissionToSendNotifications();
@@ -133,6 +120,7 @@ class _MyAppState extends StatefulWidget {
 class __MyAppStateState extends State<_MyAppState> {
   late ControladorPresentacion _controladorPresentacion;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   int _selectedIndex = 0;
   bool _isLoggedIn = false;
 
@@ -159,6 +147,53 @@ class __MyAppStateState extends State<_MyAppState> {
   void initState() {
     super.initState();
     userLogged();
+    _initializeFCM();
+  }
+
+  void _initializeFCM() async {
+    // Request permission for iOS
+    NotificationSettings settings = await _firebaseMessaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+      _firebaseMessaging.getToken().then((token) {
+        print("FCM Token: $token");
+        // Save the token to your server or use it to send test notifications
+      });
+
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        print('Message data: ${message.data}');
+        if (message.notification != null) {
+          print(
+              'Message also contained a notification: ${message.notification}');
+        }
+      });
+
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+        print('A new onMessageOpenedApp event was published!');
+        Navigator.pushNamed(context, '/message',
+            arguments: MessageArguments(message, true));
+      });
+
+      FirebaseMessaging.onBackgroundMessage(
+          _firebaseMessagingBackgroundHandler);
+    } else {
+      print('User declined or has not accepted permission');
+    }
+  }
+
+  static Future<void> _firebaseMessagingBackgroundHandler(
+      RemoteMessage message) async {
+    await Firebase.initializeApp();
+    print("Handling a background message: ${message.messageId}");
   }
 
   void userLogged() async {

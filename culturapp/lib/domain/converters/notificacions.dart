@@ -1,6 +1,44 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:culturapp/domain/converters/convert_date_format.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
+void initializeAwesomeNotifications() {
+  AwesomeNotifications().initialize(
+    null, //'assets/logoCulturApp.png',
+    [
+      NotificationChannel(
+        channelGroupKey: 'basic_channel_group',
+        channelKey: 'basic_channel',
+        channelName: 'Basic notifications',
+        channelDescription: 'Notification channel for everything',
+      )
+    ],
+    channelGroups: [
+      NotificationChannelGroup(
+          channelGroupKey: 'basic_channel_group',
+          channelGroupName: 'Basic group')
+    ],
+    debug: true,
+  );
+}
+
+void showAwesomeNotification(RemoteMessage message) {
+  AwesomeNotifications().createNotification(
+    content: NotificationContent(
+      id: message.data.hashCode,
+      channelKey: 'basic_channel',
+      title: message.notification?.title ?? 'New Message',
+      body: message.notification?.body ?? 'You have received a new message.',
+      payload: convertDynamicToStringMap(message.data),
+    ),
+  );
+}
+
+Map<String, String?> convertDynamicToStringMap(Map<String, dynamic> input) {
+  return input.map((key, value) => MapEntry(key, value.toString()));
+}
+
+//notificacions i el seu contingut
 void scheduleNotificationsActivityDayBefore(
     String activityCode, String activityName, String initialDateString) {
   DateTime initialDate = convertStringToDateTime(initialDateString);
