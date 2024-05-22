@@ -59,10 +59,12 @@ class _GrupsScreenState extends State<GrupsScreen> {
       children: [
         Row(
           children: [
-            const SizedBox(
-              width: 10.0,
+            Expanded(
+              child: Container(
+                height: 40.0,
+                child: _buildCercador(),
+              )
             ),
-            _buildCercador(),
             const SizedBox(
               width: 5.0,
             ),
@@ -86,28 +88,43 @@ class _GrupsScreenState extends State<GrupsScreen> {
 
   Widget _buildCercador() {
     return SizedBox(
-      height: 40.0,
-      width: 280.0,
-      child: TextField(
-        onChanged: (value) => updateList(value),
-        cursorColor: Colors.white,
-        cursorHeight: 20,
-        style: const TextStyle(
-          color: Colors.white,
-        ),
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: taronjaVermellosFluix,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide.none,
+      height: 45.0, // Altura del contenedor para el TextField
+      child: Padding(
+        padding: const EdgeInsets.only(right: 0.0, left: 0.0),
+        child: Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 2,
+                blurRadius: 7,
+                offset: const Offset(0, 3),
+              ),
+            ],
+            color: Colors.white.withOpacity(1),
+            borderRadius: BorderRadius.circular(25.0),
           ),
-          hintText: "search".tr(context),
-          hintStyle: const TextStyle(
-            color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 25.0, right: 15.0, top: 2.0),
+            child: Center( 
+              child: TextField(
+                onChanged: (value) => updateList(value),
+                cursorColor: Colors.black, 
+                style: const TextStyle(
+                  color: Colors.black, 
+                ),
+                decoration: InputDecoration(
+                  hintText: 'search'.tr(context),
+                  hintStyle: const TextStyle(
+                    color: Colors.grey, 
+                  ),
+                  border: InputBorder.none,
+                  suffixIcon: const Icon(Icons.search, color: Colors.grey),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0.0), 
+                ),
+              ),
+            ),
           ),
-          suffixIcon: const Icon(Icons.search),
-          suffixIconColor: Colors.white,
         ),
       ),
     );
@@ -117,7 +134,7 @@ class _GrupsScreenState extends State<GrupsScreen> {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         shape: const CircleBorder(),
-        backgroundColor: taronjaVermellosFluix,
+        backgroundColor: Color(0xFFF4692A),
         foregroundColor: Colors.white,
       ),
       onPressed: () {
