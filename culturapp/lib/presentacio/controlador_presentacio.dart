@@ -67,12 +67,14 @@ class ControladorPresentacion {
   }
 
   Future<void> initialice() async {
+    print('INITIALICE 1 ----------------------------------');
     activitats = await controladorDomini.getActivitiesAgenda();
     usersBD = await controladorDomini.getUsers();
     _loadLanguage();
   }
 
   Future<void> initialice2() async {
+    print('INITIALICE 2 ----------------------------------');
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
       _user = currentUser;
@@ -130,8 +132,7 @@ class ControladorPresentacion {
         UserCredential userCredential =
             await _auth.signInWithCredential(credential);
 
-        bool userExists =
-            await controladorDomini.accountExists(userCredential.user);
+        bool userExists = await controladorDomini.accountExists(userCredential.user);
         _user = userCredential.user;
 
         if (!userExists) {
@@ -145,6 +146,13 @@ class ControladorPresentacion {
     } catch (error) {
       print(error);
     }
+  }
+
+  Future<bool> checkUserExists(UserCredential userCred) async {
+    bool exists = await controladorDomini.accountExists(userCred.user);
+    _user = userCred.user;
+      
+    return exists;
   }
 
   Future<Usuari> getUserByName(String name) async {
@@ -165,6 +173,7 @@ class ControladorPresentacion {
   }
 
   void checkLoggedInUser(BuildContext context) {
+    print('checkLoggedInUser ----------------------------------');
     User? currentUser = _auth.currentUser;
 
     if (currentUser != null) {

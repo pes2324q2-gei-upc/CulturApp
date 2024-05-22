@@ -352,87 +352,70 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
   void mostrarBaterias() {
     bateriasCerca.sort((a, b) {
-      return a.distancia.compareTo(b.distancia);
+    return a.distancia.compareTo(b.distancia);
     });
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return FutureBuilder(
-          future: calculaBateriasCercanas(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              return SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                child: AlertDialog(
-                  content: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
+        return SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: AlertDialog(
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Row(
                       children: [
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () async {
-                              Navigator.of(context).pop();
-                            },
+                        Padding(
+                          padding: const EdgeInsets.only(top: 7.0),
+                          child: Image.asset(
+                            'assets/categoriabateria.png',
+                            height: 50.0,
+                            width: 50.0,
                           ),
                         ),
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 7.0),
-                                child: Image.asset(
-                                  'assets/categoriabateria.png',
-                                  height: 50.0,
-                                  width: 50.0,
-                                ),
-                              ),
-                              const SizedBox(width: 10.0),
-                              const Text(
-                                'Carregadors propers:',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                        const SizedBox(width: 10.0), 
+                        const Text(
+                          'Carregadors propers:',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        ...bateriasCerca
-                            .where(
-                                (bateria) => isStreetAddress(bateria.address))
-                            .map((bateria) => Padding(
-                                  padding: const EdgeInsets.only(
-                                    bottom: 5.0,
-                                  ), // Agrega un espacio en la parte inferior
-                                  child: SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.8, // 80% del ancho de la pantalla
-                                    child: bateriaBox(
-                                        adress: bateria.address,
-                                        kw: bateria.kw,
-                                        speed: bateria.speed,
-                                        distancia: bateria.distancia,
-                                        latitud: bateria.latitud,
-                                        longitud: bateria.longitud),
-                                  ),
-                                ))
-                            .toList(),
                       ],
                     ),
                   ),
-                ),
-              );
-            }
-          },
+                  ...bateriasCerca.where((bateria) => isStreetAddress(bateria.address)).map((bateria) => Padding(
+                    padding: const EdgeInsets.only(bottom: 5.0,), // Agrega un espacio en la parte inferior
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8, // 80% del ancho de la pantalla
+                      child: bateriaBox(
+                        adress: bateria.address,
+                        kw: bateria.kw, 
+                        speed: bateria.speed, 
+                        distancia: bateria.distancia, 
+                        latitud: bateria.latitud, 
+                        longitud: bateria.longitud
+                      ),
+                    ),
+                  )).toList(),
+                ],
+              ),
+            ),
+          ),
         );
       },
     );

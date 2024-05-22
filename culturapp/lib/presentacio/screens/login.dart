@@ -136,6 +136,7 @@ class _Login extends State<Login> {
 
   //Inici de sessio
   Future<UserCredential> _handleGoogleSignIn() async {
+    print('_handleGoogleSignIn -----------------------------');
     final GoogleSignIn googleSignIn = GoogleSignIn();
     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
@@ -147,9 +148,14 @@ class _Login extends State<Login> {
 
     UserCredential userCredential = await _auth.signInWithCredential(credential);
 
-    if (userCredential.user != null) {
+    bool userExists = await _controladorPresentacion.checkUserExists(userCredential);
+
+
+    if (userExists) {
       await iniciaApp();
       _controladorPresentacion.mostrarMapa(context);
+    } else {
+      _controladorPresentacion.mostrarSignup(context);
     }
 
     return userCredential;
