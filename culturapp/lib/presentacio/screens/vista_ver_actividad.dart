@@ -509,6 +509,29 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                       const Padding(
                         padding: EdgeInsets.only(bottom: 5.0),
                       ),
+                      const SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0), // Desplazamiento hacia la derecha
+                        child: Container(
+                          padding: const EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            border: Border.all(
+                              color: const Color(0xFFF4692A),
+                            ),
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: const Text(
+                            "Recomponesa:",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black, // Color de la letra negro
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
                       _expansionDescripcion(),
                       const Padding(
                         padding: EdgeInsets.only(top: 5.0),
