@@ -2,7 +2,6 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:culturapp/data/firebase_options.dart';
 import 'package:culturapp/domain/converters/notificacions.dart';
-import 'package:culturapp/domain/models/message_arguments.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
@@ -12,6 +11,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Handling a background message: ${message.messageId}");
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +38,7 @@ void main() async {
       AwesomeNotifications().requestPermissionToSendNotifications();
     }
   });
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   runApp(MyApp(
       controladorPresentacion: controladorPresentacion,
@@ -171,31 +176,37 @@ class __MyAppStateState extends State<_MyAppState> {
         // Save the token to your server or use it to send test notifications
       });
 
+      FirebaseMessaging.instance.getInitialMessage();
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        print('Message data: ${message.data}');
-        if (message.notification != null) {
-          print(
-              'Message also contained a notification: ${message.notification}');
+        RemoteNotification? notification = message.notification;
+        AndroidNotification? android = message.notification?.android;
+        if (notification != null && android != null) {
+          notificacioSimple(notification.title!, notification.body!);
+          /*showDialog(
+            context: context,
+            builder: (_) {
+              return AlertDialog(
+                title: Text(notification.title ?? ""),
+                content: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(notification.body ?? ""),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );*/
         }
       });
-
       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
         print('A new onMessageOpenedApp event was published!');
-        Navigator.pushNamed(context, '/message',
-            arguments: MessageArguments(message, true));
+        // Navigate to a specific screen
       });
-
-      FirebaseMessaging.onBackgroundMessage(
-          _firebaseMessagingBackgroundHandler);
     } else {
       print('User declined or has not accepted permission');
     }
-  }
-
-  static Future<void> _firebaseMessagingBackgroundHandler(
-      RemoteMessage message) async {
-    await Firebase.initializeApp();
-    print("Handling a background message: ${message.messageId}");
   }
 
   void userLogged() async {

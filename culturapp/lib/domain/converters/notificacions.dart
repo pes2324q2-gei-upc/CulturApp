@@ -87,3 +87,14 @@ triggerNotification() {
     ),
   );
 }
+
+notificacioSimple(String titol, String body) {
+  AwesomeNotifications().createNotification(
+    content: NotificationContent(
+      id: 11,
+      channelKey: 'basic_channel',
+      title: titol,
+      body: body,
+    ),
+  );
+}
