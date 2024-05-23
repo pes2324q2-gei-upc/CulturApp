@@ -166,6 +166,8 @@ class __MyAppStateState extends State<_MyAppState> {
       print('User granted permission');
       _firebaseMessaging.getToken().then((token) {
         print("FCM Token: $token");
+        print("helloooo");
+        //dF3O40m8QP6pmvYyUBQrzi:APA91bFbBh_a59mbcdD8l4DfepVBDlCLoAy-qzFZWoqI3lHAk03Osvn0NXv5Sz8gyLHrSmEBD2XaMLIRHIefbCbr7RpH6OMKNq_POKK8xGkI2ZeXvdzyJufQap-Q2a0n3Lne8Ti4HpTJ
         // Save the token to your server or use it to send test notifications
       });
 
