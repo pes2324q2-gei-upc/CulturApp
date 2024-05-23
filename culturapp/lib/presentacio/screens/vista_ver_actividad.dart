@@ -528,14 +528,22 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                 "Recomponesa:",
                                 style: TextStyle(
                                   fontSize: 14,
+                                  color: Colors.black, // Color de la letra negro
+                                ),
+                              ),
+                              const Text(
+                                "Exemple",
+                                style: TextStyle(
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black, // Color de la letra negro
                                 ),
                               ),
-                              const Icon(
-                                Icons.edit,
-                                color: Color(0xFF333333), // Color del ícono
-                              ),
+                              if (organizador)
+                                const Icon(
+                                  Icons.edit,
+                                  color: Color(0xFF333333), // Color del ícono
+                                ),
                             ],
                           ),
                         ),
