@@ -27,7 +27,7 @@ class UserInfoWidget extends StatefulWidget {
 
   @override
   _UserInfoWidgetState createState() =>
-      _UserInfoWidgetState(this.controladorPresentacion, this.user, this.activitatsVencidas);
+      _UserInfoWidgetState(this.controladorPresentacion, this.user, this.activitatsVencidas, this.owner);
 }
 
 class _UserInfoWidgetState extends State<UserInfoWidget> {
@@ -36,19 +36,44 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
   late Usuari _user;
   late List<Actividad> activitats;
   late List<Actividad> display_list;
+  late bool show;
+  late bool _owner;
   late List<BadgeCategory> badgeCategories;
 
-  _UserInfoWidgetState(ControladorPresentacion controladorPresentacion, Usuari user, List<Actividad> activitatsVenc) {
+  _UserInfoWidgetState(ControladorPresentacion controladorPresentacion, Usuari user, List<Actividad> activitatsVenc, bool owner) {
     _controladorPresentacion = controladorPresentacion;
     _user = user;
     activitats = [];
     display_list = [];
+    show = false;
+    _owner = owner;
   }
 
   @override
   void initState() {
     super.initState();
-    _loadActividades();
+    _loadContent();
+  }
+
+  void _loadContent() async {
+    if (_owner) {
+      _loadActividades(); 
+      show = true;
+    }
+    else {
+      bool isFriend = await _controladorPresentacion.isFriend(_user.nom);
+      if (isFriend) {
+        _loadActividades();
+        show = true;
+      }
+      else {
+        bool isPrivate = await _controladorPresentacion.checkPrivacy(_user.id);
+        if (!isPrivate) {
+          _loadActividades();
+          show = true;
+        }
+      }
+    }
     _loadBadgesCategories();
   }
 
@@ -154,7 +179,8 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                 width: MediaQuery.of(context).size.width / 4,
                 child: GestureDetector(
                   onTap: () {
-                    widget.controladorPresentacion.mostrarFollows(context, true);
+                    if (show)
+                      widget.controladorPresentacion.mostrarFollows(context, true);
                   },
                   child: _buildInfoColumn('followers'.tr(context), '12'),
                 ),
@@ -163,7 +189,8 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                 width: MediaQuery.of(context).size.width / 4,
                 child: GestureDetector(
                   onTap: () {
-                    widget.controladorPresentacion.mostrarFollows(context, false);
+                    if (show)
+                      widget.controladorPresentacion.mostrarFollows(context, false);
                   },
                   child: _buildInfoColumn('following'.tr(context), '40'),
                 ),
@@ -188,23 +215,45 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                 Expanded(
                   child: TabBarView(
                     children: [
-                      Expanded(
-                        child: ListView(
-                          controller: ScrollController(),
-                          children: [
-                            SizedBox(
-                              height: 450,
-                              child: ListaActividadesDisponibles(
-                                actividades: display_list,
-                                controladorPresentacion: _controladorPresentacion,
+                      if (show) 
+                        Expanded(
+                          child: ListView(
+                            controller: ScrollController(),
+                            children: [
+                              SizedBox(
+                                height: 450,
+                                child: ListaActividadesDisponibles(
+                                  actividades: display_list,
+                                  controladorPresentacion: _controladorPresentacion,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
+                        )
+                      else
+                      Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.lock, size: 50, color: Colors.grey),
+                              SizedBox(height: 20,),
+                              Text("private_account".tr(context), style: TextStyle(fontSize: 24)),
+                            ],
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        child: _buildBadgeCategorys(badgeCategories),
-                      ),
+                      if (show)
+                        const Text("Insignias")
+                      else
+                        Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.lock, size: 50, color: Colors.grey),
+                                SizedBox(height: 20,),
+                                Text("private_account".tr(context), style: TextStyle(fontSize: 24)),
+                              ],
+                            ),
+                          ),
                     ],
                   ),
                 ),

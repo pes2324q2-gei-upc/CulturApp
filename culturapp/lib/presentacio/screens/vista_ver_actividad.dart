@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:barcode_scan2/barcode_scan2.dart';
+import 'package:culturapp/domain/converters/notificacions.dart';
 import 'package:culturapp/domain/models/bateria.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/post.dart';
@@ -45,7 +46,6 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   late ControladorPresentacion _controladorPresentacion;
   late ControladorDomini controladorDominio;
   int _selectedIndex = 0;
-
 
   late List<String> infoActividad;
   late Uri uriActividad;
@@ -158,94 +158,102 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         return AlertDialog(
           contentPadding: const EdgeInsets.all(20),
           content: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.625, 
+            width: MediaQuery.of(context).size.width * 0.625,
             height: MediaQuery.of(context).size.height * 0.55,
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () async {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ),
-                const Text(
-                  'Participa en la actividad y obten recompensas exclusivas!',
-                  textAlign: TextAlign.justify,
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.qr_code_scanner, color: Colors.white),
-                  label: const Text('Escanear QR'),
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white, backgroundColor: Colors.deepPurpleAccent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(32),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                      },
                     ),
-                    minimumSize: const Size(double.infinity, 36),
                   ),
-                  onPressed: () async {
-                    await requestCameraPermission();
-                    ScanResult qrResult = await BarcodeScanner.scan();
-                    String qrResultString = qrResult.rawContent;
-                    if (qrResultString.toString() == infoActividad[1]) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('¡Gracias por participar!'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
-                      _controladorPresentacion.addParticipant(infoActividad[1]);
-                      setState(() {
-                        estaApuntado = true;
-                      });
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('QR no escaneado o no coincidente con la actividad.'
-                                        , textAlign: TextAlign.justify,), 
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                      Navigator.of(context).pop();
-                    }
-                  },
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'También puedes introducir el código de la actividad manualmente:',
-                  textAlign: TextAlign.justify,
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                Form(
-                  key: _formKey,
-                  child: TextFormField(
-                  controller: _codeControler,
-                  minLines: 1,
-                  maxLines: 1,
-                  decoration: const InputDecoration(
-                    labelText: "Introduce el código",
+                  const Text(
+                    'Participa en la actividad y obten recompensas exclusivas!',
+                    textAlign: TextAlign.justify,
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),
-                  validator: (value) => value!.isEmpty ? 'Por favor, introduce un código' : null,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState != null && _formKey.currentState!.validate()) {
-                        _participar();
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    icon:
+                        const Icon(Icons.qr_code_scanner, color: Colors.white),
+                    label: const Text('Escanear QR'),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.deepPurpleAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(32),
+                      ),
+                      minimumSize: const Size(double.infinity, 36),
+                    ),
+                    onPressed: () async {
+                      await requestCameraPermission();
+                      ScanResult qrResult = await BarcodeScanner.scan();
+                      String qrResultString = qrResult.rawContent;
+                      if (qrResultString.toString() == infoActividad[1]) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('¡Gracias por participar!'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                        _controladorPresentacion
+                            .addParticipant(infoActividad[1]);
+                        setState(() {
+                          estaApuntado = true;
+                        });
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'QR no escaneado o no coincidente con la actividad.',
+                              textAlign: TextAlign.justify,
+                            ),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        Navigator.of(context).pop();
                       }
                     },
-                    child: Text("send".tr(context)),
                   ),
-                ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'También puedes introducir el código de la actividad manualmente:',
+                    textAlign: TextAlign.justify,
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  Form(
+                    key: _formKey,
+                    child: TextFormField(
+                      controller: _codeControler,
+                      minLines: 1,
+                      maxLines: 1,
+                      decoration: const InputDecoration(
+                        labelText: "Introduce el código",
+                      ),
+                      validator: (value) => value!.isEmpty
+                          ? 'Por favor, introduce un código'
+                          : null,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState != null &&
+                            _formKey.currentState!.validate()) {
+                          _participar();
+                        }
+                      },
+                      child: Text("send".tr(context)),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -254,8 +262,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       },
     );
   }
-  
-  void _participar(){
+
+  void _participar() {
     if (_codeControler.text == infoActividad[1]) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -270,7 +278,10 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('El código no es coincidente con la actividad.', textAlign: TextAlign.justify,),
+          content: Text(
+            'El código no es coincidente con la actividad.',
+            textAlign: TextAlign.justify,
+          ),
           backgroundColor: Colors.red,
         ),
       );
@@ -341,86 +352,70 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
   void mostrarBaterias() {
     bateriasCerca.sort((a, b) {
-      return a.distancia.compareTo(b.distancia);
+    return a.distancia.compareTo(b.distancia);
     });
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return FutureBuilder(
-          future: calculaBateriasCercanas(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              return SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                child: AlertDialog(
-                  content: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
+        return SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: AlertDialog(
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Row(
                       children: [
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () async {
-                              Navigator.of(context).pop();
-                            },
+                        Padding(
+                          padding: const EdgeInsets.only(top: 7.0),
+                          child: Image.asset(
+                            'assets/categoriabateria.png',
+                            height: 50.0,
+                            width: 50.0,
                           ),
                         ),
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 7.0),
-                                child: Image.asset(
-                                  'assets/categoriabateria.png',
-                                  height: 50.0,
-                                  width: 50.0,
-                                ),
-                              ),
-                              const SizedBox(width: 10.0),
-                              const Text(
-                                'Carregadors propers:',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                        const SizedBox(width: 10.0), 
+                        const Text(
+                          'Carregadors propers:',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        ...bateriasCerca
-                            .where((bateria) => isStreetAddress(bateria.address))
-                            .map((bateria) => Padding(
-                                  padding: const EdgeInsets.only(
-                                    bottom: 5.0,
-                                  ), // Agrega un espacio en la parte inferior
-                                  child: SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.8, // 80% del ancho de la pantalla
-                                    child: bateriaBox(
-                                        adress: bateria.address,
-                                        kw: bateria.kw,
-                                        speed: bateria.speed,
-                                        distancia: bateria.distancia,
-                                        latitud: bateria.latitud,
-                                        longitud: bateria.longitud),
-                                  ),
-                                ))
-                            .toList(),
                       ],
                     ),
                   ),
-                ),
-              );
-            }
-          },
+                  ...bateriasCerca.where((bateria) => isStreetAddress(bateria.address)).map((bateria) => Padding(
+                    padding: const EdgeInsets.only(bottom: 5.0,), // Agrega un espacio en la parte inferior
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8, // 80% del ancho de la pantalla
+                      child: bateriaBox(
+                        adress: bateria.address,
+                        kw: bateria.kw, 
+                        speed: bateria.speed, 
+                        distancia: bateria.distancia, 
+                        latitud: bateria.latitud, 
+                        longitud: bateria.longitud
+                      ),
+                    ),
+                  )).toList(),
+                ],
+              ),
+            ),
+          ),
         );
       },
     );
@@ -431,110 +426,141 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     _controladorPresentacion
         .getForo(infoActividad[1]); //verificar que tenga un foro
     return _isLoading
-      ? Center(child: CircularProgressIndicator(color: const Color(0xFFF4692A), backgroundColor: Colors.white,)
-      ): Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF4692A),
-        title: Text("Activity".tr(context)),
-        centerTitle: true, // Centrar el título
-        toolbarHeight: 50.0,
-        titleTextStyle: const TextStyle(
-          color: Colors.white,
-          fontSize: 20.0,
-        ),
-        iconTheme: const IconThemeData(
-          color: Colors.white, // Cambia el color de la flecha de retroceso
-        ),
-        actions: <Widget>[
-          PopupMenuButton<String>(
-            onSelected: (String result) {
-              if (result == 'Enviar solicitud de organizador') {
-                _controladorPresentacion.mostrarSolicitutOrganitzador(
-                    context, infoActividad[0], infoActividad[1]);
-              } else if (result == 'share_act') {
-                if (infoActividad[5] == infoActividad[6] && infoActividad[7] != 'No disponible') {
-                  Share.share(' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} el dia ${infoActividad[5]} en ${infoActividad[7]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ',  subject: 'Actividad cultural: ${infoActividad[0]}',);
-                } else if (infoActividad[5] != infoActividad[6] && infoActividad[7] != 'No disponible') {
-                  Share.share(' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} del dia ${infoActividad[5]} hasta el dia ${infoActividad[6]} en ${infoActividad[7]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ',  subject: 'Actividad cultural: ${infoActividad[0]}',);
-                } else if (infoActividad[5] != infoActividad[6] && infoActividad[7] == 'No disponible') {
-                  Share.share(' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} del dia ${infoActividad[5]} hasta el dia ${infoActividad[6]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ', subject: 'Actividad cultural: ${infoActividad[0]}',);
-                } else if (infoActividad[5] == infoActividad[6] && infoActividad[7] == 'No disponible') {
-                  Share.share(' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} el dia ${infoActividad[5]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ', subject: 'Actividad cultural: ${infoActividad[0]}',);
-                }
-                
-              }
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
-                value: 'Enviar solicitud de organizador',
-                child: Text('Enviar solicitud de organizador'),
+        ? Center(
+            child: CircularProgressIndicator(
+            color: const Color(0xFFF4692A),
+            backgroundColor: Colors.white,
+          ))
+        : Scaffold(
+            appBar: AppBar(
+              backgroundColor: const Color(0xFFF4692A),
+              title: Text("Activity".tr(context)),
+              centerTitle: true, // Centrar el título
+              toolbarHeight: 50.0,
+              titleTextStyle: const TextStyle(
+                color: Colors.white,
+                fontSize: 20.0,
               ),
-              const PopupMenuItem<String>(
-                value: 'share_act',
-                child: Text('Compartir'),
+              iconTheme: const IconThemeData(
+                color:
+                    Colors.white, // Cambia el color de la flecha de retroceso
               ),
-            ],
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              children: [
-                _imagenActividad(infoActividad[3]), //Accedemos imagenUrl
-                _tituloBoton(
-                    infoActividad[0],
-                    infoActividad[
-                        2]), //Accedemos al nombre de la actividad y su categoria
-                const SizedBox(height: 10),
-                _descripcioActividad(
-                    infoActividad[4]), //Accedemos su descripcion
-                    const Padding(padding: EdgeInsets.only(bottom: 5.0),),
-                _expansionDescripcion(),
-                const Padding(padding: EdgeInsets.only(top: 5.0),),
-                _infoActividad(infoActividad[7], infoActividad[5],
-                    infoActividad[6], infoActividad[2], uriActividad),
-                _foro(),
-              ], //Accedemos ubicación, dataIni, DataFi, uri actividad
+              actions: <Widget>[
+                PopupMenuButton<String>(
+                  onSelected: (String result) {
+                    if (result == 'Enviar solicitud de organizador') {
+                      _controladorPresentacion.mostrarSolicitutOrganitzador(
+                          context, infoActividad[0], infoActividad[1]);
+                    } else if (result == 'share_act') {
+                      if (infoActividad[5] == infoActividad[6] &&
+                          infoActividad[7] != 'No disponible') {
+                        Share.share(
+                          ' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} el dia ${infoActividad[5]} en ${infoActividad[7]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ',
+                          subject: 'Actividad cultural: ${infoActividad[0]}',
+                        );
+                      } else if (infoActividad[5] != infoActividad[6] &&
+                          infoActividad[7] != 'No disponible') {
+                        Share.share(
+                          ' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} del dia ${infoActividad[5]} hasta el dia ${infoActividad[6]} en ${infoActividad[7]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ',
+                          subject: 'Actividad cultural: ${infoActividad[0]}',
+                        );
+                      } else if (infoActividad[5] != infoActividad[6] &&
+                          infoActividad[7] == 'No disponible') {
+                        Share.share(
+                          ' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} del dia ${infoActividad[5]} hasta el dia ${infoActividad[6]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ',
+                          subject: 'Actividad cultural: ${infoActividad[0]}',
+                        );
+                      } else if (infoActividad[5] == infoActividad[6] &&
+                          infoActividad[7] == 'No disponible') {
+                        Share.share(
+                          ' ¡No te pierdas esta increíble actividad cultural que acabo de encontrar en CulturApp!\n\n Descubre ${infoActividad[0]} el dia ${infoActividad[5]}.\n\n ¡Nos vemos ahi! 🎉🎉🎉\n\n ',
+                          subject: 'Actividad cultural: ${infoActividad[0]}',
+                        );
+                      }
+                    }
+                  },
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<String>>[
+                    const PopupMenuItem<String>(
+                      value: 'Enviar solicitud de organizador',
+                      child: Text('Enviar solicitud de organizador'),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: 'share_act',
+                      child: Text('Compartir'),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ),
-          Padding(
-              padding: const EdgeInsets.all(8.0),
-              //barra para añadir mensajes
-              child: reply == false
-                  ? PostWidget(
-                      addPost: (foroId, mensaje, fecha, numeroLikes) async {
-                        await _controladorPresentacion.addPost(
-                            foroId, mensaje, fecha, numeroLikes);
+            body: Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    children: [
+                      _imagenActividad(infoActividad[3]), //Accedemos imagenUrl
+                      _tituloBoton(
+                          infoActividad[0],
+                          infoActividad[
+                              2]), //Accedemos al nombre de la actividad y su categoria
+                      const SizedBox(height: 10),
+                      _descripcioActividad(
+                          infoActividad[4]), //Accedemos su descripcion
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 5.0),
+                      ),
+                      _expansionDescripcion(),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 5.0),
+                      ),
+                      _infoActividad(infoActividad[7], infoActividad[5],
+                          infoActividad[6], infoActividad[2], uriActividad),
+                      _foro(),
+                    ], //Accedemos ubicación, dataIni, DataFi, uri actividad
+                  ),
+                ),
+                Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    //barra para añadir mensajes
+                    child: reply == false
+                        ? PostWidget(
+                            addPost:
+                                (foroId, mensaje, fecha, numeroLikes) async {
+                              await _controladorPresentacion.addPost(
+                                  foroId, mensaje, fecha, numeroLikes);
 
-                        // Actualitza el llistat de posts
-                        setState(() {
-                          posts = _controladorPresentacion.getPostsForo(idForo);
-                        });
-                      },
-                      activitat: infoActividad[1],
-                      controladorPresentacion: _controladorPresentacion,
-                    )
-                  : ReplyWidget(
-                      addReply: (foroId, postIden, mensaje, fecha,
-                          numeroLikes) async {
-                        await _controladorPresentacion.addReplyPost(
-                            foroId, postIden, mensaje, fecha, numeroLikes);
+                              // Actualitza el llistat de posts
+                              setState(() {
+                                posts = _controladorPresentacion
+                                    .getPostsForo(idForo);
+                              });
+                            },
+                            activitat: infoActividad[1],
+                            controladorPresentacion: _controladorPresentacion,
+                          )
+                        : ReplyWidget(
+                            addReply: (foroId, postIden, mensaje, fecha,
+                                numeroLikes) async {
+                              await _controladorPresentacion.addReplyPost(
+                                  foroId,
+                                  postIden,
+                                  mensaje,
+                                  fecha,
+                                  numeroLikes);
 
-                        // Actualitza el llistat de replies
-                        setState(() {
-                          replies = _controladorPresentacion.getReplyPosts(
-                              idForo, postIden);
-                          reply = false;
-                        });
-                      },
-                      foroId: idForo,
-                      postId: postIden,
-                    )),
-        ],
-      ),
-    );
+                              // Actualitza el llistat de replies
+                              setState(() {
+                                replies = _controladorPresentacion
+                                    .getReplyPosts(idForo, postIden);
+                                reply = false;
+                              });
+                            },
+                            foroId: idForo,
+                            postId: postIden,
+                          )),
+              ],
+            ),
+          );
   }
 
   Widget _imagenActividad(String imagenUrl) {
@@ -652,7 +678,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           mostrarDescripcionCompleta
               ? 'see_less'.tr(context)
               : 'see_more'.tr(context),
-          style:  const TextStyle(
+          style: const TextStyle(
             color: Colors.grey,
           ),
         ),
@@ -664,7 +690,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       String categorias, Uri urlEntrades) {
     return Container(
       color: Colors.grey.shade200,
-     padding: const EdgeInsets.only(top: 10.0),
+      padding: const EdgeInsets.only(top: 10.0),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(children: [
@@ -751,7 +777,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                           children: [
                             const Icon(Icons.qr_code, color: Colors.white),
                             const SizedBox(width: 8),
-                            Text(organizador ? 'Mostrar QR' : 'Participar en la actividad'),
+                            Text(organizador
+                                ? 'Mostrar QR'
+                                : 'Participar en la actividad'),
                           ],
                         ),
                       ),
@@ -792,7 +820,10 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       children: [
         icono,
         const Padding(padding: EdgeInsets.only(right: 7.5)),
-        Text(texto,  style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),),
+        Text(
+          texto,
+          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+        ),
       ],
     );
   }
@@ -1244,8 +1275,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     );
   }
 
-  Widget _buildPopUpMenuNotBlocked(BuildContext context, Post post, bool reply,
-      String owner, String date) {
+  Widget _buildPopUpMenuNotBlocked(
+      BuildContext context, Post post, bool reply, String owner, String date) {
     String userLogged = _controladorPresentacion.getUsername();
     if (owner == userLogged) {
       return _buildPopupMenu([
@@ -1334,7 +1365,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     );
   }
 
-  void manageSignupButton(List<String> infoactividad) {
+  void manageSignupButton(List<String> infoActividad) {
     if (mounted) {
       setState(() {
         if (estaApuntado) {
@@ -1342,13 +1373,15 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           estaApuntado = false;
         } else {
           controladorDominio.signupInActivity(_user?.uid, infoActividad[1]);
+          scheduleNotificationsActivityDayBefore(
+              infoActividad[1], infoActividad[0], infoActividad[5]);
           estaApuntado = true;
         }
       });
     }
   }
 
-void checkApuntado(String uid, List<String> infoactividad) async {
+  void checkApuntado(String uid, List<String> infoactividad) async {
     setState(() {
       _isLoading = true;
     });

@@ -1,7 +1,6 @@
-//import "package:culturapp/presentacio/routes/routes.dart";
 import "package:culturapp/domain/models/user.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
-import "package:culturapp/presentacio/screens/afegir_amics.dart";
+import "package:culturapp/presentacio/screens/xats/afegir_amics.dart";
 import "package:culturapp/presentacio/screens/xats/amics/amics_screen.dart";
 import "package:culturapp/presentacio/screens/xats/grups/grups_screen.dart";
 import "package:culturapp/translations/AppLocalizations";
@@ -100,9 +99,9 @@ class _Xats extends State<Xats> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: const Color(0xFFF4692A),
-          title: const Text(
-            'Comunidad',
-            style: TextStyle(color: Colors.white),
+          title: Text(
+            'community'.tr(context),
+            style: const TextStyle(color: Colors.white),
           ),
           bottom: TabBar(
             labelColor: Colors.white,

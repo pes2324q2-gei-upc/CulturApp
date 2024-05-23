@@ -1,7 +1,4 @@
-import "package:culturapp/domain/models/actividad.dart";
 import "package:culturapp/translations/AppLocalizations";
-//import "package:culturapp/presentacio/routes/routes.dart";
-//import "package:culturapp/presentacio/screens/search_my_activities.dart";
 import "package:flutter/material.dart";
 
 class MyActivities extends StatefulWidget {
@@ -12,8 +9,6 @@ class MyActivities extends StatefulWidget {
 }
 
 class _MyActivities extends State<MyActivities> {
-  //List<Actividad> activitats = null; quan tinguem de base de dades fer-ho bé
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +17,7 @@ class _MyActivities extends State<MyActivities> {
           backgroundColor: const Color(0xFFF4692A),
           title: Text(
             'my_activities'.tr(context),
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
           ),
           actions: [
             IconButton(

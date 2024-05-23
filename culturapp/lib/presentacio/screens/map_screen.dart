@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
@@ -57,6 +58,15 @@ class _MapPageState extends State<MapPage> {
     categoriasFavoritas = _controladorPresentacion.getCategsFav();
     activitats = _controladorPresentacion.getActivitats();
     recomms = _controladorPresentacion.getActivitatsRecomm();
+    initializeNotifications();
+  }
+
+  void initializeNotifications() {
+    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+      if (!isAllowed) {
+        AwesomeNotifications().requestPermissionToSendNotifications();
+      }
+    });
   }
 
   BitmapDescriptor iconoArte = BitmapDescriptor.defaultMarker;

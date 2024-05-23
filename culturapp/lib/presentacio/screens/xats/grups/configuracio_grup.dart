@@ -148,8 +148,12 @@ class _ConfigGrup extends State<ConfigGrup> {
         SizedBox(
           width: 240,
           height: 40,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 5),
+          child: Container(
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              color: Colors.blueGrey.withOpacity(0.7),
+              borderRadius: BorderRadius.circular(10),
+            ),
             child: TextField(
               cursorColor: Colors.white,
               cursorHeight: 20,
@@ -164,7 +168,8 @@ class _ConfigGrup extends State<ConfigGrup> {
               ),
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Colors.blueGrey.withOpacity(0.7),
+                fillColor: Colors.blueGrey.withOpacity(0.1),
+                contentPadding: EdgeInsets.zero,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                   borderSide: BorderSide.none,
