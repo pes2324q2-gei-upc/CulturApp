@@ -172,17 +172,31 @@ class _SignupState extends State<Signup> {
                   ? Container()
                   : Column(
                       children: <Widget>[
-                        const Expanded(
-                          child: SingleChildScrollView(
-                            child: Text('Your terms and conditions here jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj'),
-                          ),
-                        ),
-                        ElevatedButton(
-                          child: const Text('Accept'),
+                        TextButton(
+                          child: Text('Accept Terms and Policies'),
                           onPressed: () {
-                            setState(() {
-                              termsAccepted = true;
-                            });
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Terms and Policies'),
+                                  content: SingleChildScrollView(
+                                    child: Text('Your terms and conditions here ...'),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: const Text('Accept'),
+                                      onPressed: () {
+                                        setState(() {
+                                          termsAccepted = true;
+                                        });
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
                           },
                         ),
                       ],
@@ -227,6 +241,10 @@ class _SignupState extends State<Signup> {
     if (!await _controladorPresentacion.usernameUnique(usernameController.text)) {
        _showErrorMessage('Ya existe un usuario con este nombre de usuario');
        return false;
+    }
+    if(!termsAccepted) {
+      _showErrorMessage('Por favor, accepta los terminos i condiciones');
+      return false;
     }
     return true;
   }
