@@ -521,13 +521,22 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             ),
                             borderRadius: BorderRadius.circular(12.0),
                           ),
-                          child: const Text(
-                            "Recomponesa:",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black, // Color de la letra negro
-                            ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                "Recomponesa:",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black, // Color de la letra negro
+                                ),
+                              ),
+                              const Icon(
+                                Icons.edit,
+                                color: Color(0xFF333333), // Color del ícono
+                              ),
+                            ],
                           ),
                         ),
                       ),
