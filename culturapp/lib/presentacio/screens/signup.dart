@@ -16,6 +16,7 @@ class Signup extends StatefulWidget {
 class _SignupState extends State<Signup> {
   final TextEditingController usernameController = TextEditingController();
   List<String> selectedCategories = [];
+  bool termsAccepted = false;
 
   final List<String> _categories = [
     'Festa',
@@ -163,6 +164,29 @@ class _SignupState extends State<Signup> {
                   ),
                 ),
                 const SizedBox(height: 20),
+              ],
+            ),
+            Column(
+              children: [
+                termsAccepted
+                  ? Container()
+                  : Column(
+                      children: <Widget>[
+                        const Expanded(
+                          child: SingleChildScrollView(
+                            child: Text('Your terms and conditions here jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj'),
+                          ),
+                        ),
+                        ElevatedButton(
+                          child: const Text('Accept'),
+                          onPressed: () {
+                            setState(() {
+                              termsAccepted = true;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
               ],
             ),
             Container(
