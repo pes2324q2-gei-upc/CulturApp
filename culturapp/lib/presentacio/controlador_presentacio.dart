@@ -641,8 +641,6 @@ class ControladorPresentacion {
     return controladorDomini.deleteReply(foroId, postId, replyId);
   }
 
-  //a partir de aqui modificar las que necesiten token o no
-
   Future<void> getXat(String receiverName) async {
     try {
       xatAmic? xat = await controladorDomini.xatExists(receiverName);
@@ -723,7 +721,7 @@ class ControladorPresentacion {
     try {
       controladorDomini.addGrupMessage(grupId, time, text);
     } catch (error) {
-      throw Exception('Error al añadir mensaje al xat: $error');
+      throw Exception('Error al añadir mensaje al grupo: $error');
     }
   }
 
@@ -732,7 +730,7 @@ class ControladorPresentacion {
       List<Message> missatges = await controladorDomini.getGrupMessages(grupId);
       return missatges;
     } catch (error) {
-      throw Exception('Error al cojer mensajes del xat: $error');
+      throw Exception('Error al cojer mensajes del grupo: $error');
     }
   }
 

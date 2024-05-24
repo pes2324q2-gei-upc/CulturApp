@@ -1079,9 +1079,6 @@ Future<List<Bateria>> getBateries() async {
     }
   }
 
-  //a partir de aqui verificar si hace falta el token i adaptar el codigo
-  //este token se debera cambiar por el del current user
-
   //xat existe? si no es asi crealo
   Future<xatAmic?> xatExists(String receiverName) async {
     try {
@@ -1168,7 +1165,11 @@ Future<List<Bateria>> getBateries() async {
   Future<List<Message>> getMessages(String? xatId) async {
     try {
       final response = await http.get(Uri.parse(
-          'https://culturapp-back.onrender.com/xats/$xatId/mensajes'));
+          'https://culturapp-back.onrender.com/xats/$xatId/mensajes'),
+          headers: {
+            'Authorization': 'Bearer ${userLogged.getToken()}'
+          }
+        );
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -1225,7 +1226,10 @@ Future<List<Bateria>> getBateries() async {
   Future<Grup> getInfoGrup(String grupId) async {
     try {
       final response = await http
-          .get(Uri.parse('https://culturapp-back.onrender.com/grups/$grupId'));
+          .get(Uri.parse('https://culturapp-back.onrender.com/grups/$grupId'),
+          headers: {
+            'Authorization': 'Bearer ${userLogged.getToken()}'
+          });
 
       if (response.statusCode == 200) {
         final dynamic data = json.decode(response.body);
@@ -1304,6 +1308,7 @@ Future<List<Bateria>> getBateries() async {
       };
 
       var request = http.MultipartRequest('PUT', Uri.parse('https://culturapp-back.onrender.com/grups/$grupId/update'));
+      request.headers['Authorization'] = 'Bearer ${userLogged.getToken()}';
 
       // Add each key-value pair from grupData as a form field
       grupData.forEach((key, value) {
@@ -1333,10 +1338,11 @@ Future<List<Bateria>> getBateries() async {
       'members': members
     };
 
-    final response = await http.put( Uri.parse('http://$ip:8080/grups/$grupId/members'),
+    final response = await http.put( Uri.parse('https://culturapp-back.onrender.com/grups/$grupId/members'),
           headers: {
-                'Content-Type': 'application/json',
-              },
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${userLogged.getToken()}'
+          },
           body: jsonEncode(grupData)
     );
 
@@ -1371,7 +1377,10 @@ Future<List<Bateria>> getBateries() async {
   Future<List<Message>> getGrupMessages(String grupId) async {
     try {
       final response = await http.get(Uri.parse(
-          'https://culturapp-back.onrender.com/grups/$grupId/mensajes'));
+          'https://culturapp-back.onrender.com/grups/$grupId/mensajes'),
+          headers: {
+            'Authorization': 'Bearer ${userLogged.getToken()}'
+          });
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
