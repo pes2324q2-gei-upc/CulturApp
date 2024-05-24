@@ -77,17 +77,6 @@ void scheduleNotificationsActivityDayBefore(
   );
 }
 
-triggerNotification() {
-  AwesomeNotifications().createNotification(
-    content: NotificationContent(
-      id: 10,
-      channelKey: 'basic_channel',
-      title: 'Simple Notification',
-      body: 'Simple Button',
-    ),
-  );
-}
-
 notificacioSimple(String titol, String body) {
   AwesomeNotifications().createNotification(
     content: NotificationContent(

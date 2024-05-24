@@ -15,11 +15,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   print("Handling a background message: ${message.messageId}");
+  notificacioSimple(message.notification?.title ?? "Title",
+      message.notification?.body ?? "Body");
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   // Inicializa Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
@@ -50,9 +51,7 @@ class MyApp extends StatelessWidget {
   final User? currentUser;
 
   const MyApp(
-      {Key? key,
-      required this.controladorPresentacion,
-      this.currentUser})
+      {Key? key, required this.controladorPresentacion, this.currentUser})
       : super(key: key);
 
   @override
@@ -174,34 +173,17 @@ class __MyAppStateState extends State<_MyAppState> {
       print('User granted permission');
       _firebaseMessaging.getToken().then((token) {
         print("FCM Token: $token");
-        //dF3O40m8QP6pmvYyUBQrzi:APA91bFbBh_a59mbcdD8l4DfepVBDlCLoAy-qzFZWoqI3lHAk03Osvn0NXv5Sz8gyLHrSmEBD2XaMLIRHIefbCbr7RpH6OMKNq_POKK8xGkI2ZeXvdzyJufQap-Q2a0n3Lne8Ti4HpTJ
-        // Save the token to your server or use it to send test notifications
       });
 
-      FirebaseMessaging.instance.getInitialMessage();
+      // Handle foreground messages
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         RemoteNotification? notification = message.notification;
         AndroidNotification? android = message.notification?.android;
         if (notification != null && android != null) {
           notificacioSimple(notification.title!, notification.body!);
-          /*showDialog(
-            context: context,
-            builder: (_) {
-              return AlertDialog(
-                title: Text(notification.title ?? ""),
-                content: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(notification.body ?? ""),
-                    ],
-                  ),
-                ),
-              );
-            },
-          );*/
         }
       });
+
       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
         print('A new onMessageOpenedApp event was published!');
         // Navigate to a specific screen

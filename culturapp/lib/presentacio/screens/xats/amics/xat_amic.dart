@@ -56,11 +56,6 @@ class _XatAmicScreen extends State<XatAmicScreen> {
   }
 
   void _sendMessage(String text) {
-    /*només e sper probar com funcionen les notificacions, després es treu*/
-    triggerNotification();
-
-    //enviar missatge, jo envio missatge
-
     if (text.isNotEmpty) {
       _controller.clear();
 
