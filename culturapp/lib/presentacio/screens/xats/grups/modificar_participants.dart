@@ -298,7 +298,7 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
       child: const Icon(Icons.check),
       onPressed: () {
         _grup.membres = participants;
-
+        _controladorPresentacion.updateMembersGrup(_grup.id, participants);
         //crida al backend per passar el grup updated
         _controladorPresentacion.mostrarInfoGrup(context, _grup);
       },
