@@ -60,19 +60,21 @@ class ControladorPresentacion {
   late List<Bateria> bateriasDispo;
   late List<String> blockedUsers;
 
-  void funcLogout() async {
+  Future<void> funcLogout() async {
     _auth.signOut();
     final GoogleSignIn googleSignIn = GoogleSignIn();
     await googleSignIn.signOut();
   }
 
   Future<void> initialice() async {
+
     activitats = await controladorDomini.getActivitiesAgenda();
     usersBD = await controladorDomini.getUsers();
     _loadLanguage();
   }
 
   Future<void> initialice2() async {
+
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
       _user = currentUser;
@@ -84,7 +86,7 @@ class ControladorPresentacion {
       activitats = await controladorDomini.getActivitiesAgenda();
       activitatsUser =
           await controladorDomini.getUserActivities(usernameLogged);
-      actividadesVencidas = await controladorDomini.getActivitiesVencudes();
+      actividadesVencidas = await controladorDomini.getActivitiesVencudes() ?? [];
       actividadesOrganizadas =
           await controladorDomini.obteActivitatsOrganitzades(_user!.uid);
       usersBD = await controladorDomini.getUsers();
@@ -115,36 +117,11 @@ class ControladorPresentacion {
     await controladorDomini.addValoracion(id, puntuacion, comentario);
   }
 
-  Future<void> handleGoogleSignIn(BuildContext context) async {
-    try {
-      final GoogleSignIn googleSignIn = GoogleSignIn();
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-      if (googleUser != null) {
-        final GoogleSignInAuthentication googleAuth =
-            await googleUser.authentication;
-        final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
-
-        UserCredential userCredential =
-            await _auth.signInWithCredential(credential);
-
-        bool userExists =
-            await controladorDomini.accountExists(userCredential.user);
-        _user = userCredential.user;
-
-        if (!userExists) {
-          mostrarSignup(context);
-        } else {
-          await initialice2();
-          await initialice();
-          mostrarMapa(context);
-        }
-      }
-    } catch (error) {
-      print(error);
-    }
+  Future<bool> checkUserExists(UserCredential userCred) async {
+    bool exists = await controladorDomini.accountExists(userCred.user);
+    _user = userCred.user;
+      
+    return exists;
   }
 
   Future<Usuari> getUserByName(String name) async {
@@ -165,6 +142,7 @@ class ControladorPresentacion {
   }
 
   void checkLoggedInUser(BuildContext context) {
+
     User? currentUser = _auth.currentUser;
 
     if (currentUser != null) {
@@ -581,14 +559,14 @@ class ControladorPresentacion {
     Foro? foro = await controladorDomini.foroExists(code);
     if (foro != null) {
       // El foro existe, imprimir sus detalles
-      print('Foro existente: $foro');
+
     } else {
       // El foro no existe, crear uno nuevo
       bool creadoExitosamente = await controladorDomini.createForo(code);
       if (creadoExitosamente) {
-        print('Nuevo foro creado');
+
       } else {
-        print('Error al crear el foro');
+
       }
     }
   }
@@ -650,13 +628,13 @@ class ControladorPresentacion {
 
       if (xat != null) {
         // El foro existe, imprimir sus detalles
-        print('Xat existente: $xat');
+
       } else {
         // El foro no existe, crear uno nuevo
         bool creadoExitosamente =
             await controladorDomini.createXat(receiverName);
         if (creadoExitosamente) {
-          print('Nuevo xat creado');
+
         } else {
           throw Exception('Error al crear el xat');
         }
