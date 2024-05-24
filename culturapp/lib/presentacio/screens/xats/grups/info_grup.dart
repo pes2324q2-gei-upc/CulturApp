@@ -1,8 +1,10 @@
+import "dart:typed_data";
 import "package:culturapp/domain/models/grup.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/widgetsUtils/user_box.dart";
 import "package:culturapp/translations/AppLocalizations";
 import "package:flutter/material.dart";
+import "package:image_picker/image_picker.dart";
 
 class InfoGrupScreen extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
@@ -25,6 +27,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
   double llargadaPantalla = 440;
   double llargadaPantallaTitols = 438;
   bool estaEditant = false;
+  Uint8List? _image;
 
   Color taronjaVermellos = const Color(0xFFF4692A);
   Color grisFluix = const Color.fromRGBO(211, 211, 211, 0.5);
@@ -37,14 +40,35 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
   void canviarEstat() {
     setState(() {
       //si passa de editar a no editar es cridaria la funció de update grup per modificar-lo
-
       if (estaEditant) {
         _controladorPresentacion.updateGrup(_grup.id, _grup.nomGroup,
-            _grup.descripcio, _grup.imageGroup, _grup.membres);
+            _grup.descripcio, _image, _grup.membres, _grup.imageGroup);
         //crida a funcio del back per fer un update de _grup amb els nous parametres
-      }
+      } 
       estaEditant = !estaEditant;
     });
+  }
+
+  void actualitzarInfoGrup() async {
+    //Grup g = await _controladorPresentacion.getInfoGrup(_grup.id);
+    //setState(() {
+      //_grup.imageGroup = g.imageGroup;
+    //});
+  }
+
+  void assignarImatge() async {
+    Uint8List img = await pickImage(ImageSource.gallery);
+    setState(() {
+      _image = img;
+    });
+  }
+
+  pickImage(ImageSource source) async {
+    final ImagePicker _imagePicker = ImagePicker();
+    XFile? _file = await _imagePicker.pickImage(source: source);
+    if(_file != null) {
+      return await _file.readAsBytes();
+    }
   }
 
   @override
@@ -133,22 +157,56 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
   }
 
   Widget _imatgeNoEditant() {
-    return const Image(
-      image: AssetImage(
-          'assets/userImage.png'), //quan s'implementi les imatges ja es tocarà
-      fit: BoxFit.fill,
-      width: 70.0,
-      height: 70.0,
-    );
+    //actualitzarInfoGrup();
+    return _image != null 
+      ? CircleAvatar(
+          backgroundImage: MemoryImage(_image!),
+          radius: 40,
+        )
+        : _grup.imageGroup.isNotEmpty
+          ? ClipOval(
+            child: Image(
+              image: NetworkImage(_grup.imageGroup),
+                  fit: BoxFit.cover,
+                  width: 70.0,
+                  height: 70.0,
+            )
+          )
+          : const Image(
+            image: AssetImage(
+                'assets/userImage.png'), 
+            fit: BoxFit.fill,
+            width: 70.0,
+            height: 70.0,
+          );
   }
 
   Widget _imatgeEditant() {
-    //ns com es faria pero s'ha de poder canviar l'imatge amb una foto del movil
-    return const Image(
-      image: AssetImage('assets/userImage.png'),
-      fit: BoxFit.fill,
-      width: 70.0,
-      height: 70.0,
+    return Stack (
+      children: [
+        _image != null 
+        ? CircleAvatar(
+            backgroundImage: MemoryImage(_image!),
+            radius: 65,
+          )
+        : _grup.imageGroup.isNotEmpty
+          ? CircleAvatar(
+              backgroundImage: NetworkImage(_grup.imageGroup),
+              radius: 65,
+            )
+          : const CircleAvatar(
+              backgroundImage: AssetImage('assets/userImage.png'),
+              radius: 65,
+            ),  
+        Positioned(
+          bottom: -10,
+          left: 80,
+          child: IconButton(
+            onPressed: assignarImatge,
+            icon: const Icon(Icons.add_a_photo),
+          )
+        )
+      ],
     );
   }
 
