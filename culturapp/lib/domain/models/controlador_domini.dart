@@ -1165,6 +1165,7 @@ class ControladorDomini {
 
       if (response.statusCode == 201) {
         print('Mensaje agregado exitosamente al xat');
+        sendNotificationToUser("token", "Mensaje enviado a grupo", text);
       } else {
         print('Error al agregar mensaje al xat: ${response.statusCode}');
       }
@@ -1388,21 +1389,20 @@ class ControladorDomini {
     }
   }
 
-  void sendNotificationToUser(token, title, text) async {
+  void sendNotificationToUser(String token, String title, String text) async {
     //token de momento hardcoded al emulador pixel a7
     token =
         "fDE4x404TSuRIjlWh1ihMB:APA91bFQm-7z6YdX3Y67FgbKMEVpIgYgXpGurgBCrvuu3AZencUBnstDDnXHtPn-gMggwkH1rWfejBtRERhZ0WeV6jTmMU5U1iUGXbhUCnXVRJLuQQ9yl0nAnuE4GfY_7OY7opbapVVI";
 
     try {
-      final url =
-          Uri.parse('https://culturapp-back.onrender.com/notificacio/enviar');
+      final url = Uri.parse('http://${ip}:8080/notificacio/enviar');
       final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${userLogged.getToken()}'
         },
-        body: jsonEncode({'title': title, 'mensaje': text}),
+        body: jsonEncode({'title': title, 'mensaje': text, 'token': token}),
       );
 
       if (response.statusCode == 201) {
