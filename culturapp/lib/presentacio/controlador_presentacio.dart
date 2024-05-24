@@ -1,6 +1,4 @@
 import 'dart:typed_data';
-import 'dart:ffi';
-
 import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/bateria.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';

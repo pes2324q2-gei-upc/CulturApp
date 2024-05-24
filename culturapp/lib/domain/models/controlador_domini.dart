@@ -1087,7 +1087,7 @@ Future<List<Bateria>> getBateries() async {
     try {
       final respuesta = await http.get(
         Uri.parse(
-            'http://${ip}:8080/xats/exists?receiver=$receiverName'),
+            'https://culturapp-back.onrender.com/xats/exists?receiver=$receiverName'),
         headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
         },
