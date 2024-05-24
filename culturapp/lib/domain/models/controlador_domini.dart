@@ -867,7 +867,10 @@ Future<List<Bateria>> getBateries() async {
   Future<List<Post>> getPostsForo(String foroId) async {
     try {
       final response = await http.get(
-          Uri.parse('https://culturapp-back.onrender.com/foros/$foroId/posts'));
+          Uri.parse('https://culturapp-back.onrender.com/foros/$foroId/posts'),
+          headers: {
+            'Authorization': 'Bearer ${userLogged.getToken()}',
+        },);
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -995,7 +998,10 @@ Future<List<Bateria>> getBateries() async {
   Future<List<Post>> getReplyPosts(String foroId, String? postId) async {
     try {
       final response = await http.get(Uri.parse(
-          'https://culturapp-back.onrender.com/foros/$foroId/posts/$postId/reply'));
+          'https://culturapp-back.onrender.com/foros/$foroId/posts/$postId/reply'),
+          headers: {
+            'Authorization': 'Bearer ${userLogged.getToken()}',
+        },);
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
