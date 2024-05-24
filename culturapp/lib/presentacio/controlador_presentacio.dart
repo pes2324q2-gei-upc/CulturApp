@@ -230,6 +230,10 @@ class ControladorPresentacion {
     return usernameLogged;
   }
 
+  Future<String?> getRecompensa(String activityId) async {
+    return controladorDomini.getRecompensa(activityId);
+  }
+
   List<Actividad> getActividadesVencidas() {
     return actividadesVencidas;
   }

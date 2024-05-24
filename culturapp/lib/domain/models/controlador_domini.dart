@@ -149,6 +149,23 @@ class ControladorDomini {
     return categorias;
   }
 
+  Future<String?> getRecompensa(String activityId) async {
+    final response = await http.get(Uri.parse('https://culturapp-back.onrender.com/activitats/reward/$activityId'),
+    headers: {
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+    }
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['recompensa']; // Asegúrate de que 'recompensa' es la clave correcta en tu respuesta JSON
+    } else {
+      // Manejo de errores
+      return null;
+    }
+  }
+
+
   Future<List<String>> obteActivitatsOrganitzades(String uid) async {
     final respuesta = await http.get(
       Uri.parse('https://culturapp-back.onrender.com/users/${uid}/actividadesorganizadas'),

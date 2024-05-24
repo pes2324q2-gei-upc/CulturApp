@@ -525,19 +525,46 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Text(
-                                "Recomponesa:",
+                                "Recompensa:",
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.black, // Color de la letra negro
                                 ),
                               ),
-                              const Text(
-                                "Exemple",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black, // Color de la letra negro
-                                ),
+                              FutureBuilder<String?>(
+                                future: _controladorPresentacion.getRecompensa(infoActividad[1]), // Llama a la API
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return const CircularProgressIndicator(); // Muestra un indicador de carga mientras esperas
+                                  } else if (snapshot.hasError) {
+                                    return const Text(
+                                      "Error",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red, // Color de la letra rojo en caso de error
+                                      ),
+                                    );
+                                  } else if (snapshot.hasData && snapshot.data != null) {
+                                    return Text(
+                                      snapshot.data!,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black, // Color de la letra negro
+                                      ),
+                                    );
+                                  } else {
+                                    return const Text(
+                                      "No disponible",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black, // Color de la letra negro
+                                      ),
+                                    );
+                                  }
+                                },
                               ),
                               if (organizador)
                                 const Icon(
