@@ -58,23 +58,26 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
   void _loadContent() async {
     if (_owner) {
       _loadActividades(); 
+      _loadBadgesCategories();
       show = true;
     }
     else {
       bool isFriend = await _controladorPresentacion.isFriend(_user.nom);
       if (isFriend) {
         _loadActividades();
+        _loadBadgesCategories();
         show = true;
       }
       else {
         bool isPrivate = await _controladorPresentacion.checkPrivacy(_user.id);
         if (!isPrivate) {
           _loadActividades();
+          _loadBadgesCategories();
           show = true;
         }
       }
     }
-    _loadBadgesCategories();
+    
   }
 
   Future<void> _loadActividades() async {
@@ -242,15 +245,15 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                           ),
                         ),
                       if (show)
-                        const Text("Insignias")
+                      _buildBadgeCategorys(badgeCategories)
                       else
                         Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.lock, size: 50, color: Colors.grey),
-                                SizedBox(height: 20,),
-                                Text("private_account".tr(context), style: TextStyle(fontSize: 24)),
+                                const Icon(Icons.lock, size: 50, color: Colors.grey),
+                                const SizedBox(height: 20,),
+                                Text("private_account".tr(context), style: const TextStyle(fontSize: 24)),
                               ],
                             ),
                           ),

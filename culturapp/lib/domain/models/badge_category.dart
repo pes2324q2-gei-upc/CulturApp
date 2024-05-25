@@ -7,18 +7,27 @@ class BadgeCategory {
     late String rank;
     late double progress;
 
-    BadgeCategory(this.name, this.totalActivities, this.actualActivities, this.rank){
+    BadgeCategory(this.name, this.actualActivities, this.rank){
+      if (rank == 't') {
+        totalActivities = 10;
+      } else if (rank == 'b') {
+        totalActivities = 50;
+      } else if (rank == 'p') {
+        totalActivities = 100;
+      } else {
+        totalActivities = actualActivities;
+      }
       lastActivities = totalActivities - actualActivities;
       progress = actualActivities.toDouble() / totalActivities.toDouble();
-      image = wichBadge(name, rank);
+      image = 'assets/badges/${name}_$rank.png';
     }
 
-    String wichBadge(String name, String rank) {
-      switch (name) {
-        case 'circ':
-          return 'assets/badges/circ_$rank.png';
-        default:
-          return 'assets/images/badge.png';
-      }
+    factory BadgeCategory.fromJson(Map<String, dynamic> json) {
+      print('Holaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+      return BadgeCategory(
+        json.keys.first,
+        json.values.first[0],
+        json.values.first[1],
+      );
     }
 }
