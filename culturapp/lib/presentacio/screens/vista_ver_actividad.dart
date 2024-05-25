@@ -516,8 +516,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
-                                "Recompensa:",
+                              Text(
+                                'reward'.tr(context),
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.black,
@@ -551,12 +551,11 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                             ),
                                           );
                                         } else if (snapshot.data == "null") {
-                                          return const Text(
-                                            "No hay recompensa",
+                                          return Text(
+                                            'noreward'.tr(context),
                                             style: TextStyle(
                                               fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
+                                              color: Colors.grey,
                                             ),
                                           );
                                         }
@@ -578,7 +577,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.black,
+                                              color: Colors.grey,
                                             ),
                                           );
                                         }
