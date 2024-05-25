@@ -1,6 +1,6 @@
-import 'dart:ffi';
-
+import 'dart:typed_data';
 import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/badge_category.dart';
 import 'package:culturapp/domain/models/bateria.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/grup.dart';
@@ -230,6 +230,14 @@ class ControladorPresentacion {
     return usernameLogged;
   }
 
+  Future<String?> getRecompensa(String activityId) async {
+    return controladorDomini.getRecompensa(activityId);
+  }
+
+  Future<void> actualizarRecompensa(String actividadId, String nuevaRecompensa) {
+    return controladorDomini.actualizarRecompensa(actividadId, nuevaRecompensa);
+  }
+
   List<Actividad> getActividadesVencidas() {
     return actividadesVencidas;
   }
@@ -259,6 +267,10 @@ class ControladorPresentacion {
 
   Future<List<String>> getRequestsUser() async {
     return await controladorDomini.getRequestsUser();
+  }
+
+ Future<List<BadgeCategory>> getBadges(String nom) async {
+    return await controladorDomini.getBadges(nom);
   }
 
   List<String> getBlockedUsers() {
@@ -316,8 +328,6 @@ class ControladorPresentacion {
   Future<void> blockUser(String user) async {
     await controladorDomini.blockUser(user);
     addBlockedUser(user);
-    deleteFriend(user);
-    deleteFollowing(user);
   }
 
   Future<void> unblockUser(String user) async {
@@ -620,8 +630,6 @@ class ControladorPresentacion {
     return controladorDomini.deleteReply(foroId, postId, replyId);
   }
 
-  //a partir de aqui modificar las que necesiten token o no
-
   Future<void> getXat(String receiverName) async {
     try {
       xatAmic? xat = await controladorDomini.xatExists(receiverName);
@@ -644,6 +652,11 @@ class ControladorPresentacion {
     }
   }
 
+  Future<String> getXatId(String receiverName) async {
+    xatAmic? xat = await controladorDomini.xatExists(receiverName);
+    return xat!.id;
+  }
+
   Future<String> lastMsg(String receiverId) async {
     xatAmic? xat = await controladorDomini.xatExists(receiverId);
     return xat!.lastMessage;
@@ -655,13 +668,15 @@ class ControladorPresentacion {
   }
 
   Future<void> addXatMessage(
-      String senderId, String receiverId, String time, String text) async {
-    String? xatId = await controladorDomini.getXatId(receiverId, senderId);
+    String senderId, String receiverId, String time, String text) async {
+    xatAmic? xat = await controladorDomini.xatExists(receiverId);
+    String xatId = xat!.id;
     controladorDomini.addMessage(xatId, time, text);
   }
 
   Future<List<Message>> getXatMessages(String sender, String receiver) async {
-    String? xatId = await controladorDomini.getXatId(receiver, sender);
+    xatAmic? xat = await controladorDomini.xatExists(receiver);
+    String xatId = xat!.id;
     List<Message> missatges = await controladorDomini.getMessages(xatId);
     return missatges;
   }
@@ -672,8 +687,8 @@ class ControladorPresentacion {
   }
 
   void createGrup(
-      String name, String description, String image, List<String> members) {
-    controladorDomini.createGrup(name, description, image, members);
+      String name, String description, Uint8List? fileBytes, List<String> members) {
+    controladorDomini.createGrup(name, description, members, fileBytes);
   }
 
   Future<Grup> getInfoGrup(String grupId) async {
@@ -681,10 +696,13 @@ class ControladorPresentacion {
     return info;
   }
 
-  void updateGrup(String grupId, String name, String description, String image,
-      List<dynamic> members) {
-    //es necesari afegir el meu user al llistat de membres?
-    controladorDomini.updateGrup(grupId, name, description, image, members);
+  void updateGrup(String grupId, String name, String description, Uint8List? fileBytes,
+      List<dynamic> members, String img) {
+    controladorDomini.updateGrup(grupId, name, description, fileBytes, members, img);
+  }
+
+  void updateMembersGrup(String grupId, List<dynamic> members, ) {
+    controladorDomini.updateMembersGrup(grupId, members);
   }
 
   //el grupId esta afegit com a parametre dels grups
@@ -692,7 +710,7 @@ class ControladorPresentacion {
     try {
       controladorDomini.addGrupMessage(grupId, time, text);
     } catch (error) {
-      throw Exception('Error al añadir mensaje al xat: $error');
+      throw Exception('Error al añadir mensaje al grupo: $error');
     }
   }
 
@@ -701,7 +719,7 @@ class ControladorPresentacion {
       List<Message> missatges = await controladorDomini.getGrupMessages(grupId);
       return missatges;
     } catch (error) {
-      throw Exception('Error al cojer mensajes del xat: $error');
+      throw Exception('Error al cojer mensajes del grupo: $error');
     }
   }
 

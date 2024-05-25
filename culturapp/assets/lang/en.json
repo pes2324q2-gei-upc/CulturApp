@@ -85,6 +85,8 @@
     "select_unselect_participants": "Select or unselect participants to add them",
     "recommendations": "Recommendations:",
     "send_organizer_request": "Send organizer request",
+    "put_post": "Enter a post to continue",
+    "put_reply": "Enter a reply to continue",
     "catalan": "Catalan",
     "spanish": "Spanish",
     "english": "English",
@@ -116,8 +118,9 @@
     "delete_post": "Delete post",
     "exit_group": "Exit group",
     "community": "Community",
-
     "aplicattion_info": "Please, also add the following information in the application to request to be an organizer",
     "aplicattion_info_text": "- DNI\n- Phone\n- Email\n- Company (if representing one)",
-    "private_account": "This account is private"
+    "private_account": "This account is private",
+    "reward": "Reward:",
+    "noreward": "No reward available"
 }

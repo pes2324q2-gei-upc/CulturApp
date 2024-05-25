@@ -85,6 +85,8 @@
     "participants": "Participants:",
     "modify_participants": "Modificar participants",
     "select_unselect_participants": "Selecciona o desselecciona participants per afegir-los",
+    "put_post": "Introdueix un missatge per continuar",
+    "put_reply": "Introdueix una resposta per continuar",
     "catalan": "Català",
     "spanish": "Castellà",
     "english": "Anglés",
@@ -116,8 +118,9 @@
     "delete_post": "Eliminar post",
     "exit_group": "Sortir de grup",
     "community": "Comunitat",
-
     "aplicattion_info": "Si us plau, també afegeixi la següent informació en l'aplicació per a sol·licitar ser organitzador",
     "aplicattion_info_text": "- DNI\n- Telèfon\n- Correu\n- Empresa (si representa a alguna)",
-    "private_account": "Aquest compte és privat"
+    "private_account": "Aquest compte és privat",
+    "reward": "Recompensa:",
+    "noreward": "No hi ha recompensa"
 }

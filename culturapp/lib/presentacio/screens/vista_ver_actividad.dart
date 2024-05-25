@@ -45,8 +45,7 @@ class VistaVerActividad extends StatefulWidget {
 class _VistaVerActividadState extends State<VistaVerActividad> {
   late ControladorPresentacion _controladorPresentacion;
   late ControladorDomini controladorDominio;
-  int _selectedIndex = 0;
-
+  
   late List<String> infoActividad;
   late Uri uriActividad;
   final _formKey = GlobalKey<FormState>();
@@ -65,6 +64,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   String? postIden = '';
   bool reply = false;
   bool mostraReplies = false;
+  
+  String username = '';
+  
   bool organizador = true;
   List<Bateria> bateriasCerca = [];
   Bateria bat = Bateria();
@@ -90,12 +92,17 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     "Espai públic - Platges"
   ];
 
+  bool _editMode = false; // Variable de estado para controlar el modo de edición
+  String _editableText = "Texto por defecto";
+  late TextEditingController _recompensaController;
+
   _VistaVerActividadState(
       ControladorPresentacion controladorPresentacion,
       List<String> info_actividad,
       Uri uri_actividad,
       bool esOrganizador,
       List<Bateria> bats) {
+
     infoActividad = info_actividad;
     uriActividad = uri_actividad;
     _controladorPresentacion = controladorPresentacion;
@@ -316,33 +323,17 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   }
 
   @override
+  void dispose() {
+    _recompensaController.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     checkApuntado(_user!.uid, infoActividad);
     calculaBateriasCercanas();
-  }
-
-  void _onTabChange(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    switch (index) {
-      case 0:
-        _controladorPresentacion.mostrarMapa(context);
-        break;
-      case 1:
-        _controladorPresentacion.mostrarActividadesUser(context);
-        break;
-      case 2:
-        _controladorPresentacion.mostrarXats(context, "Amics");
-        break;
-      case 3:
-        _controladorPresentacion.mostrarPerfil(context);
-        break;
-      default:
-        break;
-    }
+    _recompensaController = TextEditingController();
   }
 
   bool isStreetAddress(String address) {
@@ -425,6 +416,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   Widget build(BuildContext context) {
     _controladorPresentacion
         .getForo(infoActividad[1]); //verificar que tenga un foro
+    username = _controladorPresentacion.getUsername();
     return _isLoading
         ? Center(
             child: CircularProgressIndicator(
@@ -509,6 +501,105 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                       const Padding(
                         padding: EdgeInsets.only(bottom: 5.0),
                       ),
+                      const SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Container(
+                          padding: const EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            border: Border.all(
+                              color: const Color(0xFFF4692A),
+                            ),
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'reward'.tr(context),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              _editMode
+                                  ? SizedBox(
+                                      width: 100,
+                                      child: TextField(
+                                        onSubmitted: (value) {
+                                          setState(() {
+                                            _editMode = false;
+                                          });
+                                          _actualizarRecompensa(_recompensaController.text);
+                                        },
+                                        controller: _recompensaController,
+                                      ),
+                                    )
+                                  : FutureBuilder<String?>(
+                                      future: _controladorPresentacion.getRecompensa(infoActividad[1]),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState == ConnectionState.waiting) {
+                                          return const CircularProgressIndicator();
+                                        } else if (snapshot.hasError) {
+                                          return const Text(
+                                            "Error",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.red,
+                                            ),
+                                          );
+                                        } else if (snapshot.data == "null") {
+                                          return Text(
+                                            'noreward'.tr(context),
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.grey,
+                                            ),
+                                          );
+                                        }
+                                        else if (snapshot.hasData && snapshot.data != null) {
+                                          // Actualiza el texto del controlador cuando se obtienen los datos
+                                          _recompensaController.text = snapshot.data!;
+                                          return Text(
+                                            snapshot.data!,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          );
+                                        } 
+                                        else {
+                                          return const Text(
+                                            "No hay recompensa",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
+                              if (organizador)
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: Color(0xFF333333),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _editMode = true;
+                                    });
+                                  },
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
                       _expansionDescripcion(),
                       const Padding(
                         padding: EdgeInsets.only(top: 5.0),
@@ -608,6 +699,18 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         ],
       ),
     );
+  }
+
+  Future<void> _actualizarRecompensa(String nuevaRecompensa) async {
+    try {
+      await _controladorPresentacion.actualizarRecompensa(infoActividad[1], nuevaRecompensa);
+      setState(() {
+        _editableText = nuevaRecompensa;
+        _editMode = false;
+      });
+    } catch (error) {
+      print('Error al actualizar la recompensa: $error');
+    }
   }
 
   Widget _tituloBoton(String tituloActividad, String categoriaActividad) {
@@ -1030,129 +1133,111 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}'); // Si hi ha hagut algun error
         } else {
-          List<Post> posts = snapshot.data!;
+          List<Post> posts_future = snapshot.data!;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 10.0),
-                  child: Text(
-                    //quereis que añada tambien el numero de replies?
-                    'comments'.trWithArg(context, {"num": "${posts.length}"}),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                mostrarReplies(),
-              ]),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: posts.length,
-                itemBuilder: (context, index) {
-                  final post = posts[index];
-                  DateTime dateTime = DateTime.parse(post.fecha);
-                  String formattedDate =
-                      DateFormat('yyyy/MM/dd HH:mm').format(dateTime);
-                  return ListTile(
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            //se tendra que modificar por la imagen del usuario
-                            const Icon(Icons.account_circle,
-                                size: 45), // Icono de usuario
-                            const SizedBox(width: 5),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(post.username), // Nombre de usuario
-                                const SizedBox(width: 5),
-                                Text(
-                                  formattedDate,
-                                  style: const TextStyle(color: Colors.grey),
-                                ),
-                              ],
-                            ),
-                            const Spacer(),
-                            //fer que nomes el que l'ha creat ho pugui veure
-                            _buildPopUpMenuNotBlocked(
-                                context, post, false, post.username, ''),
-                            /*
-                            GestureDetector(
-                              onTap: () async {
-                                _showDeleteOption(context, post, false);
-                              },
-                              child: const Icon(Icons.more_vert, size: 20),
-                            ),
-                            */
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 50),
-                          child: Text(
-                            post.mensaje, // Mensaje del post
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 30),
-                          child: Row(
-                            children: [
-                              IconButton(
-                                icon: Icon(
-                                  post.numeroLikes > 0
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color:
-                                      post.numeroLikes > 0 ? Colors.red : null,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    if (post.numeroLikes > 0) {
-                                      post.numeroLikes =
-                                          0; // Si ya hay likes, los elimina
-                                    } else {
-                                      post.numeroLikes =
-                                          1; // Si no hay likes, añade uno
-                                    }
-                                  });
-                                },
-                              ),
-                              Text('me_gusta'.tr(context)),
-                              const SizedBox(width: 20),
-                              //respuesta
-                              IconButton(
-                                icon: const Icon(
-                                    Icons.reply), // Icono de responder
-                                onPressed: () async {
-                                  postIden = await _controladorPresentacion
-                                      .getPostId(idForo, post.fecha);
-                                  setState(() {
-                                    reply = true;
-                                  });
-                                },
-                              ),
-                              const SizedBox(width: 5),
-                              Text('reply'.tr(context)),
-                              const SizedBox(width: 20),
-                            ],
-                          ),
-                        ),
-                        if (mostraReplies)
-                          Padding(
-                              padding: const EdgeInsets.only(left: 20),
-                              child: infoReply(post.fecha))
-                      ],
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                    child: Text(
+                      'comments'.trWithArg(context, {"num": "${posts_future.length}"}),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                  );
-                },
+                  ),
+                  mostrarReplies(),
+                ]
               ),
+              _post(posts_future)
             ],
           );
         }
+      },
+    );
+  }
+
+  Widget _post(listPosts) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: listPosts.length,
+      itemBuilder: (context, index) {
+        final post = listPosts[index];
+        DateTime dateTime = DateTime.parse(post.fecha);
+        String formattedDate = DateFormat('yyyy/MM/dd HH:mm').format(dateTime);
+        return ListTile(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  //se tendra que modificar por la imagen del usuario
+                  const Icon(Icons.account_circle, size: 45), // Icono de usuario
+                  const SizedBox(width: 5),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(post.username), // Nombre de usuario
+                      const SizedBox(width: 5),
+                      Text(
+                        formattedDate,
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  //fer que nomes el que l'ha creat ho pugui veure
+                  _buildPopUpMenuNotBlocked(
+                                context, post, false, post.username, ''),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 50),
+                child: Text(
+                  post.mensaje, // Mensaje del post
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 30),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        postIden = await _controladorPresentacion.getPostId(idForo, post.fecha);
+                        setState(() {
+                          reply = true;
+                        });
+                      },
+                      child: Row(
+                        children: [
+                          IconButton(
+                            onPressed: () async {
+                              postIden = await _controladorPresentacion.getPostId(idForo, post.fecha);
+                              setState(() {
+                                reply = true;
+                              });
+                            }, 
+                            icon: const Icon(Icons.reply), // Icono de responder
+                          ),
+                          const SizedBox(width: 5),
+                          Text('reply'.tr(context)),
+                        ],
+                      )
+                    ), 
+                    const SizedBox(width: 20),
+                  ],
+                ),
+              ),
+              if (mostraReplies) 
+                Padding(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: infoReply(post.fecha)
+                )
+            ], 
+          ),
+        );
       },
     );
   }
@@ -1211,49 +1296,31 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             GestureDetector(
                               onTap: () async {
                                 postIden = await _controladorPresentacion.getPostId(idForo, date);
-                                _showDeleteOption(context, rep, true);
+                                if(username == rep.username) {
+                                  _showDeleteOption(context, rep, true);
+                                }
                               },
-                              child: const Icon(Icons.more_vert, size: 20),
-                            ),
-                            */
-                                ],
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 50),
-                                child: Text(
-                                  rep.mensaje, // Mensaje del post
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                              ),
-                              Padding(
-                                  padding: const EdgeInsets.only(left: 30),
-                                  child: Row(children: [
-                                    IconButton(
-                                      icon: Icon(
-                                        rep.numeroLikes > 0
-                                            ? Icons.favorite
-                                            : Icons.favorite_border,
-                                        color: rep.numeroLikes > 0
-                                            ? Colors.red
-                                            : null,
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          if (rep.numeroLikes > 0) {
-                                            rep.numeroLikes = 0;
-                                          } else {
-                                            rep.numeroLikes = 1;
-                                          }
-                                        });
-                                      },
-                                    ),
-                                    Text('me_gusta'.tr(context))
-                                  ]))
-                            ]));
-                      })
-                ]);
-          }
-        });
+                              child: const Icon(Icons.more_vert, size: 20),         
+                            ) */
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 50),
+                          child: Text(
+                            rep.mensaje, // Mensaje del post
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      ]
+                    )
+                  );
+                }
+              )
+            ]
+          );
+        }
+      }
+    );
   }
 
   Widget mostrarReplies() {
