@@ -92,6 +92,10 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     "Espai públic - Platges"
   ];
 
+  bool _editMode = false; // Variable de estado para controlar el modo de edición
+  String _editableText = "Texto por defecto";
+  late TextEditingController _recompensaController;
+
   _VistaVerActividadState(
       ControladorPresentacion controladorPresentacion,
       List<String> info_actividad,
@@ -319,10 +323,17 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   }
 
   @override
+  void dispose() {
+    _recompensaController.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     checkApuntado(_user!.uid, infoActividad);
     calculaBateriasCercanas();
+    _recompensaController = TextEditingController();
   }
 
   bool isStreetAddress(String address) {
@@ -490,6 +501,105 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                       const Padding(
                         padding: EdgeInsets.only(bottom: 5.0),
                       ),
+                      const SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Container(
+                          padding: const EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            border: Border.all(
+                              color: const Color(0xFFF4692A),
+                            ),
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'reward'.tr(context),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              _editMode
+                                  ? SizedBox(
+                                      width: 100,
+                                      child: TextField(
+                                        onSubmitted: (value) {
+                                          setState(() {
+                                            _editMode = false;
+                                          });
+                                          _actualizarRecompensa(_recompensaController.text);
+                                        },
+                                        controller: _recompensaController,
+                                      ),
+                                    )
+                                  : FutureBuilder<String?>(
+                                      future: _controladorPresentacion.getRecompensa(infoActividad[1]),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState == ConnectionState.waiting) {
+                                          return const CircularProgressIndicator();
+                                        } else if (snapshot.hasError) {
+                                          return const Text(
+                                            "Error",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.red,
+                                            ),
+                                          );
+                                        } else if (snapshot.data == "null") {
+                                          return Text(
+                                            'noreward'.tr(context),
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.grey,
+                                            ),
+                                          );
+                                        }
+                                        else if (snapshot.hasData && snapshot.data != null) {
+                                          // Actualiza el texto del controlador cuando se obtienen los datos
+                                          _recompensaController.text = snapshot.data!;
+                                          return Text(
+                                            snapshot.data!,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          );
+                                        } 
+                                        else {
+                                          return const Text(
+                                            "No hay recompensa",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
+                              if (organizador)
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: Color(0xFF333333),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _editMode = true;
+                                    });
+                                  },
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
                       _expansionDescripcion(),
                       const Padding(
                         padding: EdgeInsets.only(top: 5.0),
@@ -589,6 +699,18 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         ],
       ),
     );
+  }
+
+  Future<void> _actualizarRecompensa(String nuevaRecompensa) async {
+    try {
+      await _controladorPresentacion.actualizarRecompensa(infoActividad[1], nuevaRecompensa);
+      setState(() {
+        _editableText = nuevaRecompensa;
+        _editMode = false;
+      });
+    } catch (error) {
+      print('Error al actualizar la recompensa: $error');
+    }
   }
 
   Widget _tituloBoton(String tituloActividad, String categoriaActividad) {
