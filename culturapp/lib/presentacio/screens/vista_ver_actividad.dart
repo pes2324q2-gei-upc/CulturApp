@@ -549,13 +549,42 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                       ),
                                     );
                                   } else if (snapshot.hasData && snapshot.data != null) {
-                                    return Text(
-                                      snapshot.data!,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
+                                    return Row(
+                                      children: [
+                                        _editMode
+                                            ? SizedBox(
+                                                width: 100,
+                                                child: TextField(
+                                                  onSubmitted: (value) {
+                                                    setState(() {
+                                                      _editMode = false;
+                                                    });
+                                                    _actualizarRecompensa(value);
+                                                  },
+                                                  controller: TextEditingController()..text = snapshot.data!,
+                                                ),
+                                              )
+                                            : Text(
+                                                snapshot.data!,
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                        if (organizador)
+                                          IconButton(
+                                            icon: const Icon(
+                                              Icons.edit,
+                                              color: Color(0xFF333333),
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _editMode = true;
+                                              });
+                                            },
+                                          ),
+                                      ],
                                     );
                                   } else {
                                     return const Text(
@@ -569,43 +598,6 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                   }
                                 },
                               ),
-                              if (organizador)
-                                Row(
-                                  children: [
-                                    _editMode
-                                        ? SizedBox(
-                                            width: 100,
-                                            child: TextField(
-                                              onSubmitted: (value) {
-                                                _actualizarRecompensa(value);
-                                              },
-                                              controller: TextEditingController()..text = _editableText,
-                                              decoration: const InputDecoration(
-                                                hintText: "Edita el texto",
-                                              ),
-                                            ),
-                                          )
-                                        : Text(
-                                            _editableText,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                    IconButton(
-                                      icon: const Icon(
-                                        Icons.edit,
-                                        color: Color(0xFF333333),
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _editMode = !_editMode;
-                                        });
-                                      },
-                                    ),
-                                  ],
-                                ),
                             ],
                           ),
                         ),
