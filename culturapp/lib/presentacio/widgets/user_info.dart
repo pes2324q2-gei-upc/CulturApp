@@ -1,4 +1,6 @@
- import 'package:culturapp/domain/models/actividad.dart';
+ import 'dart:io';
+
+import 'package:culturapp/domain/models/actividad.dart';
 import 'package:culturapp/domain/models/badge_category.dart';
 import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
@@ -45,6 +47,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
     _user = user;
     activitats = [];
     display_list = [];
+    badgeCategories = [];
     show = false;
     _owner = owner;
   }
@@ -57,22 +60,22 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
 
   void _loadContent() async {
     if (_owner) {
-      _loadActividades(); 
       _loadBadges();
+      _loadActividades(); 
       show = true;
     }
     else {
       bool isFriend = await _controladorPresentacion.isFriend(_user.nom);
       if (isFriend) {
-        _loadActividades();
         _loadBadges();
+        _loadActividades();
         show = true;
       }
       else {
         bool isPrivate = await _controladorPresentacion.checkPrivacy(_user.id);
         if (!isPrivate) {
-          _loadActividades();
           _loadBadges();
+          _loadActividades();
           show = true;
         }
       }
@@ -89,10 +92,10 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
   }
 
   Future<void> _loadBadges() async {
-    badgeCategories = await _controladorPresentacion.getBadges(_user.nom);
+    List<BadgeCategory> badges = await _controladorPresentacion.getBadges(_user.nom);
     setState(() {
-      badgeCategories = badgeCategories;
-    });
+      badgeCategories = badges;
+    }); 
   }
 
   void _onTabChange(int index) {
@@ -244,10 +247,11 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                             ],
                           ),
                         ),
-                      if (show) ... [
-                      //_buildBadgeCategories(badgeCategories)
-                      const Text('hola'),
-                    ] else
+                      if (show)
+                      Expanded(
+                        child: _buildBadgeCategories(badgeCategories),
+                      )
+                      else
                         Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -349,7 +353,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                                   child: Align(
                                     alignment: Alignment.center,
                                     child: Text(
-                                      '${badgeCategories[index].actualActivities}/${badgeCategories[index].totalActivities} actividades ', 
+                                      badgeCategories[index].rank == 'o' ? '${badgeCategories[index].actualActivities} actividades ': '${badgeCategories[index].actualActivities}/${badgeCategories[index].totalActivities} actividades ', 
                                       style: const TextStyle(
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,

@@ -21,12 +21,4 @@ class BadgeCategory {
       progress = actualActivities.toDouble() / totalActivities.toDouble();
       image = 'assets/badges/${name}_$rank.png';
     }
-
-    factory BadgeCategory.fromJson(Map<String, dynamic> json) {
-      return BadgeCategory(
-        json.keys.first,
-        json.values.first[0],
-        json.values.first[1],
-      );
-    }
 }

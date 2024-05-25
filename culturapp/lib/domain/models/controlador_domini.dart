@@ -1484,19 +1484,24 @@ Future<List<Bateria>> getBateries() async {
   }
   
   Future<List<BadgeCategory>> getBadges(String nom) async {
-    print('ENTROOOOOO');
-    final respuesta = await http.get(
+    final response = await http.get(
         Uri.parse('https://culturapp-back.onrender.com/insignies/user/$nom'),
         headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
         }
     );
-    print('SALGOOOOOOOOOOOO');
-    if (respuesta.statusCode == 200) {
-      List<dynamic> jsonResponse = jsonDecode(respuesta.body);
-      return jsonResponse
-        .map((badge) => BadgeCategory.fromJson(badge))
-        .toList();
+    if (response.statusCode == 200) {
+      Map<String, dynamic> json = jsonDecode(response.body);
+      List<BadgeCategory> badges = json.entries.map((entry) {
+        String name = entry.key;
+        if (name == 'arte' || name == 'carnaval') {
+          return null;
+        }
+        String rank = entry.value[0];
+        int actualActivities = entry.value[1];
+        return BadgeCategory(name, actualActivities, rank);
+      }).where((badge) => badge != null).toList().cast<BadgeCategory>();
+      return badges;
     } else {
       throw Exception('Fallo la obtención de datos');
     }
