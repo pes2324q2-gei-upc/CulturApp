@@ -405,24 +405,6 @@ Future<List<Bateria>> getBateries() async {
     }
   }
 
-  Future<List<BadgeCategory>> getBadgeCategories(String nom) async {
-    final respuesta = await http.get(
-      Uri.parse('https://culturapp-back.onrender.com/users/${userLogged.getUsername()}/blockedUsers'),
-      headers: {
-        'Authorization': 'Bearer ${userLogged.getToken()}',
-      },
-    );
-    print('SALGOOOOOOOOOOOO');
-    if (respuesta.statusCode == 200) {
-      List<dynamic> jsonResponse = jsonDecode(respuesta.body);
-      return jsonResponse
-          .map((badge) => BadgeCategory.fromJson(badge))
-          .toList();
-    } else {
-      throw Exception('Fallo la obtención de datos');
-    }
-  }
-
   Future<void> acceptFriend(String person) async {
     final http.Response response = await http.put(
       Uri.parse('https://culturapp-back.onrender.com/amics/accept/$person'),
@@ -1500,6 +1482,27 @@ Future<List<Bateria>> getBateries() async {
       throw Exception('Fallo la obtención de datos');
     }
   }
+  
+  Future<List<BadgeCategory>> getBadges(String nom) async {
+    print('ENTROOOOOO');
+    final respuesta = await http.get(
+        Uri.parse('https://culturapp-back.onrender.com/insignies/user/$nom'),
+        headers: {
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+        }
+    );
+    print('SALGOOOOOOOOOOOO');
+    if (respuesta.statusCode == 200) {
+      List<dynamic> jsonResponse = jsonDecode(respuesta.body);
+      return jsonResponse
+        .map((badge) => BadgeCategory.fromJson(badge))
+        .toList();
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }  
 }
+
+
 
 

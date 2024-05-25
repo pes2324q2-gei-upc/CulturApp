@@ -58,21 +58,21 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
   void _loadContent() async {
     if (_owner) {
       _loadActividades(); 
-      _loadBadgesCategories();
+      _loadBadges();
       show = true;
     }
     else {
       bool isFriend = await _controladorPresentacion.isFriend(_user.nom);
       if (isFriend) {
         _loadActividades();
-        _loadBadgesCategories();
+        _loadBadges();
         show = true;
       }
       else {
         bool isPrivate = await _controladorPresentacion.checkPrivacy(_user.id);
         if (!isPrivate) {
           _loadActividades();
-          _loadBadgesCategories();
+          _loadBadges();
           show = true;
         }
       }
@@ -88,8 +88,8 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
     });
   }
 
-  Future<void> _loadBadgesCategories() async {
-    badgeCategories = await _controladorPresentacion.getBadgeCategories(_user.nom);
+  Future<void> _loadBadges() async {
+    badgeCategories = await _controladorPresentacion.getBadges(_user.nom);
     setState(() {
       badgeCategories = badgeCategories;
     });
@@ -244,9 +244,10 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                             ],
                           ),
                         ),
-                      if (show)
-                      _buildBadgeCategorys(badgeCategories)
-                      else
+                      if (show) ... [
+                      //_buildBadgeCategories(badgeCategories)
+                      const Text('hola'),
+                    ] else
                         Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -292,7 +293,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
     );
   }
 
-  Widget _buildBadgeCategorys (List<BadgeCategory> badgeCategories) {
+  Widget _buildBadgeCategories (List<BadgeCategory> badgeCategories) {
     return ListView.builder(
         itemCount: badgeCategories.length,
         itemBuilder: (context, index) {
