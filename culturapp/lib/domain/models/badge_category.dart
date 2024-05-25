@@ -23,7 +23,6 @@ class BadgeCategory {
     }
 
     factory BadgeCategory.fromJson(Map<String, dynamic> json) {
-      print('Holaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
       return BadgeCategory(
         json.keys.first,
         json.values.first[0],

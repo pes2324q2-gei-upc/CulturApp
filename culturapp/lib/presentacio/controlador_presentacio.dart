@@ -261,8 +261,8 @@ class ControladorPresentacion {
     return await controladorDomini.getRequestsUser();
   }
 
-  Future<List<BadgeCategory>> getBadgeCategories(String username) async {
-    return await controladorDomini.getBadgeCategories(username);
+ Future<List<BadgeCategory>> getBadgeCategories (String nom) async {
+    return await controladorDomini.getBadgeCategories(nom);
   }
 
   List<String> getBlockedUsers() {

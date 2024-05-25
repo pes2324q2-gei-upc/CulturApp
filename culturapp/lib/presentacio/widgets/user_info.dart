@@ -88,10 +88,10 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
     });
   }
 
-  void _loadBadgesCategories() async {
-    List<BadgeCategory> getBadges = await _controladorPresentacion.getBadgeCategories(_user.nom);
+  Future<void> _loadBadgesCategories() async {
+    badgeCategories = await _controladorPresentacion.getBadgeCategories(_user.nom);
     setState(() {
-      badgeCategories = getBadges;
+      badgeCategories = badgeCategories;
     });
   }
 
