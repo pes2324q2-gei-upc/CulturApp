@@ -1189,8 +1189,6 @@ class ControladorDomini {
 
       if (response.statusCode == 201) {
         print('Mensaje agregado exitosamente al xat');
-        //si el mensaje se ha agrgado correctamente
-        sendNotificationToUser("token", myName, text);
       } else {
         print('Error al agregar mensaje al xat: ${response.statusCode}');
       }
