@@ -1,13 +1,15 @@
 import 'package:culturapp/presentacio/screens/categorias.dart';
 import 'package:culturapp/translations/AppLocalizations';
 import "package:firebase_auth/firebase_auth.dart";
+import 'package:firebase_messaging/firebase_messaging.dart';
 import "package:flutter/material.dart";
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 
 class Signup extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
 
-  const Signup({Key? key, required this.controladorPresentacion}) : super(key: key);
+  const Signup({Key? key, required this.controladorPresentacion})
+      : super(key: key);
 
   @override
   _SignupState createState() => _SignupState(controladorPresentacion);
@@ -31,7 +33,7 @@ class _SignupState extends State<Signup> {
     'Activitats Virtuals',
     'Teatre'
   ];
-  
+
   late ControladorPresentacion _controladorPresentacion;
   bool _isLoading = false;
 
@@ -55,15 +57,13 @@ class _SignupState extends State<Signup> {
         alignment: Alignment.center,
         children: <Widget>[
           Column(
-            mainAxisAlignment:
-                MainAxisAlignment.center, // Añade esta línea
+            mainAxisAlignment: MainAxisAlignment.center, // Añade esta línea
             children: [
               const Padding(
                 padding: EdgeInsets.only(top: 250),
               ),
               const SizedBox(
-                child: CircularProgressIndicator(
-                    color: Color(0xFFF4692A)),
+                child: CircularProgressIndicator(color: Color(0xFFF4692A)),
               ),
               const Padding(
                 padding: EdgeInsets.only(bottom: 225.0),
@@ -71,8 +71,7 @@ class _SignupState extends State<Signup> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset('assets/logo.png',
-                      width: 20, height: 20),
+                  Image.asset('assets/logo.png', width: 20, height: 20),
                   const SizedBox(width: 10),
                   Text('CulturApp',
                       style: TextStyle(
@@ -124,12 +123,14 @@ class _SignupState extends State<Signup> {
                   controller: usernameController,
                   decoration: InputDecoration(
                     hintText: "username".tr(context),
-                    contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 25),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 20, horizontal: 25),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(18),
                       borderSide: BorderSide.none,
                     ),
-                    fillColor: const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
+                    fillColor:
+                        const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
                     filled: true,
                     prefixIcon: const Icon(Icons.person),
                   ),
@@ -139,27 +140,37 @@ class _SignupState extends State<Signup> {
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.resolveWith<Color?>(
-                        (Set<MaterialState> states) {
-                          return const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1);
-                        },
-                      ),
-                      shadowColor: MaterialStateProperty.resolveWith<Color?>(
-                        (Set<MaterialState> states) {
-                          return Colors.transparent;
-                        },
-                      ),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
+                        backgroundColor:
+                            MaterialStateProperty.resolveWith<Color?>(
+                          (Set<MaterialState> states) {
+                            return const Color.fromARGB(244, 255, 145, 0)
+                                .withOpacity(0.1);
+                          },
                         ),
-                      ),
-                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.symmetric(vertical: 20, horizontal: 15)),
-                      alignment: Alignment.centerLeft
-                    ),
+                        shadowColor: MaterialStateProperty.resolveWith<Color?>(
+                          (Set<MaterialState> states) {
+                            return Colors.transparent;
+                          },
+                        ),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+                          ),
+                        ),
+                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                            const EdgeInsets.symmetric(
+                                vertical: 20, horizontal: 15)),
+                        alignment: Alignment.centerLeft),
                     onPressed: _showMultiSelect,
-                    icon: Icon(Icons.arrow_drop_down, color: Colors.grey[800],),
-                    label: Text("favourite_categories".tr(context), style: TextStyle(fontSize: 16, color: Colors.grey[700]),),
+                    icon: Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.grey[800],
+                    ),
+                    label: Text(
+                      "favourite_categories".tr(context),
+                      style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -200,9 +211,10 @@ class _SignupState extends State<Signup> {
       _showErrorMessage('Por favor, selecciona al menos 3 categorías');
       return false;
     }
-    if (!await _controladorPresentacion.usernameUnique(usernameController.text)) {
-       _showErrorMessage('Ya existe un usuario con este nombre de usuario');
-       return false;
+    if (!await _controladorPresentacion
+        .usernameUnique(usernameController.text)) {
+      _showErrorMessage('Ya existe un usuario con este nombre de usuario');
+      return false;
     }
     return true;
   }
@@ -216,28 +228,35 @@ class _SignupState extends State<Signup> {
     );
   }
 
-Future<void> createUser() async {
-  setState(() {
-    _isLoading = true;
-  });
+  Future<void> createUser() async {
+    setState(() {
+      _isLoading = true;
+    });
 
-  try {
+    try {
+      List<String> devices = [];
+      FirebaseMessaging.instance.getToken().then((token) {
+        if (token != null) {
+          devices.add(token);
+        }
+      });
 
-      await _controladorPresentacion.createUser(usernameController.text, selectedCategories, context);
+      await _controladorPresentacion.createUser(
+          usernameController.text, selectedCategories, devices, context);
       await _controladorPresentacion.initialice2();
       await _controladorPresentacion.initialice();
       setState(() {
         _isLoading = false;
       });
-  } catch (error) {
-    setState(() {
-      _isLoading = false;
-    });
-    _showErrorMessage('Error al crear el usuario: $error');
+    } catch (error) {
+      setState(() {
+        _isLoading = false;
+      });
+      _showErrorMessage('Error al crear el usuario: $error');
+    }
   }
-}
 
- void _showMultiSelect() async {
+  void _showMultiSelect() async {
     final result = await showDialog<List<String>>(
       context: context,
       builder: (context) {

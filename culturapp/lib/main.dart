@@ -173,11 +173,14 @@ class __MyAppStateState extends State<_MyAppState> {
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       print('User granted permission');
+
       User userNoQuestion = currentUser!;
       Usuari usuari = await _controladorPresentacion
           .getUserByName(userNoQuestion.displayName!);
+
       _firebaseMessaging.getToken().then((token) async {
         print("FCM Token: $token");
+
         if (token != null) {
           bool alreadyAgregat = await userTeElDevice(token, usuari);
           if (!alreadyAgregat) {

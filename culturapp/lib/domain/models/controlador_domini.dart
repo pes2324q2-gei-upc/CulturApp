@@ -65,14 +65,15 @@ class ControladorDomini {
     }
   }
 
-  Future<bool> createUser(
-      User? user, String username, List<String> selectedCategories) async {
+  Future<bool> createUser(User? user, String username,
+      List<String> selectedCategories, List<String> devices) async {
     try {
       final Map<String, dynamic> userdata = {
         'uid': user?.uid,
         'username': username,
         'email': user?.email,
-        'favcategories': selectedCategories
+        'favcategories': selectedCategories,
+        'devices': devices
       };
 
       final respuesta = await http.post(
