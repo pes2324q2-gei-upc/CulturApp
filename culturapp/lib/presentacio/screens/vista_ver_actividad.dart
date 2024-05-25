@@ -569,7 +569,17 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                               color: Colors.red,
                                             ),
                                           );
-                                        } else if (snapshot.hasData && snapshot.data != null) {
+                                        } else if (snapshot.data == "null") {
+                                          return const Text(
+                                            "No hay recompensa",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          );
+                                        }
+                                        else if (snapshot.hasData && snapshot.data != null) {
                                           // Actualiza el texto del controlador cuando se obtienen los datos
                                           _recompensaController.text = snapshot.data!;
                                           return Text(
@@ -580,9 +590,10 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                               color: Colors.black,
                                             ),
                                           );
-                                        } else {
+                                        } 
+                                        else {
                                           return const Text(
-                                            "No disponible",
+                                            "No hay recompensa",
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
