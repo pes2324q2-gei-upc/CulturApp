@@ -85,6 +85,8 @@
     "select_unselect_participants": "Selecciona o deselecciona participantes para añadirlos",
     "recommendations": "Recomendaciones:",
     "send_organizer_request": "Enviar solicitud de organizador",
+    "put_post": "Introduce un mensaje para continuar",
+    "put_reply": "Introduce una respuesta para continuar",
     "catalan": "Catalán",
     "spanish": "Castellano",
     "english": "Inglés",
@@ -116,7 +118,6 @@
     "delete_post": "Eliminar post",
     "exit_group": "Salir de grupo",
     "community": "Comunidad",
-
     "aplicattion_info": "Por favor, tambien añada la siguiente información en la aplicación para solicitar ser organizador",
     "aplicattion_info_text": "- DNI\n- Teléfono\n- Correo\n- Empresa (si representa a alguna)",
     "private_account": "Esta cuenta es privada"

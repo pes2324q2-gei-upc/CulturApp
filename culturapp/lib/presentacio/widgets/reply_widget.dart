@@ -44,7 +44,7 @@ class _ReplyWidgetState extends State<ReplyWidget> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Introdueix una resposta per continuar';
+                    return 'put_reply'.tr(context);
                   }
                   return null;
                 },
