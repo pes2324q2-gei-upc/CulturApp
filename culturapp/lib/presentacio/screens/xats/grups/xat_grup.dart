@@ -155,10 +155,14 @@ class _XatGrupScreen extends State<XatGrupScreen> {
         },
         child: Row(
           children: [
-            const CircleAvatar(
-              backgroundImage: AssetImage('assets/userImage.png'),
-              //AssetImage(_grup.imageGroup),
-            ),
+            if (_grup.imageGroup.isNotEmpty)
+              CircleAvatar(
+                backgroundImage: NetworkImage(_grup.imageGroup),
+              )
+            else
+              const CircleAvatar(
+                backgroundImage: AssetImage('assets/userImage.png'),
+              ),
             const SizedBox(width: 10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,9 +216,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
       String myUsername = _controladorPresentacion.getUsername();
       _grup.membres.remove(myUsername);
       //elimino el meu username del grup
-
-      _controladorPresentacion.updateGrup(_grup.id, _grup.nomGroup,
-          _grup.descripcio, _grup.imageGroup, _grup.membres);
+      _controladorPresentacion.updateMembersGrup(_grup.id, _grup.membres);
       _controladorPresentacion.mostrarXats(context, "Grups");
       //crida a funcio del back per fer un update de _grup amb els nous parametres
     });

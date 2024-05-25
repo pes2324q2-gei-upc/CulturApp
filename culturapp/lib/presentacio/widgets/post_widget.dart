@@ -51,7 +51,7 @@ class _PostWidgetState extends State<PostWidget> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Introdueix un missatge per continuar';
+                    return 'put_post'.tr(context);
                   }
                   return null;
                 },

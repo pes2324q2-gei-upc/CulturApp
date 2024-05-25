@@ -135,12 +135,19 @@ class _GrupsScreenState extends State<GrupsScreen> {
       },
       child: ListTile(
         contentPadding: const EdgeInsets.all(8.0),
-        leading: const Image(
-          //image: AssetImage(display_list[index].imageGroup),
-          image: AssetImage('assets/userImage.png'),
-          fit: BoxFit.cover,
+        leading: SizedBox(
           width: 50,
           height: 50,
+          child: display_list[index].imageGroup.isNotEmpty
+            ? ClipOval(
+                child: Image(
+                  image: NetworkImage(display_list[index].imageGroup),
+                  fit: BoxFit.cover,
+                ),
+              )
+            : const Image(
+              image: AssetImage('assets/userImage.png'),
+            ), // Placeholder widget to show if there's no image
         ),
         title: Text(truncarString(display_list[index].nomGroup, 22),
             style: TextStyle(
