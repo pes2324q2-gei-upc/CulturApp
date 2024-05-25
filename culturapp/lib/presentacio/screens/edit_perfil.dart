@@ -1,9 +1,11 @@
+import 'dart:typed_data';
+import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/categorias.dart';
 import 'package:culturapp/translations/AppLocalizations';
 import 'package:flutter/material.dart';
 import "package:firebase_auth/firebase_auth.dart";
-import 'package:multi_select_flutter/multi_select_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditPerfil extends StatefulWidget {
 
@@ -27,6 +29,8 @@ class _EditPerfil extends State<EditPerfil> {
 
   final TextEditingController usernameController = TextEditingController();
   List<String> selectedCategories = [];
+
+  Uint8List? _image;
 
   final List<String> _categories = [
     'festa',
@@ -83,9 +87,9 @@ class _EditPerfil extends State<EditPerfil> {
         backgroundColor: const Color(0xFFF4692A),
         title: Text(
           'edit'.tr(context),
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.white, // Cambia el color de la flecha de retroceso
         ),
       ),      
@@ -136,7 +140,7 @@ class _EditPerfil extends State<EditPerfil> {
                             borderRadius: BorderRadius.circular(18.0), // Ajusta el radio de los bordes aquí
                           ),
                         ),
-                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.symmetric(vertical: 20, horizontal: 15)),
+                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.symmetric(vertical: 20, horizontal: 15)),
                         alignment: Alignment.centerLeft
                       ),
                       onPressed: _showMultiSelect,
@@ -169,10 +173,12 @@ class _EditPerfil extends State<EditPerfil> {
   }
 
   Future<void> editUser() async {
+    Usuari usr = await _controladorPresentacion.getUserByName(_username);
+    String img = usr.image;
     bool ok = await _controladorPresentacion.usernameUnique(usernameController.text);
     bool ok2 = await sameName();
     if (ok2 || ok) {
-      _controladorPresentacion.editUser(usernameController.text, selectedCategories, context);
+      _controladorPresentacion.editUser(usernameController.text, selectedCategories, context, img, _image);
     }
     else {
       final scaffoldMessenger = ScaffoldMessenger.of(context);
@@ -185,23 +191,78 @@ class _EditPerfil extends State<EditPerfil> {
     }
   }
 
-void _showMultiSelect() async {
-  final result = await showDialog<List<String>>(
-    context: context,
-    builder: (context) {
-      return Dialog(
-        child: Categorias(selected: selectedCategories),
-      );
-    },
-  );
-
-  if (result != null) {
+  void assignarImatge() async {
+    //verificar que este set state no se quede en bucle
+    Uint8List img = await pickImage(ImageSource.gallery);
     setState(() {
-      selectedCategories = result;
-      print(selectedCategories);
+      _image = img;
     });
   }
-}
+
+  pickImage(ImageSource source) async {
+    final ImagePicker _imagePicker = ImagePicker();
+    XFile? _file = await _imagePicker.pickImage(source: source);
+    if(_file != null) {
+      return await _file.readAsBytes();
+    }
+  }
+
+  Widget _buildEscollirImatge() {
+    return Column(
+      children: [
+        const Text(
+          'Imatge:',
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
+            color: Colors.blueGrey,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(14),
+          child: Stack (
+            children: [
+              _image != null ? 
+                CircleAvatar(
+                  backgroundImage: MemoryImage(_image!),
+                  radius: 65,
+                )
+              : const CircleAvatar(
+                  backgroundImage: AssetImage('assets/userImage.png'),
+                  radius: 65,
+                ),
+              Positioned(
+                bottom: -10,
+                left: 80,
+                child: IconButton(
+                  onPressed: assignarImatge,
+                  icon: const Icon(Icons.add_a_photo),
+                )
+              )
+            ],
+          )
+        ),
+      ],
+    );
+  }
+
+  void _showMultiSelect() async {
+    final result = await showDialog<List<String>>(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Categorias(selected: selectedCategories),
+        );
+      },
+    );
+
+    if (result != null) {
+      setState(() {
+        selectedCategories = result;
+        print(selectedCategories);
+      });
+    }
+  }
   
   Future<bool> sameName() async {
     String? name = _username;

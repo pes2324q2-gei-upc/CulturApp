@@ -65,6 +65,49 @@ class ControladorDomini {
     }
   }
 
+/*
+  Future<bool> createUser(
+      User? user, String username, List<String> selectedCategories, Uint8List? fileBytes) async {
+    try {
+
+      final Map<String, dynamic> userdata = {
+        'uid': user?.uid,
+        'username': username,
+        'email': user?.email,
+        'favcategories': jsonEncode(selectedCategories)
+      };
+
+      var request = http.MultipartRequest('POST', Uri.parse('http://$ip:8080/users/create'));
+      request.headers['Authorization'] = 'Bearer ${userLogged.getToken()}';
+
+      // Add each key-value pair from userData as a form field
+      userdata.forEach((key, value) {
+        request.fields[key] = value.toString();
+      });
+
+      // Add file to the request
+      if (fileBytes != null) {
+        request.files.add(http.MultipartFile.fromBytes('file', fileBytes, filename: 'user-img'));
+      }
+
+      var streamedResponse = await request.send();
+      var respuesta = await http.Response.fromStream(streamedResponse);
+
+
+      if (respuesta.statusCode == 200) {
+        print('Datos enviados exitosamente');
+        setInfoUserLogged(user!.uid);
+      } else {
+        print('Error al enviar los datos: ${respuesta.statusCode}');
+      }
+    } catch (error) {
+      print('Error de red: $error');
+    }
+
+    return true;
+  }
+  */
+
   Future<bool> createUser(
       User? user, String username, List<String> selectedCategories) async {
     try {
@@ -76,7 +119,7 @@ class ControladorDomini {
       };
 
       final respuesta = await http.post(
-        Uri.parse('https://culturapp-back.onrender.com/users/create'),
+        Uri.parse('https://$ip:8080/users/create'),
         body: jsonEncode(userdata),
         headers: {'Content-Type': 'application/json'},
       );
@@ -94,22 +137,36 @@ class ControladorDomini {
     return true;
   }
 
-  void editUser(User? user, String username, List<String> selectedCategories) async {
+
+  void editUser(User? user, String username, List<String> selectedCategories,  String img, Uint8List? fileBytes) async {
     try {
+
+      List<String> parts = img.split('/');
+      String image = parts.last.split('?').first;
+      image = image.substring(8);
+      image = "users/" + image;
+
       final Map<String, dynamic> userdata = {
         'uid': user?.uid,
         'username': username,
         'favcategories': jsonEncode(selectedCategories),
+        'imatge': image
       };
 
-      final respuesta = await http.post(
-        Uri.parse('https://culturapp-back.onrender.com/users/edit'),
-        body: jsonEncode(userdata),
-        headers: {
-          'Authorization': 'Bearer ${userLogged.getToken()}',
-          'Content-Type': 'application/json'
-        },
-      );
+      var request = http.MultipartRequest('POST', Uri.parse('http://$ip:8080/users/edit'));
+      request.headers['Authorization'] = 'Bearer ${userLogged.getToken()}';
+
+      // Add each key-value pair from grupData as a form field
+      userdata.forEach((key, value) {
+        request.fields[key] = value.toString();
+      });
+
+       if (fileBytes != null) {
+        request.files.add(http.MultipartFile.fromBytes('file', fileBytes, filename: 'update-image-gallery'));
+      }
+
+      var streamedResponse = await request.send();
+      var respuesta = await http.Response.fromStream(streamedResponse);
 
       if (respuesta.statusCode == 200) {
         print('Datos enviados exitosamente');
@@ -169,7 +226,7 @@ class ControladorDomini {
     return actividadesOrganizadas;
   }
 
-    Future<List<String>> obteActsValoradas(String username) async {
+  Future<List<String>> obteActsValoradas(String username) async {
     final respuesta = await http.get(
         Uri.parse(
             'https://culturapp-back.onrender.com/users/${username}/valoradas'),
@@ -185,7 +242,7 @@ class ControladorDomini {
     return categorias;
   }
 
-    Future<List<Actividad>> getActivitiesVencudes() async {
+  Future<List<Actividad>> getActivitiesVencudes() async {
     final respuesta = await http.get(
         Uri.parse('https://culturapp-back.onrender.com/activitats/read/vencidas'),
         headers: {
@@ -213,23 +270,23 @@ class ControladorDomini {
     }
   }
 
-Future<List<Bateria>> getBateries() async {
-  try {
-    final respuesta = await http.get(
-      Uri.parse('http://nattech.fib.upc.edu:40440/api/charging_points/all'),
-    );
+  Future<List<Bateria>> getBateries() async {
+    try {
+      final respuesta = await http.get(
+        Uri.parse('http://nattech.fib.upc.edu:40440/api/charging_points/all'),
+      );
 
-    if (respuesta.statusCode == 200) {
-      return _convert_bateria_to_list(respuesta);
-    } else {
-      print('Fallo la obtención de datos');
+      if (respuesta.statusCode == 200) {
+        return _convert_bateria_to_list(respuesta);
+      } else {
+        print('Fallo la obtención de datos');
+        return [];
+      }
+    } catch (e) {
+      print('Error al obtener las baterías: $e');
       return [];
     }
-  } catch (e) {
-    print('Error al obtener las baterías: $e');
-    return [];
   }
-}
 
   Future<List<Usuario>> getUsers() async {
     final respuesta = await http.get(
@@ -438,8 +495,6 @@ Future<List<Bateria>> getBateries() async {
       print('Error al eliminar al usuario');
   }
 
-
-
   Future<void> createFriend(String person) async {
     final Map<String, dynamic> body = {
       'friend': person,
@@ -485,38 +540,38 @@ Future<List<Bateria>> getBateries() async {
     }
   }
 
-    Future<String> addValoracion(String idActividad, double puntuacion, String comentario) async {
+  Future<String> addValoracion(String idActividad, double puntuacion, String comentario) async {
 
-  final Map<String, dynamic> body = {
-    'idActividad': idActividad,
-    'puntuacion': puntuacion,
-    'comentario': comentario,
-  };
+    final Map<String, dynamic> body = {
+      'idActividad': idActividad,
+      'puntuacion': puntuacion,
+      'comentario': comentario,
+    };
 
-  try {
-      final response = await http.post(
-          Uri.parse(
-              'https://culturapp-back.onrender.com/activitats/create/valoracion'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ${userLogged.getToken()}',
-          },
-          body: jsonEncode(body));
+    try {
+        final response = await http.post(
+            Uri.parse(
+                'https://culturapp-back.onrender.com/activitats/create/valoracion'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ${userLogged.getToken()}',
+            },
+            body: jsonEncode(body));
 
-    if (response.statusCode == 200) {
-      print('Valoración creada o actualizada con éxito');
-      return 'Valoración creada o actualizada con éxito';
-    } else {
-      print('Error al crear o actualizar la valoración');
+      if (response.statusCode == 200) {
+        print('Valoración creada o actualizada con éxito');
+        return 'Valoración creada o actualizada con éxito';
+      } else {
+        print('Error al crear o actualizar la valoración');
+        return 'Error al crear o actualizar la valoración';
+      }
+    } catch (e) {
+      print(e);
       return 'Error al crear o actualizar la valoración';
     }
-  } catch (e) {
-    print(e);
-    return 'Error al crear o actualizar la valoración';
   }
-}
 
-    Future<int> addValorada(String uid, String code) async {
+  Future<int> addValorada(String uid, String code) async {
     final Map<String, String> body = {
         'uid': uid,
         'activityId': code,
@@ -764,7 +819,9 @@ Future<List<Bateria>> getBateries() async {
     usuari.nom = usr['username'];
     usuari.favCategories = usr['favcategories'] ?? '';
     usuari.id = usr['id'];
-    usuari.image = 'assets/userImage.png';
+
+    String img = usr['image'];
+    usuari.image =  "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/users%2F" + img + "?alt=media";
 
     return usuari;
   }
@@ -780,13 +837,16 @@ Future<List<Bateria>> getBateries() async {
         usuario.username = userJson['username'];
         usuario.favCats = userJson['favcategories'] ?? '';
         usuario.identificador = userJson['id'];
+
+        String img = userJson['image'] ?? '';
+        usuario.avatarURL =  "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/users%2F" + img + "?alt=media";
+
         if (userJson['valoradas'] != null) {
         List<dynamic> jsonResponse = userJson['valoradas'];
         usuario.valoradas = jsonResponse.cast<Actividad>();
       } else {
         usuario.valoradas = [];
       }
-
         usuarios.add(usuario);
       });
     }

@@ -222,7 +222,7 @@ Future<void> createUser() async {
   });
 
   try {
-
+    
       await _controladorPresentacion.createUser(usernameController.text, selectedCategories, context);
       await _controladorPresentacion.initialice2();
       await _controladorPresentacion.initialice();
