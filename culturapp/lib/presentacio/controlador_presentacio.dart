@@ -234,6 +234,10 @@ class ControladorPresentacion {
     return controladorDomini.getRecompensa(activityId);
   }
 
+  Future<void> actualizarRecompensa(String actividadId, String nuevaRecompensa) {
+    return controladorDomini.actualizarRecompensa(actividadId, nuevaRecompensa);
+  }
+
   List<Actividad> getActividadesVencidas() {
     return actividadesVencidas;
   }

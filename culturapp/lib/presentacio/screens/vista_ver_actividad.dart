@@ -90,6 +90,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     "Espai públic - Platges"
   ];
 
+  bool _editMode = false; // Variable de estado para controlar el modo de edición
+  String _editableText = "Texto por defecto";
+
   _VistaVerActividadState(
       ControladorPresentacion controladorPresentacion,
       List<String> info_actividad,
@@ -511,7 +514,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                       ),
                       const SizedBox(height: 10),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0), // Desplazamiento hacia la derecha
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Container(
                           padding: const EdgeInsets.all(8.0),
                           decoration: BoxDecoration(
@@ -528,21 +531,21 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                 "Recompensa:",
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Colors.black, // Color de la letra negro
+                                  color: Colors.black,
                                 ),
                               ),
                               FutureBuilder<String?>(
-                                future: _controladorPresentacion.getRecompensa(infoActividad[1]), // Llama a la API
+                                future: _controladorPresentacion.getRecompensa(infoActividad[1]),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState == ConnectionState.waiting) {
-                                    return const CircularProgressIndicator(); // Muestra un indicador de carga mientras esperas
+                                    return const CircularProgressIndicator();
                                   } else if (snapshot.hasError) {
                                     return const Text(
                                       "Error",
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.red, // Color de la letra rojo en caso de error
+                                        color: Colors.red,
                                       ),
                                     );
                                   } else if (snapshot.hasData && snapshot.data != null) {
@@ -551,7 +554,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                       style: const TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.black, // Color de la letra negro
+                                        color: Colors.black,
                                       ),
                                     );
                                   } else {
@@ -560,16 +563,48 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.black, // Color de la letra negro
+                                        color: Colors.black,
                                       ),
                                     );
                                   }
                                 },
                               ),
                               if (organizador)
-                                const Icon(
-                                  Icons.edit,
-                                  color: Color(0xFF333333), // Color del ícono
+                                Row(
+                                  children: [
+                                    _editMode
+                                        ? SizedBox(
+                                            width: 100,
+                                            child: TextField(
+                                              onSubmitted: (value) {
+                                                _actualizarRecompensa(value);
+                                              },
+                                              controller: TextEditingController()..text = _editableText,
+                                              decoration: const InputDecoration(
+                                                hintText: "Edita el texto",
+                                              ),
+                                            ),
+                                          )
+                                        : Text(
+                                            _editableText,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.edit,
+                                        color: Color(0xFF333333),
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _editMode = !_editMode;
+                                        });
+                                      },
+                                    ),
+                                  ],
                                 ),
                             ],
                           ),
@@ -675,6 +710,18 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         ],
       ),
     );
+  }
+
+  Future<void> _actualizarRecompensa(String nuevaRecompensa) async {
+    try {
+      await _controladorPresentacion.actualizarRecompensa(infoActividad[1], nuevaRecompensa);
+      setState(() {
+        _editableText = nuevaRecompensa;
+        _editMode = false;
+      });
+    } catch (error) {
+      print('Error al actualizar la recompensa: $error');
+    }
   }
 
   Widget _tituloBoton(String tituloActividad, String categoriaActividad) {

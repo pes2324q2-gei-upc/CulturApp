@@ -150,18 +150,37 @@ class ControladorDomini {
   }
 
   Future<String?> getRecompensa(String activityId) async {
-    final response = await http.get(Uri.parse('https://culturapp-back.onrender.com/activitats/reward/$activityId'),
+    final response = await http.get(Uri.parse('https://culturapp-back.onrender.com/activitats/reward/${activityId}'),
     headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
     }
     );
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return data['recompensa']; // Asegúrate de que 'recompensa' es la clave correcta en tu respuesta JSON
+      return response.body;
     } else {
       // Manejo de errores
       return null;
+    }
+  }
+
+  Future<void> actualizarRecompensa(String actividadId, String nuevaRecompensa) async {
+    final url = Uri.parse('https://culturapp-back.onrender.com/activitats/reward/${actividadId}');
+    final response = await http.post(
+      url,
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+      body: jsonEncode(<String, String>{
+        'reward': nuevaRecompensa,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print('Recompensa actualizada correctamente');
+    } else {
+      throw Exception('Error al actualizar la recompensa: ${response.statusCode}');
     }
   }
 
