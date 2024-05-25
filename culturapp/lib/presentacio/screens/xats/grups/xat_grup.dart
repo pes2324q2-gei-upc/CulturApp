@@ -3,6 +3,7 @@ import "package:culturapp/domain/converters/convert_date_format.dart";
 import "package:culturapp/domain/converters/truncar_string.dart";
 import "package:culturapp/domain/models/grup.dart";
 import "package:culturapp/domain/models/message.dart";
+import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/chat_bubble.dart";
 import "package:culturapp/translations/AppLocalizations";
@@ -27,6 +28,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
   late List<String> nomParticipants;
   late List<Message> missatges;
   late ScrollController _scrollController;
+  List<String> allMembersDevices = [];
 
   Color taronjaVermellos = const Color(0xFFF4692A);
   Color taronjaVermellosFluix = const Color.fromARGB(199, 250, 141, 90);
@@ -40,6 +42,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
     missatges = [];
     _scrollController = ScrollController();
     _loadMessages();
+    _loadMembersDevices();
   }
 
   Message convertIntoRigthVersion(Message message) {
@@ -84,7 +87,11 @@ class _XatGrupScreen extends State<XatGrupScreen> {
       setState(() {
         //crida al backend per penjar missatge al grup
         String time = Timestamp.now().toDate().toIso8601String();
-        _controladorPresentacion.addGrupMessage(_grup.id, time, text);
+        _controladorPresentacion.addGrupMessage(
+            _grup.id, _grup.nomGroup, time, text);
+
+        _controladorPresentacion.sendNotificationToAllDevices(
+            _grup.nomGroup, text, allMembersDevices);
 
         time = convertTimeFormat(time);
 
@@ -93,6 +100,19 @@ class _XatGrupScreen extends State<XatGrupScreen> {
           Message(text: text, sender: 'Me', timeSended: time),
         );
       });
+    }
+  }
+
+  void _loadMembersDevices() async {
+    String myName = _controladorPresentacion.getUsername();
+
+    for (dynamic member in _grup.membres) {
+      Usuari user = await _controladorPresentacion.getUserByName(member);
+
+      if (user.nom != myName) {
+        List<String> devices = user.devices;
+        allMembersDevices.addAll(devices);
+      }
     }
   }
 

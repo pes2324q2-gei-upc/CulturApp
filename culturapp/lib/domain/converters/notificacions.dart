@@ -77,6 +77,30 @@ void scheduleNotificationsActivityDayBefore(
   );
 }
 
+//haig de comprovar si pel id o el channel es necessari fer notificacions diferents
+//o si amb la simple notification ja va bé
+notificacioGrup(String nomGrup, String missatge) {
+  AwesomeNotifications().createNotification(
+    content: NotificationContent(
+      id: 1,
+      channelKey: 'basic_channel',
+      title: nomGrup,
+      body: missatge,
+    ),
+  );
+}
+
+notificacioXat(String nomAmic, String missatge) {
+  AwesomeNotifications().createNotification(
+    content: NotificationContent(
+      id: 2,
+      channelKey: 'basic_channel',
+      title: nomAmic,
+      body: missatge,
+    ),
+  );
+}
+
 notificacioSimple(String titol, String body) {
   AwesomeNotifications().createNotification(
     content: NotificationContent(

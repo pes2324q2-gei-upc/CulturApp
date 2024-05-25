@@ -1150,7 +1150,8 @@ class ControladorDomini {
     }
   }
 
-  void addMessage(String? xatId, String time, String text) async {
+  void addMessage(
+      String? xatId, String myName, String time, String text) async {
     try {
       final url =
           Uri.parse('https://culturapp-back.onrender.com/xats/$xatId/mensajes');
@@ -1165,7 +1166,8 @@ class ControladorDomini {
 
       if (response.statusCode == 201) {
         print('Mensaje agregado exitosamente al xat');
-        sendNotificationToUser("token", "Mensaje enviado a grupo", text);
+        //si el mensaje se ha agrgado correctamente
+        sendNotificationToUser("token", myName, text);
       } else {
         print('Error al agregar mensaje al xat: ${response.statusCode}');
       }
@@ -1365,7 +1367,8 @@ class ControladorDomini {
   }
 
   //afegir missatge al grup
-  void addGrupMessage(String grupId, String time, String text) async {
+  void addGrupMessage(
+      String grupId, String grupName, String time, String text) async {
     try {
       final url = Uri.parse(
           'https://culturapp-back.onrender.com/grups/$grupId/mensajes');
@@ -1380,7 +1383,6 @@ class ControladorDomini {
 
       if (response.statusCode == 201) {
         print('Mensaje agregado exitosamente al xat');
-        sendNotificationToUser("token", "Mensaje enviado a grupo", text);
       } else {
         print('Error al agregar mensaje al xat: ${response.statusCode}');
       }
@@ -1389,7 +1391,7 @@ class ControladorDomini {
     }
   }
 
-  void sendNotificationToUser(String token, String title, String text) async {
+  void sendNotificationToUser(String token, String xatName, String text) async {
     //token de momento hardcoded al emulador pixel a7
     token =
         "fDE4x404TSuRIjlWh1ihMB:APA91bFQm-7z6YdX3Y67FgbKMEVpIgYgXpGurgBCrvuu3AZencUBnstDDnXHtPn-gMggwkH1rWfejBtRERhZ0WeV6jTmMU5U1iUGXbhUCnXVRJLuQQ9yl0nAnuE4GfY_7OY7opbapVVI";
@@ -1402,7 +1404,7 @@ class ControladorDomini {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${userLogged.getToken()}'
         },
-        body: jsonEncode({'title': title, 'mensaje': text, 'token': token}),
+        body: jsonEncode({'title': xatName, 'mensaje': text, 'token': token}),
       );
 
       if (response.statusCode == 201) {
