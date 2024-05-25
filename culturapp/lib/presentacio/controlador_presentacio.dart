@@ -229,6 +229,14 @@ class ControladorPresentacion {
     return usernameLogged;
   }
 
+  Future<String?> getRecompensa(String activityId) async {
+    return controladorDomini.getRecompensa(activityId);
+  }
+
+  Future<void> actualizarRecompensa(String actividadId, String nuevaRecompensa) {
+    return controladorDomini.actualizarRecompensa(actividadId, nuevaRecompensa);
+  }
+
   List<Actividad> getActividadesVencidas() {
     return actividadesVencidas;
   }
