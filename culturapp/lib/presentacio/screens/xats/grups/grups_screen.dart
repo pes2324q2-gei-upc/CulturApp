@@ -59,12 +59,10 @@ class _GrupsScreenState extends State<GrupsScreen> {
       children: [
         Row(
           children: [
-            Expanded(
-              child: Container(
-                height: 40.0,
-                child: _buildCercador(),
-              )
+            const SizedBox(
+              width: 10.0,
             ),
+            _buildCercador(),
             const SizedBox(
               width: 5.0,
             ),
@@ -75,6 +73,7 @@ class _GrupsScreenState extends State<GrupsScreen> {
           height: 20.0,
         ),
         Container(
+          color: grisFluix,
           height: 470.0,
           child: ListView.builder(
             itemCount: display_list.length,
@@ -87,43 +86,28 @@ class _GrupsScreenState extends State<GrupsScreen> {
 
   Widget _buildCercador() {
     return SizedBox(
-      height: 45.0, // Altura del contenedor para el TextField
-      child: Padding(
-        padding: const EdgeInsets.only(right: 0.0, left: 0.0),
-        child: Container(
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.3),
-                spreadRadius: 2,
-                blurRadius: 7,
-                offset: const Offset(0, 3),
-              ),
-            ],
-            color: Colors.white.withOpacity(1),
-            borderRadius: BorderRadius.circular(25.0),
+      height: 40.0,
+      width: 280.0,
+      child: TextField(
+        onChanged: (value) => updateList(value),
+        cursorColor: Colors.white,
+        cursorHeight: 20,
+        style: const TextStyle(
+          color: Colors.white,
+        ),
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: taronjaVermellosFluix,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide.none,
           ),
-          child: Padding(
-            padding: const EdgeInsets.only(left: 25.0, right: 15.0, top: 2.0),
-            child: Center( 
-              child: TextField(
-                onChanged: (value) => updateList(value),
-                cursorColor: Colors.black, 
-                style: const TextStyle(
-                  color: Colors.black, 
-                ),
-                decoration: InputDecoration(
-                  hintText: 'search'.tr(context),
-                  hintStyle: const TextStyle(
-                    color: Colors.grey, 
-                  ),
-                  border: InputBorder.none,
-                  suffixIcon: const Icon(Icons.search, color: Colors.grey),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0.0), 
-                ),
-              ),
-            ),
+          hintText: "search".tr(context),
+          hintStyle: const TextStyle(
+            color: Colors.white,
           ),
+          suffixIcon: const Icon(Icons.search),
+          suffixIconColor: Colors.white,
         ),
       ),
     );
@@ -133,7 +117,7 @@ class _GrupsScreenState extends State<GrupsScreen> {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         shape: const CircleBorder(),
-        backgroundColor: Color(0xFFF4692A),
+        backgroundColor: taronjaVermellosFluix,
         foregroundColor: Colors.white,
       ),
       onPressed: () {
@@ -146,15 +130,9 @@ class _GrupsScreenState extends State<GrupsScreen> {
   Widget _buildGrupItem(context, index) {
     return GestureDetector(
       onTap: () {
-        // anar cap a la pantalla de un xat
+        //anar cap a la pantalla de un xat
         _controladorPresentacion.mostrarXatGrup(context, display_list[index]);
       },
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(width: 0.25, color: Colors.grey),
-            top: BorderSide(width: 0.25, color: Colors.grey),
-          ),
       child: ListTile(
         contentPadding: const EdgeInsets.all(8.0),
         leading: SizedBox(
@@ -171,27 +149,14 @@ class _GrupsScreenState extends State<GrupsScreen> {
               image: AssetImage('assets/userImage.png'),
             ), // Placeholder widget to show if there's no image
         ),
-        child: ListTile(
-          contentPadding: const EdgeInsets.all(8.0),
-          leading: const Image(
-            // image: AssetImage(display_list[index].imageGroup),
-            image: AssetImage('assets/userImage.png'),
-            fit: BoxFit.cover,
-            width: 50,
-            height: 50,
-          ),
-          title: Text(
-            truncarString(display_list[index].nomGroup, 22),
+        title: Text(truncarString(display_list[index].nomGroup, 22),
             style: TextStyle(
               color: taronjaVermellos,
               fontWeight: FontWeight.bold,
-            ),
-          ),
-          subtitle: Text(truncarString(display_list[index].lastMessage, 24)),
-          trailing: Text(convertTimeFormat(display_list[index].timeLastMessage)),
-        ),
+            )),
+        subtitle: Text(truncarString(display_list[index].lastMessage, 24)),
+        trailing: Text(convertTimeFormat(display_list[index].timeLastMessage)),
       ),
     );
   }
-
 }

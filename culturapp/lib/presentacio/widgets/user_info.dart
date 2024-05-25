@@ -155,30 +155,33 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
         const SizedBox(height: 10.0),
         Container(
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: MediaQuery.of(context).size.width / 2,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Color.fromRGBO(211, 211, 211, 0.5), // Fondo gris
-                  borderRadius: BorderRadius.circular(8.0), // Bordes redondeados
-                ),
-                child: TextButton(
-                  onPressed: () {
-                    if (show) {
+                width: MediaQuery.of(context).size.width / 4,
+                child: _buildInfoColumn("assisted_events".tr(context), '1'),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width / 4,
+                child: GestureDetector(
+                  onTap: () {
+                    if (show)
                       widget.controladorPresentacion.mostrarFollows(context, true);
-                    }
                   },
-                  child: Text(
-                    "followers_and_following".tr(context),
-                    style: TextStyle(
-                      color: Color(0xFFF4692A), // Color del texto
-                    ),
-                  ),
+                  child: _buildInfoColumn('followers'.tr(context), '12'),
                 ),
-              )
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width / 4,
+                child: GestureDetector(
+                  onTap: () {
+                    if (show)
+                      widget.controladorPresentacion.mostrarFollows(context, false);
+                  },
+                  child: _buildInfoColumn('following'.tr(context), '40'),
+                ),
+              ),
             ],
           ),
         ),

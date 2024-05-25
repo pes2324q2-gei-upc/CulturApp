@@ -9,7 +9,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:page_transition/page_transition.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,14 +48,9 @@ void main() async {
     }
   });
 
-  runApp(FadeTransition(
-    opacity: AlwaysStoppedAnimation(1), // Configura la opacidad a 1 para evitar un efecto de desvanecimiento inicial
-    child: MyApp(
+  runApp(MyApp(
       controladorPresentacion: controladorPresentacion,
-      currentUser: currentUser,
-    ),
-  ));
-
+      currentUser: currentUser));
 }
 
 class MyApp extends StatelessWidget {
@@ -120,7 +114,6 @@ class MyApp extends StatelessWidget {
                 ),
               ),
             ),
-          
           );
         } else {
           return _MyAppState(controladorPresentacion: controladorPresentacion);
@@ -213,7 +206,6 @@ class __MyAppStateState extends State<_MyAppState> {
             ),
           ),
         ),
-      
       );
     }
 
@@ -245,16 +237,15 @@ class __MyAppStateState extends State<_MyAppState> {
         }
         return supportedLocales.first;
       },
-      home: FadeTransition(
-        opacity: AlwaysStoppedAnimation(1),
-        child: _isLoggedIn
-          ? MapPage(
-              controladorPresentacion: _controladorPresentacion,
-              vencidas: _controladorPresentacion.getActividadesVencidas(),
-            )
-          : Login(
-              controladorPresentacion: _controladorPresentacion,
-            ),
+      home: Scaffold(
+        body: _isLoggedIn
+            ? MapPage(
+                controladorPresentacion: _controladorPresentacion,
+                vencidas: _controladorPresentacion.getActividadesVencidas(),
+              )
+            : Login(
+                controladorPresentacion: _controladorPresentacion,
+              ),
       ),
     );
   }
