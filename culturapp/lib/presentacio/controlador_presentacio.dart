@@ -815,4 +815,10 @@ class ControladorPresentacion {
       return controladorDomini.sendNotificationToUser(device, title, text);
     }
   }
+
+  void addDevice(String? userId, List<String> devices) {
+    if (userId != null) {
+      controladorDomini.addDevice(userId, devices);
+    }
+  }
 }

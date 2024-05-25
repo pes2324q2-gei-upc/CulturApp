@@ -122,6 +122,28 @@ class ControladorDomini {
     }
   }
 
+  void addDevice(String id, List<String> devices) async {
+    try {
+      final Map<String, dynamic> userdata = {'uid': id, 'device': devices};
+
+      final respuesta = await http.post(
+        Uri.parse('http://${ip}:8080/users/addDevice'),
+        body: jsonEncode(userdata),
+        headers: {
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+          'Content-Type': 'application/json'
+        },
+      );
+      if (respuesta.statusCode == 200) {
+        print('Datos enviados exitosamente');
+      } else {
+        print('Error al enviar los datos: ${respuesta.statusCode}');
+      }
+    } catch (error) {
+      print('Error de red: $error');
+    }
+  }
+
   Future<bool> usernameUnique(String username) async {
     final respuesta = await http.get(Uri.parse(
         'https://culturapp-back.onrender.com/users/uniqueUsername?username=$username'));

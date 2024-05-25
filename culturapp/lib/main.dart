@@ -2,6 +2,7 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:culturapp/data/firebase_options.dart';
 import 'package:culturapp/domain/converters/notificacions.dart';
+import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
@@ -125,6 +126,7 @@ class _MyAppState extends StatefulWidget {
 }
 
 class __MyAppStateState extends State<_MyAppState> {
+  User? currentUser;
   late ControladorPresentacion _controladorPresentacion;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -171,8 +173,19 @@ class __MyAppStateState extends State<_MyAppState> {
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       print('User granted permission');
-      _firebaseMessaging.getToken().then((token) {
+      User userNoQuestion = currentUser!;
+      Usuari usuari = await _controladorPresentacion
+          .getUserByName(userNoQuestion.displayName!);
+      _firebaseMessaging.getToken().then((token) async {
         print("FCM Token: $token");
+        if (token != null) {
+          bool alreadyAgregat = await userTeElDevice(token, usuari);
+          if (!alreadyAgregat) {
+            usuari.devices.add(token);
+            _controladorPresentacion.addDevice(
+                currentUser?.uid, usuari.devices);
+          }
+        }
       });
 
       // Handle foreground messages
@@ -193,8 +206,22 @@ class __MyAppStateState extends State<_MyAppState> {
     }
   }
 
+  Future<bool> userTeElDevice(String? device, Usuari usuari) async {
+    if (currentUser != null && device != null) {
+      List<String> devices = usuari.devices;
+      for (String device in devices) {
+        if (devices.contains(device)) {
+          return true;
+        }
+      }
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   void userLogged() async {
-    User? currentUser = _auth.currentUser;
+    currentUser = _auth.currentUser;
     setState(() {
       _isLoggedIn = currentUser != null;
       _selectedIndex = _isLoggedIn ? _selectedIndex : 4;
