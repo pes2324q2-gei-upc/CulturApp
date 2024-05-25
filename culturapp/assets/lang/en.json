@@ -119,5 +119,6 @@
 
     "aplicattion_info": "Please, also add the following information in the application to request to be an organizer",
     "aplicattion_info_text": "- DNI\n- Phone\n- Email\n- Company (if representing one)",
-    "private_account": "This account is private"
+    "private_account": "This account is private",
+    "followers_and_following": "Seguidores y siguiendo"
 }

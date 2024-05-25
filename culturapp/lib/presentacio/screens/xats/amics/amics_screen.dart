@@ -102,7 +102,6 @@ class _AmicsScreenState extends State<AmicsScreen> {
         height: 20.0,
       ),
       Container(
-        color: grisFluix,
         height: 470.0,
         child: ListView.builder(
           itemCount: displayList.length,
@@ -167,45 +166,54 @@ class _AmicsScreenState extends State<AmicsScreen> {
         _controladorPresentacion.getXat(displayList[index].nom);
         _controladorPresentacion.mostrarXatAmic(context, displayList[index]);
       },
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(8.0),
-        leading: Image(
-          //image: AssetImage(displayList[index].image),
-          image: AssetImage(mockImage),
-          fit: BoxFit.cover,
-          width: 50,
-          height: 50,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(width: 0.25, color: Colors.grey),
+            top: BorderSide(width: 0.25, color: Colors.grey),
+          ),
         ),
-        title: Text(displayList[index].nom,
-            style: TextStyle(
-              color: taronjaVermellos,
-              fontWeight: FontWeight.bold,
-            )),
-        subtitle: FutureBuilder<String>(
-          future: agafarLastMessage(displayList[index]),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Text('Loading...');
-            } else if (snapshot.hasError) {
-              return const Text('');
-            } else {
-              return Text(truncarString(snapshot.data ?? '', 24));
-            }
-          },
-        ),
-        trailing: FutureBuilder<String>(
-          future: agafarTimeLastMessage(displayList[index]),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Text('Loading...');
-            } else if (snapshot.hasError) {
-              return const Text('');
-            } else {
-              return Text(snapshot.data ?? '');
-            }
-          },
+        child: ListTile(
+          contentPadding: const EdgeInsets.all(8.0),
+          leading: Image(
+            //image: AssetImage(displayList[index].image),
+            image: AssetImage(mockImage),
+            fit: BoxFit.cover,
+            width: 50,
+            height: 50,
+          ),
+          title: Text(displayList[index].nom,
+              style: TextStyle(
+                color: taronjaVermellos,
+                fontWeight: FontWeight.bold,
+              )),
+          subtitle: FutureBuilder<String>(
+            future: agafarLastMessage(displayList[index]), 
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Text('Loading...');
+              } else if (snapshot.hasError) {
+                return const Text('');
+              } else {
+                return Text(truncarString(snapshot.data ?? '', 24));
+              }
+            },
+          ),
+          trailing: FutureBuilder<String>(
+            future: agafarTimeLastMessage(displayList[index]),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Text('Loading...');
+              } else if (snapshot.hasError) {
+                return const Text('');
+              } else {
+                return Text(snapshot.data ?? '');
+              }
+            },
+          ),
         ),
       ),
     );
   }
+
 }

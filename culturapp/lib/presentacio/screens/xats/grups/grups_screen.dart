@@ -75,7 +75,6 @@ class _GrupsScreenState extends State<GrupsScreen> {
           height: 20.0,
         ),
         Container(
-          color: grisFluix,
           height: 470.0,
           child: ListView.builder(
             itemCount: display_list.length,
@@ -147,26 +146,37 @@ class _GrupsScreenState extends State<GrupsScreen> {
   Widget _buildGrupItem(context, index) {
     return GestureDetector(
       onTap: () {
-        //anar cap a la pantalla de un xat
+        // anar cap a la pantalla de un xat
         _controladorPresentacion.mostrarXatGrup(context, display_list[index]);
       },
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(8.0),
-        leading: const Image(
-          //image: AssetImage(display_list[index].imageGroup),
-          image: AssetImage('assets/userImage.png'),
-          fit: BoxFit.cover,
-          width: 50,
-          height: 50,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(width: 0.25, color: Colors.grey),
+            top: BorderSide(width: 0.25, color: Colors.grey),
+          ),
         ),
-        title: Text(truncarString(display_list[index].nomGroup, 22),
+        child: ListTile(
+          contentPadding: const EdgeInsets.all(8.0),
+          leading: const Image(
+            // image: AssetImage(display_list[index].imageGroup),
+            image: AssetImage('assets/userImage.png'),
+            fit: BoxFit.cover,
+            width: 50,
+            height: 50,
+          ),
+          title: Text(
+            truncarString(display_list[index].nomGroup, 22),
             style: TextStyle(
               color: taronjaVermellos,
               fontWeight: FontWeight.bold,
-            )),
-        subtitle: Text(truncarString(display_list[index].lastMessage, 24)),
-        trailing: Text(convertTimeFormat(display_list[index].timeLastMessage)),
+            ),
+          ),
+          subtitle: Text(truncarString(display_list[index].lastMessage, 24)),
+          trailing: Text(convertTimeFormat(display_list[index].timeLastMessage)),
+        ),
       ),
     );
   }
+
 }
