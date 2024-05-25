@@ -92,6 +92,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
   bool _editMode = false; // Variable de estado para controlar el modo de edición
   String _editableText = "Texto por defecto";
+  late TextEditingController _recompensaController;
 
   _VistaVerActividadState(
       ControladorPresentacion controladorPresentacion,
@@ -319,10 +320,17 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   }
 
   @override
+  void dispose() {
+    _recompensaController.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     checkApuntado(_user!.uid, infoActividad);
     calculaBateriasCercanas();
+    _recompensaController = TextEditingController();
   }
 
   void _onTabChange(int index) {
@@ -534,70 +542,68 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                   color: Colors.black,
                                 ),
                               ),
-                              FutureBuilder<String?>(
-                                future: _controladorPresentacion.getRecompensa(infoActividad[1]),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState == ConnectionState.waiting) {
-                                    return const CircularProgressIndicator();
-                                  } else if (snapshot.hasError) {
-                                    return const Text(
-                                      "Error",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.red,
+                              _editMode
+                                  ? SizedBox(
+                                      width: 100,
+                                      child: TextField(
+                                        onSubmitted: (value) {
+                                          setState(() {
+                                            _editMode = false;
+                                          });
+                                          _actualizarRecompensa(_recompensaController.text);
+                                        },
+                                        controller: _recompensaController,
                                       ),
-                                    );
-                                  } else if (snapshot.hasData && snapshot.data != null) {
-                                    return Row(
-                                      children: [
-                                        _editMode
-                                            ? SizedBox(
-                                                width: 100,
-                                                child: TextField(
-                                                  onSubmitted: (value) {
-                                                    setState(() {
-                                                      _editMode = false;
-                                                    });
-                                                    _actualizarRecompensa(value);
-                                                  },
-                                                  controller: TextEditingController()..text = snapshot.data!,
-                                                ),
-                                              )
-                                            : Text(
-                                                snapshot.data!,
-                                                style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                        if (organizador)
-                                          IconButton(
-                                            icon: const Icon(
-                                              Icons.edit,
-                                              color: Color(0xFF333333),
+                                    )
+                                  : FutureBuilder<String?>(
+                                      future: _controladorPresentacion.getRecompensa(infoActividad[1]),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState == ConnectionState.waiting) {
+                                          return const CircularProgressIndicator();
+                                        } else if (snapshot.hasError) {
+                                          return const Text(
+                                            "Error",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.red,
                                             ),
-                                            onPressed: () {
-                                              setState(() {
-                                                _editMode = true;
-                                              });
-                                            },
-                                          ),
-                                      ],
-                                    );
-                                  } else {
-                                    return const Text(
-                                      "No disponible",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    );
-                                  }
-                                },
-                              ),
+                                          );
+                                        } else if (snapshot.hasData && snapshot.data != null) {
+                                          // Actualiza el texto del controlador cuando se obtienen los datos
+                                          _recompensaController.text = snapshot.data!;
+                                          return Text(
+                                            snapshot.data!,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          );
+                                        } else {
+                                          return const Text(
+                                            "No disponible",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
+                              if (organizador)
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: Color(0xFF333333),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _editMode = true;
+                                    });
+                                  },
+                                ),
                             ],
                           ),
                         ),
