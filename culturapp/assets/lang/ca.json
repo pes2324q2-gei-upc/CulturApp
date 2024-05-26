@@ -122,5 +122,6 @@
     "aplicattion_info_text": "- DNI\n- Telèfon\n- Correu\n- Empresa (si representa a alguna)",
     "private_account": "Aquest compte és privat",
     "reward": "Recompensa:",
-    "noreward": "No hi ha recompensa"
+    "noreward": "No hi ha recompensa",
+    "followers_and_following": "Seguidors i seguint"
 }

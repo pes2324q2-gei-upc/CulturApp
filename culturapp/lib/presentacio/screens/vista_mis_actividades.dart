@@ -630,7 +630,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                 mainAxisAlignment: MainAxisAlignment.center, 
                                 children: [
                                   Text(
-                                    'add_calendar'.tr(context), 
+                                    'add_calendar'.tr(context), style: TextStyle(fontSize: 12),
                                   ),
                                   const Padding(padding: EdgeInsets.only(right: 5)),
                                   const Icon(Icons.calendar_month),
@@ -651,7 +651,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                   icon: const Icon(Icons.location_on),
                                   label: Text( 
                                     'Como llegar',
-                                    style: TextStyle(fontSize: 14),
+                                    style: TextStyle(fontSize: 12),
                                   ),
                                   onPressed: () async {
                                     final url = Uri.parse('https://www.google.com/maps/search/?api=1&query=${activitat.latitud},${activitat.longitud}');
