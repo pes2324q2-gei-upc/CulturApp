@@ -122,5 +122,6 @@
     "aplicattion_info_text": "- DNI\n- Phone\n- Email\n- Company (if representing one)",
     "private_account": "This account is private",
     "reward": "Reward:",
-    "noreward": "No reward available"
+    "noreward": "No reward available",
+    "followers_and_following": "Followers and following"
 }
