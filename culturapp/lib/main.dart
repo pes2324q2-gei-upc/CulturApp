@@ -211,8 +211,8 @@ class __MyAppStateState extends State<_MyAppState> {
     if (usuari.devices.isEmpty) return false;
     if (currentUser != null && device != null) {
       List<String> devices = usuari.devices;
-      for (String device in devices) {
-        if (devices.contains(device)) {
+      for (String deviceSaved in devices) {
+        if (deviceSaved == device) {
           return true;
         }
       }

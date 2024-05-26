@@ -125,7 +125,7 @@ class ControladorDomini {
 
   void addDevice(String id, List<String> devices) async {
     try {
-      final Map<String, dynamic> userdata = {'uid': id, 'device': devices};
+      final Map<String, dynamic> userdata = {'uid': id, 'devices': devices};
 
       final respuesta = await http.post(
         Uri.parse('http://${ip}:8080/users/addDevice'),
@@ -794,7 +794,9 @@ class ControladorDomini {
     usuari.favCategories = usr['favcategories'] ?? '';
     usuari.id = usr['id'];
     usuari.image = 'assets/userImage.png';
-    usuari.devices = usr['devices'];
+    usuari.devices = (usr['devices'] as List<dynamic>)
+        .map((device) => device as String)
+        .toList();
 
     return usuari;
   }
@@ -1420,8 +1422,7 @@ class ControladorDomini {
   void sendNotificationToUser(String token, String xatName, String text) async {
     //token de momento hardcoded al emulador pixel a7
     token =
-        "fIBkZgb-Q9ClRkwmUhS1dd:APA91bFeIcFHvScYHdrTtIWI0tO7OoXx94z-uDqsQDMKLhwVTvI-SnAD2pfdc1a6pOyAFicuMP2qcDDt1BNlWuVXFJmNRHvLU1VGaWoUboG-2s61KRoIzJhT7yX4e607NyRDF6i4FL";
-    // "fDE4x404TSuRIjlWh1ihMB:APA91bFQm-7z6YdX3Y67FgbKMEVpIgYgXpGurgBCrvuu3AZencUBnstDDnXHtPn-gMggwkH1rWfejBtRERhZ0WeV6jTmMU5U1iUGXbhUCnXVRJLuQQ9yl0nAnuE4GfY_7OY7opbapVVI";
+        "fDE4x404TSuRIjlWh1ihMB:APA91bFQm-7z6YdX3Y67FgbKMEVpIgYgXpGurgBCrvuu3AZencUBnstDDnXHtPn-gMggwkH1rWfejBtRERhZ0WeV6jTmMU5U1iUGXbhUCnXVRJLuQQ9yl0nAnuE4GfY_7OY7opbapVVI";
 
     try {
       final url = Uri.parse('http://${ip}:8080/notificacio/enviar');
