@@ -187,7 +187,6 @@ class ControladorDomini {
 
     if (respuesta.statusCode == 200) {
       List<dynamic> jsonResponse = jsonDecode(respuesta.body);
-      print('kfklsfklsdlfsdlfslfsklfs');
       print(jsonResponse);
       actividadesOrganizadas = jsonResponse.cast<String>();
     }
@@ -1421,8 +1420,6 @@ class ControladorDomini {
 
   void sendNotificationToUser(String token, String xatName, String text) async {
     //token de momento hardcoded al emulador pixel a7
-    token =
-        "fDE4x404TSuRIjlWh1ihMB:APA91bFQm-7z6YdX3Y67FgbKMEVpIgYgXpGurgBCrvuu3AZencUBnstDDnXHtPn-gMggwkH1rWfejBtRERhZ0WeV6jTmMU5U1iUGXbhUCnXVRJLuQQ9yl0nAnuE4GfY_7OY7opbapVVI";
 
     try {
       final url = Uri.parse('http://${ip}:8080/notificacio/enviar');
