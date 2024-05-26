@@ -127,6 +127,7 @@ class _MyAppState extends StatefulWidget {
 
 class __MyAppStateState extends State<_MyAppState> {
   User? currentUser;
+  late Usuari currentUsuari;
   late ControladorPresentacion _controladorPresentacion;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -174,21 +175,17 @@ class __MyAppStateState extends State<_MyAppState> {
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       print('User granted permission');
 
-      User userNoQuestion = currentUser!;
-      Usuari usuari = await _controladorPresentacion
-          .getUserByName(userNoQuestion.displayName!);
-
       _firebaseMessaging.getToken().then((token) async {
         print("FCM Token: $token");
 
-        if (token != null) {
-          bool alreadyAgregat = await userTeElDevice(token, usuari);
+        /*if (token != null) {
+          /*bool alreadyAgregat = await userTeElDevice(token, currentUsuari);
           if (!alreadyAgregat) {
-            usuari.devices.add(token);
+            currentUsuari.devices.add(token);
             _controladorPresentacion.addDevice(
-                currentUser?.uid, usuari.devices);
+                currentUser?.uid, currentUsuari.devices);*/
           }
-        }
+        }*/
       });
 
       // Handle foreground messages
@@ -225,10 +222,14 @@ class __MyAppStateState extends State<_MyAppState> {
 
   void userLogged() async {
     currentUser = _auth.currentUser;
+    print("HERE ALL TRHE TIME");
+    //currentUsuari =
+    //await _controladorPresentacion.getUserByName(currentUser!.displayName!);
     setState(() {
       _isLoggedIn = currentUser != null;
       _selectedIndex = _isLoggedIn ? _selectedIndex : 4;
       _isLoading = false;
+      print("HERE ALL TRHE TIME2");
     });
   }
 
