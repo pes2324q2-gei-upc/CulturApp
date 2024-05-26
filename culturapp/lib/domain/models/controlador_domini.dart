@@ -273,7 +273,11 @@ class ControladorDomini {
 
   Future<Usuari> getUserByName(String name) async {
     final respuesta = await http.get(
-        Uri.parse('https://culturapp-back.onrender.com/users/${name}/info'));
+      Uri.parse('https://culturapp-back.onrender.com/users/${name}/info'),
+      headers: {
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+    );
     if (respuesta.statusCode == 200) {
       return _convert_to_usuari(respuesta);
     } else {
@@ -790,6 +794,7 @@ class ControladorDomini {
     usuari.favCategories = usr['favcategories'] ?? '';
     usuari.id = usr['id'];
     usuari.image = 'assets/userImage.png';
+    usuari.devices = usr['devices'];
 
     return usuari;
   }
@@ -1415,7 +1420,8 @@ class ControladorDomini {
   void sendNotificationToUser(String token, String xatName, String text) async {
     //token de momento hardcoded al emulador pixel a7
     token =
-        "fDE4x404TSuRIjlWh1ihMB:APA91bFQm-7z6YdX3Y67FgbKMEVpIgYgXpGurgBCrvuu3AZencUBnstDDnXHtPn-gMggwkH1rWfejBtRERhZ0WeV6jTmMU5U1iUGXbhUCnXVRJLuQQ9yl0nAnuE4GfY_7OY7opbapVVI";
+        "fIBkZgb-Q9ClRkwmUhS1dd:APA91bFeIcFHvScYHdrTtIWI0tO7OoXx94z-uDqsQDMKLhwVTvI-SnAD2pfdc1a6pOyAFicuMP2qcDDt1BNlWuVXFJmNRHvLU1VGaWoUboG-2s61KRoIzJhT7yX4e607NyRDF6i4FL";
+    // "fDE4x404TSuRIjlWh1ihMB:APA91bFQm-7z6YdX3Y67FgbKMEVpIgYgXpGurgBCrvuu3AZencUBnstDDnXHtPn-gMggwkH1rWfejBtRERhZ0WeV6jTmMU5U1iUGXbhUCnXVRJLuQQ9yl0nAnuE4GfY_7OY7opbapVVI";
 
     try {
       final url = Uri.parse('http://${ip}:8080/notificacio/enviar');

@@ -58,15 +58,6 @@ class _MapPageState extends State<MapPage> {
     categoriasFavoritas = _controladorPresentacion.getCategsFav();
     activitats = _controladorPresentacion.getActivitats();
     recomms = _controladorPresentacion.getActivitatsRecomm();
-    initializeNotifications();
-  }
-
-  void initializeNotifications() {
-    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-      if (!isAllowed) {
-        AwesomeNotifications().requestPermissionToSendNotifications();
-      }
-    });
   }
 
   BitmapDescriptor iconoArte = BitmapDescriptor.defaultMarker;
@@ -90,7 +81,6 @@ class _MapPageState extends State<MapPage> {
   bool ubicacionCargada = false;
   double _currentSheetHeight = 0.1;
   final double _maxHeight = 1.0;
-  
 
   final List<String> catsAMB = [
     "Residus",
@@ -153,88 +143,91 @@ class _MapPageState extends State<MapPage> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: SizedBox(
+                        height: actividad.dataInici != actividad.dataFi
+                            ? 125.0
+                            : 100.0,
+                        width: actividad.dataInici != actividad.dataFi
+                            ? 125.0
+                            : 100.0,
+                        child: Image.network(
+                          actividad.imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Center(
+                              child: Icon(
+                                Icons.error_outline,
+                                color: Colors.red,
+                                size: 48,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10.0),
+                    Flexible(
+                      child: Column(
+                        children: [
                           Row(
-                            children: <Widget>[
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: SizedBox(
-                                  height:  actividad.dataInici !=  actividad.dataFi ? 125.0 : 100.0,
-                                  width:  actividad.dataInici !=  actividad.dataFi ? 125.0 : 100.0, 
-                                  child: Image.network(
-                                     actividad.imageUrl,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return const Center(
-                                        child: Icon(
-                                          Icons.error_outline,
-                                          color: Colors.red,
-                                          size: 48,
-                                        ),
-                                      );
-                                    },
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  actividad.name,
+                                  style: const TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFFF4692A),
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 10.0),
-                              Flexible(
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .start,
-                                      children: [
-                                        Flexible(
-                                          child: Text(
-                                             actividad.name,
-                                            style: const TextStyle(
-                                              fontSize: 18.0,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(0xFFF4692A),
-                                            ),
-                                          ),
-                                        ),
-                                        const Padding(
-                                            padding: EdgeInsets.only(right: 5.0)),
-                                        _retornaIcon( actividad.categoria[
-                                            0]),
-                                      ],
-                                    ),
-                                    const Padding(padding: EdgeInsets.only(top: 3.5)),
-                                    Row(
-                                      children: [
-                                        const Icon(Icons.location_on),
-                                        const Padding(
-                                            padding: EdgeInsets.only(right: 7.5)),
-                                        Expanded(
-                                          child: Text(
-                                             actividad.ubicacio,
-                                            overflow: TextOverflow
-                                                .ellipsis, 
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                              Row(
-                                children: [
-                                  const Icon(Icons.calendar_month),
-                                  const Padding(padding: EdgeInsets.only(right: 7.5)),
-                                  Text( actividad.dataInici),
-                                ],
-                              ),
-                               actividad.dataInici !=  actividad.dataFi
-                                  ? Row(
-                                      children: [
-                                        const Icon(Icons.calendar_month),
-                                        const Padding(padding: EdgeInsets.only(right: 7.5)),
-                                        Text( actividad.dataFi),
-                                      ],
-                                    )
-                                  : Container(),
-                                  ],
+                              const Padding(
+                                  padding: EdgeInsets.only(right: 5.0)),
+                              _retornaIcon(actividad.categoria[0]),
+                            ],
+                          ),
+                          const Padding(padding: EdgeInsets.only(top: 3.5)),
+                          Row(
+                            children: [
+                              const Icon(Icons.location_on),
+                              const Padding(
+                                  padding: EdgeInsets.only(right: 7.5)),
+                              Expanded(
+                                child: Text(
+                                  actividad.ubicacio,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
                           ),
+                          Row(
+                            children: [
+                              const Icon(Icons.calendar_month),
+                              const Padding(
+                                  padding: EdgeInsets.only(right: 7.5)),
+                              Text(actividad.dataInici),
+                            ],
+                          ),
+                          actividad.dataInici != actividad.dataFi
+                              ? Row(
+                                  children: [
+                                    const Icon(Icons.calendar_month),
+                                    const Padding(
+                                        padding: EdgeInsets.only(right: 7.5)),
+                                    Text(actividad.dataFi),
+                                  ],
+                                )
+                              : Container(),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
                 const Padding(padding: EdgeInsets.only(bottom: 20.0)),
                 RatingBar.builder(
                   initialRating: 0,
@@ -520,8 +513,7 @@ class _MapPageState extends State<MapPage> {
                         child: Column(
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment
-                                  .start,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Flexible(
                                   child: Text(
@@ -535,8 +527,7 @@ class _MapPageState extends State<MapPage> {
                                 ),
                                 const Padding(
                                     padding: EdgeInsets.only(right: 5.0)),
-                                _retornaIcon(actividad.categoria[
-                                    0]),
+                                _retornaIcon(actividad.categoria[0]),
                               ],
                             ),
                             const Padding(padding: EdgeInsets.only(top: 7.5)),
@@ -833,7 +824,6 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
-  
   void updateActivities(LatLng position, double zoom) async {
     fetchActivities(position, zoom).then((value) {
       setState(() {
@@ -964,78 +954,85 @@ class _MapPageState extends State<MapPage> {
               left: 0,
               right: 0,
               child: MyCarousel(clickCarouselCat)),
-              Positioned.fill(
-                child: DraggableScrollableSheet(
-                  initialChildSize: _currentSheetHeight,
-                  minChildSize: 0.1,
-                  maxChildSize: _maxHeight,
-                  builder: (BuildContext context, ScrollController scrollController) {
-                    if (_currentSheetHeight > 0.75) {
-                      _currentSheetHeight = 0.1;
-                      WidgetsBinding.instance!.addPostFrameCallback((_) {
-                        _controladorPresentacion.mostrarActividadesDisponibles(context, _actividades,);
-                        updateActivities(lastPosition, 16);
+          Positioned.fill(
+            child: DraggableScrollableSheet(
+              initialChildSize: _currentSheetHeight,
+              minChildSize: 0.1,
+              maxChildSize: _maxHeight,
+              builder:
+                  (BuildContext context, ScrollController scrollController) {
+                if (_currentSheetHeight > 0.75) {
+                  _currentSheetHeight = 0.1;
+                  WidgetsBinding.instance!.addPostFrameCallback((_) {
+                    _controladorPresentacion.mostrarActividadesDisponibles(
+                      context,
+                      _actividades,
+                    );
+                    updateActivities(lastPosition, 16);
+                  });
+                  return Container();
+                } else {
+                  return GestureDetector(
+                    onVerticalDragUpdate: (details) {
+                      double delta = details.primaryDelta ?? 0;
+                      double newHeight = _currentSheetHeight -
+                          delta / MediaQuery.of(context).size.height;
+                      if (newHeight > _maxHeight) {
+                        newHeight = _maxHeight;
+                      } else if (newHeight <= 0.1) {
+                        newHeight = 0.1;
+                      }
+                      setState(() {
+                        _currentSheetHeight = newHeight;
                       });
-                      return Container();
-                    } else {
-                      return GestureDetector(
-                        onVerticalDragUpdate: (details) {
-                          double delta = details.primaryDelta ?? 0;
-                          double newHeight = _currentSheetHeight - delta / MediaQuery.of(context).size.height;
-                          if (newHeight > _maxHeight) {
-                            newHeight = _maxHeight;
-                          } else if (newHeight <= 0.1) {
-                            newHeight = 0.1;
-                          }
-                          setState(() {
-                            _currentSheetHeight = newHeight;
-                          });
-                        },
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(24),
-                              topRight: Radius.circular(24),
+                    },
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(24),
+                          topRight: Radius.circular(24),
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Container(
+                              width: 40,
+                              height: 5,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
                           ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Container(
-                                  width: 40,
-                                  height: 5,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[300],
-                                    borderRadius: BorderRadius.circular(10),
+                          Text(
+                            "available_activities".trWithArg(
+                                context, {"number": _actividades.length}),
+                            style: const TextStyle(
+                              color: Color(0xFFF4692A),
+                            ),
+                          ),
+                          Expanded(
+                            child: ListView(
+                              controller: scrollController,
+                              children: [
+                                SizedBox(
+                                  height: 750,
+                                  child: ListaActividadesDisponibles(
+                                    actividades: _actividades,
+                                    controladorPresentacion:
+                                        _controladorPresentacion,
                                   ),
                                 ),
-                              ),
-                              Text(
-                                "available_activities".trWithArg(context, {"number": _actividades.length}),
-                                style: const TextStyle(
-                                  color: Color(0xFFF4692A),
-                                ),
-                              ),
-                              Expanded(
-                                child: ListView(
-                                  controller: scrollController,
-                                  children: [
-                                    SizedBox(
-                                      height: 750,
-                                      child: ListaActividadesDisponibles(
-                                        actividades: _actividades,
-                                        controladorPresentacion: _controladorPresentacion,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
+                        ],
                       ),
+                    ),
                   );
                 }
               },

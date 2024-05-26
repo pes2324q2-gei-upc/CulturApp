@@ -174,18 +174,19 @@ class __MyAppStateState extends State<_MyAppState> {
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       print('User granted permission');
-
+      String name = _controladorPresentacion.getUsername();
+      currentUsuari = await _controladorPresentacion.getUserByName(name);
       _firebaseMessaging.getToken().then((token) async {
         print("FCM Token: $token");
 
-        /*if (token != null) {
-          /*bool alreadyAgregat = await userTeElDevice(token, currentUsuari);
+        if (token != null) {
+          bool alreadyAgregat = await userTeElDevice(token, currentUsuari);
           if (!alreadyAgregat) {
             currentUsuari.devices.add(token);
             _controladorPresentacion.addDevice(
-                currentUser?.uid, currentUsuari.devices);*/
+                currentUser?.uid, currentUsuari.devices);
           }
-        }*/
+        }
       });
 
       // Handle foreground messages
@@ -207,6 +208,7 @@ class __MyAppStateState extends State<_MyAppState> {
   }
 
   Future<bool> userTeElDevice(String? device, Usuari usuari) async {
+    if (usuari.devices.isEmpty) return false;
     if (currentUser != null && device != null) {
       List<String> devices = usuari.devices;
       for (String device in devices) {
@@ -222,14 +224,10 @@ class __MyAppStateState extends State<_MyAppState> {
 
   void userLogged() async {
     currentUser = _auth.currentUser;
-    print("HERE ALL TRHE TIME");
-    //currentUsuari =
-    //await _controladorPresentacion.getUserByName(currentUser!.displayName!);
     setState(() {
       _isLoggedIn = currentUser != null;
       _selectedIndex = _isLoggedIn ? _selectedIndex : 4;
       _isLoading = false;
-      print("HERE ALL TRHE TIME2");
     });
   }
 
