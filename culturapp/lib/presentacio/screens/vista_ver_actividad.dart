@@ -45,7 +45,7 @@ class VistaVerActividad extends StatefulWidget {
 class _VistaVerActividadState extends State<VistaVerActividad> {
   late ControladorPresentacion _controladorPresentacion;
   late ControladorDomini controladorDominio;
-  
+
   late List<String> infoActividad;
   late Uri uriActividad;
   final _formKey = GlobalKey<FormState>();
@@ -64,9 +64,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   String? postIden = '';
   bool reply = false;
   bool mostraReplies = false;
-  
+
   String username = '';
-  
+
   bool organizador = true;
   List<Bateria> bateriasCerca = [];
   Bateria bat = Bateria();
@@ -98,7 +98,6 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       Uri uri_actividad,
       bool esOrganizador,
       List<Bateria> bats) {
-
     infoActividad = info_actividad;
     uriActividad = uri_actividad;
     _controladorPresentacion = controladorPresentacion;
@@ -332,7 +331,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
   void mostrarBaterias() {
     bateriasCerca.sort((a, b) {
-    return a.distancia.compareTo(b.distancia);
+      return a.distancia.compareTo(b.distancia);
     });
 
     showDialog(
@@ -367,7 +366,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             width: 50.0,
                           ),
                         ),
-                        const SizedBox(width: 10.0), 
+                        const SizedBox(width: 10.0),
                         const Text(
                           'Carregadors propers:',
                           style: TextStyle(
@@ -378,20 +377,25 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                       ],
                     ),
                   ),
-                  ...bateriasCerca.where((bateria) => isStreetAddress(bateria.address)).map((bateria) => Padding(
-                    padding: const EdgeInsets.only(bottom: 5.0,), // Agrega un espacio en la parte inferior
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.8, // 80% del ancho de la pantalla
-                      child: bateriaBox(
-                        adress: bateria.address,
-                        kw: bateria.kw, 
-                        speed: bateria.speed, 
-                        distancia: bateria.distancia, 
-                        latitud: bateria.latitud, 
-                        longitud: bateria.longitud
-                      ),
-                    ),
-                  )).toList(),
+                  ...bateriasCerca
+                      .where((bateria) => isStreetAddress(bateria.address))
+                      .map((bateria) => Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: 5.0,
+                            ), // Agrega un espacio en la parte inferior
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width *
+                                  0.8, // 80% del ancho de la pantalla
+                              child: bateriaBox(
+                                  adress: bateria.address,
+                                  kw: bateria.kw,
+                                  speed: bateria.speed,
+                                  distancia: bateria.distancia,
+                                  latitud: bateria.latitud,
+                                  longitud: bateria.longitud),
+                            ),
+                          ))
+                      .toList(),
                 ],
               ),
             ),
@@ -1015,18 +1019,18 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-                    child: Text(
-                      'comments'.trWithArg(context, {"num": "${posts_future.length}"}),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
+              Row(children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 10.0),
+                  child: Text(
+                    'comments'
+                        .trWithArg(context, {"num": "${posts_future.length}"}),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  mostrarReplies(),
-                ]
-              ),
+                ),
+                mostrarReplies(),
+              ]),
               _post(posts_future)
             ],
           );
@@ -1051,7 +1055,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
               Row(
                 children: [
                   //se tendra que modificar por la imagen del usuario
-                  const Icon(Icons.account_circle, size: 45), // Icono de usuario
+                  const Icon(Icons.account_circle,
+                      size: 45), // Icono de usuario
                   const SizedBox(width: 5),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1067,7 +1072,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                   const Spacer(),
                   //fer que nomes el que l'ha creat ho pugui veure
                   _buildPopUpMenuNotBlocked(
-                                context, post, false, post.username, ''),
+                      context, post, false, post.username, ''),
                 ],
               ),
               Padding(
@@ -1082,38 +1087,39 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                 child: Row(
                   children: [
                     GestureDetector(
-                      onTap: () async {
-                        postIden = await _controladorPresentacion.getPostId(idForo, post.fecha);
-                        setState(() {
-                          reply = true;
-                        });
-                      },
-                      child: Row(
-                        children: [
-                          IconButton(
-                            onPressed: () async {
-                              postIden = await _controladorPresentacion.getPostId(idForo, post.fecha);
-                              setState(() {
-                                reply = true;
-                              });
-                            }, 
-                            icon: const Icon(Icons.reply), // Icono de responder
-                          ),
-                          const SizedBox(width: 5),
-                          Text('reply'.tr(context)),
-                        ],
-                      )
-                    ), 
+                        onTap: () async {
+                          postIden = await _controladorPresentacion.getPostId(
+                              idForo, post.fecha);
+                          setState(() {
+                            reply = true;
+                          });
+                        },
+                        child: Row(
+                          children: [
+                            IconButton(
+                              onPressed: () async {
+                                postIden = await _controladorPresentacion
+                                    .getPostId(idForo, post.fecha);
+                                setState(() {
+                                  reply = true;
+                                });
+                              },
+                              icon:
+                                  const Icon(Icons.reply), // Icono de responder
+                            ),
+                            const SizedBox(width: 5),
+                            Text('reply'.tr(context)),
+                          ],
+                        )),
                     const SizedBox(width: 20),
                   ],
                 ),
               ),
-              if (mostraReplies) 
+              if (mostraReplies)
                 Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: infoReply(post.fecha)
-                )
-            ], 
+                    padding: const EdgeInsets.only(left: 20),
+                    child: infoReply(post.fecha))
+            ],
           ),
         );
       },
@@ -1180,25 +1186,20 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                               },
                               child: const Icon(Icons.more_vert, size: 20),         
                             ) */
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 50),
-                          child: Text(
-                            rep.mensaje, // Mensaje del post
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      ]
-                    )
-                  );
-                }
-              )
-            ]
-          );
-        }
-      }
-    );
+                                ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 50),
+                                child: Text(
+                                  rep.mensaje, // Mensaje del post
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            ]));
+                      })
+                ]);
+          }
+        });
   }
 
   Widget mostrarReplies() {
@@ -1319,7 +1320,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         } else {
           controladorDominio.signupInActivity(_user?.uid, infoActividad[1]);
           scheduleNotificationsActivityDayBefore(
-              infoActividad[1], infoActividad[0], infoActividad[5]);
+              infoActividad[1], infoActividad[0], infoActividad[5], context);
           estaApuntado = true;
         }
       });

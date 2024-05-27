@@ -1,6 +1,8 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:culturapp/domain/converters/convert_date_format.dart';
+import 'package:culturapp/translations/AppLocalizations';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/widgets.dart';
 
 /*Send Test Notification
 
@@ -52,8 +54,8 @@ Map<String, String?> convertDynamicToStringMap(Map<String, dynamic> input) {
 }
 
 //notificacions i el seu contingut
-void scheduleNotificationsActivityDayBefore(
-    String activityCode, String activityName, String initialDateString) {
+void scheduleNotificationsActivityDayBefore(String activityCode,
+    String activityName, String initialDateString, BuildContext context) {
   DateTime initialDate = convertStringToDateTime(initialDateString);
   DateTime dayBeforeActivity = initialDate.subtract(const Duration(days: 1));
 
@@ -61,8 +63,8 @@ void scheduleNotificationsActivityDayBefore(
     content: NotificationContent(
       id: int.parse(activityCode.substring(activityCode.length - 5)),
       channelKey: 'basic_channel',
-      title: 'Pròxima Activitat!',
-      body: 'Demà té lloc la activitat $activityName que tens guardada.',
+      title: 'next_activity'.tr(context),
+      body: 'ad_next_activity'.trWithArg(context, {"String": activityName}),
     ),
     schedule: NotificationCalendar(
       year: dayBeforeActivity.year,
