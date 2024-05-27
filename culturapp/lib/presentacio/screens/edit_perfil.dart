@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
@@ -6,6 +7,8 @@ import 'package:culturapp/translations/AppLocalizations';
 import 'package:flutter/material.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 class EditPerfil extends StatefulWidget {
 
@@ -53,6 +56,30 @@ class _EditPerfil extends State<EditPerfil> {
     _controladorPresentacion = controladorPresentacion;
     _username = controladorPresentacion.getUsername();
     selectedCategories = controladorPresentacion.getCategsFav();
+  }
+
+  Future<void> _requestGalleryPermission() async {
+    PermissionStatus status;
+    if (Platform.isAndroid) {
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      if (androidInfo.version.sdkInt <= 32) {
+        status = await Permission.storage.request();
+      } else {
+        status = await Permission.photos.request();
+      }
+    } else {
+      status = await Permission.photos.request();
+    }
+
+    if (status.isGranted) {
+      assignarImatge();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Gallery permission is required to select an image.'),
+        ),
+      );
+    } 
   }
 
   @override
@@ -193,7 +220,6 @@ class _EditPerfil extends State<EditPerfil> {
   }
 
   void assignarImatge() async {
-    //verificar que este set state no se quede en bucle
     Uint8List img = await pickImage(ImageSource.gallery);
     setState(() {
       _image = img;
@@ -263,7 +289,7 @@ class _EditPerfil extends State<EditPerfil> {
                 bottom: -10,
                 left: 80,
                 child: IconButton(
-                  onPressed: assignarImatge,
+                  onPressed: _requestGalleryPermission,
                   icon: const Icon(Icons.add_a_photo),
                 )
               )
