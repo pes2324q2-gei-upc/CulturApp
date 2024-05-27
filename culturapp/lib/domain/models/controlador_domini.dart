@@ -73,7 +73,7 @@ class ControladorDomini {
         'username': username,
         'email': user?.email,
         'favcategories': selectedCategories,
-        'devices': devices
+        'devices': jsonEncode(devices)
       };
 
       final respuesta = await http.post(
