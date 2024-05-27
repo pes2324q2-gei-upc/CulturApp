@@ -76,7 +76,7 @@ class _PostWidgetState extends State<PostWidget> {
               },
               child: const Row(
                 children: [
-                  Icon(Icons.send),
+                  Icon(Icons.send, color: Color(0xFFF4692A)),
                   SizedBox(width: 4),
                 ],
               ),
