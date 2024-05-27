@@ -525,7 +525,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             children: [
                               Text(
                                 'reward'.tr(context),
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 14,
                                   color: Colors.black,
                                 ),
@@ -559,7 +559,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                         } else if (snapshot.data == "null") {
                                           return Text(
                                             'noreward'.tr(context),
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 14,
                                               color: Colors.grey,
                                             ),
