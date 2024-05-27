@@ -39,6 +39,10 @@ class _XatAmicScreen extends State<XatAmicScreen> {
       ControladorPresentacion controladorPresentacion, Usuari usuari) {
     _controladorPresentacion = controladorPresentacion;
     _usuari = usuari;
+
+    //antes de añadir un img a todos los users
+    usuari.image = '';
+    
     messages = [];
     _scrollController = ScrollController();
     _loadMessages();
@@ -172,9 +176,14 @@ class _XatAmicScreen extends State<XatAmicScreen> {
         },
         child: Row(
           children: [
-            CircleAvatar(
-              backgroundImage: AssetImage(_usuari.image),
-            ),
+            if (_usuari.image.isNotEmpty)
+              CircleAvatar(
+                backgroundImage: NetworkImage(_usuari.image),
+              )
+            else
+              const CircleAvatar(
+                backgroundImage: AssetImage('assets/userImage.png'),
+              ),
             const SizedBox(width: 10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -266,8 +275,9 @@ class _XatAmicScreen extends State<XatAmicScreen> {
               final bool? confirm = await confirmPopUp(
                   "report_user_confirm".trWithArg(context, {"user": username}));
               if (confirm == true) {
+                print(xat.id); 
                 _controladorPresentacion.mostrarReportUser(
-                    context, username, "chat chatId");
+                    context, username, xat.id);
               }
             }
           },

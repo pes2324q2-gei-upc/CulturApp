@@ -126,15 +126,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _user.image.isNotEmpty
-              ? CircleAvatar(
-                  backgroundImage: NetworkImage(_user.image),
-                  radius: 50,
-                )
-              : const CircleAvatar(
-                  backgroundImage: AssetImage('assets/userImage.png'),
-                  radius: 50,
-                ),
+              _buildImatge(),
               const SizedBox(width: 20),
               Padding(
                 padding: const EdgeInsets.only(top: 25),
@@ -280,4 +272,39 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
       ),
     );
   }
+
+  Future<String> getImg() async {
+    Usuari usr =  await _controladorPresentacion.getUserByName(_user.nom);
+    return usr.image;
+  }
+
+  Widget _buildImatge() {
+    return FutureBuilder<String>(
+      future: getImg(),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircleAvatar(
+            radius: 50,
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return const CircleAvatar(
+            backgroundImage: AssetImage('assets/userImage.png'),
+            radius: 50,
+          );
+        } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+          return CircleAvatar(
+            backgroundImage: NetworkImage(snapshot.data!),
+            radius: 50,
+          );
+        } else {
+          return const CircleAvatar(
+            backgroundImage: AssetImage('assets/userImage.png'),
+            radius: 50,
+          );
+        }
+      },
+    );
+  }
+
 }

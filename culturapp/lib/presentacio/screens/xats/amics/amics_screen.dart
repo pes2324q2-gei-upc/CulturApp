@@ -69,6 +69,11 @@ class _AmicsScreenState extends State<AmicsScreen> {
 
     llista_amics = await convertirStringEnUsuari(llistaNoms);
 
+    //hasta que añada el param a todos los users
+    for(Usuari u in llista_amics) {
+      u.image = '';
+    }
+
     if (!_isDisposed) {
       setState(() {
         displayList = List.from(llista_amics);
@@ -149,12 +154,19 @@ class _AmicsScreenState extends State<AmicsScreen> {
       },
       child: ListTile(
         contentPadding: const EdgeInsets.all(8.0),
-        leading: Image(
-          //image: AssetImage(displayList[index].image),
-          image: AssetImage(mockImage),
-          fit: BoxFit.cover,
+        leading: SizedBox(
           width: 50,
           height: 50,
+          child: displayList[index].image.isNotEmpty
+            ? ClipOval(
+                child: Image(
+                  image: NetworkImage(displayList[index].image),
+                  fit: BoxFit.cover,
+                ),
+              )
+            : const Image(
+              image: AssetImage('assets/userImage.png'),
+            ), // Placeholder widget to show if there's no image
         ),
         title: Text(displayList[index].nom,
             style: TextStyle(
