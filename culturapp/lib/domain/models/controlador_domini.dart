@@ -67,14 +67,15 @@ class ControladorDomini {
     }
   }
 
-  Future<bool> createUser(
-      User? user, String username, List<String> selectedCategories) async {
+  Future<bool> createUser(User? user, String username,
+      List<String> selectedCategories, List<String> devices) async {
     try {
       final Map<String, dynamic> userdata = {
         'uid': user?.uid,
         'username': username,
         'email': user?.email,
-        'favcategories': selectedCategories
+        'favcategories': selectedCategories,
+        'devices': jsonEncode(devices)
       };
 
       final respuesta = await http.post(
@@ -96,7 +97,8 @@ class ControladorDomini {
     return true;
   }
 
-  void editUser(User? user, String username, List<String> selectedCategories) async {
+  void editUser(
+      User? user, String username, List<String> selectedCategories) async {
     try {
       final Map<String, dynamic> userdata = {
         'uid': user?.uid,
@@ -113,6 +115,32 @@ class ControladorDomini {
         },
       );
 
+      if (respuesta.statusCode == 200) {
+        print('Datos enviados exitosamente');
+      } else {
+        print('Error al enviar los datos: ${respuesta.statusCode}');
+      }
+    } catch (error) {
+      print('Error de red: $error');
+    }
+  }
+
+  void addDevice(String id, List<String> devices) async {
+    try {
+      final Map<String, dynamic> userdata = {
+        'uid': id,
+        'devices': jsonEncode(devices)
+      };
+      print(jsonEncode(userdata));
+
+      final respuesta = await http.post(
+        Uri.parse('https://culturapp-back.onrender.com/users/addDevice'),
+        body: jsonEncode(userdata),
+        headers: {
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+          'Content-Type': 'application/json'
+        },
+      );
       if (respuesta.statusCode == 200) {
         print('Datos enviados exitosamente');
       } else {
@@ -152,11 +180,12 @@ class ControladorDomini {
   }
 
   Future<String?> getRecompensa(String activityId) async {
-    final response = await http.get(Uri.parse('https://culturapp-back.onrender.com/activitats/reward/${activityId}'),
-    headers: {
+    final response = await http.get(
+        Uri.parse(
+            'https://culturapp-back.onrender.com/activitats/reward/${activityId}'),
+        headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
-    }
-    );
+        });
 
     if (response.statusCode == 200) {
       return response.body;
@@ -166,13 +195,15 @@ class ControladorDomini {
     }
   }
 
-  Future<void> actualizarRecompensa(String actividadId, String nuevaRecompensa) async {
-    final url = Uri.parse('https://culturapp-back.onrender.com/activitats/reward/${actividadId}');
+  Future<void> actualizarRecompensa(
+      String actividadId, String nuevaRecompensa) async {
+    final url = Uri.parse(
+        'https://culturapp-back.onrender.com/activitats/reward/${actividadId}');
     final response = await http.post(
       url,
       headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${userLogged.getToken()}',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${userLogged.getToken()}',
       },
       body: jsonEncode(<String, String>{
         'reward': nuevaRecompensa,
@@ -182,14 +213,15 @@ class ControladorDomini {
     if (response.statusCode == 200) {
       print('Recompensa actualizada correctamente');
     } else {
-      throw Exception('Error al actualizar la recompensa: ${response.statusCode}');
+      throw Exception(
+          'Error al actualizar la recompensa: ${response.statusCode}');
     }
   }
 
-
   Future<List<String>> obteActivitatsOrganitzades(String uid) async {
     final respuesta = await http.get(
-      Uri.parse('https://culturapp-back.onrender.com/users/${uid}/actividadesorganizadas'),
+      Uri.parse(
+          'https://culturapp-back.onrender.com/users/${uid}/actividadesorganizadas'),
       headers: {
         'Authorization': 'Bearer ${userLogged.getToken()}',
         'Content-Type': 'application/json'
@@ -200,14 +232,13 @@ class ControladorDomini {
 
     if (respuesta.statusCode == 200) {
       List<dynamic> jsonResponse = jsonDecode(respuesta.body);
-      print('kfklsfklsdlfsdlfslfsklfs');
       print(jsonResponse);
       actividadesOrganizadas = jsonResponse.cast<String>();
     }
     return actividadesOrganizadas;
   }
 
-    Future<List<String>> obteActsValoradas(String username) async {
+  Future<List<String>> obteActsValoradas(String username) async {
     final respuesta = await http.get(
         Uri.parse(
             'https://culturapp-back.onrender.com/users/${username}/valoradas'),
@@ -223,9 +254,10 @@ class ControladorDomini {
     return categorias;
   }
 
-    Future<List<Actividad>> getActivitiesVencudes() async {
+  Future<List<Actividad>> getActivitiesVencudes() async {
     final respuesta = await http.get(
-        Uri.parse('https://culturapp-back.onrender.com/activitats/read/vencidas'),
+        Uri.parse(
+            'https://culturapp-back.onrender.com/activitats/read/vencidas'),
         headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
         });
@@ -251,23 +283,23 @@ class ControladorDomini {
     }
   }
 
-Future<List<Bateria>> getBateries() async {
-  try {
-    final respuesta = await http.get(
-      Uri.parse('http://nattech.fib.upc.edu:40440/api/charging_points/all'),
-    );
+  Future<List<Bateria>> getBateries() async {
+    try {
+      final respuesta = await http.get(
+        Uri.parse('http://nattech.fib.upc.edu:40440/api/charging_points/all'),
+      );
 
-    if (respuesta.statusCode == 200) {
-      return _convert_bateria_to_list(respuesta);
-    } else {
-      print('Fallo la obtención de datos');
+      if (respuesta.statusCode == 200) {
+        return _convert_bateria_to_list(respuesta);
+      } else {
+        print('Fallo la obtención de datos');
+        return [];
+      }
+    } catch (e) {
+      print('Error al obtener las baterías: $e');
       return [];
     }
-  } catch (e) {
-    print('Error al obtener las baterías: $e');
-    return [];
   }
-}
 
   Future<List<Usuario>> getUsers() async {
     final respuesta = await http.get(
@@ -285,7 +317,11 @@ Future<List<Bateria>> getBateries() async {
 
   Future<Usuari> getUserByName(String name) async {
     final respuesta = await http.get(
-        Uri.parse('https://culturapp-back.onrender.com/users/${name}/info'));
+      Uri.parse('https://culturapp-back.onrender.com/users/${name}/info'),
+      headers: {
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+    );
     if (respuesta.statusCode == 200) {
       return _convert_to_usuari(respuesta);
     } else {
@@ -426,7 +462,8 @@ Future<List<Bateria>> getBateries() async {
 
   Future<List<String>> getBlockedUsers() async {
     final respuesta = await http.get(
-      Uri.parse('https://culturapp-back.onrender.com/users/${userLogged.getUsername()}/blockedUsers'),
+      Uri.parse(
+          'https://culturapp-back.onrender.com/users/${userLogged.getUsername()}/blockedUsers'),
       headers: {
         'Authorization': 'Bearer ${userLogged.getToken()}',
       },
@@ -436,8 +473,7 @@ Future<List<Bateria>> getBateries() async {
       final List<String> blockedUsers = List<String>.from(json.decode(body));
       return blockedUsers;
     } else {
-      throw Exception(
-          'Fallo la obtención de datos');
+      throw Exception('Fallo la obtención de datos');
     }
   }
 
@@ -461,23 +497,20 @@ Future<List<Bateria>> getBateries() async {
       },
     );
 
-    if (response.statusCode != 200)
-      print('Error al eliminar al usuario');
+    if (response.statusCode != 200) print('Error al eliminar al usuario');
   }
 
   Future<void> deleteFollowing(String person) async {
     final http.Response response = await http.delete(
-      Uri.parse('https://culturapp-back.onrender.com/amics/deleteFollowing/$person'),
+      Uri.parse(
+          'https://culturapp-back.onrender.com/amics/deleteFollowing/$person'),
       headers: {
         'Authorization': 'Bearer ${userLogged.getToken()}',
       },
     );
 
-    if (response.statusCode != 200)
-      print('Error al eliminar al usuario');
+    if (response.statusCode != 200) print('Error al eliminar al usuario');
   }
-
-
 
   Future<void> createFriend(String person) async {
     final Map<String, dynamic> body = {
@@ -524,15 +557,15 @@ Future<List<Bateria>> getBateries() async {
     }
   }
 
-    Future<String> addValoracion(String idActividad, double puntuacion, String comentario) async {
+  Future<String> addValoracion(
+      String idActividad, double puntuacion, String comentario) async {
+    final Map<String, dynamic> body = {
+      'idActividad': idActividad,
+      'puntuacion': puntuacion,
+      'comentario': comentario,
+    };
 
-  final Map<String, dynamic> body = {
-    'idActividad': idActividad,
-    'puntuacion': puntuacion,
-    'comentario': comentario,
-  };
-
-  try {
+    try {
       final response = await http.post(
           Uri.parse(
               'https://culturapp-back.onrender.com/activitats/create/valoracion'),
@@ -542,29 +575,28 @@ Future<List<Bateria>> getBateries() async {
           },
           body: jsonEncode(body));
 
-    if (response.statusCode == 200) {
-      print('Valoración creada o actualizada con éxito');
-      return 'Valoración creada o actualizada con éxito';
-    } else {
-      print('Error al crear o actualizar la valoración');
+      if (response.statusCode == 200) {
+        print('Valoración creada o actualizada con éxito');
+        return 'Valoración creada o actualizada con éxito';
+      } else {
+        print('Error al crear o actualizar la valoración');
+        return 'Error al crear o actualizar la valoración';
+      }
+    } catch (e) {
+      print(e);
       return 'Error al crear o actualizar la valoración';
     }
-  } catch (e) {
-    print(e);
-    return 'Error al crear o actualizar la valoración';
   }
-}
 
-    Future<int> addValorada(String uid, String code) async {
+  Future<int> addValorada(String uid, String code) async {
     final Map<String, String> body = {
-        'uid': uid,
-        'activityId': code,
+      'uid': uid,
+      'activityId': code,
     };
 
     try {
       final response = await http.post(
-          Uri.parse(
-              'https://culturapp-back.onrender.com/users/addValorada'),
+          Uri.parse('https://culturapp-back.onrender.com/users/addValorada'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ${userLogged.getToken()}',
@@ -639,8 +671,8 @@ Future<List<Bateria>> getBateries() async {
     }
   }
 
-  Future<int> sendReportUser(
-      String titol, String usuariReportat, String report, String placeReport) async {
+  Future<int> sendReportUser(String titol, String usuariReportat, String report,
+      String placeReport) async {
     final Map<String, dynamic> body = {
       'titol': titol,
       'usuariReportat': usuariReportat,
@@ -673,13 +705,13 @@ Future<List<Bateria>> getBateries() async {
       'activitatID': idActivity,
     };
 
-    final response = await http.put(Uri.parse(
-              'https://culturapp-back.onrender.com/users/escanearQR'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ${userLogged.getToken()}',
-          },
-          body: jsonEncode(body));
+    final response = await http.put(
+        Uri.parse('https://culturapp-back.onrender.com/users/escanearQR'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+        },
+        body: jsonEncode(body));
 
     if (response.statusCode != 200) {
       print(response.body);
@@ -692,7 +724,8 @@ Future<List<Bateria>> getBateries() async {
     };
 
     final response = await http.put(
-      Uri.parse('https://culturapp-back.onrender.com/users/${userLogged.getUsername()}/blockuser'),
+      Uri.parse(
+          'https://culturapp-back.onrender.com/users/${userLogged.getUsername()}/blockuser'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${userLogged.getToken()}',
@@ -711,7 +744,8 @@ Future<List<Bateria>> getBateries() async {
     };
 
     final response = await http.put(
-      Uri.parse('https://culturapp-back.onrender.com/users/${userLogged.getUsername()}/unblockuser'),
+      Uri.parse(
+          'https://culturapp-back.onrender.com/users/${userLogged.getUsername()}/unblockuser'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${userLogged.getToken()}',
@@ -735,8 +769,9 @@ Future<List<Bateria>> getBateries() async {
         bateria.latitud = json['latitud'].toDouble();
         bateria.longitud = json['longitud'].toDouble();
         bateria.kw = json['kw'] is int ? json['kw'] : -1;
-        bateria.speed = (json['tipus_velocitat'] ?? 'No disponible').split(' ')[0];
-        bateria.connection = json['connexio'] ??  'No disponible';
+        bateria.speed =
+            (json['tipus_velocitat'] ?? 'No disponible').split(' ')[0];
+        bateria.connection = json['connexio'] ?? 'No disponible';
 
         baterias.add(bateria);
       });
@@ -804,6 +839,9 @@ Future<List<Bateria>> getBateries() async {
     usuari.favCategories = usr['favcategories'] ?? '';
     usuari.id = usr['id'];
     usuari.image = 'assets/userImage.png';
+    usuari.devices = (usr['devices'] as List<dynamic>)
+        .map((device) => device as String)
+        .toList();
 
     return usuari;
   }
@@ -820,11 +858,11 @@ Future<List<Bateria>> getBateries() async {
         usuario.favCats = userJson['favcategories'] ?? '';
         usuario.identificador = userJson['id'];
         if (userJson['valoradas'] != null) {
-        List<dynamic> jsonResponse = userJson['valoradas'];
-        usuario.valoradas = jsonResponse.cast<Actividad>();
-      } else {
-        usuario.valoradas = [];
-      }
+          List<dynamic> jsonResponse = userJson['valoradas'];
+          usuario.valoradas = jsonResponse.cast<Actividad>();
+        } else {
+          usuario.valoradas = [];
+        }
 
         usuarios.add(usuario);
       });
@@ -906,10 +944,11 @@ Future<List<Bateria>> getBateries() async {
   Future<List<Post>> getPostsForo(String foroId) async {
     try {
       final response = await http.get(
-          Uri.parse('https://culturapp-back.onrender.com/foros/$foroId/posts'),
-          headers: {
-            'Authorization': 'Bearer ${userLogged.getToken()}',
-        },);
+        Uri.parse('https://culturapp-back.onrender.com/foros/$foroId/posts'),
+        headers: {
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+        },
+      );
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -1036,11 +1075,13 @@ Future<List<Bateria>> getBateries() async {
   //getReplies
   Future<List<Post>> getReplyPosts(String foroId, String? postId) async {
     try {
-      final response = await http.get(Uri.parse(
-          'https://culturapp-back.onrender.com/foros/$foroId/posts/$postId/reply'),
-          headers: {
-            'Authorization': 'Bearer ${userLogged.getToken()}',
-        },);
+      final response = await http.get(
+        Uri.parse(
+            'https://culturapp-back.onrender.com/foros/$foroId/posts/$postId/reply'),
+        headers: {
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+        },
+      );
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -1140,11 +1181,11 @@ Future<List<Bateria>> getBateries() async {
         if (data['exists']) {
           //El xat existe, devuelve sus detalles
           return xatAmic(
-            id: data['data']['id'],
-            lastMessage: data['data']['last_msg'],
-            timeLastMessage: data['data']['last_time'],
-            recieverId: data['data']['receiverId'],
-            senderId: data['data']['senderId']);
+              id: data['data']['id'],
+              lastMessage: data['data']['last_msg'],
+              timeLastMessage: data['data']['last_time'],
+              recieverId: data['data']['receiverId'],
+              senderId: data['data']['senderId']);
         } else {
           return null; //El xat no existe
         }
@@ -1184,7 +1225,8 @@ Future<List<Bateria>> getBateries() async {
     }
   }
 
-  void addMessage(String? xatId, String time, String text) async {
+  void addMessage(
+      String? xatId, String myName, String time, String text) async {
     try {
       final url =
           Uri.parse('https://culturapp-back.onrender.com/xats/$xatId/mensajes');
@@ -1209,12 +1251,9 @@ Future<List<Bateria>> getBateries() async {
 
   Future<List<Message>> getMessages(String? xatId) async {
     try {
-      final response = await http.get(Uri.parse(
-          'https://culturapp-back.onrender.com/xats/$xatId/mensajes'),
-          headers: {
-            'Authorization': 'Bearer ${userLogged.getToken()}'
-          }
-        );
+      final response = await http.get(
+          Uri.parse('https://culturapp-back.onrender.com/xats/$xatId/mensajes'),
+          headers: {'Authorization': 'Bearer ${userLogged.getToken()}'});
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -1248,11 +1287,14 @@ Future<List<Bateria>> getBateries() async {
         final List<dynamic> data = json.decode(response.body);
         List<Grup> reply = data.map((json) => Grup.fromJson(json)).toList();
         reply.sort((b, a) => a.timeLastMessage.compareTo(b.timeLastMessage));
-        for(Grup g in reply) {
+        for (Grup g in reply) {
           //funcio per agafar la imatge
           if (g.imageGroup.isNotEmpty) {
             String image = g.imageGroup.substring(6);
-            g.imageGroup = "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/grups%2F" + image + "?alt=media";
+            g.imageGroup =
+                "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/grups%2F" +
+                    image +
+                    "?alt=media";
           }
         }
         return reply;
@@ -1270,18 +1312,19 @@ Future<List<Bateria>> getBateries() async {
   //get info d'un grup
   Future<Grup> getInfoGrup(String grupId) async {
     try {
-      final response = await http
-          .get(Uri.parse('https://culturapp-back.onrender.com/grups/$grupId'),
-          headers: {
-            'Authorization': 'Bearer ${userLogged.getToken()}'
-          });
+      final response = await http.get(
+          Uri.parse('https://culturapp-back.onrender.com/grups/$grupId'),
+          headers: {'Authorization': 'Bearer ${userLogged.getToken()}'});
 
       if (response.statusCode == 200) {
         final dynamic data = json.decode(response.body);
-        Grup reply = Grup.fromJson(data);  // Directly parse the JSON into Grup
+        Grup reply = Grup.fromJson(data); // Directly parse the JSON into Grup
         //Grup reply = data.map((json) => Grup.fromJson(json)).toList();
         String image = reply.imageGroup.substring(6);
-        reply.imageGroup = "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/grups%2F" + image + "?alt=media";
+        reply.imageGroup =
+            "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/grups%2F" +
+                image +
+                "?alt=media";
         return reply;
       } else if (response.statusCode == 404) {
         throw Exception('grup no existeix');
@@ -1295,19 +1338,19 @@ Future<List<Bateria>> getBateries() async {
   }
 
   //crear grup
-  Future<void> createGrup(String name, String description,
-      List<String> members, Uint8List? fileBytes) async {
+  Future<void> createGrup(String name, String description, List<String> members,
+      Uint8List? fileBytes) async {
     try {
-
       String membersJson = jsonEncode(members);
 
       final Map<String, dynamic> grupData = {
         'name': name,
         'descr': description,
-        'members':  membersJson
+        'members': membersJson
       };
 
-      var request = http.MultipartRequest('POST', Uri.parse('https://culturapp-back.onrender.com/grups/create'));
+      var request = http.MultipartRequest('POST',
+          Uri.parse('https://culturapp-back.onrender.com/grups/create'));
       request.headers['Authorization'] = 'Bearer ${userLogged.getToken()}';
 
       // Add each key-value pair from grupData as a form field
@@ -1317,7 +1360,8 @@ Future<List<Bateria>> getBateries() async {
 
       // Add file to the request
       if (fileBytes != null) {
-        request.files.add(http.MultipartFile.fromBytes('file', fileBytes, filename: 'image-gallery'));
+        request.files.add(http.MultipartFile.fromBytes('file', fileBytes,
+            filename: 'image-gallery'));
       }
 
       var streamedResponse = await request.send();
@@ -1334,10 +1378,9 @@ Future<List<Bateria>> getBateries() async {
   }
 
   //actualitzar info grup
-  Future<void> updateGrup(String grupId, String name, String description, Uint8List? fileBytes,
-      List<dynamic> members, String img) async {
+  Future<void> updateGrup(String grupId, String name, String description,
+      Uint8List? fileBytes, List<dynamic> members, String img) async {
     try {
-
       String membersJson = jsonEncode(members);
 
       List<String> parts = img.split('/');
@@ -1352,7 +1395,10 @@ Future<List<Bateria>> getBateries() async {
         'members': membersJson
       };
 
-      var request = http.MultipartRequest('PUT', Uri.parse('https://culturapp-back.onrender.com/grups/$grupId/update'));
+      var request = http.MultipartRequest(
+          'PUT',
+          Uri.parse(
+              'https://culturapp-back.onrender.com/grups/$grupId/update'));
       request.headers['Authorization'] = 'Bearer ${userLogged.getToken()}';
 
       // Add each key-value pair from grupData as a form field
@@ -1360,8 +1406,9 @@ Future<List<Bateria>> getBateries() async {
         request.fields[key] = value.toString();
       });
 
-       if (fileBytes != null) {
-        request.files.add(http.MultipartFile.fromBytes('file', fileBytes, filename: 'update-image-gallery'));
+      if (fileBytes != null) {
+        request.files.add(http.MultipartFile.fromBytes('file', fileBytes,
+            filename: 'update-image-gallery'));
       }
 
       var streamedResponse = await request.send();
@@ -1378,24 +1425,23 @@ Future<List<Bateria>> getBateries() async {
   }
 
   Future<void> updateMembersGrup(String grupId, List<dynamic> members) async {
+    final Map<String, dynamic> grupData = {'members': members};
 
-    final Map<String, dynamic> grupData = {
-      'members': members
-    };
+    final response = await http.put(
+        Uri.parse('https://culturapp-back.onrender.com/grups/$grupId/members'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${userLogged.getToken()}'
+        },
+        body: jsonEncode(grupData));
 
-    final response = await http.put( Uri.parse('https://culturapp-back.onrender.com/grups/$grupId/members'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ${userLogged.getToken()}'
-          },
-          body: jsonEncode(grupData)
-    );
-
-    if (response.statusCode != 200) throw Exception('Error al actualitzar el membres del grup');
+    if (response.statusCode != 200)
+      throw Exception('Error al actualitzar el membres del grup');
   }
 
   //afegir missatge al grup
-  void addGrupMessage(String grupId, String time, String text) async {
+  void addGrupMessage(
+      String grupId, String grupName, String time, String text) async {
     try {
       final url = Uri.parse(
           'https://culturapp-back.onrender.com/grups/$grupId/mensajes');
@@ -1418,14 +1464,39 @@ Future<List<Bateria>> getBateries() async {
     }
   }
 
+  void sendNotificationToUser(String token, String xatName, String text) async {
+    //token de momento hardcoded al emulador pixel a7
+
+    try {
+      final url =
+          Uri.parse('https://culturapp-back.onrender.com/notificacio/enviar');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${userLogged.getToken()}'
+        },
+        body: jsonEncode({'title': xatName, 'mensaje': text, 'token': token}),
+      );
+
+      if (response.statusCode == 201) {
+        print('Notificacion llegada exitosamente al dispositivo');
+      } else {
+        print(
+            'Error al enviar notificación al dispositivo: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error al enviar notificación');
+    }
+  }
+
   //agafar missatges del grup
   Future<List<Message>> getGrupMessages(String grupId) async {
     try {
-      final response = await http.get(Uri.parse(
-          'https://culturapp-back.onrender.com/grups/$grupId/mensajes'),
-          headers: {
-            'Authorization': 'Bearer ${userLogged.getToken()}'
-          });
+      final response = await http.get(
+          Uri.parse(
+              'https://culturapp-back.onrender.com/grups/$grupId/mensajes'),
+          headers: {'Authorization': 'Bearer ${userLogged.getToken()}'});
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -1464,8 +1535,7 @@ Future<List<Bateria>> getBateries() async {
 
   Future<bool> checkPrivacy(String uid) async {
     final respuesta = await http.get(
-        Uri.parse(
-            'https://culturapp-back.onrender.com/users/$uid/privacy'),
+        Uri.parse('https://culturapp-back.onrender.com/users/$uid/privacy'),
         headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
         });
@@ -1485,8 +1555,7 @@ Future<List<Bateria>> getBateries() async {
       };
 
       final respuesta = await http.post(
-        Uri.parse(
-            'https://culturapp-back.onrender.com/users/changePrivacy'),
+        Uri.parse('https://culturapp-back.onrender.com/users/changePrivacy'),
         body: jsonEncode(requestData),
         headers: {
           'Content-Type': 'application/json',
@@ -1518,32 +1587,31 @@ Future<List<Bateria>> getBateries() async {
       throw Exception('Fallo la obtención de datos');
     }
   }
-  
+
   Future<List<BadgeCategory>> getBadges(String nom) async {
     final response = await http.get(
         Uri.parse('https://culturapp-back.onrender.com/insignies/user/$nom'),
         headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
-        }
-    );
+        });
     if (response.statusCode == 200) {
       Map<String, dynamic> json = jsonDecode(response.body);
-      List<BadgeCategory> badges = json.entries.map((entry) {
-        String name = entry.key;
-        if (name == 'arte' || name == 'carnaval') {
-          return null;
-        }
-        String rank = entry.value[0];
-        int actualActivities = entry.value[1];
-        return BadgeCategory(name, actualActivities, rank);
-      }).where((badge) => badge != null).toList().cast<BadgeCategory>();
+      List<BadgeCategory> badges = json.entries
+          .map((entry) {
+            String name = entry.key;
+            if (name == 'arte' || name == 'carnaval') {
+              return null;
+            }
+            String rank = entry.value[0];
+            int actualActivities = entry.value[1];
+            return BadgeCategory(name, actualActivities, rank);
+          })
+          .where((badge) => badge != null)
+          .toList()
+          .cast<BadgeCategory>();
       return badges;
     } else {
       throw Exception('Fallo la obtención de datos');
     }
-  }  
+  }
 }
-
-
-
-

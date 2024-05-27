@@ -123,5 +123,7 @@
     "private_account": "This account is private",
     "reward": "Reward:  ",
     "noreward": "No reward available",
-    "followers_and_following": "Followers and following"
+    "followers_and_following": "Followers and following",
+    "next_activity": "PròxiNext Activity!",
+    "ad_next_activity": "Tomorrow the activity {String} takes place."
 }

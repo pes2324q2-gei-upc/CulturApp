@@ -67,14 +67,12 @@ class ControladorPresentacion {
   }
 
   Future<void> initialice() async {
-
     activitats = await controladorDomini.getActivitiesAgenda();
     usersBD = await controladorDomini.getUsers();
     _loadLanguage();
   }
 
   Future<void> initialice2() async {
-
     User? currentUser = _auth.currentUser;
     if (currentUser != null) {
       _user = currentUser;
@@ -86,7 +84,8 @@ class ControladorPresentacion {
       activitats = await controladorDomini.getActivitiesAgenda();
       activitatsUser =
           await controladorDomini.getUserActivities(usernameLogged);
-      actividadesVencidas = await controladorDomini.getActivitiesVencudes() ?? [];
+      actividadesVencidas =
+          await controladorDomini.getActivitiesVencudes() ?? [];
       actividadesOrganizadas =
           await controladorDomini.obteActivitatsOrganitzades(_user!.uid);
       usersBD = await controladorDomini.getUsers();
@@ -120,7 +119,7 @@ class ControladorPresentacion {
   Future<bool> checkUserExists(UserCredential userCred) async {
     bool exists = await controladorDomini.accountExists(userCred.user);
     _user = userCred.user;
-      
+
     return exists;
   }
 
@@ -129,8 +128,9 @@ class ControladorPresentacion {
   }
 
   Future<bool> createUser(String username, List<String> selectedCategories,
-      BuildContext context) async {
-    await controladorDomini.createUser(_user, username, selectedCategories);
+      List<String> devices, BuildContext context) async {
+    await controladorDomini.createUser(
+        _user, username, selectedCategories, devices);
     return true;
   }
 
@@ -142,7 +142,6 @@ class ControladorPresentacion {
   }
 
   void checkLoggedInUser(BuildContext context) {
-
     User? currentUser = _auth.currentUser;
 
     if (currentUser != null) {
@@ -429,13 +428,15 @@ class ControladorPresentacion {
         });
   }
 
-    Future<void> mostrarActividadesDisponibles(BuildContext context, List<Actividad> acts) async {
+  Future<void> mostrarActividadesDisponibles(
+      BuildContext context, List<Actividad> acts) async {
     getUserActivs().then((actividades) => {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => Actsdisponibles(
-                controladorPresentacion: this, mapActs: acts,
+                controladorPresentacion: this,
+                mapActs: acts,
               ),
             ),
           )
@@ -569,15 +570,11 @@ class ControladorPresentacion {
     Foro? foro = await controladorDomini.foroExists(code);
     if (foro != null) {
       // El foro existe, imprimir sus detalles
-
     } else {
       // El foro no existe, crear uno nuevo
       bool creadoExitosamente = await controladorDomini.createForo(code);
       if (creadoExitosamente) {
-
-      } else {
-
-      }
+      } else {}
     }
   }
 
@@ -636,13 +633,11 @@ class ControladorPresentacion {
 
       if (xat != null) {
         // El foro existe, imprimir sus detalles
-
       } else {
         // El foro no existe, crear uno nuevo
         bool creadoExitosamente =
             await controladorDomini.createXat(receiverName);
         if (creadoExitosamente) {
-
         } else {
           throw Exception('Error al crear el xat');
         }
@@ -668,10 +663,10 @@ class ControladorPresentacion {
   }
 
   Future<void> addXatMessage(
-    String senderId, String receiverId, String time, String text) async {
-    xatAmic? xat = await controladorDomini.xatExists(receiverId);
+      String senderName, String receiverName, String time, String text) async {
+    xatAmic? xat = await controladorDomini.xatExists(receiverName);
     String xatId = xat!.id;
-    controladorDomini.addMessage(xatId, time, text);
+    controladorDomini.addMessage(xatId, senderName, time, text);
   }
 
   Future<List<Message>> getXatMessages(String sender, String receiver) async {
@@ -686,8 +681,8 @@ class ControladorPresentacion {
     return grups;
   }
 
-  void createGrup(
-      String name, String description, Uint8List? fileBytes, List<String> members) {
+  void createGrup(String name, String description, Uint8List? fileBytes,
+      List<String> members) {
     controladorDomini.createGrup(name, description, members, fileBytes);
   }
 
@@ -696,19 +691,24 @@ class ControladorPresentacion {
     return info;
   }
 
-  void updateGrup(String grupId, String name, String description, Uint8List? fileBytes,
-      List<dynamic> members, String img) {
-    controladorDomini.updateGrup(grupId, name, description, fileBytes, members, img);
+  void updateGrup(String grupId, String name, String description,
+      Uint8List? fileBytes, List<dynamic> members, String img) {
+    controladorDomini.updateGrup(
+        grupId, name, description, fileBytes, members, img);
   }
 
-  void updateMembersGrup(String grupId, List<dynamic> members, ) {
+  void updateMembersGrup(
+    String grupId,
+    List<dynamic> members,
+  ) {
     controladorDomini.updateMembersGrup(grupId, members);
   }
 
   //el grupId esta afegit com a parametre dels grups
-  void addGrupMessage(String grupId, String time, String text) async {
+  void addGrupMessage(
+      String grupId, String grupName, String time, String text) async {
     try {
-      controladorDomini.addGrupMessage(grupId, time, text);
+      controladorDomini.addGrupMessage(grupId, grupName, time, text);
     } catch (error) {
       throw Exception('Error al añadir mensaje al grupo: $error');
     }
@@ -737,7 +737,7 @@ class ControladorPresentacion {
   }
 
   void mostrarPendents(BuildContext context) {
-    List<String>users;
+    List<String> users;
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -786,7 +786,7 @@ class ControladorPresentacion {
   }
 
   void mostrarBlockedUsers(BuildContext context) {
-      Navigator.push(
+    Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => LlistarBlocked(controladorPresentacion: this),
@@ -821,7 +821,16 @@ class ControladorPresentacion {
     return controladorDomini.isFriend(nom);
   }
 
-  /*Future<List<String>> obteAmics() async {
-    return await controladorDomini.obteFollows(usernameLogged);
-  }*/
+  void sendNotificationToAllDevices(
+      String title, String text, List<String> allMembersDevices) {
+    for (String device in allMembersDevices) {
+      return controladorDomini.sendNotificationToUser(device, title, text);
+    }
+  }
+
+  void addDevice(String? userId, List<String> devices) {
+    if (userId != null) {
+      controladorDomini.addDevice(userId, devices);
+    }
+  }
 }

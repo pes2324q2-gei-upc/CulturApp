@@ -1,18 +1,27 @@
 // ignore_for_file: no_logic_in_create_state, library_private_types_in_public_api
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:culturapp/data/firebase_options.dart';
+import 'package:culturapp/domain/converters/notificacions.dart';
+import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/screens/login.dart';
 import 'package:culturapp/presentacio/screens/map_screen.dart';
 import 'package:culturapp/translations/AppLocalizations';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Handling a background message: ${message.messageId}");
+  notificacioSimple(message.notification?.title ?? "Title",
+      message.notification?.body ?? "Body");
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   // Inicializa Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
@@ -24,29 +33,14 @@ void main() async {
     await controladorPresentacion.initialice();
   }
 
-  AwesomeNotifications().initialize(
-    null, //'assets/logoCulturApp.png',
-    [
-      NotificationChannel(
-        channelGroupKey: 'basic_channel_group',
-        channelKey: 'basic_channel',
-        channelName: 'Basic notifications',
-        channelDescription: 'Notification channel for everything',
-      )
-    ],
-    channelGroups: [
-      NotificationChannelGroup(
-          channelGroupKey: 'basic_channel_group',
-          channelGroupName: 'Basic group')
-    ],
-    debug: true,
-  );
-
+  //inicilitzar notificacions i demanar permisos
+  initializeAwesomeNotifications();
   AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
     if (!isAllowed) {
       AwesomeNotifications().requestPermissionToSendNotifications();
     }
   });
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   runApp(MyApp(
       controladorPresentacion: controladorPresentacion,
@@ -58,9 +52,7 @@ class MyApp extends StatelessWidget {
   final User? currentUser;
 
   const MyApp(
-      {Key? key,
-      required this.controladorPresentacion,
-      this.currentUser})
+      {Key? key, required this.controladorPresentacion, this.currentUser})
       : super(key: key);
 
   @override
@@ -134,8 +126,11 @@ class _MyAppState extends StatefulWidget {
 }
 
 class __MyAppStateState extends State<_MyAppState> {
+  User? currentUser;
+  late Usuari currentUsuari;
   late ControladorPresentacion _controladorPresentacion;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   int _selectedIndex = 0;
   bool _isLoggedIn = false;
 
@@ -162,10 +157,73 @@ class __MyAppStateState extends State<_MyAppState> {
   void initState() {
     super.initState();
     userLogged();
+    _initializeFCM();
+  }
+
+  void _initializeFCM() async {
+    // Request permission for iOS
+    NotificationSettings settings = await _firebaseMessaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+      String name = _controladorPresentacion.getUsername();
+      currentUsuari = await _controladorPresentacion.getUserByName(name);
+      _firebaseMessaging.getToken().then((token) async {
+        print("FCM Token: $token");
+
+        if (token != null) {
+          bool alreadyAgregat = await userTeElDevice(token, currentUsuari);
+          if (!alreadyAgregat) {
+            currentUsuari.devices.add(token);
+            _controladorPresentacion.addDevice(
+                currentUser?.uid, currentUsuari.devices);
+          }
+        }
+      });
+
+      // Handle foreground messages
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        RemoteNotification? notification = message.notification;
+        AndroidNotification? android = message.notification?.android;
+        if (notification != null && android != null) {
+          notificacioSimple(notification.title!, notification.body!);
+        }
+      });
+
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+        print('A new onMessageOpenedApp event was published!');
+        // Navigate to a specific screen
+      });
+    } else {
+      print('User declined or has not accepted permission');
+    }
+  }
+
+  Future<bool> userTeElDevice(String? device, Usuari usuari) async {
+    if (usuari.devices.isEmpty) return false;
+    if (currentUser != null && device != null) {
+      List<String> devices = usuari.devices;
+      for (String deviceSaved in devices) {
+        if (deviceSaved == device) {
+          return true;
+        }
+      }
+      return false;
+    } else {
+      return true;
+    }
   }
 
   void userLogged() async {
-    User? currentUser = _auth.currentUser;
+    currentUser = _auth.currentUser;
     setState(() {
       _isLoggedIn = currentUser != null;
       _selectedIndex = _isLoggedIn ? _selectedIndex : 4;
