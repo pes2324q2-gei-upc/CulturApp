@@ -1219,7 +1219,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                 reply = true;
                               });
                             }, 
-                            icon: const Icon(Icons.reply, color: Color(0xFFF4692A)), // Icono de responder
+                            icon: const Icon(Icons.reply), // Icono de responder
                           ),
                           const SizedBox(width: 5),
                           Text('reply'.tr(context)),
