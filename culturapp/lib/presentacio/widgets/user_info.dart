@@ -337,7 +337,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(20),
                           child: SizedBox(
-                            width: 250,  
+                            width: 200,  
                             child: Stack(
                               children: [
                                 LinearProgressIndicator(

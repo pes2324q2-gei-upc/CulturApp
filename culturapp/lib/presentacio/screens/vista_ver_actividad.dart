@@ -495,9 +495,11 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                           infoActividad[0],
                           infoActividad[
                               2]), //Accedemos al nombre de la actividad y su categoria
-                      const SizedBox(height: 10),
+                     const SizedBox(height: 10),
                       _descripcioActividad(
                           infoActividad[4]), //Accedemos su descripcion
+                      const SizedBox(height: 10),
+                     _expansionDescripcion(),
                       const Padding(
                         padding: EdgeInsets.only(bottom: 5.0),
                       ),
@@ -514,7 +516,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Text(
                                 'reward'.tr(context),
@@ -524,8 +526,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                 ),
                               ),
                               _editMode
-                                  ? SizedBox(
-                                      width: 100,
+                                  ? Expanded(
                                       child: TextField(
                                         onSubmitted: (value) {
                                           setState(() {
@@ -600,7 +601,6 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      _expansionDescripcion(),
                       const Padding(
                         padding: EdgeInsets.only(top: 5.0),
                       ),
@@ -1219,7 +1219,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                 reply = true;
                               });
                             }, 
-                            icon: const Icon(Icons.reply), // Icono de responder
+                            icon: const Icon(Icons.reply, color: Color(0xFFF4692A)), // Icono de responder
                           ),
                           const SizedBox(width: 5),
                           Text('reply'.tr(context)),
@@ -1331,7 +1331,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         });
       },
       child: Padding(
-        padding: const EdgeInsets.only(left: 180),
+        padding: const EdgeInsets.only(right: 10),
         child: Text(
           mostraReplies ? 'no_reply'.tr(context) : 'see_reply'.tr(context),
           style: const TextStyle(
