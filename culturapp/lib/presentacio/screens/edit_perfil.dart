@@ -59,24 +59,24 @@ class _EditPerfil extends State<EditPerfil> {
   Widget build(BuildContext context) {
     print(selectedCategories.toString());
     return Builder(
-  builder: (context) {
-    // Aquí puedes acceder a los datos que necesitas para construir tu widget.
-    // Como Builder no maneja Futures, necesitarás obtener los datos de otra manera.
-    // Por ejemplo, podrías obtener los datos en un método initState y almacenarlos en una variable de estado.
-    final username = this._username; // Reemplaza esto con tu lógica para obtener el nombre de usuario
+      builder: (context) {
+        // Aquí puedes acceder a los datos que necesitas para construir tu widget.
+        // Como Builder no maneja Futures, necesitarás obtener los datos de otra manera.
+        // Por ejemplo, podrías obtener los datos en un método initState y almacenarlos en una variable de estado.
+        final username = _username; 
 
-    if (username.isEmpty) {
-      return Container(
-        alignment: Alignment.center,
-        width: 50,
-        height: 50,
-        child: const CircularProgressIndicator(color:Color(0xFFF4692A)),
-      );
-    } else {
-      return _buildUserInfo(username);
-    }
-  },
-);
+        if (username.isEmpty) {
+          return Container(
+            alignment: Alignment.center,
+            width: 50,
+            height: 50,
+            child: const CircularProgressIndicator(color:Color(0xFFF4692A)),
+          );
+        } else {
+          return _buildUserInfo(username);
+        }
+      },
+    );
   }
 
   Widget _buildUserInfo(String username) {
@@ -103,6 +103,7 @@ class _EditPerfil extends State<EditPerfil> {
       body: ListView(
         padding: const EdgeInsets.all(30),
         children: [
+              _buildEscollirImatge(),
               Column(
                 children: <Widget>[
                   TextField(
@@ -152,20 +153,20 @@ class _EditPerfil extends State<EditPerfil> {
               ),
               const SizedBox(height: 30),
               GestureDetector(
-              onTap: () {
-                editUser();
-              },
-              child: const Text(
-                'Guardar',
-                textAlign: TextAlign.right, // Alineado a la derecha
-                style: TextStyle(
-                  color: Color.fromARGB(244, 255, 145, 0), // Color principal
-                  fontWeight: FontWeight.bold, // Negrita
-                  fontSize: 16, // Tamaño de fuente 16
-                  decoration: TextDecoration.none, // Sin decoración
+                onTap: () {
+                  editUser();
+                },
+                child: const Text(
+                  'Guardar',
+                  textAlign: TextAlign.right, // Alineado a la derecha
+                  style: TextStyle(
+                    color: Color.fromARGB(244, 255, 145, 0), // Color principal
+                    fontWeight: FontWeight.bold, // Negrita
+                    fontSize: 16, // Tamaño de fuente 16
+                    decoration: TextDecoration.none, // Sin decoración
+                  ),
                 ),
               ),
-            ),
             ],
           ),
 
@@ -207,7 +208,12 @@ class _EditPerfil extends State<EditPerfil> {
     }
   }
 
-  Widget _buildEscollirImatge() {
+  Future<String> getImg() async {
+    Usuari usr =  await _controladorPresentacion.getUserByName(_username);
+    return usr.image;
+  }
+
+  Widget _buildEscollirImatge() { 
     return Column(
       children: [
         const Text(
@@ -227,9 +233,31 @@ class _EditPerfil extends State<EditPerfil> {
                   backgroundImage: MemoryImage(_image!),
                   radius: 65,
                 )
-              : const CircleAvatar(
-                  backgroundImage: AssetImage('assets/userImage.png'),
-                  radius: 65,
+              : FutureBuilder<String>(
+                  future: getImg(),
+                  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircleAvatar(
+                        radius: 65,
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (snapshot.hasError) {
+                      return const CircleAvatar(
+                        backgroundImage: AssetImage('assets/userImage.png'),
+                        radius: 65,
+                      );
+                    } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                      return CircleAvatar(
+                        backgroundImage: NetworkImage(snapshot.data!),
+                        radius: 65,
+                      );
+                    } else {
+                      return const CircleAvatar(
+                        backgroundImage: AssetImage('assets/userImage.png'),
+                        radius: 65,
+                      );
+                    }
+                  },
                 ),
               Positioned(
                 bottom: -10,

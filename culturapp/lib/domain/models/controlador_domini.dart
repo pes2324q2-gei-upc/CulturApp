@@ -820,8 +820,11 @@ class ControladorDomini {
     usuari.favCategories = usr['favcategories'] ?? '';
     usuari.id = usr['id'];
 
-    String img = usr['image'];
-    usuari.image =  "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/users%2F" + img + "?alt=media";
+    String img = usr['image'] ?? '';
+    if(img.isNotEmpty) {
+      img = img.substring(6);
+      usuari.image =  "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/users%2F" + img + "?alt=media";
+    }
 
     return usuari;
   }
@@ -839,7 +842,10 @@ class ControladorDomini {
         usuario.identificador = userJson['id'];
 
         String img = userJson['image'] ?? '';
-        usuario.avatarURL =  "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/users%2F" + img + "?alt=media";
+        if(img.isNotEmpty) {
+          img = img.substring(6);
+          usuario.avatarURL =  "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/users%2F" + img + "?alt=media";
+        }
 
         if (userJson['valoradas'] != null) {
         List<dynamic> jsonResponse = userJson['valoradas'];

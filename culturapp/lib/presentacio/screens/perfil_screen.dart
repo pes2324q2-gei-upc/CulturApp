@@ -65,7 +65,7 @@ class _PerfilPageState extends State<PerfilPage> {
         _controladorPresentacion.mostrarXats(context, "Amics");
         break;
       case 3:
-        _controladorPresentacion.mostrarPerfil(context);
+        //_controladorPresentacion.mostrarPerfil(context);
         break;
       default:
         break;

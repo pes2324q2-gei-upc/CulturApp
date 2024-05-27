@@ -104,9 +104,9 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
           future: Future.value(activitats),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator(color: Color(0xFFF4692A));
+              return const CircularProgressIndicator(color: Color(0xFFF4692A));
             } else if (snapshot.hasError) {
-              return Text('Error al obtener el nombre de usuario');
+              return const Text('Error al obtener el nombre de usuario');
             } else {
               final username = snapshot.data ?? '';
               return _buildUserInfo(_user, activitats);
@@ -126,10 +126,15 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                backgroundImage: AssetImage(_user.image),
-                radius: 50,
-              ),
+              _user.image.isNotEmpty
+              ? CircleAvatar(
+                  backgroundImage: NetworkImage(_user.image),
+                  radius: 50,
+                )
+              : const CircleAvatar(
+                  backgroundImage: AssetImage('assets/userImage.png'),
+                  radius: 50,
+                ),
               const SizedBox(width: 20),
               Padding(
                 padding: const EdgeInsets.only(top: 25),
@@ -139,7 +144,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                   children: [
                     Text(
                       _user.nom,
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 5),
                     const Text(
@@ -222,9 +227,9 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.lock, size: 50, color: Colors.grey),
-                              SizedBox(height: 20,),
-                              Text("private_account".tr(context), style: TextStyle(fontSize: 24)),
+                              const Icon(Icons.lock, size: 50, color: Colors.grey),
+                              const SizedBox(height: 20,),
+                              Text("private_account".tr(context), style: const TextStyle(fontSize: 24)),
                             ],
                           ),
                         ),
@@ -235,9 +240,9 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.lock, size: 50, color: Colors.grey),
-                                SizedBox(height: 20,),
-                                Text("private_account".tr(context), style: TextStyle(fontSize: 24)),
+                                const Icon(Icons.lock, size: 50, color: Colors.grey),
+                                const SizedBox(height: 20,),
+                                Text("private_account".tr(context), style: const TextStyle(fontSize: 24)),
                               ],
                             ),
                           ),
