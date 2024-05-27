@@ -107,7 +107,6 @@ class _AmicsScreenState extends State<AmicsScreen> {
         height: 20.0,
       ),
       Container(
-        color: grisFluix,
         height: 470.0,
         child: ListView.builder(
           itemCount: displayList.length,
@@ -118,26 +117,45 @@ class _AmicsScreenState extends State<AmicsScreen> {
   }
 
   Widget _buildCercador() {
-    return TextField(
-      onChanged: (value) => updateList(value),
-      cursorColor: Colors.white,
-      cursorHeight: 20,
-      style: const TextStyle(
-        color: Colors.white,
-      ),
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: taronjaVermellosFluix,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide.none,
+    return SizedBox(
+       height: 45.0, // Altura del contenedor para el TextField
+       child: Padding(
+         padding: const EdgeInsets.only(right: 0.0, left: 0.0),
+         child: Container(
+           decoration: BoxDecoration(
+             boxShadow: [
+               BoxShadow(
+                 color: Colors.grey.withOpacity(0.3),
+                 spreadRadius: 2,
+                 blurRadius: 7,
+                 offset: const Offset(0, 3),
+               ),
+             ],
+             color: Colors.white.withOpacity(1),
+             borderRadius: BorderRadius.circular(25.0),
+           ),
+           child: Padding(
+             padding: const EdgeInsets.only(left: 25.0, right: 15.0, top: 2.0),
+             child: Center( 
+               child: TextField(
+                 onChanged: (value) => updateList(value),
+                 cursorColor: Colors.black, 
+                 style: const TextStyle(
+                   color: Colors.black, 
+                 ),
+                 decoration: InputDecoration(
+                   hintText: 'search'.tr(context),
+                   hintStyle: const TextStyle(
+                     color: Colors.grey, 
+                   ),
+                   border: InputBorder.none,
+                   suffixIcon: const Icon(Icons.search, color: Colors.grey),
+                   contentPadding: const EdgeInsets.symmetric(vertical: 0.0), 
+                 ),
+               ),
+             ),
+           ),
         ),
-        hintText: "search".tr(context),
-        hintStyle: const TextStyle(
-          color: Colors.white,
-        ),
-        suffixIcon: const Icon(Icons.search),
-        suffixIconColor: Colors.white,
       ),
     );
   }
@@ -152,6 +170,13 @@ class _AmicsScreenState extends State<AmicsScreen> {
         _controladorPresentacion.getXat(displayList[index].nom);
         _controladorPresentacion.mostrarXatAmic(context, displayList[index]);
       },
+      child: Container(
+         decoration: BoxDecoration(
+           border: Border(
+             bottom: BorderSide(width: 0.25, color: Colors.grey),
+             top: BorderSide(width: 0.25, color: Colors.grey),
+           ),
+         ),
       child: ListTile(
         contentPadding: const EdgeInsets.all(8.0),
         leading: SizedBox(
@@ -168,34 +193,35 @@ class _AmicsScreenState extends State<AmicsScreen> {
               image: AssetImage('assets/userImage.png'),
             ), // Placeholder widget to show if there's no image
         ),
-        title: Text(displayList[index].nom,
-            style: TextStyle(
-              color: taronjaVermellos,
-              fontWeight: FontWeight.bold,
-            )),
-        subtitle: FutureBuilder<String>(
-          future: agafarLastMessage(displayList[index]),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Text('Loading...');
-            } else if (snapshot.hasError) {
-              return const Text('');
-            } else {
-              return Text(truncarString(snapshot.data ?? '', 24));
-            }
-          },
-        ),
-        trailing: FutureBuilder<String>(
-          future: agafarTimeLastMessage(displayList[index]),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Text('Loading...');
-            } else if (snapshot.hasError) {
-              return const Text('');
-            } else {
-              return Text(snapshot.data ?? '');
-            }
-          },
+           title: Text(displayList[index].nom,
+               style: TextStyle(
+                 color: taronjaVermellos,
+                 fontWeight: FontWeight.bold,
+               )),
+           subtitle: FutureBuilder<String>(
+             future: agafarLastMessage(displayList[index]), 
+             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+               if (snapshot.connectionState == ConnectionState.waiting) {
+                 return const Text('Loading...');
+               } else if (snapshot.hasError) {
+                 return const Text('');
+               } else {
+                 return Text(truncarString(snapshot.data ?? '', 24));
+               }
+             },
+           ),
+           trailing: FutureBuilder<String>(
+             future: agafarTimeLastMessage(displayList[index]),
+             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+               if (snapshot.connectionState == ConnectionState.waiting) {
+                 return const Text('Loading...');
+               } else if (snapshot.hasError) {
+                 return const Text('');
+               } else {
+                 return Text(snapshot.data ?? '');
+               }
+             },
+           ),
         ),
       ),
     );

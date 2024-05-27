@@ -120,5 +120,10 @@
     "community": "Comunidad",
     "aplicattion_info": "Por favor, tambien añada la siguiente información en la aplicación para solicitar ser organizador",
     "aplicattion_info_text": "- DNI\n- Teléfono\n- Correo\n- Empresa (si representa a alguna)",
-    "private_account": "Esta cuenta es privada"
+    "private_account": "Esta cuenta es privada",
+    "reward": "Recompensa:  ",
+    "noreward": "No hay recompensa",
+    "followers_and_following": "Seguidores y siguiendo",
+    "next_activity": "¡Próxima Actividad!",
+    "ad_next_activity": "Mañana tiene lugar la actividad {String} que tienes guardada."
 }

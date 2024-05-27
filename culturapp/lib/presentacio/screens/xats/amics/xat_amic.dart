@@ -1,4 +1,3 @@
-import "package:awesome_notifications/awesome_notifications.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:culturapp/domain/converters/convert_date_format.dart";
 import "package:culturapp/domain/models/message.dart";
@@ -48,23 +47,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
     _loadMessages();
   }
 
-  triggerNotification() {
-    AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: 10,
-        channelKey: 'basic_channel',
-        title: 'Simple Notification',
-        body: 'Simple Button',
-      ),
-    );
-  }
-
   void _sendMessage(String text) {
-    /*només e sper probar com funcionen les notificacions, després es treu*/
-    triggerNotification();
-
-    //enviar missatge, jo envio missatge
-
     if (text.isNotEmpty) {
       _controller.clear();
 
@@ -73,6 +56,9 @@ class _XatAmicScreen extends State<XatAmicScreen> {
         String time = Timestamp.now().toDate().toIso8601String();
         String myName = _controladorPresentacion.getUsername();
         _controladorPresentacion.addXatMessage(myName, _usuari.nom, time, text);
+
+        _controladorPresentacion.sendNotificationToAllDevices(
+            myName, text, _usuari.devices);
 
         time = convertTimeFormat(time);
 
@@ -203,8 +189,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
     );
   }
 
-  //Duplicación de código con user_box, revisar como añadirlo a un archivo aparte
-
+ 
   Widget _buildPopUpMenuNotBlocked() {
     return _buildPopupMenu(
         ['block_user'.tr(context), 'report_user'.tr(context)]);
@@ -260,16 +245,9 @@ class _XatAmicScreen extends State<XatAmicScreen> {
           onSelected: (String value) async {
             String username = _usuari.nom;
             if (value == 'block_user'.tr(context)) {
-              final bool? confirm = await confirmPopUp(
-                  "block_user_confirm".trWithArg(context, {"user": username}));
-              if (confirm == true) {
-                //_controladorPresentacion.blockUser(username);
-              }
-            } else if (value == 'unblock_user'.tr(context)) {
-              final bool? confirm = await confirmPopUp("unblock_user_confirm"
-                  .trWithArg(context, {"user": username}));
-              if (confirm == true) {
-                //_controladorPresentacion.unblockUser(username);
+              final bool? confirm = await confirmPopUp("block_user_confirm".trWithArg(context, {"user": username}));
+              if(confirm == true) {
+              _controladorPresentacion.blockUser(username);
               }
             } else if (value == 'report_user'.tr(context)) {
               final bool? confirm = await confirmPopUp(

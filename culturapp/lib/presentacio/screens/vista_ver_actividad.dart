@@ -46,7 +46,7 @@ class VistaVerActividad extends StatefulWidget {
 class _VistaVerActividadState extends State<VistaVerActividad> {
   late ControladorPresentacion _controladorPresentacion;
   late ControladorDomini controladorDominio;
-  
+
   late List<String> infoActividad;
   late Uri uriActividad;
   final _formKey = GlobalKey<FormState>();
@@ -65,9 +65,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   String? postIden = '';
   bool reply = false;
   bool mostraReplies = false;
-  
+
   String username = '';
-  
+
   bool organizador = true;
   List<Bateria> bateriasCerca = [];
   Bateria bat = Bateria();
@@ -93,13 +93,16 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     "Espai públic - Platges"
   ];
 
+  bool _editMode = false; // Variable de estado para controlar el modo de edición
+  String _editableText = "Texto por defecto";
+  late TextEditingController _recompensaController;
+
   _VistaVerActividadState(
       ControladorPresentacion controladorPresentacion,
       List<String> info_actividad,
       Uri uri_actividad,
       bool esOrganizador,
       List<Bateria> bats) {
-
     infoActividad = info_actividad;
     uriActividad = uri_actividad;
     _controladorPresentacion = controladorPresentacion;
@@ -320,10 +323,17 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   }
 
   @override
+  void dispose() {
+    _recompensaController.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     checkApuntado(_user!.uid, infoActividad);
     calculaBateriasCercanas();
+    _recompensaController = TextEditingController();
   }
 
   bool isStreetAddress(String address) {
@@ -333,7 +343,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
   void mostrarBaterias() {
     bateriasCerca.sort((a, b) {
-    return a.distancia.compareTo(b.distancia);
+      return a.distancia.compareTo(b.distancia);
     });
 
     showDialog(
@@ -368,7 +378,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             width: 50.0,
                           ),
                         ),
-                        const SizedBox(width: 10.0), 
+                        const SizedBox(width: 10.0),
                         const Text(
                           'Carregadors propers:',
                           style: TextStyle(
@@ -379,20 +389,25 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                       ],
                     ),
                   ),
-                  ...bateriasCerca.where((bateria) => isStreetAddress(bateria.address)).map((bateria) => Padding(
-                    padding: const EdgeInsets.only(bottom: 5.0,), // Agrega un espacio en la parte inferior
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.8, // 80% del ancho de la pantalla
-                      child: bateriaBox(
-                        adress: bateria.address,
-                        kw: bateria.kw, 
-                        speed: bateria.speed, 
-                        distancia: bateria.distancia, 
-                        latitud: bateria.latitud, 
-                        longitud: bateria.longitud
-                      ),
-                    ),
-                  )).toList(),
+                  ...bateriasCerca
+                      .where((bateria) => isStreetAddress(bateria.address))
+                      .map((bateria) => Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: 5.0,
+                            ), // Agrega un espacio en la parte inferior
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width *
+                                  0.8, // 80% del ancho de la pantalla
+                              child: bateriaBox(
+                                  adress: bateria.address,
+                                  kw: bateria.kw,
+                                  speed: bateria.speed,
+                                  distancia: bateria.distancia,
+                                  latitud: bateria.latitud,
+                                  longitud: bateria.longitud),
+                            ),
+                          ))
+                      .toList(),
                 ],
               ),
             ),
@@ -485,13 +500,112 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                           infoActividad[0],
                           infoActividad[
                               2]), //Accedemos al nombre de la actividad y su categoria
-                      const SizedBox(height: 10),
+                     const SizedBox(height: 10),
                       _descripcioActividad(
                           infoActividad[4]), //Accedemos su descripcion
+                      const SizedBox(height: 10),
+                     _expansionDescripcion(),
                       const Padding(
                         padding: EdgeInsets.only(bottom: 5.0),
                       ),
-                      _expansionDescripcion(),
+                      const SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Container(
+                          padding: const EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            border: Border.all(
+                              color: const Color(0xFFF4692A),
+                            ),
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                'reward'.tr(context),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              _editMode
+                                  ? Expanded(
+                                      child: TextField(
+                                        onSubmitted: (value) {
+                                          setState(() {
+                                            _editMode = false;
+                                          });
+                                          _actualizarRecompensa(_recompensaController.text);
+                                        },
+                                        controller: _recompensaController,
+                                      ),
+                                    )
+                                  : FutureBuilder<String?>(
+                                      future: _controladorPresentacion.getRecompensa(infoActividad[1]),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState == ConnectionState.waiting) {
+                                          return const CircularProgressIndicator();
+                                        } else if (snapshot.hasError) {
+                                          return const Text(
+                                            "Error",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.red,
+                                            ),
+                                          );
+                                        } else if (snapshot.data == "null") {
+                                          return Text(
+                                            'noreward'.tr(context),
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.grey,
+                                            ),
+                                          );
+                                        }
+                                        else if (snapshot.hasData && snapshot.data != null) {
+                                          // Actualiza el texto del controlador cuando se obtienen los datos
+                                          _recompensaController.text = snapshot.data!;
+                                          return Text(
+                                            snapshot.data!,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          );
+                                        } 
+                                        else {
+                                          return const Text(
+                                            "No hay recompensa",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
+                              if (organizador)
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: Color(0xFF333333),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _editMode = true;
+                                    });
+                                  },
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
                       const Padding(
                         padding: EdgeInsets.only(top: 5.0),
                       ),
@@ -590,6 +704,18 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         ],
       ),
     );
+  }
+
+  Future<void> _actualizarRecompensa(String nuevaRecompensa) async {
+    try {
+      await _controladorPresentacion.actualizarRecompensa(infoActividad[1], nuevaRecompensa);
+      setState(() {
+        _editableText = nuevaRecompensa;
+        _editMode = false;
+      });
+    } catch (error) {
+      print('Error al actualizar la recompensa: $error');
+    }
   }
 
   Widget _tituloBoton(String tituloActividad, String categoriaActividad) {
@@ -1016,18 +1142,18 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-                    child: Text(
-                      'comments'.trWithArg(context, {"num": "${posts_future.length}"}),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
+              Row(children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 10.0),
+                  child: Text(
+                    'comments'
+                        .trWithArg(context, {"num": "${posts_future.length}"}),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  mostrarReplies(),
-                ]
-              ),
+                ),
+                mostrarReplies(),
+              ]),
               _post(posts_future)
             ],
           );
@@ -1101,7 +1227,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                   const Spacer(),
                   //fer que nomes el que l'ha creat ho pugui veure
                   _buildPopUpMenuNotBlocked(
-                                context, post, false, post.username, ''),
+                      context, post, false, post.username, ''),
                 ],
               ),
               Padding(
@@ -1116,38 +1242,39 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                 child: Row(
                   children: [
                     GestureDetector(
-                      onTap: () async {
-                        postIden = await _controladorPresentacion.getPostId(idForo, post.fecha);
-                        setState(() {
-                          reply = true;
-                        });
-                      },
-                      child: Row(
-                        children: [
-                          IconButton(
-                            onPressed: () async {
-                              postIden = await _controladorPresentacion.getPostId(idForo, post.fecha);
-                              setState(() {
-                                reply = true;
-                              });
-                            }, 
-                            icon: const Icon(Icons.reply), // Icono de responder
-                          ),
-                          const SizedBox(width: 5),
-                          Text('reply'.tr(context)),
-                        ],
-                      )
-                    ), 
+                        onTap: () async {
+                          postIden = await _controladorPresentacion.getPostId(
+                              idForo, post.fecha);
+                          setState(() {
+                            reply = true;
+                          });
+                        },
+                        child: Row(
+                          children: [
+                            IconButton(
+                              onPressed: () async {
+                                postIden = await _controladorPresentacion
+                                    .getPostId(idForo, post.fecha);
+                                setState(() {
+                                  reply = true;
+                                });
+                              },
+                              icon:
+                                  const Icon(Icons.reply), // Icono de responder
+                            ),
+                            const SizedBox(width: 5),
+                            Text('reply'.tr(context)),
+                          ],
+                        )),
                     const SizedBox(width: 20),
                   ],
                 ),
               ),
-              if (mostraReplies) 
+              if (mostraReplies)
                 Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: infoReply(post.fecha)
-                )
-            ], 
+                    padding: const EdgeInsets.only(left: 20),
+                    child: infoReply(post.fecha))
+            ],
           ),
         );
       },
@@ -1212,25 +1339,20 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                               },
                               child: const Icon(Icons.more_vert, size: 20),         
                             ) */
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 50),
-                          child: Text(
-                            rep.mensaje, // Mensaje del post
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      ]
-                    )
-                  );
-                }
-              )
-            ]
-          );
-        }
-      }
-    );
+                                ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 50),
+                                child: Text(
+                                  rep.mensaje, // Mensaje del post
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            ]));
+                      })
+                ]);
+          }
+        });
   }
 
   Widget mostrarReplies() {
@@ -1241,7 +1363,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         });
       },
       child: Padding(
-        padding: const EdgeInsets.only(left: 180),
+        padding: const EdgeInsets.only(right: 10),
         child: Text(
           mostraReplies ? 'no_reply'.tr(context) : 'see_reply'.tr(context),
           style: const TextStyle(
@@ -1351,7 +1473,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
         } else {
           controladorDominio.signupInActivity(_user?.uid, infoActividad[1]);
           scheduleNotificationsActivityDayBefore(
-              infoActividad[1], infoActividad[0], infoActividad[5]);
+              infoActividad[1], infoActividad[0], infoActividad[5], context);
           estaApuntado = true;
         }
       });
