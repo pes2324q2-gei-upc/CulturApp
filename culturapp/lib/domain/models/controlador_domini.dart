@@ -40,7 +40,7 @@ class ControladorDomini {
 
   Future<void> setInfoUserLogged(String uid) async {
     final respuesta = await http.get(
-        Uri.parse('https://culturapp-back.onrender.com/users/infoToken'),
+        Uri.parse('http://${ip}:8080/users/infoToken'),
         headers: {'Authorization': 'Bearer $uid'});
 
     if (respuesta.statusCode == 200) {
@@ -163,8 +163,7 @@ class ControladorDomini {
 
   Future<List<String>> obteCatsFavs(String username) async {
     final respuesta = await http.get(
-        Uri.parse(
-            'https://culturapp-back.onrender.com/users/${username}/favcategories'),
+        Uri.parse('http://${ip}:8080/users/${username}/favcategories'),
         headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
         });
@@ -179,8 +178,7 @@ class ControladorDomini {
 
   Future<List<String>> obteActivitatsOrganitzades(String uid) async {
     final respuesta = await http.get(
-      Uri.parse(
-          'https://culturapp-back.onrender.com/users/${uid}/actividadesorganizadas'),
+      Uri.parse('http://${ip}:8080/users/${uid}/actividadesorganizadas'),
       headers: {
         'Authorization': 'Bearer ${userLogged.getToken()}',
         'Content-Type': 'application/json'
@@ -199,8 +197,7 @@ class ControladorDomini {
 
   Future<List<String>> obteActsValoradas(String username) async {
     final respuesta = await http.get(
-        Uri.parse(
-            'https://culturapp-back.onrender.com/users/${username}/valoradas'),
+        Uri.parse('http://${ip}:8080/users/${username}/valoradas'),
         headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
         });
@@ -214,12 +211,10 @@ class ControladorDomini {
   }
 
   Future<List<Actividad>> getActivitiesVencudes() async {
-    final respuesta = await http.get(
-        Uri.parse(
-            'https://culturapp-back.onrender.com/activitats/read/vencidas'),
-        headers: {
-          'Authorization': 'Bearer ${userLogged.getToken()}',
-        });
+    final respuesta = await http
+        .get(Uri.parse('http://${ip}:8080/activitats/read/vencidas'), headers: {
+      'Authorization': 'Bearer ${userLogged.getToken()}',
+    });
 
     if (respuesta.statusCode == 200) {
       return _convert_database_to_list(respuesta);
@@ -229,11 +224,10 @@ class ControladorDomini {
   }
 
   Future<List<Actividad>> getActivitiesAgenda() async {
-    final respuesta = await http.get(
-        Uri.parse('https://culturapp-back.onrender.com/activitats/read/all'),
-        headers: {
-          'Authorization': 'Bearer ${userLogged.getToken()}',
-        });
+    final respuesta = await http
+        .get(Uri.parse('http://${ip}:8080/activitats/read/all'), headers: {
+      'Authorization': 'Bearer ${userLogged.getToken()}',
+    });
 
     if (respuesta.statusCode == 200) {
       return _convert_database_to_list(respuesta);
@@ -261,11 +255,10 @@ class ControladorDomini {
   }
 
   Future<List<Usuario>> getUsers() async {
-    final respuesta = await http.get(
-        Uri.parse('https://culturapp-back.onrender.com/users/read/users'),
-        headers: {
-          'Authorization': 'Bearer ${userLogged.getToken()}',
-        });
+    final respuesta = await http
+        .get(Uri.parse('http://${ip}:8080/users/read/users'), headers: {
+      'Authorization': 'Bearer ${userLogged.getToken()}',
+    });
 
     if (respuesta.statusCode == 200) {
       return _convert_database_to_list_user(respuesta);
@@ -276,7 +269,7 @@ class ControladorDomini {
 
   Future<Usuari> getUserByName(String name) async {
     final respuesta = await http.get(
-      Uri.parse('https://culturapp-back.onrender.com/users/${name}/info'),
+      Uri.parse('http://${ip}:8080/users/${name}/info'),
       headers: {
         'Authorization': 'Bearer ${userLogged.getToken()}',
       },
@@ -290,8 +283,7 @@ class ControladorDomini {
 
   Future<List<Actividad>> getUserActivities(String username) async {
     final respuesta = await http.get(
-      Uri.parse(
-          'https://culturapp-back.onrender.com/users/${username}/activitats'),
+      Uri.parse('http://${ip}:8080/users/${username}/activitats'),
       headers: {
         'Authorization': 'Bearer ${userLogged.getToken()}',
       },
@@ -307,7 +299,7 @@ class ControladorDomini {
   Future<List<Actividad>> searchMyActivities(String name) async {
     final respuesta = await http.get(
         Uri.parse(
-            'https://culturapp-back.onrender.com/users/activitats/search/$name'), //FALTA AÑADIR TOKENS
+            'http://${ip}:8080/users/activitats/search/$name'), //FALTA AÑADIR TOKENS
         headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
         });
@@ -343,7 +335,7 @@ class ControladorDomini {
   Future<bool> isUserInActivity(String? uid, String code) async {
     final respuesta = await http.get(
         Uri.parse(
-            'https://culturapp-back.onrender.com/users/activitats/isuserin?id=$uid&activityId=$code'),
+            'http://${ip}:8080/users/activitats/isuserin?id=$uid&activityId=$code'),
         headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
         });
@@ -363,8 +355,7 @@ class ControladorDomini {
       };
 
       final respuesta = await http.post(
-        Uri.parse(
-            'https://culturapp-back.onrender.com/users/activitats/signup'),
+        Uri.parse('http://${ip}:8080/users/activitats/signup'),
         body: jsonEncode(requestData),
         headers: {
           'Content-Type': 'application/json',
@@ -384,8 +375,7 @@ class ControladorDomini {
 
   Future<List<dynamic>> obteFollows(String username, String endpoint) async {
     final respuesta = await http.get(
-      Uri.parse(
-          'https://culturapp-back.onrender.com/amics/$username/$endpoint'),
+      Uri.parse('http://${ip}:8080/amics/$username/$endpoint'),
       headers: {
         'Authorization': 'Bearer ${userLogged.getToken()}',
       },
@@ -421,7 +411,7 @@ class ControladorDomini {
   Future<List<String>> getBlockedUsers() async {
     final respuesta = await http.get(
       Uri.parse(
-          'https://culturapp-back.onrender.com/users/${userLogged.getUsername()}/blockedUsers'),
+          'http://${ip}:8080/users/${userLogged.getUsername()}/blockedUsers'),
       headers: {
         'Authorization': 'Bearer ${userLogged.getToken()}',
       },
@@ -1113,8 +1103,8 @@ class ControladorDomini {
   }
 
   Future<String> getUsername(String uid) async {
-    final respuesta = await http.get(Uri.parse(
-        'https://culturapp-back.onrender.com/users/username?uid=${uid}'));
+    final respuesta =
+        await http.get(Uri.parse('http://${ip}:8080users/username?uid=${uid}'));
 
     if (respuesta.statusCode == 200) {
       return respuesta.body;
@@ -1127,8 +1117,7 @@ class ControladorDomini {
   Future<xatAmic?> xatExists(String receiverName) async {
     try {
       final respuesta = await http.get(
-        Uri.parse(
-            'https://culturapp-back.onrender.com/xats/exists?receiver=$receiverName'),
+        Uri.parse('http://${ip}:8080/xats/exists?receiver=$receiverName'),
         headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
         },
@@ -1186,8 +1175,7 @@ class ControladorDomini {
   void addMessage(
       String? xatId, String myName, String time, String text) async {
     try {
-      final url =
-          Uri.parse('https://culturapp-back.onrender.com/xats/$xatId/mensajes');
+      final url = Uri.parse('http://${ip}:8080/xats/$xatId/mensajes');
       final response = await http.post(
         url,
         headers: {
@@ -1210,7 +1198,7 @@ class ControladorDomini {
   Future<List<Message>> getMessages(String? xatId) async {
     try {
       final response = await http.get(
-          Uri.parse('https://culturapp-back.onrender.com/xats/$xatId/mensajes'),
+          Uri.parse('http://${ip}:8080/xats/$xatId/mensajes'),
           headers: {'Authorization': 'Bearer ${userLogged.getToken()}'});
 
       if (response.statusCode == 200) {
@@ -1235,7 +1223,7 @@ class ControladorDomini {
   Future<List<Grup>> getUserGrups() async {
     try {
       final response = await http.get(
-        Uri.parse('https://culturapp-back.onrender.com/grups/users/all'),
+        Uri.parse('http://${ip}:8080/grups/users/all'),
         headers: {
           'Authorization': 'Bearer ${userLogged.getToken()}',
         },
@@ -1271,7 +1259,7 @@ class ControladorDomini {
   Future<Grup> getInfoGrup(String grupId) async {
     try {
       final response = await http.get(
-          Uri.parse('https://culturapp-back.onrender.com/grups/$grupId'),
+          Uri.parse('http://${ip}:8080/grups/$grupId'),
           headers: {'Authorization': 'Bearer ${userLogged.getToken()}'});
 
       if (response.statusCode == 200) {
@@ -1307,8 +1295,8 @@ class ControladorDomini {
         'members': membersJson
       };
 
-      var request = http.MultipartRequest('POST',
-          Uri.parse('https://culturapp-back.onrender.com/grups/create'));
+      var request = http.MultipartRequest(
+          'POST', Uri.parse('http://${ip}:8080/grups/create'));
       request.headers['Authorization'] = 'Bearer ${userLogged.getToken()}';
 
       // Add each key-value pair from grupData as a form field
@@ -1354,9 +1342,7 @@ class ControladorDomini {
       };
 
       var request = http.MultipartRequest(
-          'PUT',
-          Uri.parse(
-              'https://culturapp-back.onrender.com/grups/$grupId/update'));
+          'PUT', Uri.parse('http://${ip}:8080/grups/$grupId/update'));
       request.headers['Authorization'] = 'Bearer ${userLogged.getToken()}';
 
       // Add each key-value pair from grupData as a form field
@@ -1401,8 +1387,7 @@ class ControladorDomini {
   void addGrupMessage(
       String grupId, String grupName, String time, String text) async {
     try {
-      final url = Uri.parse(
-          'https://culturapp-back.onrender.com/grups/$grupId/mensajes');
+      final url = Uri.parse('http://${ip}:8080/grups/$grupId/mensajes');
       final response = await http.post(
         url,
         headers: {
@@ -1451,8 +1436,7 @@ class ControladorDomini {
   Future<List<Message>> getGrupMessages(String grupId) async {
     try {
       final response = await http.get(
-          Uri.parse(
-              'https://culturapp-back.onrender.com/grups/$grupId/mensajes'),
+          Uri.parse('http://${ip}:8080/grups/$grupId/mensajes'),
           headers: {'Authorization': 'Bearer ${userLogged.getToken()}'});
 
       if (response.statusCode == 200) {
@@ -1476,8 +1460,7 @@ class ControladorDomini {
   getUserActivitiesByUser(Usuari user) async {
     print("Aconseguint activitats de " + user.nom);
     final respuesta = await http.get(
-      Uri.parse(
-          'https://culturapp-back.onrender.com/users/${user.nom}/activitats'),
+      Uri.parse('http://${ip}:8080/users/${user.nom}/activitats'),
       headers: {
         'Authorization': 'Bearer ${userLogged.getToken()}',
       },
