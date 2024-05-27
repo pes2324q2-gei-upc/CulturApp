@@ -73,10 +73,7 @@ class _userBoxState extends State<userBox> {
                 shape: BoxShape.circle,
                 color: Colors.blue,
               ),
-              child: Image.asset(
-                'assets/userImage.png', 
-                fit: BoxFit.cover, 
-              ),
+              child: _buildImatge()
             ),
             const SizedBox(width: 8.0),
             Expanded(
@@ -117,6 +114,40 @@ class _userBoxState extends State<userBox> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<String> getImg() async {
+    Usuari usr =  await widget.controladorPresentacion.getUserByName(widget.text);
+    return usr.image;
+  }
+
+  Widget _buildImatge() {
+    return FutureBuilder<String>(
+      future: getImg(),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircleAvatar(
+            radius: 50,
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return const CircleAvatar(
+            backgroundImage: AssetImage('assets/userImage.png'),
+            radius: 50,
+          );
+        } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+          return CircleAvatar(
+            backgroundImage: NetworkImage(snapshot.data!),
+            radius: 50,
+          );
+        } else {
+          return const CircleAvatar(
+            backgroundImage: AssetImage('assets/userImage.png'),
+            radius: 50,
+          );
+        }
+      },
     );
   }
 
