@@ -125,7 +125,10 @@ class ControladorDomini {
 
   void addDevice(String id, List<String> devices) async {
     try {
-      final Map<String, dynamic> userdata = {'uid': id, 'devices': devices};
+      final Map<String, dynamic> userdata = {
+        'uid': id,
+        'devices': jsonEncode(devices)
+      };
       print(jsonEncode(userdata));
 
       final respuesta = await http.post(
