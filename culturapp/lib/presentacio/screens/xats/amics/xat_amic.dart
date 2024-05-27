@@ -180,8 +180,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
     );
   }
 
-  //Duplicación de código con user_box, revisar como añadirlo a un archivo aparte
-
+ 
   Widget _buildPopUpMenuNotBlocked() {
     return _buildPopupMenu(
         ['block_user'.tr(context), 'report_user'.tr(context)]);
@@ -237,16 +236,9 @@ class _XatAmicScreen extends State<XatAmicScreen> {
           onSelected: (String value) async {
             String username = _usuari.nom;
             if (value == 'block_user'.tr(context)) {
-              final bool? confirm = await confirmPopUp(
-                  "block_user_confirm".trWithArg(context, {"user": username}));
-              if (confirm == true) {
-                //_controladorPresentacion.blockUser(username);
-              }
-            } else if (value == 'unblock_user'.tr(context)) {
-              final bool? confirm = await confirmPopUp("unblock_user_confirm"
-                  .trWithArg(context, {"user": username}));
-              if (confirm == true) {
-                //_controladorPresentacion.unblockUser(username);
+              final bool? confirm = await confirmPopUp("block_user_confirm".trWithArg(context, {"user": username}));
+              if(confirm == true) {
+              _controladorPresentacion.blockUser(username);
               }
             } else if (value == 'report_user'.tr(context)) {
               final bool? confirm = await confirmPopUp(

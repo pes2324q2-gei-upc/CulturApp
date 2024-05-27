@@ -69,38 +69,10 @@ class _AfegirAmicsState extends State<AfegirAmics> {
         : Column(
       children: [
         SizedBox(
-          height: 45.0,
-          child: Padding(
-            padding: const EdgeInsets.only(right: 20.0, left: 20.0),
-            child: TextField(
-              onChanged: (value) {
-                updateList(value);
-              },
-              cursorColor: Colors.white,
-              cursorHeight: 20,
-              style: const TextStyle(
-                color: Colors.white,
-              ),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: taronjaVermellosFluix,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: BorderSide.none,
-                ),
-                hintText: "search".tr(context),
-                hintStyle: const TextStyle(
-                  color: Colors.white,
-                ),
-                suffixIcon: const Icon(Icons.search),
-                suffixIconColor: Colors.white,
-                contentPadding: const EdgeInsets.symmetric(
-                    vertical: 12.0, horizontal: 12.0),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(
+         height: 40,
+         child: _buildCercador(),
+       ),
+       SizedBox(
           child: Column(
             children: [
               const Padding(padding: EdgeInsets.only(top: 20.0)),
@@ -165,4 +137,49 @@ class _AfegirAmicsState extends State<AfegirAmics> {
       ],
     );
   }
+
+    Widget _buildCercador() {
+     return SizedBox(
+       height: 45.0, // Altura del contenedor para el TextField
+       child: Padding(
+         padding: const EdgeInsets.only(right: 0.0, left: 0.0),
+         child: Container(
+           decoration: BoxDecoration(
+             boxShadow: [
+               BoxShadow(
+                 color: Colors.grey.withOpacity(0.3),
+                 spreadRadius: 2,
+                 blurRadius: 7,
+                 offset: const Offset(0, 3),
+               ),
+             ],
+             color: Colors.white.withOpacity(1),
+             borderRadius: BorderRadius.circular(25.0),
+           ),
+           child: Padding(
+             padding: const EdgeInsets.only(left: 25.0, right: 15.0, top: 2.0),
+             child: Center( 
+               child: TextField(
+                 onChanged: (value) => updateList(value),
+                 cursorColor: Colors.black, 
+                 style: const TextStyle(
+                   color: Colors.black, 
+                 ),
+                 decoration: InputDecoration(
+                   hintText: 'search'.tr(context),
+                   hintStyle: const TextStyle(
+                     color: Colors.grey, 
+                   ),
+                   border: InputBorder.none,
+                   suffixIcon: const Icon(Icons.search, color: Colors.grey),
+                   contentPadding: const EdgeInsets.symmetric(vertical: 0.0), 
+                 ),
+               ),
+             ),
+           ),
+         ),
+       ),
+     );
+   }
 }
+

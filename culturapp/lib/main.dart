@@ -271,6 +271,8 @@ class __MyAppStateState extends State<_MyAppState> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: mainColor,
+        primaryColor: mainColor,
+        hintColor: mainColor
       ),
       supportedLocales: const [
         Locale('en'),

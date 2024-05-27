@@ -18,6 +18,7 @@ class Signup extends StatefulWidget {
 class _SignupState extends State<Signup> {
   final TextEditingController usernameController = TextEditingController();
   List<String> selectedCategories = [];
+  bool termsAccepted = false;
 
   final List<String> _categories = [
     'Festa',
@@ -176,6 +177,43 @@ class _SignupState extends State<Signup> {
                 const SizedBox(height: 20),
               ],
             ),
+            Column(
+              children: [
+                termsAccepted
+                  ? Container()
+                  : Column(
+                      children: <Widget>[
+                        TextButton(
+                          child: Text('Accept Terms and Policies'),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Terms and Policies'),
+                                  content: const SingleChildScrollView(
+                                    child: TextTermsAndConditions(),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: const Text('Accept'),
+                                      onPressed: () {
+                                        setState(() {
+                                          termsAccepted = true;
+                                        });
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+              ],
+            ),
             Container(
               padding: const EdgeInsets.only(top: 3, left: 3),
               child: ElevatedButton(
@@ -214,6 +252,10 @@ class _SignupState extends State<Signup> {
     if (!await _controladorPresentacion
         .usernameUnique(usernameController.text)) {
       _showErrorMessage('Ya existe un usuario con este nombre de usuario');
+      return false;
+    }
+    if(!termsAccepted) {
+      _showErrorMessage('Por favor, accepta los terminos i condiciones');
       return false;
     }
     return true;
@@ -277,5 +319,30 @@ class _SignupState extends State<Signup> {
   void dispose() {
     usernameController.dispose();
     super.dispose();
+  }
+}
+
+class TextTermsAndConditions extends StatelessWidget {
+  const TextTermsAndConditions({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text(
+        'Términos y Condiciones\n\n'
+        '1. Aceptación de los Términos y Condiciones\n\n'
+        'Al descargar y utilizar nuestra aplicación, aceptas cumplir con estos términos y condiciones. Si no estás de acuerdo con estos términos, no debes descargar ni utilizar nuestra aplicación.\n\n'
+        '2. Permisos de la Aplicación\n\n'
+        'Nuestra aplicación requiere los siguientes permisos para proporcionar sus servicios:\n\n'
+        '2.1 Permiso de Ubicación\n\n'
+        'Nuestra aplicación requiere acceso a tu ubicación para proporcionar ciertas funcionalidades. No compartiremos tu ubicación con terceros sin tu consentimiento.\n\n'
+        '2.2 Permiso de Cámara\n\n'
+        'Nuestra aplicación requiere acceso a tu cámara para proporcionar ciertas funcionalidades. No compartiremos las imágenes capturadas con tu cámara con terceros sin tu consentimiento.\n\n'
+        '2.3 Permiso de Notificaciones\n\n'
+        'Nuestra aplicación enviará notificaciones para mantenerte informado sobre las actualizaciones y características importantes. Puedes desactivar las notificaciones en cualquier momento a través de la configuración de la aplicación.\n\n'
+        '3. Cambios en los Términos y Condiciones\n\n'
+        'Nos reservamos el derecho de modificar estos términos y condiciones en cualquier momento. Te notificaremos de cualquier cambio importante en estos términos y condiciones a través de la aplicación o por correo electrónico.\n\n'
+        '4. Contacto\n\n'
+        'Si tienes alguna pregunta sobre estos términos y condiciones, por favor contáctanos a través de nuestro soporte al cliente.',
+      );
   }
 }

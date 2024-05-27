@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/badge_category.dart';
 import 'package:culturapp/domain/models/bateria.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/grup.dart';
@@ -228,6 +229,14 @@ class ControladorPresentacion {
     return usernameLogged;
   }
 
+  Future<String?> getRecompensa(String activityId) async {
+    return controladorDomini.getRecompensa(activityId);
+  }
+
+  Future<void> actualizarRecompensa(String actividadId, String nuevaRecompensa) {
+    return controladorDomini.actualizarRecompensa(actividadId, nuevaRecompensa);
+  }
+
   List<Actividad> getActividadesVencidas() {
     return actividadesVencidas;
   }
@@ -257,6 +266,10 @@ class ControladorPresentacion {
 
   Future<List<String>> getRequestsUser() async {
     return await controladorDomini.getRequestsUser();
+  }
+
+ Future<List<BadgeCategory>> getBadges(String nom) async {
+    return await controladorDomini.getBadges(nom);
   }
 
   List<String> getBlockedUsers() {
@@ -314,8 +327,6 @@ class ControladorPresentacion {
   Future<void> blockUser(String user) async {
     await controladorDomini.blockUser(user);
     addBlockedUser(user);
-    deleteFriend(user);
-    deleteFollowing(user);
   }
 
   Future<void> unblockUser(String user) async {

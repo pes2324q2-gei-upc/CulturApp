@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/badge_category.dart';
 import 'package:culturapp/domain/models/bateria.dart';
 import 'package:culturapp/domain/models/foro_model.dart';
 import 'package:culturapp/domain/models/post.dart';
@@ -11,6 +12,7 @@ import 'package:culturapp/domain/models/message.dart';
 import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/domain/models/xat_amic.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class UserLogged {
@@ -175,6 +177,45 @@ class ControladorDomini {
       categorias = jsonResponse.cast<String>();
     }
     return categorias;
+  }
+
+  Future<String?> getRecompensa(String activityId) async {
+    final response = await http.get(
+        Uri.parse(
+            'https://culturapp-back.onrender.com/activitats/reward/${activityId}'),
+        headers: {
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+        });
+
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {
+      // Manejo de errores
+      return null;
+    }
+  }
+
+  Future<void> actualizarRecompensa(
+      String actividadId, String nuevaRecompensa) async {
+    final url = Uri.parse(
+        'https://culturapp-back.onrender.com/activitats/reward/${actividadId}');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${userLogged.getToken()}',
+      },
+      body: jsonEncode(<String, String>{
+        'reward': nuevaRecompensa,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print('Recompensa actualizada correctamente');
+    } else {
+      throw Exception(
+          'Error al actualizar la recompensa: ${response.statusCode}');
+    }
   }
 
   Future<List<String>> obteActivitatsOrganitzades(String uid) async {
@@ -395,6 +436,7 @@ class ControladorDomini {
       final List<dynamic> data = json.decode(body);
       return data;
     } else {
+      print(respuesta.body);
       throw Exception('Fallo la obtención de datos');
     }
   }
@@ -1541,6 +1583,33 @@ class ControladorDomini {
 
     if (respuesta.statusCode == 200) {
       return (respuesta.body == "true");
+    } else {
+      throw Exception('Fallo la obtención de datos');
+    }
+  }
+
+  Future<List<BadgeCategory>> getBadges(String nom) async {
+    final response = await http.get(
+        Uri.parse('https://culturapp-back.onrender.com/insignies/user/$nom'),
+        headers: {
+          'Authorization': 'Bearer ${userLogged.getToken()}',
+        });
+    if (response.statusCode == 200) {
+      Map<String, dynamic> json = jsonDecode(response.body);
+      List<BadgeCategory> badges = json.entries
+          .map((entry) {
+            String name = entry.key;
+            if (name == 'arte' || name == 'carnaval') {
+              return null;
+            }
+            String rank = entry.value[0];
+            int actualActivities = entry.value[1];
+            return BadgeCategory(name, actualActivities, rank);
+          })
+          .where((badge) => badge != null)
+          .toList()
+          .cast<BadgeCategory>();
+      return badges;
     } else {
       throw Exception('Fallo la obtención de datos');
     }
