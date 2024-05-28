@@ -130,5 +130,11 @@
     "coment": "Comentario",
     "calendar": "Actividad añadida a Google Calendar",
     "anar": "Como llegar",
-    "disponibles":"Actividades Disponibles"
+    "disponibles":"Actividades Disponibles",
+    "bloqued": "Usuarios Bloqueados",
+    "no_recompensa":"No hay recompensa",
+    "cargadores": "Ver cargadores cercanos",
+    "mostrar_qr": "Mostrar QR",
+    "participar": "Participar en la actividad",
+    "default_text": "Texto por defecto"
 }

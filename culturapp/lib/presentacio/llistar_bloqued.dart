@@ -51,7 +51,7 @@ class _LlistarBlockedState extends State<LlistarBlocked> {
       ) : Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
-        title: const Text("Usuarios bloqeuados"),
+        title:  Text("bloqued".tr(context),),
         centerTitle: true, // Centrar el título
         toolbarHeight: 50.0,
         titleTextStyle: const TextStyle(

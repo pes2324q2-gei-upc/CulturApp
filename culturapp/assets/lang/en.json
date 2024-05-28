@@ -130,5 +130,11 @@
     "coment": "Comment",
     "calendar": "Activity added to Google Calendar",
     "anar": "Directions",
-    "disponibles":"Available Activities"
+    "disponibles":"Available Activities",
+    "bloqued": "Blocked Users",
+    "no_recompensa":"No reward available",
+    "cargadores": "Nearby chargers",
+    "mostrar_qr": "Show QR",
+    "participar": "Participate in the activity",
+    "default_text": "Default Texto"
 }

@@ -130,5 +130,11 @@
     "coment": "Comentari",
     "calendar": "Activitat afegida a Google Calendar",
     "anar": "Indicacions",
-    "disponibles":"Activitats Disponibles"
+    "disponibles":"Activitats Disponibles",
+    "bloqued": "Usuaris bloquejats",
+    "no_recompensa":"No n'hi ha recompensa",
+    "cargadores": "Veure carregadors propers",
+    "mostrar_qr": "Vuere QR",
+    "participar": "Participar en la activitat",
+    "default_text": "Text per defecte"
 }
