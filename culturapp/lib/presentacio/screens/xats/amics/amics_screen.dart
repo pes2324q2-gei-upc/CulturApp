@@ -160,7 +160,7 @@ class _AmicsScreenState extends State<AmicsScreen> {
 
   Widget _buildAmic(context, index) {
     //crida per getUsuari
-
+    
     return GestureDetector(
       onTap: () {
         //anar cap a la pantalla de un xat amb l'usuari
@@ -169,7 +169,7 @@ class _AmicsScreenState extends State<AmicsScreen> {
         _controladorPresentacion.mostrarXatAmic(context, displayList[index]);
       },
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           border: Border(
             bottom: BorderSide(width: 0.25, color: Colors.grey),
             top: BorderSide(width: 0.25, color: Colors.grey),
@@ -177,20 +177,28 @@ class _AmicsScreenState extends State<AmicsScreen> {
         ),
         child: ListTile(
           contentPadding: const EdgeInsets.all(8.0),
-          leading: Image(
-            //image: AssetImage(displayList[index].image),
-            image: AssetImage(mockImage),
-            fit: BoxFit.cover,
+          leading: SizedBox(
             width: 50,
             height: 50,
+            child: displayList[index].image.isNotEmpty
+              ? ClipOval(
+                child: Image(
+                  image: NetworkImage(displayList[index].image),
+                  fit: BoxFit.cover,
+                ),
+              )
+              : const Image(
+                image: AssetImage('assets/userImage.png'),
+              ), // Placeholder widget to show if there's no image
           ),
           title: Text(displayList[index].nom,
-              style: TextStyle(
-                color: taronjaVermellos,
+            style: TextStyle(
+              color: taronjaVermellos,
                 fontWeight: FontWeight.bold,
-              )),
+              )
+            ),
           subtitle: FutureBuilder<String>(
-            future: agafarLastMessage(displayList[index]),
+            future: agafarLastMessage(displayList[index]), 
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Text('Loading...');

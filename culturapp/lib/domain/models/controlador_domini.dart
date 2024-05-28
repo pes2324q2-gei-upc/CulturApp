@@ -79,7 +79,7 @@ class ControladorDomini {
       };
 
       final respuesta = await http.post(
-        Uri.parse('https://culturapp-back.onrender.com/users/create'),
+        Uri.parse('https://$ip:8080/users/create'),
         body: jsonEncode(userdata),
         headers: {'Content-Type': 'application/json'},
       );
@@ -97,23 +97,36 @@ class ControladorDomini {
     return true;
   }
 
-  void editUser(
-      User? user, String username, List<String> selectedCategories) async {
+
+  void editUser(User? user, String username, List<String> selectedCategories,  String img, Uint8List? fileBytes) async {
     try {
+
+      List<String> parts = img.split('/');
+      String image = parts.last.split('?').first;
+      image = image.substring(8);
+      image = "users/" + image;
+
       final Map<String, dynamic> userdata = {
         'uid': user?.uid,
         'username': username,
         'favcategories': jsonEncode(selectedCategories),
+        'imatge': image
       };
 
-      final respuesta = await http.post(
-        Uri.parse('https://culturapp-back.onrender.com/users/edit'),
-        body: jsonEncode(userdata),
-        headers: {
-          'Authorization': 'Bearer ${userLogged.getToken()}',
-          'Content-Type': 'application/json'
-        },
-      );
+      var request = http.MultipartRequest('POST', Uri.parse('http://$ip:8080/users/edit'));
+      request.headers['Authorization'] = 'Bearer ${userLogged.getToken()}';
+
+      // Add each key-value pair from grupData as a form field
+      userdata.forEach((key, value) {
+        request.fields[key] = value.toString();
+      });
+
+       if (fileBytes != null) {
+        request.files.add(http.MultipartFile.fromBytes('file', fileBytes, filename: 'update-image-gallery'));
+      }
+
+      var streamedResponse = await request.send();
+      var respuesta = await http.Response.fromStream(streamedResponse);
 
       if (respuesta.statusCode == 200) {
         print('Datos enviados exitosamente');
@@ -557,6 +570,7 @@ class ControladorDomini {
     }
   }
 
+
   Future<String> addValoracion(
       String idActividad, double puntuacion, String comentario) async {
     final Map<String, dynamic> body = {
@@ -838,7 +852,16 @@ class ControladorDomini {
     usuari.nom = usr['username'];
     usuari.favCategories = usr['favcategories'] ?? '';
     usuari.id = usr['id'];
-    usuari.image = 'assets/userImage.png';
+
+    String img = usr['image'] ?? '';
+    if(img.isNotEmpty) {
+      img = img.substring(6);
+      usuari.image =  "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/users%2F" + img + "?alt=media";
+    }
+    else{
+      usuari.image = '';
+    }
+
     usuari.devices = (usr['devices'] as List<dynamic>)
         .map((device) => device as String)
         .toList();
@@ -857,6 +880,13 @@ class ControladorDomini {
         usuario.username = userJson['username'];
         usuario.favCats = userJson['favcategories'] ?? '';
         usuario.identificador = userJson['id'];
+
+        String img = userJson['image'] ?? '';
+        if(img.isNotEmpty) {
+          img = img.substring(6);
+          usuario.avatarURL =  "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/users%2F" + img + "?alt=media";
+        }
+
         if (userJson['valoradas'] != null) {
           List<dynamic> jsonResponse = userJson['valoradas'];
           usuario.valoradas = jsonResponse.cast<Actividad>();
@@ -1000,7 +1030,7 @@ class ControladorDomini {
   Future<void> deletePost(String foroId, String? postId) async {
     try {
       final url = Uri.parse(
-          'https://culturapp-back.onrender.com/foros/$foroId/posts/$postId');
+          'http://${ip}:8080/foros/$foroId/posts/$postId');
       final response = await http.delete(
         url,
         headers: {

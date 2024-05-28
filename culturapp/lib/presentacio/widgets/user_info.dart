@@ -145,10 +145,7 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                backgroundImage: AssetImage(_user.image),
-                radius: 50,
-              ),
+              _buildImatge(),
               const SizedBox(width: 20),
               Padding(
                 padding: const EdgeInsets.only(top: 25),
@@ -238,9 +235,9 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.lock, size: 50, color: Colors.grey),
-                              SizedBox(height: 20,),
-                              Text("private_account".tr(context), style: TextStyle(fontSize: 24)),
+                              const Icon(Icons.lock, size: 50, color: Colors.grey),
+                              const SizedBox(height: 20,),
+                              Text("private_account".tr(context), style: const TextStyle(fontSize: 24)),
                             ],
                           ),
                         ),
@@ -291,6 +288,40 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
           ),
         ],
       ),
+    );
+  }
+
+  Future<String> getImg() async {
+    Usuari usr =  await _controladorPresentacion.getUserByName(_user.nom);
+    return usr.image;
+  }
+
+  Widget _buildImatge() {
+    return FutureBuilder<String>(
+      future: getImg(),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircleAvatar(
+            radius: 50,
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return const CircleAvatar(
+            backgroundImage: AssetImage('assets/userImage.png'),
+            radius: 50,
+          );
+        } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+          return CircleAvatar(
+            backgroundImage: NetworkImage(snapshot.data!),
+            radius: 50,
+          );
+        } else {
+          return const CircleAvatar(
+            backgroundImage: AssetImage('assets/userImage.png'),
+            radius: 50,
+          );
+        }
+      },
     );
   }
 
@@ -374,13 +405,3 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
   }
 
 }
-
-
-
-
-
-
-
-
-
-

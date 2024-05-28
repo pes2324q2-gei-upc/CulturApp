@@ -1,9 +1,12 @@
+import "dart:io";
 import "dart:typed_data";
 import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
+import "package:device_info_plus/device_info_plus.dart";
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 import "package:image_picker/image_picker.dart";
+import "package:permission_handler/permission_handler.dart";
 
 class ConfigGrup extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
@@ -44,10 +47,31 @@ class _ConfigGrup extends State<ConfigGrup> {
     _participants = participants;
   }
 
-  void assignarImatge() async {
-    //de moment no funcional
-    //imatgeGrup = value;
+  Future<void> _requestGalleryPermission() async {
+    PermissionStatus status;
+    if (Platform.isAndroid) {
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      if (androidInfo.version.sdkInt <= 32) {
+        status = await Permission.storage.request();
+      } else {
+        status = await Permission.photos.request();
+      }
+    } else {
+      status = await Permission.photos.request();
+    }
 
+    if (status.isGranted) {
+      assignarImatge();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Gallery permission is required to select an image.'),
+        ),
+      );
+    } 
+  }
+
+  void assignarImatge() async {
     Uint8List img = await pickImage(ImageSource.gallery);
     setState(() {
       _image = img;
