@@ -477,13 +477,13 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                   },
                   itemBuilder: (BuildContext context) =>
                       <PopupMenuEntry<String>>[
-                    const PopupMenuItem<String>(
+                     PopupMenuItem<String>(
                       value: 'Enviar solicitud de organizador',
-                      child: Text('Enviar solicitud de organizador'),
+                      child: Text("sol-org".tr(context),),
                     ),
-                    const PopupMenuItem<String>(
+                     PopupMenuItem<String>(
                       value: 'share_act',
-                      child: Text('Compartir'),
+                      child: Text("share".tr(context),),
                     ),
                   ],
                 ),

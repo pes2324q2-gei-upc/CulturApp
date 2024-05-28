@@ -136,5 +136,10 @@
     "cargadores": "Veure carregadors propers",
     "mostrar_qr": "Vuere QR",
     "participar": "Participar en la activitat",
-    "default_text": "Text per defecte"
+    "default_text": "Text per defecte",
+    "report": "Reportar error a l'aplicació",
+    "bloqued-see": "Veure usuaris bloquejats",
+    "sol-org": "Enviar sol·licitud per ser organitzador",
+    "share": "Compartir"
+
 }

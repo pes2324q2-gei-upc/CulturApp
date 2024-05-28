@@ -184,7 +184,7 @@ class _SignupState extends State<Signup> {
                   : Column(
                       children: <Widget>[
                         TextButton(
-                          child: Text('Accept Terms and Policies'),
+                          child: const Text('Accept Terms and Policies'),
                           onPressed: () {
                             showDialog(
                               context: context,
@@ -242,20 +242,20 @@ class _SignupState extends State<Signup> {
 
   Future<bool> _validateInputs() async {
     if (usernameController.text.isEmpty) {
-      _showErrorMessage('Por favor, ingrese un nombre de usuario');
+      _showErrorMessage('Please enter a username');
       return false;
     }
     if (selectedCategories.length < 3) {
-      _showErrorMessage('Por favor, selecciona al menos 3 categorías');
+      _showErrorMessage('Please select at least 3 categories');
       return false;
     }
     if (!await _controladorPresentacion
         .usernameUnique(usernameController.text)) {
-      _showErrorMessage('Ya existe un usuario con este nombre de usuario');
+      _showErrorMessage('A user with this username already exists');
       return false;
     }
     if(!termsAccepted) {
-      _showErrorMessage('Por favor, accepta los terminos i condiciones');
+      _showErrorMessage('Please, accept the terms and conditions');
       return false;
     }
     return true;
@@ -294,7 +294,7 @@ class _SignupState extends State<Signup> {
       setState(() {
         _isLoading = false;
       });
-      _showErrorMessage('Error al crear el usuario: $error');
+      _showErrorMessage('Error creating user:$error');
     }
   }
 
@@ -328,21 +328,21 @@ class TextTermsAndConditions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Text(
-        'Términos y Condiciones\n\n'
-        '1. Aceptación de los Términos y Condiciones\n\n'
-        'Al descargar y utilizar nuestra aplicación, aceptas cumplir con estos términos y condiciones. Si no estás de acuerdo con estos términos, no debes descargar ni utilizar nuestra aplicación.\n\n'
-        '2. Permisos de la Aplicación\n\n'
-        'Nuestra aplicación requiere los siguientes permisos para proporcionar sus servicios:\n\n'
-        '2.1 Permiso de Ubicación\n\n'
-        'Nuestra aplicación requiere acceso a tu ubicación para proporcionar ciertas funcionalidades. No compartiremos tu ubicación con terceros sin tu consentimiento.\n\n'
-        '2.2 Permiso de Cámara\n\n'
-        'Nuestra aplicación requiere acceso a tu cámara para proporcionar ciertas funcionalidades. No compartiremos las imágenes capturadas con tu cámara con terceros sin tu consentimiento.\n\n'
-        '2.3 Permiso de Notificaciones\n\n'
-        'Nuestra aplicación enviará notificaciones para mantenerte informado sobre las actualizaciones y características importantes. Puedes desactivar las notificaciones en cualquier momento a través de la configuración de la aplicación.\n\n'
-        '3. Cambios en los Términos y Condiciones\n\n'
-        'Nos reservamos el derecho de modificar estos términos y condiciones en cualquier momento. Te notificaremos de cualquier cambio importante en estos términos y condiciones a través de la aplicación o por correo electrónico.\n\n'
-        '4. Contacto\n\n'
-        'Si tienes alguna pregunta sobre estos términos y condiciones, por favor contáctanos a través de nuestro soporte al cliente.',
+        'Terms and Conditions\n\n'
+        '1. Acceptance of the Terms and Conditions\n\n'
+        'By downloading and using our application, you agree to comply with these terms and conditions. If you do not agree to these terms, you must not download or use our application.\n\n'
+        '2. Application Permissions\n\n'
+        'Our application requires the following permissions to provide its services:\n\n'
+        '2.1 Location Permission\n\n'
+        'Our application requires access to your location to provide certain functionalities. We will not share your location with third parties without your consent.\n\n'
+        '2.2 Camera Permission\n\n'
+        'Our app requires access to your camera to provide certain functionality. We will not share images captured with your camera with third parties without your consent.\n\n'
+        '2.3 Notifications Permission\n\n'
+        'Our app will send notifications to keep you informed about important updates and features. You can turn off notifications at any time through the app settings.\n\n'
+        '3. Changes to Terms and Conditions\n\n'
+        'We reserve the right to modify these terms and conditions at any time. We will notify you of any material changes to these terms and conditions through the app or by email.\n\n'
+        '4. Contact\n\n'
+        'If you have any questions about these terms and conditions, please contact us through our customer support.',
       );
   }
 }

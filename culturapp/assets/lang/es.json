@@ -136,5 +136,9 @@
     "cargadores": "Ver cargadores cercanos",
     "mostrar_qr": "Mostrar QR",
     "participar": "Participar en la actividad",
-    "default_text": "Texto por defecto"
+    "default_text": "Texto por defecto",
+    "report": "Reportar error en la aplicación",
+    "bloqued-see": "Ver a los usuarios bloqueados",
+    "sol-org": "Enviar solicitud de organizador",
+    "share": "Compartir"
 }

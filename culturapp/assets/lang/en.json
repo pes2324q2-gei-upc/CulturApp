@@ -136,5 +136,9 @@
     "cargadores": "Nearby chargers",
     "mostrar_qr": "Show QR",
     "participar": "Participate in the activity",
-    "default_text": "Default Texto"
+    "default_text": "Default Texto",
+    "report": "Report error in the application",
+    "bloqued-see": "See blocked users",
+    "sol-org": "Send organizer request",
+    "share": "Share"
 }

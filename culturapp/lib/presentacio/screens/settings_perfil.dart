@@ -86,7 +86,7 @@ class _SettingsPerfil extends State<SettingsPerfil> {
           const Divider(height: 0),
           //si queremos, añadir tema de notificaciones
           ListTile(
-            title: const Text('Reportar error en la aplicación'),
+            title: Text("report".tr(context),),
             leading: const Icon(Icons.assignment),
             onTap: () {
               widget.controladorPresentacion.mostrarReportBug(context);
@@ -94,7 +94,7 @@ class _SettingsPerfil extends State<SettingsPerfil> {
           ),
           const Divider(height: 0),
           ListTile(
-            title: const Text('Ver a los usuarios bloqueados'),
+            title: Text("bloqued-see".tr(context),),
             leading: const Icon(Icons.block),
             onTap: () {
               widget.controladorPresentacion.mostrarBlockedUsers(context);
