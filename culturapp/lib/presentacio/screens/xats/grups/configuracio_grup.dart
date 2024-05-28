@@ -1,6 +1,7 @@
 import "dart:typed_data";
 import "package:culturapp/domain/models/usuari.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
+import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 import "package:image_picker/image_picker.dart";
 
@@ -33,7 +34,7 @@ class _ConfigGrup extends State<ConfigGrup> {
   List<Usuari> _participants = [];
 
   Uint8List? _image;
-  
+
   Color taronjaVermellos = const Color(0xFFF4692A);
   Color taronjaVermellosFluix = const Color.fromARGB(199, 250, 141, 90);
 
@@ -56,7 +57,7 @@ class _ConfigGrup extends State<ConfigGrup> {
   pickImage(ImageSource source) async {
     final ImagePicker _imagePicker = ImagePicker();
     XFile? _file = await _imagePicker.pickImage(source: source);
-    if(_file != null) {
+    if (_file != null) {
       return await _file.readAsBytes();
     }
   }
@@ -98,7 +99,7 @@ class _ConfigGrup extends State<ConfigGrup> {
                     children: [
                       _buildEscollirImatge(),
                       const SizedBox(
-                        width: 10,
+                        width: 3,
                       ),
                       _buildInsertarNom(),
                     ],
@@ -135,29 +136,27 @@ class _ConfigGrup extends State<ConfigGrup> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(14),
-          child: Stack (
-            children: [
-              _image != null ? 
-                CircleAvatar(
-                  backgroundImage: MemoryImage(_image!),
-                  radius: 65,
-                )
-              : const CircleAvatar(
-                  backgroundImage: AssetImage('assets/userImage.png'),
-                  radius: 65,
-                ),
-              Positioned(
-                bottom: -10,
-                left: 80,
-                child: IconButton(
-                  onPressed: assignarImatge,
-                  icon: const Icon(Icons.add_a_photo),
-                )
-              )
-            ],
-          )
-        ),
+            padding: const EdgeInsets.all(14),
+            child: Stack(
+              children: [
+                _image != null
+                    ? CircleAvatar(
+                        backgroundImage: MemoryImage(_image!),
+                        radius: 55,
+                      )
+                    : const CircleAvatar(
+                        backgroundImage: AssetImage('assets/userImage.png'),
+                        radius: 55,
+                      ),
+                Positioned(
+                    bottom: -10,
+                    left: 73,
+                    child: IconButton(
+                      onPressed: assignarImatge,
+                      icon: const Icon(Icons.add_a_photo),
+                    ))
+              ],
+            )),
       ],
     );
   }
@@ -166,7 +165,7 @@ class _ConfigGrup extends State<ConfigGrup> {
     return Column(
       children: [
         Container(
-          width: 238,
+          width: 230,
           alignment: Alignment.centerLeft,
           child: const Text(
             'Nom:',
@@ -178,10 +177,11 @@ class _ConfigGrup extends State<ConfigGrup> {
           ),
         ),
         SizedBox(
-          width: 240,
+          width: 230,
           height: 40,
           child: Container(
-            padding: const EdgeInsets.all(3),
+            padding: const EdgeInsets.only(top: 3, bottom: 3, right: 6),
+            alignment: Alignment.centerLeft,
             decoration: BoxDecoration(
               color: Colors.blueGrey.withOpacity(0.7),
               borderRadius: BorderRadius.circular(10),
