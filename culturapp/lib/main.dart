@@ -26,7 +26,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   final controladorPresentacion = ControladorPresentacion();
-
+  await controladorPresentacion.funcLogout();
   User? currentUser = FirebaseAuth.instance.currentUser;
   await controladorPresentacion.initialice2();
   if (currentUser != null) {
@@ -172,7 +172,7 @@ class __MyAppStateState extends State<_MyAppState> {
       sound: true,
     );
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    if (settings.authorizationStatus == AuthorizationStatus.authorized && currentUser != null) {
       print('User granted permission');
       String name = _controladorPresentacion.getUsername();
       currentUsuari = await _controladorPresentacion.getUserByName(name);
