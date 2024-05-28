@@ -144,7 +144,6 @@ class _XatAmicScreen extends State<XatAmicScreen> {
   }
 
   PreferredSizeWidget _buildAppBar() {
-    print(_usuari.image);
     return AppBar(
       backgroundColor: taronjaVermellos,
       leading: IconButton(
@@ -251,7 +250,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
               final bool? confirm = await confirmPopUp(
                   "report_user_confirm".trWithArg(context, {"user": username}));
               if (confirm == true) {
-                print(xat.id); 
+                //print(xat.id); 
                 _controladorPresentacion.mostrarReportUser(
                     context, username, xat.id);
               }

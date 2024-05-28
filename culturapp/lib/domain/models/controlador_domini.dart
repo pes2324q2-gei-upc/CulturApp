@@ -79,7 +79,7 @@ class ControladorDomini {
       };
 
       final respuesta = await http.post(
-        Uri.parse('https://$ip:8080/users/create'),
+        Uri.parse('https://culturapp-back.onrender.com/users/create'),
         body: jsonEncode(userdata),
         headers: {'Content-Type': 'application/json'},
       );
@@ -113,7 +113,7 @@ class ControladorDomini {
         'imatge': image
       };
 
-      var request = http.MultipartRequest('POST', Uri.parse('http://$ip:8080/users/edit'));
+      var request = http.MultipartRequest('POST', Uri.parse('https://culturapp-back.onrender.com/users/edit'));
       request.headers['Authorization'] = 'Bearer ${userLogged.getToken()}';
 
       // Add each key-value pair from grupData as a form field
@@ -1030,7 +1030,7 @@ class ControladorDomini {
   Future<void> deletePost(String foroId, String? postId) async {
     try {
       final url = Uri.parse(
-          'http://${ip}:8080/foros/$foroId/posts/$postId');
+          'https://culturapp-back.onrender.com/foros/$foroId/posts/$postId');
       final response = await http.delete(
         url,
         headers: {
