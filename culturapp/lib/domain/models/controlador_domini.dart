@@ -1027,7 +1027,7 @@ class ControladorDomini {
   Future<void> deletePost(String foroId, String? postId) async {
     try {
       final url = Uri.parse(
-          'https://culturapp-back.onrender.com/foros/$foroId/posts/$postId');
+          'http://${ip}:8080/foros/$foroId/posts/$postId');
       final response = await http.delete(
         url,
         headers: {

@@ -1080,7 +1080,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   }
 
   Future<void> _deletePost(Post post, String? postId) async {
-    _controladorPresentacion.deletePost(idForo, postId);
+    await _controladorPresentacion.deletePost(idForo, postId);
 
     setState(() {
       posts = _controladorPresentacion.getPostsForo(idForo);
@@ -1088,7 +1088,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   }
 
   Future<void> _deleteReply(Post reply, String? postId, String? replyId) async {
-    _controladorPresentacion.deleteReply(idForo, postId, replyId);
+    await _controladorPresentacion.deleteReply(idForo, postId, replyId);
 
     setState(() {
       replies = _controladorPresentacion.getReplyPosts(idForo, postId);
