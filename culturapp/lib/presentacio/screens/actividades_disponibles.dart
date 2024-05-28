@@ -301,7 +301,7 @@ class _Actsdisponibles extends State<Actsdisponibles> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF4692A),
-        title: const Text("Actividades Disponibles", style: TextStyle(color: Colors.white,)),
+        title:  Text('disponibles'.tr(context), style: TextStyle(color: Colors.white,)),
         automaticallyImplyLeading: true,
          iconTheme: const IconThemeData(color: Colors.white), 
       ),
@@ -536,12 +536,12 @@ class _Actsdisponibles extends State<Actsdisponibles> {
               Navigator.pop(context);
             },
             backgroundColor: const Color(0xFFF4692A),
-            child: const Row(
+            child:  Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.map, color: Colors.white,),
+                const Icon(Icons.map, color: Colors.white,),
                 Padding(padding: EdgeInsets.only(right: 5.0)),
-                Text('Mapa', style: TextStyle(color: Colors.white))
+                Text('map'.tr(context), style: TextStyle(color: Colors.white))
               ],
             ), 
           ),

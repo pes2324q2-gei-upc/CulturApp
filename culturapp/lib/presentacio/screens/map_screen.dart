@@ -907,8 +907,7 @@ class _MapPageState extends State<MapPage> {
   }
 
    
- 
-  @override
+ @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: CustomBottomNavigationBar(
@@ -971,92 +970,67 @@ class _MapPageState extends State<MapPage> {
               left: 0,
               right: 0,
               child: MyCarousel(clickCarouselCat)),
-          Positioned.fill(
-            child: DraggableScrollableSheet(
-              initialChildSize: _currentSheetHeight,
-              minChildSize: 0.1,
-              maxChildSize: _maxHeight,
-              builder:
-                  (BuildContext context, ScrollController scrollController) {
-                if (_currentSheetHeight > 0.75) {
-                  _currentSheetHeight = 0.1;
-                  WidgetsBinding.instance!.addPostFrameCallback((_) {
-                    _controladorPresentacion.mostrarActividadesDisponibles(
-                      context,
-                      _actividades,
-                    );
-                    updateActivities(lastPosition, 16);
-                  });
-                  return Container();
-                } else {
-                  return GestureDetector(
-                    onVerticalDragUpdate: (details) {
-                      double delta = details.primaryDelta ?? 0;
-                      double newHeight = _currentSheetHeight -
-                          delta / MediaQuery.of(context).size.height;
-                      if (newHeight > _maxHeight) {
-                        newHeight = _maxHeight;
-                      } else if (newHeight <= 0.1) {
-                        newHeight = 0.1;
-                      }
-                      setState(() {
-                        _currentSheetHeight = newHeight;
-                      });
-                    },
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(24),
-                          topRight: Radius.circular(24),
-                        ),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Container(
-                              width: 40,
-                              height: 5,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                          ),
-                          Text(
-                            "available_activities".trWithArg(
-                                context, {"number": _actividades.length}),
-                            style: const TextStyle(
-                              color: Color(0xFFF4692A),
-                            ),
-                          ),
-                          Expanded(
-                            child: ListView(
-                              controller: scrollController,
-                              children: [
-                                SizedBox(
-                                  height: 750,
-                                  child: ListaActividadesDisponibles(
-                                    actividades: _actividades,
-                                    controladorPresentacion:
-                                        _controladorPresentacion,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-              },
-            ),
+              Positioned.fill(
+                child: llista(context)
           ),
         ],
       ),
+    );
+  }
+
+  Widget llista(BuildContext context) {
+    return DraggableScrollableSheet(
+      controller: _draggableScrollableController,
+      initialChildSize: 0.1,
+      minChildSize: 0.1,
+      maxChildSize: 1.0,
+      builder: (BuildContext context, ScrollController scrollController) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(24),
+              topRight: Radius.circular(24),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Container(
+                  width: 40,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              Text(
+                "available_activities".trWithArg(context, {"number": _actividades.length}),
+                style: const TextStyle(
+                  color: Color(0xFFF4692A),
+                ),
+              ),
+              Expanded(
+                child: ListView(
+                  controller: scrollController,
+                  children: [
+                    SizedBox(
+                      height: 750,
+                      child: ListaActividadesDisponibles(
+                        actividades: _actividades,
+                        controladorPresentacion: _controladorPresentacion,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      }
     );
   }
 }

@@ -127,5 +127,8 @@
     "next_activity": "¡Próxima Actividad!",
     "ad_next_activity": "Mañana tiene lugar la actividad {String} que tienes guardada.",
     "valoration_text": "Ens importa la teva opinió!",
-    "coment": "Comentario"
+    "coment": "Comentario",
+    "calendar": "Actividad añadida a Google Calendar",
+    "anar": "Como llegar",
+    "disponibles":"Actividades Disponibles"
 }

@@ -127,5 +127,8 @@
     "next_activity": "PròxiNext Activity!",
     "ad_next_activity": "Tomorrow the activity {String} takes place.",
     "valoration_text": "Your opinion is important for us!",
-    "coment": "Comment"
+    "coment": "Comment",
+    "calendar": "Activity added to Google Calendar",
+    "anar": "Directions",
+    "disponibles":"Available Activities"
 }

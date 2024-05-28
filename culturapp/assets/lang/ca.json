@@ -127,5 +127,8 @@
     "next_activity": "Pròxima Activitat!",
     "ad_next_activity": "Demà té lloc la activitat {String} que tens guardada.",
     "valoration_text": "Ens importa la teva opinió!",
-    "coment": "Comentari"
+    "coment": "Comentari",
+    "calendar": "Activitat afegida a Google Calendar",
+    "anar": "Indicacions",
+    "disponibles":"Activitats Disponibles"
 }
