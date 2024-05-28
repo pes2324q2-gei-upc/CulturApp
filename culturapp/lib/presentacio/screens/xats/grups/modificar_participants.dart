@@ -214,13 +214,29 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
           children: [
             Container(
               alignment: Alignment.topCenter,
-              child: const Image(
+              child: amics[index].image.isNotEmpty
+                ? ClipOval(
+                    child: Image(
+                      image: NetworkImage(amics[index].image),
+                      fit: BoxFit.fill,
+                      width: 55.0,
+                      height: 55.0,
+                    ),
+                  )
+                : Image.asset(
+                    'assets/userImage.png',
+                    fit: BoxFit.fill,
+                    width: 55.0,
+                    height: 55.0,
+                  ),
+              /*const Image(
                 image: AssetImage(
                     'assets/userImage.png'), //AssetImage(participants[index].image),
                 fit: BoxFit.fill,
                 width: 55.0,
                 height: 55.0,
               ),
+              */
             ),
             Positioned(
               bottom: 9,
@@ -250,12 +266,21 @@ class _ModificarParticipantsScreen extends State<ModificarParticipantsScreen> {
   Widget _buildParticipant(context, index) {
     return ListTile(
       contentPadding: const EdgeInsets.all(8.0),
-      leading: Image(
-        image: AssetImage(displayList[index].image),
-        fit: BoxFit.fill,
-        width: 50.0,
-        height: 50.0,
-      ),
+      leading:displayList[index].image.isNotEmpty
+        ? ClipOval(
+            child: Image(
+              image: NetworkImage(displayList[index].image),
+              fit: BoxFit.fill,
+              width: 50.0,
+              height: 50.0,
+            ),
+          )
+          : const Image(
+            image: AssetImage('assets/userImage.png'),
+            fit: BoxFit.fill,
+            width: 50.0,
+            height: 50.0,
+          ), // Placeholder widget to show if there's no image
       title: Text(displayList[index].nom,
           style: TextStyle(
             color: taronjaVermellos,

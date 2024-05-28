@@ -5,6 +5,7 @@ import 'package:culturapp/domain/converters/notificacions.dart';
 import 'package:culturapp/domain/models/bateria.dart';
 import 'package:culturapp/domain/models/controlador_domini.dart';
 import 'package:culturapp/domain/models/post.dart';
+import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/widgets/post_widget.dart';
 import 'package:culturapp/presentacio/widgets/reply_widget.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
@@ -1079,7 +1080,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   }
 
   Future<void> _deletePost(Post post, String? postId) async {
-    _controladorPresentacion.deletePost(idForo, postId);
+    await _controladorPresentacion.deletePost(idForo, postId);
 
     setState(() {
       posts = _controladorPresentacion.getPostsForo(idForo);
@@ -1087,7 +1088,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   }
 
   Future<void> _deleteReply(Post reply, String? postId, String? replyId) async {
-    _controladorPresentacion.deleteReply(idForo, postId, replyId);
+    await _controladorPresentacion.deleteReply(idForo, postId, replyId);
 
     setState(() {
       replies = _controladorPresentacion.getReplyPosts(idForo, postId);
@@ -1161,6 +1162,40 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     );
   }
 
+  Future<String> getImg(String username) async {
+    Usuari usr =  await widget.controladorPresentacion.getUserByName(username);
+    return usr.image;
+  }
+
+  Widget _buildImatge(username) {
+    return FutureBuilder<String>(
+      future: getImg(username),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircleAvatar(
+            radius: 25,
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return const CircleAvatar(
+            backgroundImage: AssetImage('assets/userImage.png'),
+            radius: 25,
+          );
+        } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+          return CircleAvatar(
+            backgroundImage: NetworkImage(snapshot.data!),
+            radius: 25,
+          );
+        } else {
+          return const CircleAvatar(
+            backgroundImage: AssetImage('assets/userImage.png'),
+            radius: 25,
+          );
+        }
+      },
+    );
+  }
+
   Widget _post(listPosts) {
     return ListView.builder(
       shrinkWrap: true,
@@ -1176,14 +1211,35 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
             children: [
               Row(
                 children: [
-                  //se tendra que modificar por la imagen del usuario
-                  const Icon(Icons.account_circle,
-                      size: 45), // Icono de usuario
+                  _buildImatge(post.username),
                   const SizedBox(width: 5),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(post.username), // Nombre de usuario
+                      Row(
+                        children: [
+                          Text(
+                            post.username,
+                            style: TextStyle(
+                              fontWeight: post.esOrganitzador ? FontWeight.bold : FontWeight.normal,
+                              color: post.esOrganitzador ? const Color(0xFFF4692A) : Colors.black,
+                            ), // Different style for the organizer
+                          ), // Nombre de usuario
+                          const SizedBox(width: 5),
+                          if (post.esOrganitzador) // Conditionally add star icon
+                            Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF4692A), // Background color
+                                borderRadius: BorderRadius.circular(8), // Adjust border radius as needed
+                              ),
+                              padding: const EdgeInsets.all(4), // Adjust padding as needed
+                              child: const IconTheme(
+                                data: IconThemeData(size: 16), // Adjust size of the star icon
+                                child: Icon(Icons.star, color: Colors.yellow),
+                              ),
+                            ),
+                        ],
+                      ),
                       const SizedBox(width: 5),
                       Text(
                         formattedDate,
@@ -1277,9 +1333,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                 children: [
                               Row(
                                 children: [
-                                  //se tendra que modificar por la imagen del usuario
-                                  const Icon(Icons.account_circle,
-                                      size: 45), // Icono de usuario
+                                  _buildImatge(rep.username), // Icono de usuario
                                   const SizedBox(width: 5),
                                   Column(
                                     crossAxisAlignment:

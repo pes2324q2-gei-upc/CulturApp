@@ -135,8 +135,8 @@ class ControladorPresentacion {
   }
 
   void editUser(String username, List<String> selectedCategories,
-      BuildContext context) async {
-    controladorDomini.editUser(_user, username, selectedCategories);
+      BuildContext context, String img, Uint8List? fileBytes) async {
+    controladorDomini.editUser(_user, username, selectedCategories, img, fileBytes);
     categsFav = selectedCategories;
     mostrarPerfil(context);
   }
@@ -628,6 +628,7 @@ class ControladorPresentacion {
     return controladorDomini.deleteReply(foroId, postId, replyId);
   }
 
+  //get el xat
   Future<void> getXat(String receiverName) async {
     try {
       xatAmic? xat = await controladorDomini.xatExists(receiverName);
@@ -648,21 +649,25 @@ class ControladorPresentacion {
     }
   }
 
+  //get id del xat
   Future<String> getXatId(String receiverName) async {
     xatAmic? xat = await controladorDomini.xatExists(receiverName);
     return xat!.id;
   }
 
+  //get last message d'un xat
   Future<String> lastMsg(String receiverId) async {
     xatAmic? xat = await controladorDomini.xatExists(receiverId);
     return xat!.lastMessage;
   }
 
+  //get last timne d'un xat
   Future<String> lasTime(String receiverId) async {
     xatAmic? xat = await controladorDomini.xatExists(receiverId);
     return xat!.timeLastMessage;
   }
 
+  //post message
   Future<void> addXatMessage(
       String senderName, String receiverName, String time, String text) async {
     xatAmic? xat = await controladorDomini.xatExists(receiverName);
@@ -670,6 +675,7 @@ class ControladorPresentacion {
     controladorDomini.addMessage(xatId, senderName, time, text);
   }
 
+  //get xat messages
   Future<List<Message>> getXatMessages(String sender, String receiver) async {
     xatAmic? xat = await controladorDomini.xatExists(receiver);
     String xatId = xat!.id;
@@ -677,35 +683,36 @@ class ControladorPresentacion {
     return missatges;
   }
 
+  //get grups of a user
   Future<List<Grup>> getUserGrups() async {
     List<Grup> grups = await controladorDomini.getUserGrups();
     return grups;
   }
 
-  void createGrup(String name, String description, Uint8List? fileBytes,
-      List<String> members) {
+  //create grup
+  void createGrup(
+      String name, String description, Uint8List? fileBytes, List<String> members) {
     controladorDomini.createGrup(name, description, members, fileBytes);
   }
 
+  //get info of a grup
   Future<Grup> getInfoGrup(String grupId) async {
     Grup info = await controladorDomini.getInfoGrup(grupId);
     return info;
   }
 
-  void updateGrup(String grupId, String name, String description,
-      Uint8List? fileBytes, List<dynamic> members, String img) {
-    controladorDomini.updateGrup(
-        grupId, name, description, fileBytes, members, img);
+  //put of a grup
+  void updateGrup(String grupId, String name, String description, Uint8List? fileBytes,
+      List<dynamic> members, String img) {
+    controladorDomini.updateGrup(grupId, name, description, fileBytes, members, img);
   }
 
-  void updateMembersGrup(
-    String grupId,
-    List<dynamic> members,
-  ) {
+  //put of the members of a grup
+  void updateMembersGrup(String grupId, List<dynamic> members) {
     controladorDomini.updateMembersGrup(grupId, members);
   }
 
-  //el grupId esta afegit com a parametre dels grups
+  //add grup message
   void addGrupMessage(
       String grupId, String grupName, String time, String text) async {
     try {
@@ -715,6 +722,7 @@ class ControladorPresentacion {
     }
   }
 
+  //get grup messages
   Future<List<Message>> getGrupMessages(String grupId) async {
     try {
       List<Message> missatges = await controladorDomini.getGrupMessages(grupId);

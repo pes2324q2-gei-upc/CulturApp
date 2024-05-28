@@ -1,10 +1,13 @@
+import "dart:io";
 import "dart:typed_data";
 import "package:culturapp/domain/models/grup.dart";
 import "package:culturapp/presentacio/controlador_presentacio.dart";
 import "package:culturapp/presentacio/widgets/widgetsUtils/user_box.dart";
 import "package:culturapp/translations/AppLocalizations";
+import "package:device_info_plus/device_info_plus.dart";
 import "package:flutter/material.dart";
 import "package:image_picker/image_picker.dart";
+import "package:permission_handler/permission_handler.dart";
 
 class InfoGrupScreen extends StatefulWidget {
   final ControladorPresentacion controladorPresentacion;
@@ -48,6 +51,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
       estaEditant = !estaEditant;
     });
   }
+
 
   void actualitzarInfoGrup() async {
     //Grup g = await _controladorPresentacion.getInfoGrup(_grup.id);
@@ -137,6 +141,30 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
     );
   }
 
+  Future<void> _requestGalleryPermission() async {
+    PermissionStatus status;
+    if (Platform.isAndroid) {
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      if (androidInfo.version.sdkInt <= 32) {
+        status = await Permission.storage.request();
+      } else {
+        status = await Permission.photos.request();
+      }
+    } else {
+      status = await Permission.photos.request();
+    }
+
+    if (status.isGranted) {
+      assignarImatge();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Gallery permission is required to select an image.'),
+        ),
+      );
+    } 
+  }
+
   Widget _buildImatge() {
     return Column(
       children: [
@@ -197,12 +225,13 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
                     radius: 65,
                   ),
         Positioned(
-            bottom: -10,
-            left: 73,
-            child: IconButton(
-              onPressed: assignarImatge,
-              icon: const Icon(Icons.add_a_photo),
-            ))
+          bottom: -10,
+          left: 80,
+          child: IconButton(
+            onPressed: _requestGalleryPermission,
+            icon: const Icon(Icons.add_a_photo),
+          )
+        )
       ],
     );
   }
