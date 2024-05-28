@@ -115,7 +115,7 @@ class _MapPageState extends State<MapPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          titlePadding: EdgeInsets.all(0), // Elimina el padding del título
+          titlePadding: const EdgeInsets.all(0), // Elimina el padding del título
           title: Stack(
             children: [
               Align(
@@ -130,15 +130,13 @@ class _MapPageState extends State<MapPage> {
                   },
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(
-                    top: 45.0,
-                    bottom: 15.0,
-                    left:
-                        25.0), // Ajusta este valor para mover el texto hacia abajo
+              Padding(
+                padding: const EdgeInsets.only(top: 45.0, bottom: 15.0, left: 25.0, right: 25.0),
                 child: Align(
                   alignment: Alignment.topLeft,
-                  child: Text('¡Nos importa tu opinión!'),
+                  child: Flexible(
+                    child: Text('valoration_text'.tr(context)),
+                  ),
                 ),
               ),
             ],
@@ -249,8 +247,8 @@ class _MapPageState extends State<MapPage> {
                 ),
                 TextField(
                   controller: controller,
-                  decoration: const InputDecoration(
-                    labelText: 'Comentario',
+                  decoration:  InputDecoration(
+                    labelText: 'coment'.tr(context),
                   ),
                 ),
               ],
@@ -258,7 +256,7 @@ class _MapPageState extends State<MapPage> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Enviar'),
+              child:  Text('send'.tr(context)),
               onPressed: () async {
                 Navigator.of(context).pop();
                 _controladorPresentacion.addValorada(actividad.code);

@@ -125,5 +125,7 @@
     "noreward": "No reward available",
     "followers_and_following": "Followers and following",
     "next_activity": "PròxiNext Activity!",
-    "ad_next_activity": "Tomorrow the activity {String} takes place."
+    "ad_next_activity": "Tomorrow the activity {String} takes place.",
+    "valoration_text": "Your opinion is important for us!",
+    "coment": "Comment"
 }

@@ -125,5 +125,7 @@
     "noreward": "No hi ha recompensa",
     "followers_and_following": "Seguidors i seguint",
     "next_activity": "Pròxima Activitat!",
-    "ad_next_activity": "Demà té lloc la activitat {String} que tens guardada."
+    "ad_next_activity": "Demà té lloc la activitat {String} que tens guardada.",
+    "valoration_text": "Ens importa la teva opinió!",
+    "coment": "Comentari"
 }
