@@ -2,7 +2,6 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:culturapp/domain/converters/convert_date_format.dart';
 import 'package:culturapp/domain/models/notification_id_manager.dart';
 import 'package:culturapp/translations/AppLocalizations';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:async';
 

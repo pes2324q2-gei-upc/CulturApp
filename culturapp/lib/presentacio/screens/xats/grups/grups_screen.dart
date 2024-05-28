@@ -31,7 +31,7 @@ class _GrupsScreenState extends State<GrupsScreen> {
     _initialize();
   }
 
-  void _initialize() async {
+  Future<void> _initialize() async {
     List<Grup> grups = await _controladorPresentacion.getUserGrups();
     if (mounted) {
       setState(() {
@@ -53,7 +53,7 @@ class _GrupsScreenState extends State<GrupsScreen> {
     );
   }
 
- @override
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -74,9 +74,12 @@ class _GrupsScreenState extends State<GrupsScreen> {
         ),
         Container(
           height: 470.0,
-          child: ListView.builder(
-            itemCount: display_list.length,
-            itemBuilder: (context, index) => _buildGrupItem(context, index),
+          child: RefreshIndicator(
+            onRefresh: _initialize,
+            child: ListView.builder(
+              itemCount: display_list.length,
+              itemBuilder: (context, index) => _buildGrupItem(context, index),
+            ),
           ),
         ),
       ],
@@ -103,21 +106,21 @@ class _GrupsScreenState extends State<GrupsScreen> {
           ),
           child: Padding(
             padding: const EdgeInsets.only(left: 25.0, right: 15.0, top: 2.0),
-            child: Center( 
+            child: Center(
               child: TextField(
                 onChanged: (value) => updateList(value),
-                cursorColor: Colors.black, 
+                cursorColor: Colors.black,
                 style: const TextStyle(
-                  color: Colors.black, 
+                  color: Colors.black,
                 ),
                 decoration: InputDecoration(
                   hintText: 'search'.tr(context),
                   hintStyle: const TextStyle(
-                    color: Colors.grey, 
+                    color: Colors.grey,
                   ),
                   border: InputBorder.none,
                   suffixIcon: const Icon(Icons.search, color: Colors.grey),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0.0), 
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0.0),
                 ),
               ),
             ),
@@ -153,15 +156,15 @@ class _GrupsScreenState extends State<GrupsScreen> {
           width: 50,
           height: 50,
           child: display_list[index].imageGroup.isNotEmpty
-            ? ClipOval(
-                child: Image(
-                  image: NetworkImage(display_list[index].imageGroup),
-                  fit: BoxFit.cover,
-                ),
-              )
-            : const Image(
-              image: AssetImage('assets/userImage.png'),
-            ), // Placeholder widget to show if there's no image
+              ? ClipOval(
+                  child: Image(
+                    image: NetworkImage(display_list[index].imageGroup),
+                    fit: BoxFit.cover,
+                  ),
+                )
+              : const Image(
+                  image: AssetImage('assets/userImage.png'),
+                ), // Placeholder widget to show if there's no image
         ),
         title: Text(truncarString(display_list[index].nomGroup, 22),
             style: TextStyle(

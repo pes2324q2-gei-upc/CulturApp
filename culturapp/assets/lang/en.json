@@ -125,5 +125,20 @@
     "noreward": "No reward available",
     "followers_and_following": "Followers and following",
     "next_activity": "PròxiNext Activity!",
-    "ad_next_activity": "Tomorrow the activity {String} takes place."
+    "ad_next_activity": "Tomorrow the activity {String} takes place.",
+    "valoration_text": "Your opinion is important for us!",
+    "coment": "Comment",
+    "calendar": "Activity added to Google Calendar",
+    "anar": "Directions",
+    "disponibles":"Available Activities",
+    "bloqued": "Blocked Users",
+    "no_recompensa":"No reward available",
+    "cargadores": "Nearby chargers",
+    "mostrar_qr": "Show QR",
+    "participar": "Participate in the activity",
+    "default_text": "Default Texto",
+    "report": "Report error in the application",
+    "bloqued-see": "See blocked users",
+    "sol-org": "Send organizer request",
+    "share": "Share"
 }

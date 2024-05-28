@@ -125,5 +125,20 @@
     "noreward": "No hay recompensa",
     "followers_and_following": "Seguidores y siguiendo",
     "next_activity": "¡Próxima Actividad!",
-    "ad_next_activity": "Mañana tiene lugar la actividad {String} que tienes guardada."
+    "ad_next_activity": "Mañana tiene lugar la actividad {String} que tienes guardada.",
+    "valoration_text": "Ens importa la teva opinió!",
+    "coment": "Comentario",
+    "calendar": "Actividad añadida a Google Calendar",
+    "anar": "Como llegar",
+    "disponibles":"Actividades Disponibles",
+    "bloqued": "Usuarios Bloqueados",
+    "no_recompensa":"No hay recompensa",
+    "cargadores": "Ver cargadores cercanos",
+    "mostrar_qr": "Mostrar QR",
+    "participar": "Participar en la actividad",
+    "default_text": "Texto por defecto",
+    "report": "Reportar error en la aplicación",
+    "bloqued-see": "Ver a los usuarios bloqueados",
+    "sol-org": "Enviar solicitud de organizador",
+    "share": "Compartir"
 }

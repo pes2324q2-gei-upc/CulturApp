@@ -1,8 +1,8 @@
 import 'package:culturapp/presentacio/screens/categorias.dart';
 import 'package:culturapp/translations/AppLocalizations';
-import "package:firebase_auth/firebase_auth.dart";
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import "package:flutter/material.dart";
+import 'package:flutter/material.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 
 class Signup extends StatefulWidget {
@@ -19,21 +19,6 @@ class _SignupState extends State<Signup> {
   final TextEditingController usernameController = TextEditingController();
   List<String> selectedCategories = [];
   bool termsAccepted = false;
-
-  final List<String> _categories = [
-    'Festa',
-    'Infantil',
-    'Circ',
-    'Commemoració',
-    'Exposicions',
-    'Art',
-    'Carnaval',
-    'Concerts',
-    'Conferencies',
-    'Rutes',
-    'Activitats Virtuals',
-    'Teatre'
-  ];
 
   late ControladorPresentacion _controladorPresentacion;
   bool _isLoading = false;
@@ -58,17 +43,12 @@ class _SignupState extends State<Signup> {
         alignment: Alignment.center,
         children: <Widget>[
           Column(
-            mainAxisAlignment: MainAxisAlignment.center, // Añade esta línea
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(top: 250),
-              ),
               const SizedBox(
                 child: CircularProgressIndicator(color: Color(0xFFF4692A)),
               ),
-              const Padding(
-                padding: EdgeInsets.only(bottom: 225.0),
-              ),
+              const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -92,7 +72,6 @@ class _SignupState extends State<Signup> {
     return SingleChildScrollView(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 40),
-        height: MediaQuery.of(context).size.height - 50,
         width: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -108,13 +87,12 @@ class _SignupState extends State<Signup> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
                 Text(
                   "add_info".tr(context),
                   style: TextStyle(fontSize: 15, color: Colors.grey[700]),
-                )
+                ),
+                const SizedBox(height: 20),
               ],
             ),
             Column(
@@ -130,8 +108,7 @@ class _SignupState extends State<Signup> {
                       borderRadius: BorderRadius.circular(18),
                       borderSide: BorderSide.none,
                     ),
-                    fillColor:
-                        const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
+                    fillColor: const Color.fromARGB(244, 255, 145, 0).withOpacity(0.1),
                     filled: true,
                     prefixIcon: const Icon(Icons.person),
                   ),
@@ -141,8 +118,7 @@ class _SignupState extends State<Signup> {
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.resolveWith<Color?>(
+                        backgroundColor: MaterialStateProperty.resolveWith<Color?>(
                           (Set<MaterialState> states) {
                             return const Color.fromARGB(244, 255, 145, 0)
                                 .withOpacity(0.1);
@@ -153,8 +129,7 @@ class _SignupState extends State<Signup> {
                             return Colors.transparent;
                           },
                         ),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(18.0),
                           ),
@@ -177,43 +152,40 @@ class _SignupState extends State<Signup> {
                 const SizedBox(height: 20),
               ],
             ),
-            Column(
-              children: [
-                termsAccepted
-                  ? Container()
-                  : Column(
-                      children: <Widget>[
-                        TextButton(
-                          child: Text('Accept Terms and Policies'),
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text('Terms and Policies'),
-                                  content: const SingleChildScrollView(
-                                    child: TextTermsAndConditions(),
+            termsAccepted
+                ? Container()
+                : Column(
+                    children: <Widget>[
+                      TextButton(
+                        child: const Text('Accept Terms and Policies'),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Terms and Policies'),
+                                content: const SingleChildScrollView(
+                                  child: TextTermsAndConditions(),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: const Text('Accept'),
+                                    onPressed: () {
+                                      setState(() {
+                                        termsAccepted = true;
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
                                   ),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      child: const Text('Accept'),
-                                      onPressed: () {
-                                        setState(() {
-                                          termsAccepted = true;
-                                        });
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-              ],
-            ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
             Container(
               padding: const EdgeInsets.only(top: 3, left: 3),
               child: ElevatedButton(
@@ -234,6 +206,7 @@ class _SignupState extends State<Signup> {
                 ),
               ),
             ),
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -242,20 +215,20 @@ class _SignupState extends State<Signup> {
 
   Future<bool> _validateInputs() async {
     if (usernameController.text.isEmpty) {
-      _showErrorMessage('Por favor, ingrese un nombre de usuario');
+      _showErrorMessage('Please enter a username');
       return false;
     }
     if (selectedCategories.length < 3) {
-      _showErrorMessage('Por favor, selecciona al menos 3 categorías');
+      _showErrorMessage('Please select at least 3 categories');
       return false;
     }
     if (!await _controladorPresentacion
         .usernameUnique(usernameController.text)) {
-      _showErrorMessage('Ya existe un usuario con este nombre de usuario');
+      _showErrorMessage('A user with this username already exists');
       return false;
     }
-    if(!termsAccepted) {
-      _showErrorMessage('Por favor, accepta los terminos i condiciones');
+    if (!termsAccepted) {
+      _showErrorMessage('Please, accept the terms and conditions');
       return false;
     }
     return true;
@@ -294,7 +267,7 @@ class _SignupState extends State<Signup> {
       setState(() {
         _isLoading = false;
       });
-      _showErrorMessage('Error al crear el usuario: $error');
+      _showErrorMessage('Error creating user: $error');
     }
   }
 
@@ -302,9 +275,7 @@ class _SignupState extends State<Signup> {
     final result = await showDialog<List<String>>(
       context: context,
       builder: (context) {
-        return Dialog(
-          child: Categorias(selected: selectedCategories),
-        );
+        return Categorias(selected: selectedCategories);
       },
     );
 
@@ -328,21 +299,30 @@ class TextTermsAndConditions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Text(
-        'Términos y Condiciones\n\n'
-        '1. Aceptación de los Términos y Condiciones\n\n'
-        'Al descargar y utilizar nuestra aplicación, aceptas cumplir con estos términos y condiciones. Si no estás de acuerdo con estos términos, no debes descargar ni utilizar nuestra aplicación.\n\n'
-        '2. Permisos de la Aplicación\n\n'
-        'Nuestra aplicación requiere los siguientes permisos para proporcionar sus servicios:\n\n'
-        '2.1 Permiso de Ubicación\n\n'
-        'Nuestra aplicación requiere acceso a tu ubicación para proporcionar ciertas funcionalidades. No compartiremos tu ubicación con terceros sin tu consentimiento.\n\n'
-        '2.2 Permiso de Cámara\n\n'
-        'Nuestra aplicación requiere acceso a tu cámara para proporcionar ciertas funcionalidades. No compartiremos las imágenes capturadas con tu cámara con terceros sin tu consentimiento.\n\n'
-        '2.3 Permiso de Notificaciones\n\n'
-        'Nuestra aplicación enviará notificaciones para mantenerte informado sobre las actualizaciones y características importantes. Puedes desactivar las notificaciones en cualquier momento a través de la configuración de la aplicación.\n\n'
-        '3. Cambios en los Términos y Condiciones\n\n'
-        'Nos reservamos el derecho de modificar estos términos y condiciones en cualquier momento. Te notificaremos de cualquier cambio importante en estos términos y condiciones a través de la aplicación o por correo electrónico.\n\n'
-        '4. Contacto\n\n'
-        'Si tienes alguna pregunta sobre estos términos y condiciones, por favor contáctanos a través de nuestro soporte al cliente.',
-      );
+      'Terms and Conditions\n\n'
+      '1. Acceptance of the Terms and Conditions\n\n'
+      'By downloading and using our application, you agree to comply with these terms and conditions. If you do not agree to these terms, you must not download or use our application.\n\n'
+      '2. Application Permissions\n\n'
+      'Our application requires the following permissions to provide its services:\n\n'
+      '2.1 Location Permission\n\n'
+      'Our application requires access to your location to provide certain functionalities. We will not share your location with third parties without your consent.\n\n'
+      '2.2 Camera Permission\n\n'
+      'Our app requires access to your camera to provide certain functionality. We will not share images captured with your camera with third parties without your consent.\n\n'
+      '2.3 Notifications Permission\n\n'
+      'Our application requires access to send you notifications about updates, events, and other relevant information. You can manage notification preferences in the app settings.\n\n'
+      '3. Privacy Policy\n\n'
+      'We take your privacy seriously. Please refer to our Privacy Policy for information about how we collect, use, and protect your personal data.\n\n'
+      '4. Intellectual Property\n\n'
+      'The content and materials provided in our application are protected by intellectual property rights. You may not reproduce, distribute, or create derivative works without our consent.\n\n'
+      '5. Limitation of Liability\n\n'
+      'We strive to provide accurate and reliable information in our application. However, we are not responsible for any damages or losses arising from the use of the application.\n\n'
+      '6. Changes to Terms and Conditions\n\n'
+      'We may update these terms and conditions from time to time. You will be notified of any significant changes through the application. Continued use of the application after such changes constitutes acceptance of the new terms.\n\n'
+      '7. Governing Law\n\n'
+      'These terms and conditions are governed by the laws of your country of residence. Any disputes will be resolved in accordance with the laws of that country.\n\n'
+      '8. Contact\n\n'
+      'If you have any questions or concerns about these terms and conditions, please contact us at [contact information].\n\n'
+      'By accepting these terms and conditions, you acknowledge that you have read, understood, and agreed to comply with all the provisions outlined herein.',
+    );
   }
 }

@@ -30,7 +30,7 @@ List<Usuario> calculaUsuariosRecomendados(List<Usuario>users, String usernameAct
 
   if (recomms.isEmpty || recomms.length < 5){
     for (int i = 0; i < users.length && recomms.length < 5; ++i){
-      if (users[i].username != usernameActual){
+      if (users[i].username != usernameActual && !recomms.contains(users[i])){
         recomms.add(users[i]);
       }
     }

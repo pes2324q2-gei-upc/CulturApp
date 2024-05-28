@@ -233,7 +233,8 @@ class ControladorPresentacion {
     return controladorDomini.getRecompensa(activityId);
   }
 
-  Future<void> actualizarRecompensa(String actividadId, String nuevaRecompensa) {
+  Future<void> actualizarRecompensa(
+      String actividadId, String nuevaRecompensa) {
     return controladorDomini.actualizarRecompensa(actividadId, nuevaRecompensa);
   }
 
@@ -268,7 +269,7 @@ class ControladorPresentacion {
     return await controladorDomini.getRequestsUser();
   }
 
- Future<List<BadgeCategory>> getBadges(String nom) async {
+  Future<List<BadgeCategory>> getBadges(String nom) async {
     return await controladorDomini.getBadges(nom);
   }
 

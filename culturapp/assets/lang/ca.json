@@ -125,5 +125,21 @@
     "noreward": "No hi ha recompensa",
     "followers_and_following": "Seguidors i seguint",
     "next_activity": "Pròxima Activitat!",
-    "ad_next_activity": "Demà té lloc la activitat {String} que tens guardada."
+    "ad_next_activity": "Demà té lloc la activitat {String} que tens guardada.",
+    "valoration_text": "Ens importa la teva opinió!",
+    "coment": "Comentari",
+    "calendar": "Activitat afegida a Google Calendar",
+    "anar": "Indicacions",
+    "disponibles":"Activitats Disponibles",
+    "bloqued": "Usuaris bloquejats",
+    "no_recompensa":"No n'hi ha recompensa",
+    "cargadores": "Veure carregadors propers",
+    "mostrar_qr": "Vuere QR",
+    "participar": "Participar en la activitat",
+    "default_text": "Text per defecte",
+    "report": "Reportar error a l'aplicació",
+    "bloqued-see": "Veure usuaris bloquejats",
+    "sol-org": "Enviar sol·licitud per ser organitzador",
+    "share": "Compartir"
+
 }

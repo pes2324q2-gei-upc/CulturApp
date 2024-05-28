@@ -47,9 +47,17 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
         _controladorPresentacion.updateGrup(_grup.id, _grup.nomGroup,
             _grup.descripcio, _image, _grup.membres, _grup.imageGroup);
         //crida a funcio del back per fer un update de _grup amb els nous parametres
-      } 
+      }
       estaEditant = !estaEditant;
     });
+  }
+
+
+  void actualitzarInfoGrup() async {
+    //Grup g = await _controladorPresentacion.getInfoGrup(_grup.id);
+    //setState(() {
+    //_grup.imageGroup = g.imageGroup;
+    //});
   }
 
   void assignarImatge() async {
@@ -62,7 +70,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
   pickImage(ImageSource source) async {
     final ImagePicker _imagePicker = ImagePicker();
     XFile? _file = await _imagePicker.pickImage(source: source);
-    if(_file != null) {
+    if (_file != null) {
       return await _file.readAsBytes();
     }
   }
@@ -83,7 +91,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
                     children: [
                       _buildImatge(),
                       const SizedBox(
-                        width: 10,
+                        width: 3,
                       ),
                       _buildNom(),
                     ],
@@ -177,46 +185,45 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
   }
 
   Widget _imatgeNoEditant() {
-    return _image != null 
-      ? CircleAvatar(
-          backgroundImage: MemoryImage(_image!),
-          radius: 40,
-        )
-        : _grup.imageGroup.isNotEmpty
-          ? ClipOval(
-            child: Image(
-              image: NetworkImage(_grup.imageGroup),
-                  fit: BoxFit.cover,
-                  width: 70.0,
-                  height: 70.0,
-            )
+    //actualitzarInfoGrup();
+    return _image != null
+        ? CircleAvatar(
+            backgroundImage: MemoryImage(_image!),
+            radius: 40,
           )
-          : const Image(
-            image: AssetImage(
-                'assets/userImage.png'), 
-            fit: BoxFit.fill,
-            width: 70.0,
-            height: 70.0,
-          );
+        : _grup.imageGroup.isNotEmpty
+            ? ClipOval(
+                child: Image(
+                image: NetworkImage(_grup.imageGroup),
+                fit: BoxFit.cover,
+                width: 70.0,
+                height: 70.0,
+              ))
+            : const Image(
+                image: AssetImage('assets/userImage.png'),
+                fit: BoxFit.fill,
+                width: 70.0,
+                height: 70.0,
+              );
   }
 
   Widget _imatgeEditant() {
-    return Stack (
+    return Stack(
       children: [
-        _image != null 
-        ? CircleAvatar(
-            backgroundImage: MemoryImage(_image!),
-            radius: 65,
-          )
-        : _grup.imageGroup.isNotEmpty
-          ? CircleAvatar(
-              backgroundImage: NetworkImage(_grup.imageGroup),
-              radius: 65,
-            )
-          : const CircleAvatar(
-              backgroundImage: AssetImage('assets/userImage.png'),
-              radius: 65,
-            ),  
+        _image != null
+            ? CircleAvatar(
+                backgroundImage: MemoryImage(_image!),
+                radius: 55,
+              )
+            : _grup.imageGroup.isNotEmpty
+                ? CircleAvatar(
+                    backgroundImage: NetworkImage(_grup.imageGroup),
+                    radius: 55,
+                  )
+                : const CircleAvatar(
+                    backgroundImage: AssetImage('assets/userImage.png'),
+                    radius: 65,
+                  ),
         Positioned(
           bottom: -10,
           left: 80,
@@ -233,7 +240,7 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
     return Column(
       children: [
         Container(
-          width: 238,
+          width: 230,
           alignment: Alignment.centerLeft,
           child: const Text(
             'Nom:',
@@ -245,9 +252,10 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
           ),
         ),
         SizedBox(
-          width: 240,
+          width: 230,
           height: 40,
-          child: Padding(
+          child: Container(
+            alignment: Alignment.centerLeft,
             padding: const EdgeInsets.only(top: 5),
             child: estaEditant ? _nomGrupEditant() : _nomGrupNoEditant(),
           ),
@@ -396,7 +404,8 @@ class _InfoGrupScreen extends State<InfoGrupScreen> {
                     itemBuilder: (context, index) {
                       return Column(
                         children: [
-                          if(_controladorPresentacion.isBlockedUser(_grup.membres[index])) ...[
+                          if (_controladorPresentacion
+                              .isBlockedUser(_grup.membres[index])) ...[
                             userBox(
                               text: _grup.membres[index],
                               recomm: false,

@@ -164,17 +164,13 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
       var request = calendarApi.events.insert(event, 'primary');
       var addedEvent = await request;
 
-      print('Evento añadido: ${addedEvent.id}');
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Actividad añadida a Google Calendar'),
+          content: Text("calendar".tr(context)),
           duration: Duration(seconds: 3),
         ),
       );
 
-    } else {
-      print('No se pudo obtener el token de acceso');
     }
   }
 
@@ -650,7 +646,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                   ),
                                   icon: const Icon(Icons.location_on),
                                   label: Text( 
-                                    'Como llegar',
+                                    'map'.tr(context),
                                     style: TextStyle(fontSize: 12),
                                   ),
                                   onPressed: () async {

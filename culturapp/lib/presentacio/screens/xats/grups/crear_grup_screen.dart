@@ -141,46 +141,45 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
 
   Widget _buildCercador() {
     return SizedBox(
-         height: 45.0, // Altura del contenedor para el TextField
-       child: Padding(
-         padding: const EdgeInsets.only(right: 10.0, left: 10.0),
-         child: Container(
-           decoration: BoxDecoration(
-             boxShadow: [
-               BoxShadow(
-                 color: Colors.grey.withOpacity(0.3),
-                 spreadRadius: 2,
-                 blurRadius: 7,
-                 offset: const Offset(0, 3),
-               ),
-             ],
-             color: Colors.white.withOpacity(1),
-             borderRadius: BorderRadius.circular(25.0),
-          ),
-          child: Padding(
-             padding: const EdgeInsets.only(left: 25.0, right: 15.0, top: 2.0),
-             child: Center( 
-               child: TextField(
-                 onChanged: (value) => updateList(value),
-                 cursorColor: Colors.black, 
-                 style: const TextStyle(
-                   color: Colors.black, 
-                 ),
-                 decoration: InputDecoration(
-                   hintText: 'search'.tr(context),
-                   hintStyle: const TextStyle(
-                     color: Colors.grey, 
-                   ),
-                   border: InputBorder.none,
-                   suffixIcon: const Icon(Icons.search, color: Colors.grey),
-                   contentPadding: const EdgeInsets.symmetric(vertical: 0.0), 
-                 ),
-               ),
+      height: 45.0, // Altura del contenedor para el TextField
+      child: Padding(
+          padding: const EdgeInsets.only(right: 10.0, left: 10.0),
+          child: Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.3),
+                  spreadRadius: 2,
+                  blurRadius: 7,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+              color: Colors.white.withOpacity(1),
+              borderRadius: BorderRadius.circular(25.0),
             ),
-          ),
-         )
-       ),
-     );
+            child: Padding(
+              padding: const EdgeInsets.only(left: 25.0, right: 15.0, top: 2.0),
+              child: Center(
+                child: TextField(
+                  onChanged: (value) => updateList(value),
+                  cursorColor: Colors.black,
+                  style: const TextStyle(
+                    color: Colors.black,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'search'.tr(context),
+                    hintStyle: const TextStyle(
+                      color: Colors.grey,
+                    ),
+                    border: InputBorder.none,
+                    suffixIcon: const Icon(Icons.search, color: Colors.grey),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 0.0),
+                  ),
+                ),
+              ),
+            ),
+          )),
+    );
   }
 
   Widget _buildAfegits() {
@@ -310,7 +309,8 @@ class _CrearGrupScreen extends State<CrearGrupScreen> {
       ),
       child: const Icon(Icons.arrow_forward),
       onPressed: () {
-        _controladorPresentacion.mostrarConfigGrup(context, participants);
+        if (participants.isNotEmpty)
+          _controladorPresentacion.mostrarConfigGrup(context, participants);
       },
     );
   }

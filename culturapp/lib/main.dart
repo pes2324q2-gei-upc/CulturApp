@@ -172,7 +172,7 @@ class __MyAppStateState extends State<_MyAppState> {
       sound: true,
     );
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    if (settings.authorizationStatus == AuthorizationStatus.authorized && currentUser != null) {
       print('User granted permission');
       String name = _controladorPresentacion.getUsername();
       currentUsuari = await _controladorPresentacion.getUserByName(name);

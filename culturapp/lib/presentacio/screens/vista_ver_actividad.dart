@@ -425,7 +425,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
     return _isLoading
         ? const Center(
             child: CircularProgressIndicator(
-            color:Color(0xFFF4692A),
+            color: Color(0xFFF4692A),
             backgroundColor: Colors.white,
           ))
         : Scaffold(
@@ -478,13 +478,13 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                   },
                   itemBuilder: (BuildContext context) =>
                       <PopupMenuEntry<String>>[
-                    const PopupMenuItem<String>(
+                     PopupMenuItem<String>(
                       value: 'Enviar solicitud de organizador',
-                      child: Text('Enviar solicitud de organizador'),
+                      child: Text("sol-org".tr(context),),
                     ),
-                    const PopupMenuItem<String>(
+                     PopupMenuItem<String>(
                       value: 'share_act',
-                      child: Text('Compartir'),
+                      child: Text("share".tr(context),),
                     ),
                   ],
                 ),
@@ -578,9 +578,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                                           );
                                         } 
                                         else {
-                                          return const Text(
-                                            "No hay recompensa",
-                                            style: TextStyle(
+                                          return  Text(
+                                            "no_recompensa".tr(context),
+                                            style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.grey,
@@ -687,7 +687,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                         Colors.black, // Color del texto y del icono
                   ),
                   icon: const Icon(Icons.location_on),
-                  label: const Text('Como llegar'),
+                  label:  Text("anar".tr(context),),
                   onPressed: () async {
                     final url = Uri.parse(
                         'https://www.google.com/maps/search/?api=1&query=${infoActividad[8]},${infoActividad[9]}');
@@ -816,9 +816,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                   onTap: () {
                     launchUrl(urlEntrades);
                   },
-                  child: const Text(
-                    'Informació Entrades',
-                    style: TextStyle(
+                  child: Text(
+                    "tickets_info".tr(context),
+                    style: const TextStyle(
                       decoration: TextDecoration.underline,
                       color: Colors.blue,
                     ),
@@ -847,12 +847,12 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                       onPressed: () {
                         mostrarBaterias();
                       },
-                      child: const FittedBox(
+                      child:  FittedBox(
                         child: Row(
                           children: [
-                            Icon(Icons.battery_charging_full,
+                            const Icon(Icons.battery_charging_full,
                                 color: Colors.white), // Icono de un rayo
-                            Text('Ver cargadores cercanos'),
+                            Text("cargadores".tr(context),),
                           ],
                         ),
                       ),
@@ -886,8 +886,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                             const Icon(Icons.qr_code, color: Colors.white),
                             const SizedBox(width: 8),
                             Text(organizador
-                                ? 'Mostrar QR'
-                                : 'Participar en la actividad'),
+                                ? "mostrar_qr".tr(context)
+                                : "participar".tr(context),),
                           ],
                         ),
                       ),
