@@ -858,6 +858,9 @@ class ControladorDomini {
       img = img.substring(6);
       usuari.image =  "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/users%2F" + img + "?alt=media";
     }
+    else{
+      usuari.image = '';
+    }
 
     usuari.devices = (usr['devices'] as List<dynamic>)
         .map((device) => device as String)

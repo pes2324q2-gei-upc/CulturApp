@@ -69,11 +69,6 @@ class _AmicsScreenState extends State<AmicsScreen> {
 
     llista_amics = await convertirStringEnUsuari(llistaNoms);
 
-    //hasta que añada el param a todos los users
-    for(Usuari u in llista_amics) {
-      u.image = '';
-    }
-
     if (!_isDisposed) {
       setState(() {
         displayList = List.from(llista_amics);
