@@ -22,6 +22,10 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Inicializa el Stopwatch
+  Stopwatch stopwatch = Stopwatch()..start();
+
   // Inicializa Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
@@ -44,15 +48,16 @@ void main() async {
 
   runApp(MyApp(
       controladorPresentacion: controladorPresentacion,
-      currentUser: currentUser));
+      currentUser: currentUser, stopwatch: stopwatch,));
 }
 
 class MyApp extends StatelessWidget {
   final ControladorPresentacion controladorPresentacion;
   final User? currentUser;
+  final Stopwatch stopwatch;
 
   const MyApp(
-      {Key? key, required this.controladorPresentacion, this.currentUser})
+      {Key? key, required this.controladorPresentacion, this.currentUser, required this.stopwatch,})
       : super(key: key);
 
   @override
@@ -108,6 +113,8 @@ class MyApp extends StatelessWidget {
             ),
           );
         } else {
+          stopwatch.stop();
+          print("Time to first frame: ${stopwatch.elapsedMilliseconds} ms");
           return _MyAppState(controladorPresentacion: controladorPresentacion);
         }
       },
