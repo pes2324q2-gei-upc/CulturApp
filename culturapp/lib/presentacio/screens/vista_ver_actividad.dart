@@ -1216,7 +1216,30 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(post.username), // Nombre de usuario
+                      Row(
+                        children: [
+                          Text(
+                            post.username,
+                            style: TextStyle(
+                              fontWeight: post.esOrganitzador ? FontWeight.bold : FontWeight.normal,
+                              color: post.esOrganitzador ? const Color(0xFFF4692A) : Colors.black,
+                            ), // Different style for the organizer
+                          ), // Nombre de usuario
+                          const SizedBox(width: 5),
+                          if (post.esOrganitzador) // Conditionally add star icon
+                            Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF4692A), // Background color
+                                borderRadius: BorderRadius.circular(8), // Adjust border radius as needed
+                              ),
+                              padding: const EdgeInsets.all(4), // Adjust padding as needed
+                              child: const IconTheme(
+                                data: IconThemeData(size: 16), // Adjust size of the star icon
+                                child: Icon(Icons.star, color: Colors.yellow),
+                              ),
+                            ),
+                        ],
+                      ),
                       const SizedBox(width: 5),
                       Text(
                         formattedDate,
