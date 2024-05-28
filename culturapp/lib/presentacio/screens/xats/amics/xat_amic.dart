@@ -38,9 +38,6 @@ class _XatAmicScreen extends State<XatAmicScreen> {
       ControladorPresentacion controladorPresentacion, Usuari usuari) {
     _controladorPresentacion = controladorPresentacion;
     _usuari = usuari;
-
-    //antes de añadir un img a todos los users
-    usuari.image = '';
     
     messages = [];
     _scrollController = ScrollController();
@@ -147,6 +144,7 @@ class _XatAmicScreen extends State<XatAmicScreen> {
   }
 
   PreferredSizeWidget _buildAppBar() {
+    print(_usuari.image);
     return AppBar(
       backgroundColor: taronjaVermellos,
       leading: IconButton(
