@@ -325,12 +325,21 @@ class _ConfigGrup extends State<ConfigGrup> {
   Widget _buildParticipant(context, index) {
     return ListTile(
       contentPadding: const EdgeInsets.all(8.0),
-      leading: Image(
-        image: AssetImage(_participants[index].image),
-        fit: BoxFit.fill,
-        width: 50.0,
-        height: 50.0,
-      ),
+      leading:  _participants[index].image.isNotEmpty
+                ? ClipOval(
+                    child: Image(
+                      image: NetworkImage(_participants[index].image),
+                      fit: BoxFit.fill,
+                      width: 50.0,
+                      height: 50.0,
+                    ),
+                  )
+                : Image.asset(
+                    'assets/userImage.png',
+                    fit: BoxFit.fill,
+                    width: 50.0,
+                    height: 50.0,
+                  ),
       title: Text(_participants[index].nom,
           style: const TextStyle(
             color: Color(0xFFF4692A),
