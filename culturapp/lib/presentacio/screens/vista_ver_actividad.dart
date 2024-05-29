@@ -445,7 +445,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
               actions: <Widget>[
                 PopupMenuButton<String>(
                   onSelected: (String result) {
-                    if (result == 'Enviar solicitud de organizador') {
+                    if (result == 'send_organizer_aplication') {
                       _controladorPresentacion.mostrarSolicitutOrganitzador(
                           context, infoActividad[0], infoActividad[1]);
                     } else if (result == 'share_act') {
@@ -479,7 +479,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                   itemBuilder: (BuildContext context) =>
                       <PopupMenuEntry<String>>[
                      PopupMenuItem<String>(
-                      value: "send_organizer_aplication".tr(context),
+                      value: 'send_organizer_aplication',
                       child: Text("sol-org".tr(context),),
                     ),
                      PopupMenuItem<String>(
