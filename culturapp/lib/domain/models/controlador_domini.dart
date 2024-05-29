@@ -97,10 +97,9 @@ class ControladorDomini {
     return true;
   }
 
-
-  void editUser(User? user, String username, List<String> selectedCategories,  String img, Uint8List? fileBytes) async {
+  void editUser(User? user, String username, List<String> selectedCategories,
+      String img, Uint8List? fileBytes) async {
     try {
-
       List<String> parts = img.split('/');
       String image = parts.last.split('?').first;
       image = image.substring(8);
@@ -113,7 +112,8 @@ class ControladorDomini {
         'imatge': image
       };
 
-      var request = http.MultipartRequest('POST', Uri.parse('https://culturapp-back.onrender.com/users/edit'));
+      var request = http.MultipartRequest(
+          'POST', Uri.parse('https://culturapp-back.onrender.com/users/edit'));
       request.headers['Authorization'] = 'Bearer ${userLogged.getToken()}';
 
       // Add each key-value pair from grupData as a form field
@@ -121,8 +121,9 @@ class ControladorDomini {
         request.fields[key] = value.toString();
       });
 
-       if (fileBytes != null) {
-        request.files.add(http.MultipartFile.fromBytes('file', fileBytes, filename: 'update-image-gallery'));
+      if (fileBytes != null) {
+        request.files.add(http.MultipartFile.fromBytes('file', fileBytes,
+            filename: 'update-image-gallery'));
       }
 
       var streamedResponse = await request.send();
@@ -388,7 +389,8 @@ class ControladorDomini {
       //return Actividad.fromJson(responseData.first);
       return _convert_database_to_list(respuesta);
     } else if (respuesta.statusCode == 404) {
-      throw Exception('No existe la actividad ' + squery);
+      print('No existe la actividad ' + squery);
+      return [];
     } else {
       throw Exception('Fallo en buscar la actividad');
     }
@@ -569,7 +571,6 @@ class ControladorDomini {
       print('Error de red: $error');
     }
   }
-
 
   Future<String> addValoracion(
       String idActividad, double puntuacion, String comentario) async {
@@ -854,11 +855,13 @@ class ControladorDomini {
     usuari.id = usr['id'];
 
     String img = usr['image'] ?? '';
-    if(img.isNotEmpty) {
+    if (img.isNotEmpty) {
       img = img.substring(6);
-      usuari.image =  "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/users%2F" + img + "?alt=media";
-    }
-    else{
+      usuari.image =
+          "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/users%2F" +
+              img +
+              "?alt=media";
+    } else {
       usuari.image = '';
     }
 
@@ -882,9 +885,12 @@ class ControladorDomini {
         usuario.identificador = userJson['id'];
 
         String img = userJson['image'] ?? '';
-        if(img.isNotEmpty) {
+        if (img.isNotEmpty) {
           img = img.substring(6);
-          usuario.avatarURL =  "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/users%2F" + img + "?alt=media";
+          usuario.avatarURL =
+              "https://firebasestorage.googleapis.com/v0/b/culturapp-82c6c.appspot.com/o/users%2F" +
+                  img +
+                  "?alt=media";
         }
 
         if (userJson['valoradas'] != null) {

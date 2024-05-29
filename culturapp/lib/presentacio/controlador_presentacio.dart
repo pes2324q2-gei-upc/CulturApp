@@ -95,7 +95,7 @@ class ControladorPresentacion {
       usersRecom =
           calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
       usersBD.removeWhere((usuario) => friends.contains(usuario.username));
-      bateriasDispo = await controladorDomini.getBateries();
+      //bateriasDispo = await controladorDomini.getBateries();
       blockedUsers = await controladorDomini.getBlockedUsers();
     }
   }
@@ -136,7 +136,8 @@ class ControladorPresentacion {
 
   void editUser(String username, List<String> selectedCategories,
       BuildContext context, String img, Uint8List? fileBytes) async {
-    controladorDomini.editUser(_user, username, selectedCategories, img, fileBytes);
+    controladorDomini.editUser(
+        _user, username, selectedCategories, img, fileBytes);
     categsFav = selectedCategories;
     mostrarPerfil(context);
   }
@@ -690,8 +691,8 @@ class ControladorPresentacion {
   }
 
   //create grup
-  void createGrup(
-      String name, String description, Uint8List? fileBytes, List<String> members) {
+  void createGrup(String name, String description, Uint8List? fileBytes,
+      List<String> members) {
     controladorDomini.createGrup(name, description, members, fileBytes);
   }
 
@@ -702,9 +703,10 @@ class ControladorPresentacion {
   }
 
   //put of a grup
-  void updateGrup(String grupId, String name, String description, Uint8List? fileBytes,
-      List<dynamic> members, String img) {
-    controladorDomini.updateGrup(grupId, name, description, fileBytes, members, img);
+  void updateGrup(String grupId, String name, String description,
+      Uint8List? fileBytes, List<dynamic> members, String img) {
+    controladorDomini.updateGrup(
+        grupId, name, description, fileBytes, members, img);
   }
 
   //put of the members of a grup

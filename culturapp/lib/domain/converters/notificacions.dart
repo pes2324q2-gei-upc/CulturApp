@@ -7,7 +7,7 @@ import 'dart:async';
 
 void initializeAwesomeNotifications() {
   AwesomeNotifications().initialize(
-    null, //'assets/logoCulturApp.png',
+    'resource://drawable/logoCulturApp.png',
     [
       NotificationChannel(
         channelGroupKey: 'basic_channel_group',
@@ -46,8 +46,8 @@ void scheduleNotificationsActivityDayBefore(String activityCode,
       year: dayBeforeActivity.year,
       month: dayBeforeActivity.month,
       day: dayBeforeActivity.day,
-      hour: 11,
-      minute: 00,
+      hour: 12,
+      minute: 40,
       second: 0,
       millisecond: 0,
       repeats: false,
