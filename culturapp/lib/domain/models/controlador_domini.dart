@@ -100,10 +100,13 @@ class ControladorDomini {
   void editUser(User? user, String username, List<String> selectedCategories,
       String img, Uint8List? fileBytes) async {
     try {
-      List<String> parts = img.split('/');
-      String image = parts.last.split('?').first;
-      image = image.substring(8);
-      image = "users/" + image;
+      String image = '';
+      if(img.isNotEmpty){
+        List<String> parts = img.split('/');
+        String image = parts.last.split('?').first;
+        image = image.substring(8);
+        image = "users/" + image;
+      }
 
       final Map<String, dynamic> userdata = {
         'uid': user?.uid,
@@ -1424,10 +1427,13 @@ class ControladorDomini {
     try {
       String membersJson = jsonEncode(members);
 
-      List<String> parts = img.split('/');
-      String image = parts.last.split('?').first;
-      image = image.substring(8);
-      image = "grups/" + image;
+      String image = '';
+      if(img.isNotEmpty){
+        List<String> parts = img.split('/');
+        image = parts.last.split('?').first;
+        image = image.substring(8);
+        image = "grups/" + image;
+      }
 
       final Map<String, dynamic> grupData = {
         'name': name,
