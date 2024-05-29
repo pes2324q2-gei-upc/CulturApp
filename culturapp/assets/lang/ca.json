@@ -140,6 +140,14 @@
     "report": "Reportar error a l'aplicació",
     "bloqued-see": "Veure usuaris bloquejats",
     "sol-org": "Enviar sol·licitud per ser organitzador",
-    "share": "Compartir"
-
+    "share": "Compartir",
+    "participate": "Participa a l'activitat i obtindràs recompenses exclusives!",
+    "scan_QR": "Escanejar QR",
+    "thank_participation": "Gràcies per participar!",
+    "scan_QR_error": "QR no escanejat o no coincident amb l'activitat.",
+    "introduce_code_message": "També pots introduïr el codi de l'activitat manualment:",
+    "introduce_code": "Introdueix el codi",
+    "introduce_code_error": "Sius plau, introdueixi un codi",
+    "code_not_found": "El codi no es coincident amb l'activitat.",
+    "send_organizer_aplication": "Enviar sol·licitud d'organizador"
 }

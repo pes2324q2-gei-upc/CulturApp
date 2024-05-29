@@ -140,5 +140,14 @@
     "report": "Report error in the application",
     "bloqued-see": "See blocked users",
     "sol-org": "Send organizer request",
-    "share": "Share"
+    "share": "Share",
+    "participate": "Participate in the activity and get exclusive rewards!",
+    "scan_QR": "Scan QR",
+    "thank_participation": "Thank you for participating!",
+    "scan_QR_error": "QR doesn't scan or doesn't match the activity.",
+    "introduce_code_message": "You can also enter the activity code manually:",
+    "introduce_code": "Enter the code",
+    "introduce_code_error": "Please enter a code",
+    "code_not_found": "The code doesn't match the activity.",
+    "send_organizer_aplication": "Send organizer request"
 }

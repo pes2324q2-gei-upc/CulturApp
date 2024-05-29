@@ -140,5 +140,14 @@
     "report": "Reportar error en la aplicación",
     "bloqued-see": "Ver a los usuarios bloqueados",
     "sol-org": "Enviar solicitud de organizador",
-    "share": "Compartir"
+    "share": "Compartir",
+    "participate": "Participa en la actividad y obten recompensas exclusivas!",
+    "scan_QR": "Escanear QR",
+    "thank_participation": "¡Gracias por participar!",
+    "scan_QR_error": "QR no escaneado o no coincidente con la actividad.",
+    "introduce_code_message": "También puedes introducir el código de la actividad manualmente:",
+    "introduce_code": "Introduce el código",
+    "introduce_code_error": "Por favor, introduce un código",
+    "code_not_found": "El código no es coincidente con la actividad.",
+    "send_organizer_aplication": "Enviar solicitud de organizador"
 }

@@ -179,8 +179,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                       },
                     ),
                   ),
-                  const Text(
-                    'Participa en la actividad y obten recompensas exclusivas!',
+                  Text(
+                    "participate".tr(context),
                     textAlign: TextAlign.justify,
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),
@@ -188,7 +188,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                   ElevatedButton.icon(
                     icon:
                         const Icon(Icons.qr_code_scanner, color: Colors.white),
-                    label: const Text('Escanear QR'),
+                    label: Text("scan_QR".tr(context)),
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
                       backgroundColor: Colors.deepPurpleAccent,
@@ -203,8 +203,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                       String qrResultString = qrResult.rawContent;
                       if (qrResultString.toString() == infoActividad[1]) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('¡Gracias por participar!'),
+                          SnackBar(
+                            content: Text("thank_participation".tr(context)),
                             backgroundColor: Colors.green,
                           ),
                         );
@@ -215,9 +215,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                         });
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
+                          SnackBar(
                             content: Text(
-                              'QR no escaneado o no coincidente con la actividad.',
+                              "scan_QR_error".tr(context),
                               textAlign: TextAlign.justify,
                             ),
                             backgroundColor: Colors.red,
@@ -228,8 +228,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  const Text(
-                    'También puedes introducir el código de la actividad manualmente:',
+                  Text(
+                    "introduce_code_message".tr(context),
                     textAlign: TextAlign.justify,
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),
@@ -240,11 +240,11 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                       controller: _codeControler,
                       minLines: 1,
                       maxLines: 1,
-                      decoration: const InputDecoration(
-                        labelText: "Introduce el código",
+                      decoration: InputDecoration(
+                        labelText: "introduce_code".tr(context),
                       ),
                       validator: (value) => value!.isEmpty
-                          ? 'Por favor, introduce un código'
+                          ? "introduce_code_error".tr(context)
                           : null,
                     ),
                   ),
@@ -273,8 +273,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
   void _participar() {
     if (_codeControler.text == infoActividad[1]) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('¡Gracias por participar!'),
+        SnackBar(
+          content: Text("thank_participation".tr(context)),
           backgroundColor: Colors.green,
         ),
       );
@@ -284,9 +284,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            'El código no es coincidente con la actividad.',
+            "code_not_found".tr(context),
             textAlign: TextAlign.justify,
           ),
           backgroundColor: Colors.red,
@@ -479,7 +479,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                   itemBuilder: (BuildContext context) =>
                       <PopupMenuEntry<String>>[
                      PopupMenuItem<String>(
-                      value: 'Enviar solicitud de organizador',
+                      value: "send_organizer_aplication".tr(context),
                       child: Text("sol-org".tr(context),),
                     ),
                      PopupMenuItem<String>(
@@ -1466,8 +1466,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                 if (reply) {
                   String? postId =
                       await _controladorPresentacion.getPostId(idForo, date);
-                  _controladorPresentacion.mostrarReportUser(
-                      context, username, "forum $idForo $postId");
+                  //_controladorPresentacion.mostrarReportUser(
+                     // context, username, "forum $idForo $postId");
                 } else {
                   String? postId = await _controladorPresentacion.getPostId(
                       idForo, post.fecha);

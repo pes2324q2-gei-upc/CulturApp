@@ -157,11 +157,6 @@ Widget _buildUserInfo(Usuari _user, List<Actividad> activitats) {
                     _user.nom,
                     style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 5),
-                  const Text(
-                    '1500 XP',
-                    style: TextStyle(fontSize: 14),
-                  ),
                 ],
               ),
             ),
