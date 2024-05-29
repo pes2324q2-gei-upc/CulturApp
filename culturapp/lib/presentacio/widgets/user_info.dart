@@ -376,7 +376,7 @@ Widget _buildUserInfo(Usuari _user, List<Actividad> activitats) {
                                   child: Align(
                                     alignment: Alignment.center,
                                     child: Text(
-                                      badgeCategories[index].rank == 'o' ? '${badgeCategories[index].actualActivities} actividades ': '${badgeCategories[index].actualActivities}/${badgeCategories[index].totalActivities} actividades ', 
+                                      badgeCategories[index].rank == 'o' ? '${badgeCategories[index].actualActivities} ${"activities".tr(context)} ': '${badgeCategories[index].actualActivities}/${badgeCategories[index].totalActivities} ${"activities".tr(context)} ', 
                                       style: const TextStyle(
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,

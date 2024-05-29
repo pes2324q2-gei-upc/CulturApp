@@ -149,5 +149,7 @@
     "introduce_code": "Enter the code",
     "introduce_code_error": "Please enter a code",
     "code_not_found": "The code doesn't match the activity.",
-    "send_organizer_aplication": "Send organizer request"
+    "send_organizer_aplication": "Send organizer request",
+    "nearby_chargers": "Nearby chargers:",
+    "activities": "activities"
 }

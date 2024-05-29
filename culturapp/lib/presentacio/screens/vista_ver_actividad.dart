@@ -379,9 +379,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                           ),
                         ),
                         const SizedBox(width: 10.0),
-                        const Text(
-                          'Carregadors propers:',
-                          style: TextStyle(
+                        Text(
+                          'nearby_chargers'.tr(context),
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
