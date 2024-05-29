@@ -149,5 +149,7 @@
     "introduce_code": "Introdueix el codi",
     "introduce_code_error": "Sius plau, introdueixi un codi",
     "code_not_found": "El codi no es coincident amb l'activitat.",
-    "send_organizer_aplication": "Enviar sol·licitud d'organizador"
+    "send_organizer_aplication": "Enviar sol·licitud d'organizador",
+    "nearby_chargers": "Carregadors propers:",
+    "activities": "activitats"
 }

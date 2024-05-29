@@ -379,9 +379,9 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                           ),
                         ),
                         const SizedBox(width: 10.0),
-                        const Text(
-                          'Carregadors propers:',
-                          style: TextStyle(
+                        Text(
+                          'nearby_chargers'.tr(context),
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -445,7 +445,8 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
               actions: <Widget>[
                 PopupMenuButton<String>(
                   onSelected: (String result) {
-                    if (result == 'Enviar solicitud de organizador') {
+                    print(result);
+                    if (result == 'send_organizer_aplication') {
                       _controladorPresentacion.mostrarSolicitutOrganitzador(
                           context, infoActividad[0], infoActividad[1]);
                     } else if (result == 'share_act') {
@@ -479,7 +480,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
                   itemBuilder: (BuildContext context) =>
                       <PopupMenuEntry<String>>[
                      PopupMenuItem<String>(
-                      value: "send_organizer_aplication".tr(context),
+                      value: 'send_organizer_aplication',
                       child: Text("sol-org".tr(context),),
                     ),
                      PopupMenuItem<String>(

@@ -242,13 +242,13 @@ class _XatAmicScreen extends State<XatAmicScreen> {
           onSelected: (String value) async {
             String username = _usuari.nom;
             if (value == 'block_user'.tr(context)) {
-              final bool? confirm = await confirmPopUp("block_user_confirm".trWithArg(context, {"user": username}));
+              final bool? confirm = await confirmPopUp("confirm_block_user".trWithArg(context, {"user": username}));
               if(confirm == true) {
               _controladorPresentacion.blockUser(username);
               }
             } else if (value == 'report_user'.tr(context)) {
               final bool? confirm = await confirmPopUp(
-                  "report_user_confirm".trWithArg(context, {"user": username}));
+                  "confirm_report_user".trWithArg(context, {"user": username}));
               if (confirm == true) {
                 //print(xat.id); 
                 _controladorPresentacion.mostrarReportUser(
