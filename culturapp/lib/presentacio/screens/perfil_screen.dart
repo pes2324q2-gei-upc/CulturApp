@@ -134,14 +134,12 @@ class _PerfilPageState extends State<PerfilPage> {
         currentIndex: _selectedIndex,
         onTabChange: _onTabChange,
       ),
-      body: Expanded(
-        child: UserInfoWidget(
+      body: UserInfoWidget(
           controladorPresentacion: _controladorPresentacion,
           user: _user,
           owner: widget.owner,
           activitatsVencidas: activitatsVencidas,
         ),
-      ),
     );
   }
 }
