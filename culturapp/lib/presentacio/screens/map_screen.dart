@@ -3,11 +3,14 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:culturapp/domain/converters/notificacions.dart';
 import 'package:culturapp/domain/models/actividad.dart';
+import 'package:culturapp/domain/models/usuari.dart';
 import 'package:culturapp/presentacio/controlador_presentacio.dart';
 import 'package:culturapp/presentacio/widgets/carousel.dart';
 import 'package:culturapp/presentacio/screens/vista_lista_actividades.dart';
 import 'package:culturapp/translations/AppLocalizations';
 import 'package:culturapp/widgetsUtils/bnav_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -44,6 +47,8 @@ class _MapPageState extends State<MapPage> {
   final DraggableScrollableController _draggableScrollableController =
       DraggableScrollableController();
   bool showingList = false;
+  late Usuari currentUsuari;
+  User? currentUser;
 
   void clickCarouselCat(String cat) {
     setState(() {
@@ -62,6 +67,41 @@ class _MapPageState extends State<MapPage> {
     categoriasFavoritas = _controladorPresentacion.getCategsFav();
     activitats = _controladorPresentacion.getActivitats();
     recomms = _controladorPresentacion.getActivitatsRecomm();
+    currentUser = _controladorPresentacion.getUser();
+    initializerDevices();
+  }
+
+  void initializerDevices() async {
+    FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+    String name = _controladorPresentacion.getUsername();
+    currentUsuari = await _controladorPresentacion.getUserByName(name);
+    _firebaseMessaging.getToken().then((token) async {
+      print("FCM Token: $token");
+
+      if (token != null) {
+        bool alreadyAgregat = await userTeElDevice(token, currentUsuari);
+        if (!alreadyAgregat) {
+          currentUsuari.devices.add(token);
+          _controladorPresentacion.addDevice(
+              currentUser?.uid, currentUsuari.devices);
+        }
+      }
+    });
+  }
+
+  Future<bool> userTeElDevice(String? device, Usuari usuari) async {
+    if (usuari.devices.isEmpty) return false;
+    if (currentUser != null && device != null) {
+      List<String> devices = usuari.devices;
+      for (String deviceSaved in devices) {
+        if (deviceSaved == device) {
+          return true;
+        }
+      }
+      return false;
+    } else {
+      return true;
+    }
   }
 
   BitmapDescriptor iconoArte = BitmapDescriptor.defaultMarker;

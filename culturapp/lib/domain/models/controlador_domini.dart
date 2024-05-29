@@ -865,9 +865,7 @@ class ControladorDomini {
       usuari.image = '';
     }
 
-    usuari.devices = (usr['devices'] as List<dynamic>)
-        .map((device) => device as String)
-        .toList();
+    usuari.devices = List<String>.from(jsonDecode(usr['devices']));
 
     return usuari;
   }
