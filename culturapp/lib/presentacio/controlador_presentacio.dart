@@ -679,9 +679,14 @@ class ControladorPresentacion {
   //get xat messages
   Future<List<Message>> getXatMessages(String sender, String receiver) async {
     xatAmic? xat = await controladorDomini.xatExists(receiver);
-    String xatId = xat!.id;
-    List<Message> missatges = await controladorDomini.getMessages(xatId);
-    return missatges;
+    if(xat != null) {
+      String xatId = xat.id;
+      List<Message> missatges = await controladorDomini.getMessages(xatId);
+      return missatges;
+    }
+    else{
+      return [];
+    }
   }
 
   //get grups of a user
