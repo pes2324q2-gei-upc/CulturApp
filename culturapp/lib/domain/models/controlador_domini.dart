@@ -1245,7 +1245,7 @@ class ControladorDomini {
 
   Future<bool> createXat(String receiverName) async {
     try {
-      final Map<String, dynamic> xatdata = {'receiverId': receiverName};
+      final Map<String, dynamic> xatdata = {'receiver': receiverName};
 
       final respuesta = await http.post(
         Uri.parse('https://culturapp-back.onrender.com/xats/create'),
