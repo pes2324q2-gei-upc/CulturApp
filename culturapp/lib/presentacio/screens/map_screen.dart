@@ -92,7 +92,7 @@ class _MapPageState extends State<MapPage> {
   Future<bool> userTeElDevice(String? device, Usuari usuari) async {
     if (usuari.devices.isEmpty) return false;
     if (currentUser != null && device != null) {
-      List<String> devices = usuari.devices;
+      List<dynamic> devices = usuari.devices;
       for (String deviceSaved in devices) {
         if (deviceSaved == device) {
           return true;

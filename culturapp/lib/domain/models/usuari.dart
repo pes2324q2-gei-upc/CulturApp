@@ -5,7 +5,7 @@ class Usuari {
   late String nom;
   late String email;
   late String image;
-  late List<String> devices;
+  late List<dynamic> devices;
   late List<String> activitats;
   late List<dynamic> favCategories;
   late List<Usuari> followers; //aka amigos

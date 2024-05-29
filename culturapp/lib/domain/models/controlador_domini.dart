@@ -139,7 +139,7 @@ class ControladorDomini {
     }
   }
 
-  void addDevice(String id, List<String> devices) async {
+  void addDevice(String id, List<dynamic> devices) async {
     try {
       final Map<String, dynamic> userdata = {
         'uid': id,
@@ -865,7 +865,14 @@ class ControladorDomini {
       usuari.image = '';
     }
 
-    usuari.devices = List<String>.from(jsonDecode(usr['devices']));
+    List<dynamic> aux;
+    if (usr['devices'] == "[]") {
+      aux = [];
+    } else {
+      aux = usr['devices'];
+    }
+
+    usuari.devices = aux;
 
     return usuari;
   }
@@ -1498,7 +1505,8 @@ class ControladorDomini {
     }
   }
 
-  void sendNotificationToUser(String token, String xatName, String text) async {
+  void sendNotificationToUser(
+      dynamic token, String xatName, String text) async {
     //token de momento hardcoded al emulador pixel a7
 
     try {

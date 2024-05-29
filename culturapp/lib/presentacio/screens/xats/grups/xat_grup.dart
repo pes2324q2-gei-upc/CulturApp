@@ -28,7 +28,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
   late List<String> nomParticipants;
   late List<Message> missatges;
   late ScrollController _scrollController;
-  List<String> allMembersDevices = [];
+  List<dynamic> allMembersDevices = [];
 
   Color taronjaVermellos = const Color(0xFFF4692A);
   Color taronjaVermellosFluix = const Color.fromARGB(199, 250, 141, 90);
@@ -110,7 +110,7 @@ class _XatGrupScreen extends State<XatGrupScreen> {
       Usuari user = await _controladorPresentacion.getUserByName(member);
 
       if (user.nom != myName) {
-        List<String> devices = user.devices;
+        List<dynamic> devices = user.devices;
         allMembersDevices.addAll(devices);
       }
     }

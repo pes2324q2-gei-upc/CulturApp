@@ -833,13 +833,13 @@ class ControladorPresentacion {
   }
 
   void sendNotificationToAllDevices(
-      String title, String text, List<String> allMembersDevices) {
+      String title, String text, List<dynamic> allMembersDevices) {
     for (String device in allMembersDevices) {
       return controladorDomini.sendNotificationToUser(device, title, text);
     }
   }
 
-  void addDevice(String? userId, List<String> devices) {
+  void addDevice(String? userId, List<dynamic> devices) {
     if (userId != null) {
       controladorDomini.addDevice(userId, devices);
     }
