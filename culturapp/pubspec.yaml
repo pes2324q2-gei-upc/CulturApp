@@ -115,6 +115,7 @@ flutter:
   - assets/calendar.png
   - assets/logo.png
   - assets/badges/
+  - assets/logoCulturApp.png
   
   uses-material-design: true
 
