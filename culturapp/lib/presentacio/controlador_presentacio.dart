@@ -95,7 +95,7 @@ class ControladorPresentacion {
       usersRecom =
           calculaUsuariosRecomendados(usersBD, usernameLogged, categsFav);
       usersBD.removeWhere((usuario) => friends.contains(usuario.username));
-      //bateriasDispo = await controladorDomini.getBateries();
+      bateriasDispo = await controladorDomini.getBateries();
       blockedUsers = await controladorDomini.getBlockedUsers();
     }
   }
