@@ -303,7 +303,7 @@ class ControladorDomini {
   Future<List<Bateria>> getBateries() async {
     try {
       final respuesta = await http.get(
-        Uri.parse('http://nattech.fib.upc.edu:40440/api/charging_points/all'),
+        Uri.parse('http://nattech.fib.upc.edu:40330/api/charging_points/all'),
       );
 
       if (respuesta.statusCode == 200) {
