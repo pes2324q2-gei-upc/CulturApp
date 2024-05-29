@@ -172,23 +172,8 @@ class __MyAppStateState extends State<_MyAppState> {
       sound: true,
     );
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized && currentUser != null) {
-      print('User granted permission');
-      String name = _controladorPresentacion.getUsername();
-      currentUsuari = await _controladorPresentacion.getUserByName(name);
-      _firebaseMessaging.getToken().then((token) async {
-        print("FCM Token: $token");
-
-        if (token != null) {
-          bool alreadyAgregat = await userTeElDevice(token, currentUsuari);
-          if (!alreadyAgregat) {
-            currentUsuari.devices.add(token);
-            _controladorPresentacion.addDevice(
-                currentUser?.uid, currentUsuari.devices);
-          }
-        }
-      });
-
+    if (settings.authorizationStatus == AuthorizationStatus.authorized &&
+        currentUser != null) {
       // Handle foreground messages
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         RemoteNotification? notification = message.notification;
@@ -204,21 +189,6 @@ class __MyAppStateState extends State<_MyAppState> {
       });
     } else {
       print('User declined or has not accepted permission');
-    }
-  }
-
-  Future<bool> userTeElDevice(String? device, Usuari usuari) async {
-    if (usuari.devices.isEmpty) return false;
-    if (currentUser != null && device != null) {
-      List<String> devices = usuari.devices;
-      for (String deviceSaved in devices) {
-        if (deviceSaved == device) {
-          return true;
-        }
-      }
-      return false;
-    } else {
-      return true;
     }
   }
 
@@ -270,10 +240,9 @@ class __MyAppStateState extends State<_MyAppState> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: mainColor,
-        primaryColor: mainColor,
-        hintColor: mainColor
-      ),
+          primarySwatch: mainColor,
+          primaryColor: mainColor,
+          hintColor: mainColor),
       supportedLocales: const [
         Locale('en'),
         Locale('ca'),

@@ -7,7 +7,7 @@ import 'dart:async';
 
 void initializeAwesomeNotifications() {
   AwesomeNotifications().initialize(
-    'resource://drawable/logoCulturApp.png',
+    'resource://drawable/logo_cultur_app.png',
     [
       NotificationChannel(
         channelGroupKey: 'basic_channel_group',
