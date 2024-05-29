@@ -115,7 +115,8 @@ class _MapPageState extends State<MapPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          titlePadding: const EdgeInsets.all(0), // Elimina el padding del título
+          titlePadding:
+              const EdgeInsets.all(0), // Elimina el padding del título
           title: Stack(
             children: [
               Align(
@@ -131,7 +132,8 @@ class _MapPageState extends State<MapPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 45.0, bottom: 15.0, left: 25.0, right: 25.0),
+                padding: const EdgeInsets.only(
+                    top: 45.0, bottom: 15.0, left: 25.0, right: 25.0),
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: Flexible(
@@ -247,7 +249,7 @@ class _MapPageState extends State<MapPage> {
                 ),
                 TextField(
                   controller: controller,
-                  decoration:  InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'coment'.tr(context),
                   ),
                 ),
@@ -256,7 +258,7 @@ class _MapPageState extends State<MapPage> {
           ),
           actions: <Widget>[
             TextButton(
-              child:  Text('send'.tr(context)),
+              child: Text('send'.tr(context)),
               onPressed: () async {
                 Navigator.of(context).pop();
                 _controladorPresentacion.addValorada(actividad.code);
@@ -879,8 +881,10 @@ class _MapPageState extends State<MapPage> {
   Future<void> busquedaActivitat(String querySearch) async {
     List<Actividad> llista =
         (await _controladorPresentacion.searchActivitat(querySearch));
-    activitat = llista.first;
-    moveMapToSelectedActivity();
+    if (llista.isNotEmpty) {
+      activitat = llista.first;
+      moveMapToSelectedActivity();
+    }
   }
 
   void _onTabChange(int index) {
@@ -906,8 +910,7 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-   
- @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: CustomBottomNavigationBar(
@@ -970,9 +973,7 @@ class _MapPageState extends State<MapPage> {
               left: 0,
               right: 0,
               child: MyCarousel(clickCarouselCat)),
-              Positioned.fill(
-                child: llista(context)
-          ),
+          Positioned.fill(child: llista(context)),
         ],
       ),
     );
@@ -980,57 +981,57 @@ class _MapPageState extends State<MapPage> {
 
   Widget llista(BuildContext context) {
     return DraggableScrollableSheet(
-      controller: _draggableScrollableController,
-      initialChildSize: 0.1,
-      minChildSize: 0.1,
-      maxChildSize: 1.0,
-      builder: (BuildContext context, ScrollController scrollController) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(24),
-              topRight: Radius.circular(24),
+        controller: _draggableScrollableController,
+        initialChildSize: 0.1,
+        minChildSize: 0.1,
+        maxChildSize: 1.0,
+        builder: (BuildContext context, ScrollController scrollController) {
+          return Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(24),
+                topRight: Radius.circular(24),
+              ),
             ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Container(
-                  width: 40,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(10),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Container(
+                    width: 40,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
-              ),
-              Text(
-                "available_activities".trWithArg(context, {"number": _actividades.length}),
-                style: const TextStyle(
-                  color: Color(0xFFF4692A),
+                Text(
+                  "available_activities"
+                      .trWithArg(context, {"number": _actividades.length}),
+                  style: const TextStyle(
+                    color: Color(0xFFF4692A),
+                  ),
                 ),
-              ),
-              Expanded(
-                child: ListView(
-                  controller: scrollController,
-                  children: [
-                    SizedBox(
-                      height: 750,
-                      child: ListaActividadesDisponibles(
-                        actividades: _actividades,
-                        controladorPresentacion: _controladorPresentacion,
+                Expanded(
+                  child: ListView(
+                    controller: scrollController,
+                    children: [
+                      SizedBox(
+                        height: 750,
+                        child: ListaActividadesDisponibles(
+                          actividades: _actividades,
+                          controladorPresentacion: _controladorPresentacion,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      }
-    );
+              ],
+            ),
+          );
+        });
   }
 }
