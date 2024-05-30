@@ -85,7 +85,7 @@ class ControladorPresentacion {
       activitatsUser =
           await controladorDomini.getUserActivities(usernameLogged);
       actividadesVencidas =
-          await controladorDomini.getActivitiesVencudes() ?? [];
+          await controladorDomini.getActivitiesVencudes();
       actividadesOrganizadas =
           await controladorDomini.obteActivitatsOrganitzades(_user!.uid);
       usersBD = await controladorDomini.getUsers();
@@ -109,6 +109,10 @@ class ControladorPresentacion {
     } else {
       return false;
     }
+  }
+
+  Future<void>actualizaOrg() async {
+    actividadesOrganizadas = await controladorDomini.obteActivitatsOrganitzades(_user!.uid);
   }
 
   Future<void> createValoracion(

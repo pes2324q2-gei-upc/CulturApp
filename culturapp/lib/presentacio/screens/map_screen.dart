@@ -370,11 +370,9 @@ class _MapPageState extends State<MapPage> {
       });
       return;
     } else {
-      //Obtener ubicacion y asignar
-      /*Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      LatLng currentLatLng = LatLng(position.latitude, position.longitude);*/
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      LatLng currentLatLng = LatLng(position.latitude, position.longitude);
 
-      LatLng currentLatLng = const LatLng(41.389376, 2.113236);
 
       // Actualizar ubicacion
       setState(() {
@@ -662,6 +660,7 @@ class _MapPageState extends State<MapPage> {
                         height: 35.0,
                         child: ElevatedButton(
                           onPressed: () async {
+                            await _controladorPresentacion.actualizaOrg();
                             List<String> act = [
                               actividad.name,
                               actividad.code,
@@ -1049,11 +1048,19 @@ class _MapPageState extends State<MapPage> {
                     ),
                   ),
                 ),
-                Text(
-                  "available_activities"
-                      .trWithArg(context, {"number": _actividades.length}),
-                  style: const TextStyle(
-                    color: Color(0xFFF4692A),
+                GestureDetector(
+                  onTap: () {
+                     _draggableScrollableController.animateTo(
+                      0.5,
+                      duration: const Duration(seconds: 1),
+                      curve: Curves.easeInOut,
+                    );
+                  },
+                  child: Text(
+                    "available_activities".trWithArg(context, {"number": _actividades.length}),
+                    style: const TextStyle(
+                      color: Color(0xFFF4692A),
+                    ),
                   ),
                 ),
                 Expanded(

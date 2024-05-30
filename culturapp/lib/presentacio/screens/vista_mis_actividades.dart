@@ -166,6 +166,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          backgroundColor: Color(0xFFF4692A),
           content: Text("calendar".tr(context)),
           duration: Duration(seconds: 3),
         ),
@@ -457,6 +458,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                   activitat = display_list[index];
                   return GestureDetector(
                     onTap: () async {
+                      await _controladorPresentacion.actualizaOrg();
                       List<String> act = [
                         activitat.name,
                         activitat.code,
@@ -646,7 +648,7 @@ class _ListaMisActividadesState extends State<ListaMisActividades> {
                                   ),
                                   icon: const Icon(Icons.location_on),
                                   label: Text( 
-                                    'map'.tr(context),
+                                    'anar'.tr(context),
                                     style: TextStyle(fontSize: 12),
                                   ),
                                   onPressed: () async {

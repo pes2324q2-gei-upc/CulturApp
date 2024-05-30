@@ -75,15 +75,6 @@ class _SettingsPerfil extends State<SettingsPerfil> {
             },
           ),
           const Divider(height: 0),
-          ListTile(
-            title: Text('delete_account'.tr(context)),
-            subtitle: Text("delete_account_permanently".tr(context)),
-            leading: const Icon(Icons.delete),
-            onTap: () {
-              // Delete account logic
-            },
-          ),
-          const Divider(height: 0),
           //si queremos, añadir tema de notificaciones
           ListTile(
             title: Text("report".tr(context),),

@@ -153,6 +153,7 @@ class _VistaVerActividadState extends State<VistaVerActividad> {
 
   Future<void> requestCameraPermission() async {
     var status = await Permission.camera.status;
+    await _controladorPresentacion.actualizaOrg();
     if (!status.isGranted) {
       await Permission.camera.request();
     }

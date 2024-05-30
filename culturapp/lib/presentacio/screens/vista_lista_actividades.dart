@@ -169,6 +169,7 @@ class _ListaActividadesDisponiblesState extends State<ListaActividadesDisponible
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () async {
+            await _controladorPresentacion.actualizaOrg();
             List<String> act = [
               widget.actividades[index].name,
               widget.actividades[index].code,
