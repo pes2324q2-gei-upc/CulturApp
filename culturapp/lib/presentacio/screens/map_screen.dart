@@ -185,7 +185,7 @@ class _MapPageState extends State<MapPage> {
             ],
           ),
           content: SingleChildScrollView(
-            child: ListBody(
+            child: Column(
               children: <Widget>[
                 Row(
                   children: <Widget>[

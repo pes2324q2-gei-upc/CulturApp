@@ -1,3 +1,4 @@
+import 'package:culturapp/translations/AppLocalizations';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -118,7 +119,7 @@ Widget build(BuildContext context) {
                         backgroundColor: Colors.black, 
                       ),
                       icon: const Icon(Icons.location_on),
-                      label: const Text('Como llegar'),
+                      label:  Text( 'anar'.tr(context),),
                       onPressed: () async {
                         final url = Uri.parse('https://www.google.com/maps/search/?api=1&query=$latitud,$longitud');
                         if (await canLaunchUrl(url)) {
